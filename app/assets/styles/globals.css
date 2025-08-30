@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* brand tokens for easy reskin */
+:root {
+  --brand-bg:   #0F1216;
+  --brand-card: #161A22;
+  --brand-text: #EDEFF2;
+  --brand-a1:   #7B2CFB;
+  --brand-a2:   #00E5FF;
+}
+html, body { background: var(--brand-bg); color: var(--brand-text); }
