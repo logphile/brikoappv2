@@ -1,0 +1,8 @@
+{
+  "prices": [
+    { "part_num": "3024", "avg_price": 0.05 },
+    { "part_num": "3023", "avg_price": 0.08 },
+    { "part_num": "3710", "avg_price": 0.12 },
+    { "part_num": "3022", "avg_price": 0.10 }
+  ]
+}

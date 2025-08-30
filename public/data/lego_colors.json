@@ -1,0 +1,10 @@
+{
+  "colors": [
+    { "id": 0, "name": "Black", "rgb": [0, 0, 0] },
+    { "id": 1, "name": "White", "rgb": [255, 255, 255] },
+    { "id": 5, "name": "Red", "rgb": [196, 40, 27] },
+    { "id": 14, "name": "Yellow", "rgb": [245, 205, 47] },
+    { "id": 28, "name": "Blue", "rgb": [13, 105, 171] },
+    { "id": 199, "name": "Dark Stone Grey", "rgb": [99, 95, 98] }
+  ]
+}
