@@ -1,0 +1,12 @@
+name: Windsurf task
+description: Add work to the queue
+title: "WS: <short title>"
+labels: [windsurf]
+body:
+  - type: textarea
+    id: brief
+    attributes:
+      label: Brief
+      description: What to build. Include filenames + code blocks.
+    validations:
+      required: true
