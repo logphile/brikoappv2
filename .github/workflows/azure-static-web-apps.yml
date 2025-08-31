@@ -43,10 +43,20 @@ jobs:
           test -f .output/public/index.html || (echo "No index.html in .output/public" && exit 1)
           ls -la .output/public | head -n 50
 
-      - name: Deploy to Azure SWA (prebuilt, skip Oryx)
+      - name: Verify routes
+        run: |
+          if [ -f ".output/public/mosaic/index.html" ]; then
+            echo "Prerendered /mosaic present.";
+          else
+            echo "No prerendered /mosaic – relying on SPA fallback.";
+          fi
+
+      - name: Deploy to Azure SWA (prebuilt)
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: "upload"
+          action: upload
           app_location: ".output/public"     # prebuilt static artifacts
           skip_app_build: true
+          is_static_export: true
+          config_file_location: "app/staticwebapp.config.json"
