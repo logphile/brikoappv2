@@ -6,6 +6,12 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   typescript: { strict: true },
   css: ['@/assets/styles/globals.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {}
+    }
+  },
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
@@ -20,7 +26,9 @@ export default defineNuxtConfig({
     head: {
       title: 'BrickMOC Companion',
       meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
-      link: []
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
+      ]
     }
   }
 })
