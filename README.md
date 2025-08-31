@@ -84,3 +84,4 @@ npm run dev
   - return BOM + est price (from `public/data/avg_prices.json`)
 - Build `/studio` three-panel UI; hook up worker; show live stats.
 - Add `exportCsv` + `exportPng`.
+# trigger
