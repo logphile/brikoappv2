@@ -11,34 +11,34 @@ const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
 const showGrid = ref(true)
 const mode = ref<'singles'|'greedy'>('singles')
-const useDither = ref(true)
+const useDither = ref(true)                       // <-- NEW
+// drag-n-drop on preview area + global guard
 const dropActive = ref(false)
 
 async function onFile(file: File) {
-  loading.value = true
-  grid.value = null
+  loading.value = true; grid.value = null
   const mod = await import('@/workers/mosaic.worker?worker')
   const worker: Worker = new mod.default()
 
-  // ---- progressive: tiny preview then full ----
-  const doPass = (w:number,h:number, greedy=false)=>
+  const run = (w:number,h:number, greedy:boolean, dither:boolean) =>
     new Promise<WorkerOut>(async (resolve)=>{
-      worker.onmessage = (e)=>resolve(e.data as WorkerOut)
+      worker.onmessage = (e)=> resolve(e.data as WorkerOut)
       const img = await createImageBitmap(file)
-      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy, dither: useDither.value }, [img])
+      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy, dither }, [img])
     })
-  const thumb = await doPass(64, 64, false)      // fast first look
-  grid.value = thumb
-  const full  = await doPass(target.value.w, target.value.h, true)
-  grid.value = full
+
+  // Progressive: fast thumb (no greedy), then full (with greedy)
+  grid.value = await run(64, 64, false, useDither.value)
+  grid.value = await run(target.value.w, target.value.w, true, useDither.value)
+  worker.terminate()
   loading.value = false
 }
 const bom = computed<BomRow[]>(() => {
   if(!grid.value) return []
   return mode.value==='greedy' && grid.value.bomGreedy ? grid.value.bomGreedy : grid.value.bomSingles
 })
-const cost = computed<number>(() => bom.value.reduce((s: number, r: BomRow) => s + r.total_price, 0))
-function onExportCsv(){ if(bom.value.length) downloadCsv(bom.value) }
+const cost = computed(()=> bom.value.reduce((s,r)=> s + r.total_price, 0))
+function onExportCsv(){ if(grid.value) downloadCsv(bom.value) }
 function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
 
 function handleDrop(e: DragEvent) {
@@ -62,14 +62,8 @@ function preventWindowDrop(e: DragEvent) {
     e.preventDefault()
   }
 }
-onMounted(() => {
-  window.addEventListener('dragover', preventWindowDrop)
-  window.addEventListener('drop', preventWindowDrop)
-})
-onBeforeUnmount(() => {
-  window.removeEventListener('dragover', preventWindowDrop)
-  window.removeEventListener('drop', preventWindowDrop)
-})
+onMounted(()=>{ window.addEventListener('dragover', preventWindowDrop); window.addEventListener('drop', preventWindowDrop) })
+onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop) })
 </script>
 
 <template>
@@ -78,6 +72,7 @@ onBeforeUnmount(() => {
     <p class="opacity-80">Upload an image → map to brick colors → preview & export.</p>
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
+      <!-- left column -->
       <section class="lg:col-span-1 space-y-4">
         <MosaicUploader @file="onFile" />
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 space-y-3">
@@ -90,7 +85,7 @@ onBeforeUnmount(() => {
               <input type="radio" value="greedy" v-model="mode"> Greedy (fewer parts)
             </label>
           </div>
-          <label class="block text-sm">Resolution</label>
+          <label class="block text-sm mt-3">Resolution</label>
           <select v-model.number="target.w" class="bg-black/40 rounded px-3 py-2">
             <option :value="64">64×64</option>
             <option :value="128">128×128</option>
@@ -103,15 +98,15 @@ onBeforeUnmount(() => {
             <input type="checkbox" v-model="useDither"> Dithering (Floyd–Steinberg)
           </label>
           <div class="flex gap-2 pt-2">
-            <button class="px-4 py-2 rounded-xl bg-cta-grad" :disabled="!grid" @click="onExportPng">Export PNG</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10" :disabled="!grid" @click="onExportCsv">Export CSV</button>
+            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40" :disabled="!grid" @click="onExportPng">Export PNG</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!grid" @click="onExportCsv">Export CSV</button>
           </div>
         </div>
 
         <div v-if="bom.length" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <div class="font-semibold mb-2">BOM — {{ mode==='greedy' ? 'Greedy plates' : '1×1 studs' }}</div>
           <ul class="max-h-64 overflow-auto text-sm space-y-1">
-            <li v-for="row in bom" :key="row.part+'|'+row.color_name" class="flex justify-between">
+            <li v-for="row in bom" :key="row.part + row.color_name" class="flex justify-between">
               <span class="flex items-center gap-2">
                 <span class="inline-block h-3 w-3 rounded" :style="{background: row.hex}"></span>
                 {{ row.color_name }}
@@ -123,6 +118,7 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
+      <!-- right preview with dropzone -->
       <section
         class="lg:col-span-2 relative rounded-2xl bg-white/5 ring-1 ring-white/10 p-4"
         @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
