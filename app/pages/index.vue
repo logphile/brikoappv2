@@ -51,18 +51,9 @@
         </div>
 
         <!-- visual card -->
-        <div class="rounded-3xl bg-white/5 ring-1 ring-white/10 p-6">
-          <div class="aspect-[4/3] rounded-2xl bg-gradient-to-br from-sandstone to-white/5 grid place-items-center">
-            <div class="text-center">
-              <div class="text-sm uppercase tracking-widest text-white/60">MVP Milestone</div>
-              <div class="mt-2 text-xl font-semibold">Week 1 → Mosaic engine</div>
-              <ul class="mt-3 text-white/80 text-sm space-y-1">
-                <li>• Image → LEGO color map</li>
-                <li>• Greedy tiling (cost-savvy)</li>
-                <li>• BOM + price + PNG/CSV export</li>
-              </ul>
-            </div>
-          </div>
+        <div>
+          <div class="mb-3 text-sm uppercase tracking-widest text-white/60">Instant preview — drag to compare</div>
+          <HeroDemo originalSrc="/demo/original.jpg" mosaicSrc="/demo/mosaic.jpg" />
         </div>
       </div>
     </section>
