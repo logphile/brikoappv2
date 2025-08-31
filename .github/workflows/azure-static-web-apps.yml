@@ -43,4 +43,3 @@ jobs:
           output_location: ".output/public"  # prebuilt static output
           skip_app_build: true
           is_static_export: true
-          config_file_location: "staticwebapp.config.json"
