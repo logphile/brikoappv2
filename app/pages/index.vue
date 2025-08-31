@@ -1,21 +1,16 @@
-<script setup lang="ts">
-useHead({
-  title: 'Briko — BrickMOC Companion',
-  meta: [
-    { name: 'description', content: 'Turn any idea or image into a LEGO-style build preview with parts & price. Not affiliated with the LEGO Group.' },
-    { property: 'og:title', content: 'Briko — BrickMOC Companion' },
-    { property: 'og:description', content: 'Turn any idea or image into a LEGO-style build preview with parts & price.' },
-    { property: 'og:type', content: 'website' }
-  ]
-})
-</script>
-
 <template>
+  <Head>
+    <Title>Briko — BrickMOC Companion</Title>
+    <Meta name="description" content="Turn any idea or image into a LEGO-style build preview with parts & price. Not affiliated with the LEGO Group." />
+    <Meta property="og:title" content="Briko — BrickMOC Companion" />
+    <Meta property="og:description" content="Turn any idea or image into a LEGO-style build preview with parts & price." />
+    <Meta property="og:type" content="website" />
+  </Head>
   <main class="min-h-screen bg-midnight text-white">
     <!-- top bar -->
     <header class="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <img src="/favicon.svg" alt="Briko" class="h-8 w-8 rounded-xl" />
+        <div aria-hidden="true" class="h-8 w-8 rounded-xl bg-cta-grad ring-1 ring-white/10"></div>
         <span class="text-xl font-semibold tracking-tight">Briko</span>
       </div>
       <nav class="hidden sm:flex items-center gap-6 text-sm text-white/80">
