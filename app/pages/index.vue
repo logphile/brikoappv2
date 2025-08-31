@@ -16,6 +16,7 @@
         <span class="text-xl font-semibold tracking-tight">Briko</span>
       </div>
       <nav class="hidden sm:flex items-center gap-6 text-sm text-white/80">
+        <NuxtLink to="/voxel" class="hover:text-white">Voxel demo</NuxtLink>
         <a href="#how" class="hover:text-white">How it works</a>
         <a href="#updates" class="hover:text-white">Updates</a>
         <a href="mailto:hello@briko.app" class="hover:text-white">Contact</a>
