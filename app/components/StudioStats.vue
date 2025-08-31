@@ -9,5 +9,6 @@
   </AppCard>
 </template>
 <script setup lang="ts">
+import { useProjectStore } from '@/stores/project'
 const store = useProjectStore()
 </script>
