@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import type { WorkerOut } from '@/types/mosaic'
-const props = defineProps<{ data: WorkerOut, showGrid?: boolean }>()
+import type { WorkerOut, Placement } from '@/types/mosaic'
+const props = defineProps<{ data: WorkerOut, showGrid?: boolean, showTiles?: boolean }>()
 const cvs = ref<HTMLCanvasElement|null>(null)
 
 function render(){
@@ -23,9 +23,17 @@ function render(){
       }
     }
   }
+  // tile outlines when provided
+  if(props.showTiles && props.data.placements){
+    ctx.lineWidth = Math.max(1, Math.floor(scale/6))
+    ctx.strokeStyle = 'rgba(255,255,255,.6)'
+    for(const t of props.data.placements as Placement[]){
+      ctx.strokeRect(t.x*scale+.5, t.y*scale+.5, t.w*scale-1, t.h*scale-1)
+    }
+  }
   // save canvas globally for PNG export
   ;(window as any).__brikoCanvas = cvs.value
 }
-onMounted(render); watch(()=>[props.data, props.showGrid], render, {deep:true})
+onMounted(render); watch(()=>[props.data, props.showGrid, props.showTiles], render, {deep:true})
 </script>
 <template><canvas ref="cvs" class="w-full rounded-xl bg-black/20"></canvas></template>
