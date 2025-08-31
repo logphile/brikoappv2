@@ -39,7 +39,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "upload"
-          app_location: "/"                  # repo root is project root
-          output_location: ".output/public"  # prebuilt static output
+          app_location: ".output/public"     # point directly to built artifacts
           skip_app_build: true
           is_static_export: true
