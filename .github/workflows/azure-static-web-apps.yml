@@ -25,6 +25,9 @@ jobs:
         run: npm ci
 
       - name: Build static Nuxt output
+        env:
+          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
+          NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           npm run build
         # Project root is repo root (Nuxt srcDir is 'app'); no working-directory needed
@@ -39,6 +42,7 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: "upload"
-          app_location: ".output/public"     # point directly to built artifacts
+          app_location: "/"                  # repo root
+          output_location: ".output/public"  # built static artifact
           skip_app_build: true
           is_static_export: true
