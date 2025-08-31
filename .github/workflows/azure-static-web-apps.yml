@@ -27,8 +27,12 @@ jobs:
       - name: Build static Nuxt output
         run: |
           npm run build
-          npx nuxt generate
         # Project root is repo root (Nuxt srcDir is 'app'); no working-directory needed
+
+      - name: Sanity check build artifacts
+        run: |
+          test -f .output/public/index.html || (echo "No index.html in .output/public" && exit 1)
+          ls -la .output/public | head -n 50
 
       - name: Deploy to Azure SWA (prebuilt, skip Oryx)
         uses: Azure/static-web-apps-deploy@v1
@@ -39,3 +43,4 @@ jobs:
           output_location: ".output/public"  # prebuilt static output
           skip_app_build: true
           is_static_export: true
+          config_file_location: "staticwebapp.config.json"
