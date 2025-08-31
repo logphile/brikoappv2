@@ -39,11 +39,14 @@ const PARTS = [
 ] as const
 
 self.onmessage = async (e: MessageEvent<WorkerIn>) => {
-  const { type, image, width, height, palette, greedy } = e.data
+  const { type, image, width, height, palette, greedy, dither = true } = e.data
   if (type !== 'process') return
   // Draw into offscreen canvas at target size
   const oc = new OffscreenCanvas(width, height)
   const ctx = oc.getContext('2d', { willReadFrequently: true })!
+  // High quality resize & sampling
+  ;(ctx as any).imageSmoothingEnabled = true
+  ;(ctx as any).imageSmoothingQuality = 'high'
   ctx.drawImage(image, 0, 0, width, height)
   const { data } = ctx.getImageData(0, 0, width, height)
 
@@ -51,10 +54,46 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
   const indexes = new Uint16Array(width * height)
   const counts = new Uint32Array(palette.length)
 
-  for (let i = 0, px = 0; i < data.length; i += 4, px++) {
-    const lab = srgbToLab([data[i], data[i + 1], data[i + 2]])
-    const idx = nearestIndex(lab, palLab)
-    indexes[px] = idx; counts[idx]++
+  if (!dither) {
+    for (let i = 0, px = 0; i < data.length; i += 4, px++) {
+      const lab = srgbToLab([data[i], data[i + 1], data[i + 2]])
+      const idx = nearestIndex(lab, palLab)
+      indexes[px] = idx; counts[idx]++
+    }
+  } else {
+    // Floyd–Steinberg dithering (serpentine) on sRGB
+    const buf = new Float32Array(data.length)
+    for (let i = 0; i < data.length; i++) buf[i] = data[i]
+    for (let y = 0; y < height; y++) {
+      const leftToRight = (y % 2 === 0)
+      const xStart = leftToRight ? 0 : width - 1
+      const xEnd = leftToRight ? width : -1
+      const step = leftToRight ? 1 : -1
+      for (let x = xStart; x !== xEnd; x += step) {
+        const o = (y * width + x) * 4
+        const sr = Math.max(0, Math.min(255, buf[o + 0]))
+        const sg = Math.max(0, Math.min(255, buf[o + 1]))
+        const sb = Math.max(0, Math.min(255, buf[o + 2]))
+        const lab = srgbToLab([sr, sg, sb])
+        const k = nearestIndex(lab, palLab)
+        const chosen = palette[k].rgb
+        indexes[(y * width) + x] = k
+        counts[k]++
+        const er = sr - chosen[0]
+        const eg = sg - chosen[1]
+        const eb = sb - chosen[2]
+        const dir = step // +1 right, -1 left
+        const add = (xx: number, yy: number, w: number) => {
+          if (xx < 0 || xx >= width || yy < 0 || yy >= height) return
+          const i = (yy * width + xx) * 4
+          buf[i + 0] += er * w; buf[i + 1] += eg * w; buf[i + 2] += eb * w
+        }
+        add(x + dir, y, 7 / 16)
+        add(x - dir, y + 1, 3 / 16)
+        add(x, y + 1, 5 / 16)
+        add(x + dir, y + 1, 1 / 16)
+      }
+    }
   }
 
   const bomSingles: BomRow[] = palette
