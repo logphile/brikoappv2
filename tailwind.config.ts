@@ -1,6 +1,10 @@
 import type { Config } from 'tailwindcss'
 export default <Partial<Config>>{
-  content: ['./app/**/*.{vue,ts}'],
+  content: [
+    './app/**/*.{vue,ts,js}',
+    './components/**/*.{vue,ts,js}',
+    './pages/**/*.{vue,ts,js}'
+  ],
   theme: {
     extend: {
       colors: {

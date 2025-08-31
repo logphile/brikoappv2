@@ -32,6 +32,12 @@ jobs:
           npm run build
         # Project root is repo root (Nuxt srcDir is 'app'); no working-directory needed
 
+      - name: Verify Tailwind compiled
+        run: |
+          if grep -q "@tailwind base" .output/public/index.html; then
+            echo "Tailwind not compiled — aborting."; exit 1;
+          fi
+
       - name: Sanity check build artifacts
         run: |
           test -f .output/public/index.html || (echo "No index.html in .output/public" && exit 1)
