@@ -1,28 +1,41 @@
-name: Azure Static Web Apps CI/CD
+name: Deploy to Azure Static Web Apps
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20.19.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Deploy to Azure Static Web Apps
+          node-version: '20.19.0'
+          cache: 'npm'
+
+      - name: Install deps (clean)
+        run: npm ci
+
+      - name: Build static Nuxt output
+        run: |
+          npm run build
+          npx nuxt generate
+        # Project root is repo root (Nuxt srcDir is 'app'); no working-directory needed
+
+      - name: Deploy to Azure SWA (prebuilt, skip Oryx)
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: upload
-          app_location: "/"
-          output_location: ".output/public"
-          app_build_command: "npm install && npm run build"
+          action: "upload"
+          app_location: "/"                  # repo root is project root
+          output_location: ".output/public"  # prebuilt static output
+          skip_app_build: true
+          is_static_export: true
