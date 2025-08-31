@@ -25,6 +25,8 @@
   </AppCard>
 </template>
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useProjectStore } from '@/stores/project'
 const store = useProjectStore()
 const mode = computed({
   get: () => store.mode,
