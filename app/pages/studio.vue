@@ -6,6 +6,9 @@
   </div>
 </template>
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { useProjectStore } from '@/stores/project'
+import { usePalette } from '@/composables/usePalette'
 const store = useProjectStore()
 const { load } = usePalette()
 

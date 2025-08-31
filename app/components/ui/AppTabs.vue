@@ -15,6 +15,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useVModel } from '@vueuse/core'
 const props = defineProps<{ modelValue: string; tabs: string[] }>()
 const emit = defineEmits(['update:modelValue'])
 const model = useVModel(props, 'modelValue', emit)

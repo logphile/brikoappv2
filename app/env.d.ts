@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="nuxt" />
 
 declare module '*.svg?url' {
   const src: string

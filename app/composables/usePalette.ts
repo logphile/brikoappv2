@@ -1,3 +1,6 @@
+import { computed } from 'vue'
+import { useState } from 'nuxt/app'
+
 export const usePalette = () => {
   const colors = useState('lego-colors', () => [] as any[])
   const loaded = computed(() => colors.value.length > 0)

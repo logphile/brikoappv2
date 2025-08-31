@@ -12,5 +12,20 @@
       "@/*": ["./app/*"]
     },
     "types": ["node", "nuxt"]
-  }
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.vue",
+    "app/**/*.d.ts",
+    "nuxt.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".output",
+    "pages/**",
+    "plugins/**",
+    "middleware/**",
+    "server/**"
+  ]
 }

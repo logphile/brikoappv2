@@ -1,18 +1,18 @@
 import { createClient } from '@supabase/supabase-js'
-import { defineNuxtPlugin } from '#app'
-import { useRuntimeConfig } from '#imports'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { defineNuxtPlugin, useRuntimeConfig } from 'nuxt/app'
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
-  const url = config.public.supabaseUrl
-  const key = config.public.supabaseAnonKey
+  const url = config.public.supabaseUrl as string
+  const key = config.public.supabaseAnonKey as string
 
   // If keys are missing, don’t initialize; expose a no-op client.
   if (!url || !key) {
     console.warn('[briko] Supabase disabled: missing env')
     return {
       provide: {
-        supabase: null as any,
-        db: { available: false }
+        supabase: null as SupabaseClient | null,
+        db: { available: false, supabase: null as SupabaseClient | null }
       }
     }
   }
@@ -20,8 +20,8 @@ export default defineNuxtPlugin(() => {
   const supabase = createClient(url, key)
   return {
     provide: {
-      supabase,
-      db: { available: true, supabase }
+      supabase: supabase as SupabaseClient | null,
+      db: { available: true, supabase: supabase as SupabaseClient | null }
     }
   }
 })
