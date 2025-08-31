@@ -59,4 +59,4 @@ jobs:
           app_location: ".output/public"     # prebuilt static artifacts
           skip_app_build: true
           is_static_export: true
-          config_file_location: "app/staticwebapp.config.json"
+          config_file_location: "app"
