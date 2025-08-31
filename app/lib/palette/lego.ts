@@ -14,5 +14,15 @@ export const legoPalette: PaletteColor[] = [
   { name:'Tan',             hex:'#E4CD9E', rgb:[228,205,158],price_1x1:0.03 },
   { name:'Orange',          hex:'#FE8A18', rgb:[254,138,24], price_1x1:0.03 },
   { name:'Bright Pink',     hex:'#FF4F9A', rgb:[255,79,154], price_1x1:0.04 },
-  { name:'Purple',          hex:'#81007B', rgb:[129,0,123],  price_1x1:0.04 }
+  { name:'Purple',          hex:'#81007B', rgb:[129,0,123],  price_1x1:0.04 },
+  // Added portrait-friendly tones
+  { name:'Light Nougat',   hex:'#F6D7B3', rgb:[246,215,179], price_1x1:0.04 },
+  { name:'Medium Nougat',  hex:'#AA7D55', rgb:[170,125,85],  price_1x1:0.04 },
+  { name:'Dark Orange',    hex:'#A95500', rgb:[169,85,0],    price_1x1:0.04 },
+  { name:'Dark Brown',     hex:'#4C1E10', rgb:[76,30,16],    price_1x1:0.05 },
+  { name:'Sand Green',     hex:'#A0BCAC', rgb:[160,188,172], price_1x1:0.04 },
+  { name:'Sand Blue',      hex:'#6C8092', rgb:[108,128,146], price_1x1:0.04 },
+  { name:'Dark Red',       hex:'#7F1010', rgb:[127,16,16],   price_1x1:0.04 },
+  { name:'Dark Blue',      hex:'#001D5F', rgb:[0,29,95],     price_1x1:0.04 },
+  { name:'Bright Light Blue', hex:'#9CD7F7', rgb:[156,215,247], price_1x1:0.04 }
 ]

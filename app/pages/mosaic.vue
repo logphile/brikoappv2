@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import { legoPalette } from '@/lib/palette/lego'
@@ -11,6 +11,8 @@ const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
 const showGrid = ref(true)
 const mode = ref<'singles'|'greedy'>('singles')
+const useDither = ref(true)
+const dropActive = ref(false)
 
 async function onFile(file: File) {
   loading.value = true
@@ -23,7 +25,7 @@ async function onFile(file: File) {
     new Promise<WorkerOut>(async (resolve)=>{
       worker.onmessage = (e)=>resolve(e.data as WorkerOut)
       const img = await createImageBitmap(file)
-      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy }, [img])
+      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy, dither: useDither.value }, [img])
     })
   const thumb = await doPass(64, 64, false)      // fast first look
   grid.value = thumb
@@ -38,6 +40,36 @@ const bom = computed<BomRow[]>(() => {
 const cost = computed<number>(() => bom.value.reduce((s: number, r: BomRow) => s + r.total_price, 0))
 function onExportCsv(){ if(bom.value.length) downloadCsv(bom.value) }
 function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
+
+function handleDrop(e: DragEvent) {
+  e.preventDefault(); e.stopPropagation()
+  dropActive.value = false
+  const f = e.dataTransfer?.files?.[0]
+  if (f) onFile(f)
+}
+function handleDragOver(e: DragEvent) {
+  e.preventDefault(); e.stopPropagation()
+  dropActive.value = true
+}
+function handleDragLeave(e: DragEvent) {
+  e.preventDefault(); e.stopPropagation()
+  dropActive.value = false
+}
+
+// Global safety: don’t open the file in the browser if drop misses the zones.
+function preventWindowDrop(e: DragEvent) {
+  if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+    e.preventDefault()
+  }
+}
+onMounted(() => {
+  window.addEventListener('dragover', preventWindowDrop)
+  window.addEventListener('drop', preventWindowDrop)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('dragover', preventWindowDrop)
+  window.removeEventListener('drop', preventWindowDrop)
+})
 </script>
 
 <template>
@@ -67,6 +99,9 @@ function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
           <label class="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" v-model="showGrid"> Show stud grid
           </label>
+          <label class="inline-flex items-center gap-2 text-sm mt-2">
+            <input type="checkbox" v-model="useDither"> Dithering (Floyd–Steinberg)
+          </label>
           <div class="flex gap-2 pt-2">
             <button class="px-4 py-2 rounded-xl bg-cta-grad" :disabled="!grid" @click="onExportPng">Export PNG</button>
             <button class="px-4 py-2 rounded-xl bg-white/10" :disabled="!grid" @click="onExportCsv">Export CSV</button>
@@ -88,7 +123,12 @@ function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
         </div>
       </section>
 
-      <section class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+      <section
+        class="lg:col-span-2 relative rounded-2xl bg-white/5 ring-1 ring-white/10 p-4"
+        @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
+      >
+        <div v-if="dropActive"
+             class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">Processing…</div>
         <MosaicCanvas v-else-if="grid" :data="grid" :showGrid="showGrid" :showTiles="mode==='greedy'"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
@@ -96,3 +136,4 @@ function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
     </div>
   </main>
 </template>
+

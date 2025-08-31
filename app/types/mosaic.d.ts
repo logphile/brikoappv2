@@ -3,7 +3,7 @@ export type BomRow = { part:string; color_name:string; hex:string; qty:number; u
 export type Placement = { x:number; y:number; w:number; h:number; color:number; part:string }
 
 export type WorkerIn =
-  | { type:'process'; image: ImageBitmap; width:number; height:number; palette:PaletteColor[]; greedy?: boolean };
+  | { type:'process'; image: ImageBitmap; width:number; height:number; palette:PaletteColor[]; greedy?: boolean; dither?: boolean };
 
 export type WorkerOut = {
   width:number; height:number; palette:PaletteColor[]; indexes:Uint16Array;
