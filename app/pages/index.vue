@@ -5,6 +5,8 @@
     <Meta property="og:title" content="Briko — BrickMOC Companion" />
     <Meta property="og:description" content="Turn any idea or image into a LEGO-style build preview with parts & price." />
     <Meta property="og:type" content="website" />
+    <Link rel="preload" as="image" href="/demo/original.jpg" />
+    <Link rel="preload" as="image" href="/demo/mosaic.jpg" />
   </Head>
   <main class="min-h-screen bg-midnight text-white">
     <!-- top bar -->
