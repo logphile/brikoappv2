@@ -1,4 +1,4 @@
-# BrickMOC Companion
+# Briko
 
 Turn any idea or image into a LEGO-style build preview with a parts list, cost estimate, and quick exports.
 
