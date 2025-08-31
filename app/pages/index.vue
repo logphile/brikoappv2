@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useHead } from '#imports'
 useHead({
   title: 'Briko — BrickMOC Companion',
   meta: [
@@ -7,9 +6,6 @@ useHead({
     { property: 'og:title', content: 'Briko — BrickMOC Companion' },
     { property: 'og:description', content: 'Turn any idea or image into a LEGO-style build preview with parts & price.' },
     { property: 'og:type', content: 'website' }
-  ],
-  link: [
-    { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
   ]
 })
 </script>
