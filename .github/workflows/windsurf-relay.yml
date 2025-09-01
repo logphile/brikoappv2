@@ -1,33 +1,55 @@
 name: Windsurf Relay
 on:
   issues:
-    types: [opened, edited, labeled]
+    types: [opened, labeled, edited]
 permissions:
   contents: write
   issues: write
+  pull-requests: write
 jobs:
-  enqueue:
+  relay:
     if: github.event.issue.state == 'open' && contains(github.event.issue.labels.*.name, 'windsurf')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Append to AGENT_TASKS.md
+
+      - name: Append task to AGENT_TASKS.md
         run: |
           f=AGENT_TASKS.md
-          [ ! -f "$f" ] && echo -e "# Agent Tasks (source of truth)\n\n## Queue\n\n## Done" > "$f"
-          esc_title="$(printf "%s" "${{ github.event.issue.title }} — ${{ github.event.issue.html_url }}" | sed 's/`/\\`/g')"
-          esc_body="$(printf "%s" "${{ github.event.issue.body }}" | sed 's/`/\\`/g')"
-          ins="- [ ] ${esc_title}\n\n${esc_body}\n"
-          awk -v ins="$ins" 'BEGIN{p=0} /^## Queue/ && !p {print; print ins; p=1; next} {print}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
-      - name: Commit queue update
+          [ ! -f "$f" ] && printf '# Agent Tasks (source of truth)\n\n## Queue\n\n## Done\n' > "$f"
+          title="${{ github.event.issue.title }} — ${{ github.event.issue.html_url }}"
+          body="${{ github.event.issue.body }}"
+          printf -- "- [ ] %s\n\n%s\n" "$title" "$body" > .queue_add
+          awk 'BEGIN{p=0} /^## Queue/ && !p {print; system("cat .queue_add"); p=1; next} {print}' "$f" > "$f.new"
+          mv "$f.new" "$f"
+
+      - name: Commit to a new branch and push
+        env:
+          BRANCH: ws-queue/${{ github.event.issue.number }}
         run: |
           git config user.name "windsurf-relay"
           git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$BRANCH"
           git add AGENT_TASKS.md
-          git commit -m "chore(windsurf): enqueue task from #${{ github.event.issue.number }}" || true
-          git push
-      - uses: actions-ecosystem/action-add-comment@v1
+          git commit -m "chore(queue): enqueue #${{ github.event.issue.number }}"
+          git push origin "$BRANCH"
+
+      - name: Open PR and add automerge label
+        uses: actions/github-script@v7
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          body: "Queued in **AGENT_TASKS.md**. Windsurf will pick it up."
+          script: |
+            const {owner, repo} = context.repo
+            const base = context.payload.repository.default_branch
+            const number = context.payload.issue.number
+            const head = `ws-queue/${number}`
+            const title = `chore(queue): enqueue #${number}`
+            const { data: pr } = await github.pulls.create({ owner, repo, head, base, title, body: 'Auto-generated from issue.' })
+            await github.issues.addLabels({ owner, repo, issue_number: pr.number, labels: ['automerge'] })
+
+      - name: Comment on original issue
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "Queued in **AGENT_TASKS.md** via PR. Windsurf will pick it up."
+
       - uses: peter-evans/close-issue@v3
