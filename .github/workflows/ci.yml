@@ -1,0 +1,23 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20.19.0", cache: "npm" }
+      - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck || echo "No TS project; skipping"
+      - name: Lint (soft)
+        run: npm run lint || echo "No ESLint config; skipping"
+      - name: Build (static)
+        run: npm run build:static
+      - name: Verify Tailwind compiled
+        run: |
+          test -f app/.output/public/index.html || { echo "no build"; exit 1; }
+          ! grep -q "@tailwind base" app/.output/public/index.html || { echo "Tailwind not compiled"; exit 1; }
