@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
+import StepCanvas from '@/components/StepCanvas.client.vue'
 import { legoPalette } from '@/lib/palette/lego'
 import { downloadCsv, downloadPng } from '@/lib/exporters'
+import { chunkSteps } from '@/lib/steps'
 import type { BomRow, WorkerOut } from '@/types/mosaic'
 
 const target = ref<{w:number,h:number}>({ w: 128, h: 128 }) // 256 later
@@ -19,12 +21,12 @@ async function onFile(file: File) {
   loading.value = true; grid.value = null
   const mod = await import('@/workers/mosaic.worker?worker')
   const worker: Worker = new mod.default()
+  const img = await createImageBitmap(file) // reuse across passes
 
   const run = (w:number,h:number, greedy:boolean, dither:boolean) =>
-    new Promise<WorkerOut>(async (resolve)=>{
+    new Promise<WorkerOut>((resolve)=>{
       worker.onmessage = (e)=> resolve(e.data as WorkerOut)
-      const img = await createImageBitmap(file)
-      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy, dither }, [img])
+      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy, dither })
     })
 
   // Progressive: fast thumb (no greedy), then full (with greedy)
@@ -40,6 +42,17 @@ const bom = computed<BomRow[]>(() => {
 const cost = computed(()=> bom.value.reduce((s,r)=> s + r.total_price, 0))
 function onExportCsv(){ if(grid.value) downloadCsv(bom.value) }
 function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
+// Steps & PDF
+const stepIdx = ref(1)
+const steps = computed(()=> (mode.value==='greedy' && grid.value?.placements) ? chunkSteps(grid.value.placements, 300) : [])
+watch(steps, ()=>{ stepIdx.value = steps.value.length ? 1 : 0 })
+async function onExportPdf(){
+  const root = document.body
+  if(grid.value){
+    const { exportMosaicPdf } = await import('@/lib/exporters/pdfGuide')
+    exportMosaicPdf(root, grid.value, bom.value, 300)
+  }
+}
 
 function handleDrop(e: DragEvent) {
   e.preventDefault(); e.stopPropagation()
@@ -91,6 +104,9 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
             <option :value="128">128×128</option>
             <option :value="256">256×256</option>
           </select>
+          <label class="block text-sm mt-4">Build steps</label>
+          <input type="range" min="1" :max="steps.length || 1" v-model.number="stepIdx" class="w-full" :disabled="!steps.length">
+          <div class="text-xs opacity-70">Step {{ stepIdx }} / {{ steps.length || 1 }}</div>
           <label class="inline-flex items-center gap-2 text-sm">
             <input type="checkbox" v-model="showGrid"> Show stud grid
           </label>
@@ -100,6 +116,7 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
           <div class="flex gap-2 pt-2">
             <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40" :disabled="!grid" @click="onExportPng">Export PNG</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!grid" @click="onExportCsv">Export CSV</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!grid" @click="onExportPdf">Export PDF</button>
           </div>
         </div>
 
@@ -126,7 +143,13 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
         <div v-if="dropActive"
              class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">Processing…</div>
-        <MosaicCanvas v-else-if="grid" :data="grid" :showGrid="showGrid" :showTiles="mode==='greedy'"/>
+        <div v-else-if="grid">
+          <MosaicCanvas v-if="mode==='singles'" :data="grid" :showGrid="showGrid"/>
+          <template v-else>
+            <MosaicCanvas v-if="!steps.length" :data="grid" :showGrid="showGrid" :showTiles="true"/>
+            <StepCanvas v-else :data="grid" :stepItems="steps[stepIdx-1].items" :showGrid="showGrid"/>
+          </template>
+        </div>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
       </section>
     </div>
