@@ -18,9 +18,13 @@ export const useAuth = () => {
     loading.value = false
   }
 
-  const loginWithMagicLink = async (email: string) => {
+  const loginWithMagicLink = async (email: string, redirectTo?: string) => {
     if (!$supabase) throw new Error('Auth unavailable')
-    await $supabase.auth.signInWithOtp({ email })
+    const redirect = redirectTo || (process.client ? `${window.location.origin}/login` : '/login')
+    await $supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: redirect }
+    })
   }
 
   const logout = async () => {
