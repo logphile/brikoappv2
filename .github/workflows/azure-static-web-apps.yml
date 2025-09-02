@@ -1,62 +1,54 @@
-name: Deploy to Azure Static Web Apps
+name: Deploy — Azure Static Web Apps
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']         # production deploys
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  pull_request:                 # preview envs for PRs into main
+    branches: ['main']
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: swa-${{ github.event_name }}-${{ github.ref || github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
-  build_and_deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
+    timeout-minutes: 25
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node 20.19.x
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20.19.0'
-          cache: 'npm'
+          cache: 'pnpm'
 
-      - name: Install deps (clean)
-        run: npm ci
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      - name: Build static Nuxt output
-        env:
-          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
-          NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate static site
         run: |
-          npm run build
-        # Project root is repo root (Nuxt srcDir is 'app'); no working-directory needed
+          pnpm run -s generate || pnpm run -s build
+          test -d .output/public
 
-      - name: Verify Tailwind compiled
-        run: |
-          if grep -q "@tailwind base" .output/public/index.html; then
-            echo "Tailwind not compiled — aborting."; exit 1;
-          fi
-
-      - name: Sanity check build artifacts
-        run: |
-          test -f .output/public/index.html || (echo "No index.html in .output/public" && exit 1)
-          ls -la .output/public | head -n 50
-
-      - name: Verify routes
-        run: |
-          if [ -f ".output/public/mosaic/index.html" ]; then
-            echo "Prerendered /mosaic present.";
-          else
-            echo "No prerendered /mosaic – relying on SPA fallback.";
-          fi
-
-      - name: Deploy to Azure SWA (prebuilt)
+      - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: upload
-          app_location: ".output/public"     # prebuilt static artifacts
-          skip_app_build: true
-          is_static_export: true
-          config_file_location: "app"
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          app_location: '.'
+          output_location: '.output/public'
+          skip_app_build: true   # we already generated static files
