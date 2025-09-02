@@ -14,8 +14,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || '',
-      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || ''
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
+      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
     }
   },
   nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/health'] } },
