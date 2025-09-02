@@ -34,7 +34,8 @@
     "@supabase/supabase-js": "^2.45.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
-    "three": "^0.165.0"
+    "three": "^0.165.0",
+    "zod": "^3.23.8"
   },
   "engines": {
     "node": "20.19.0"

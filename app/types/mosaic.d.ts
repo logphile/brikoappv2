@@ -3,6 +3,7 @@ export type BomRow = {
   part:string
   color_name:string
   hex:string
+  color_id?: number
   qty:number
   unit_price:number
   total_price:number
@@ -18,6 +19,7 @@ export type WorkerIn = {
   palette:PaletteColor[]
   greedy?: boolean
   dither?: boolean              // <-- NEW
+  distance?: 'ciede2000' | 'euclid'
 }
 
 export type WorkerOut = {
@@ -28,4 +30,5 @@ export type WorkerOut = {
   bomSingles: BomRow[]
   placements?: Placement[]
   bomGreedy?: BomRow[]
+  timings?: { preprocess:number; quantize:number; tile:number; bom:number; total:number }
 }
