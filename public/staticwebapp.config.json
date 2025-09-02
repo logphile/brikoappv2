@@ -1,4 +1,7 @@
 {
+  "routes": [
+    { "route": "/login", "rewrite": "/login/index.html" }
+  ],
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/assets/*", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg"]
