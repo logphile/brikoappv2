@@ -1,0 +1,94 @@
+<template>
+  <main class="mx-auto max-w-5xl px-6 py-10 text-white">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-semibold">{{ project?.title || 'Project' }}</h1>
+        <div v-if="project" class="text-sm opacity-80">{{ project.width }}×{{ project.height }} studs</div>
+      </div>
+      <NuxtLink to="/mosaic" class="px-4 py-2 rounded-xl bg-cta-grad">Open Editor</NuxtLink>
+    </div>
+
+    <section class="mt-6 grid gap-4">
+      <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <h2 class="font-medium mb-2">Sharing</h2>
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <label class="inline-flex items-center gap-2">
+            <input type="checkbox" v-model="projectPublic" @change="togglePublic" />
+            <span>Public (read‑only)</span>
+          </label>
+          <button class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40" @click="copyLink" :disabled="!shareUrl">Copy Share Link</button>
+          <button class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40" @click="regenerate" :disabled="!projectPublic">Regenerate Link</button>
+          <NuxtLink v-if="shareUrl" :to="sharePath" class="underline">Open public view</NuxtLink>
+        </div>
+        <p v-if="err" class="mt-2 text-sm text-red-300">{{ err }}</p>
+      </div>
+
+      <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <h2 class="font-medium mb-2">Assets</h2>
+        <div class="flex items-center gap-3 text-sm">
+          <button class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40" @click="uploadPreview">Upload Preview</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useNuxtApp } from 'nuxt/app'
+import { useMosaicStore } from '@/stores/mosaic'
+
+const route = useRoute()
+const { $supabase } = useNuxtApp() as any
+const mosaic = useMosaicStore()
+
+const pid = String(route.params.id || '')
+const project = ref<any | null>(null)
+const projectPublic = ref(false)
+const err = ref('')
+
+const sharePath = computed(()=> project.value?.share_token ? `/s/${project.value.share_token}` : '')
+const shareUrl = computed(()=> sharePath.value ? (location.origin + sharePath.value) : '')
+
+function rand(n=8){ return Math.random().toString(36).slice(2, 2+n) }
+
+async function fetchProject(){
+  if(!$supabase) return
+  const { data, error } = await $supabase.from('projects').select('*').eq('id', pid).single()
+  if(error){ err.value = error.message; return }
+  project.value = data
+  projectPublic.value = !!data.is_public
+}
+
+async function togglePublic(){
+  err.value = ''
+  if(!project.value) return
+  const updates: any = { is_public: projectPublic.value }
+  if (projectPublic.value && !project.value.share_token) updates.share_token = rand(12)
+  const { data, error } = await $supabase.from('projects').update(updates).eq('id', pid).select('*').single()
+  if(error){ err.value = error.message; return }
+  project.value = data
+}
+
+async function regenerate(){
+  if(!project.value) return
+  const { data, error } = await $supabase.from('projects').update({ share_token: rand(12) }).eq('id', pid).select('*').single()
+  if(error){ err.value = error.message; return }
+  project.value = data
+}
+
+async function copyLink(){
+  if(!shareUrl.value) return
+  try{ await navigator.clipboard.writeText(shareUrl.value) }catch(e){ console.warn(e) }
+}
+
+async function uploadPreview(){
+  await mosaic.uploadPreview()
+}
+
+onMounted(async () => {
+  mosaic.setCurrentProject(pid)
+  await fetchProject()
+  await mosaic.loadProject(pid)
+})
+</script>
