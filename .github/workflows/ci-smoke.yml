@@ -1,8 +1,5 @@
 name: Briko CI Smoke
 on:
-  push:
-    branches: ['**']     # run on pushes to any branch
-  pull_request:
   workflow_dispatch:
 jobs:
   smoke:
