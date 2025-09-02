@@ -15,7 +15,14 @@ export default defineNuxtPlugin(() => {
     return { provide }
   }
 
-  const supabase: SupabaseClient | null = createClient(url, key)
+  const supabase: SupabaseClient | null = createClient(url, key, {
+    auth: {
+      flowType: 'pkce',
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true
+    }
+  })
   const provide: ProvideShape = { supabase, db: { available: true, supabase } }
   return { provide }
 })
