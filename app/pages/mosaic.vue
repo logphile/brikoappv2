@@ -4,55 +4,53 @@ import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
 import { legoPalette } from '@/lib/palette/lego'
-import { downloadCsv, downloadPng } from '@/lib/exporters'
 import { chunkSteps } from '@/lib/steps'
-import type { BomRow, WorkerOut } from '@/types/mosaic'
+import type { WorkerOut } from '@/types/mosaic'
+import { useMosaicStore } from '@/stores/mosaic'
 
-const target = ref<{w:number,h:number}>({ w: 128, h: 128 }) // 256 later
+const mosaic = useMosaicStore()
+
+const target = ref<{w:number,h:number}>({ w: 128, h: 128 })
 const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
 const showGrid = ref(true)
-const mode = ref<'singles'|'greedy'>('singles')
-const useDither = ref(true)                       // <-- NEW
+const useDither = ref(true)
 // drag-n-drop on preview area + global guard
 const dropActive = ref(false)
+
+// Allowed parts multiselect
+const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
+const selectedParts = ref<string[]>([...ALL_PARTS])
+watch(selectedParts, (val)=>{ mosaic.setAllowedParts(val as any) }, { immediate: true })
 
 async function onFile(file: File) {
   loading.value = true; grid.value = null
   const mod = await import('@/workers/mosaic.worker?worker')
-  const worker: Worker = new mod.default()
-  const img = await createImageBitmap(file) // reuse across passes
+  const worker: Worker = new (mod as any).default()
+  const img = await createImageBitmap(file)
 
-  const run = (w:number,h:number, greedy:boolean, dither:boolean) =>
-    new Promise<WorkerOut>((resolve)=>{
-      worker.onmessage = (e)=> resolve(e.data as WorkerOut)
-      worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy, dither })
-    })
+  const run = (w:number,h:number, dither:boolean) => new Promise<WorkerOut>((resolve)=>{
+    worker.onmessage = (e)=> resolve(e.data as WorkerOut)
+    worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy: false, dither })
+  })
 
-  // Progressive: fast thumb (no greedy), then full (with greedy)
-  grid.value = await run(64, 64, false, useDither.value)
-  grid.value = await run(target.value.w, target.value.w, true, useDither.value)
+  // Progressive: fast thumb (no tiling yet), then full-size indexes
+  grid.value = await run(64, 64, useDither.value)
+  const full = await run(target.value.w, target.value.w, useDither.value)
+  grid.value = full
   worker.terminate()
+  // Hook to store for tiling
+  mosaic.setTargetSize(full.width, full.height)
+  mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
   loading.value = false
 }
-const bom = computed<BomRow[]>(() => {
-  if(!grid.value) return []
-  return mode.value==='greedy' && grid.value.bomGreedy ? grid.value.bomGreedy : grid.value.bomSingles
-})
-const cost = computed(()=> bom.value.reduce((s,r)=> s + r.total_price, 0))
-function onExportCsv(){ if(grid.value) downloadCsv(bom.value) }
-function onExportPng(){ if(grid.value) downloadPng('mosaic.png') }
-// Steps & PDF
+
+function onGenerate(){ mosaic.runGreedyTiling() }
+
+// Steps (kept for compatibility when using legacy greedy placements)
 const stepIdx = ref(1)
-const steps = computed(()=> (mode.value==='greedy' && grid.value?.placements) ? chunkSteps(grid.value.placements, 300) : [])
+const steps = computed(()=> (grid.value?.placements) ? chunkSteps(grid.value.placements, 300) : [])
 watch(steps, ()=>{ stepIdx.value = steps.value.length ? 1 : 0 })
-async function onExportPdf(){
-  const root = document.body
-  if(grid.value){
-    const { exportMosaicPdf } = await import('@/lib/exporters/pdfGuide')
-    exportMosaicPdf(root, grid.value, bom.value, 300)
-  }
-}
 
 function handleDrop(e: DragEvent) {
   e.preventDefault(); e.stopPropagation()
@@ -89,49 +87,45 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
       <section class="lg:col-span-1 space-y-4">
         <MosaicUploader @file="onFile" />
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 space-y-3">
-          <label class="block text-sm">Tiling mode</label>
-          <div class="flex gap-3 text-sm">
-            <label class="inline-flex items-center gap-2">
-              <input type="radio" value="singles" v-model="mode"> Singles
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="radio" value="greedy" v-model="mode"> Greedy (fewer parts)
+          <label class="block text-sm">Output size (studs)</label>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <label>Width: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.w)" class="w-full"></label>
+            <label>Height: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.w)" class="w-full"></label>
+          </div>
+          <label class="block text-sm mt-3">Allowed parts</label>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            <label v-for="p in ALL_PARTS" :key="p" class="inline-flex items-center gap-2">
+              <input type="checkbox" :value="p" v-model="selectedParts"> {{ p.replace('x','×') }}
             </label>
           </div>
-          <label class="block text-sm mt-3">Resolution</label>
-          <select v-model.number="target.w" class="bg-black/40 rounded px-3 py-2">
-            <option :value="64">64×64</option>
-            <option :value="128">128×128</option>
-            <option :value="256">256×256</option>
+          <label class="block text-sm mt-3">Orientation</label>
+          <select v-model="mosaic.settings.snapOrientation" class="bg-black/40 rounded px-3 py-2">
+            <option value="both">Both</option>
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
           </select>
-          <label class="block text-sm mt-4">Build steps</label>
-          <input type="range" min="1" :max="steps.length || 1" v-model.number="stepIdx" class="w-full" :disabled="!steps.length">
-          <div class="text-xs opacity-70">Step {{ stepIdx }} / {{ steps.length || 1 }}</div>
-          <label class="inline-flex items-center gap-2 text-sm">
+          <label class="inline-flex items-center gap-2 text-sm mt-2">
             <input type="checkbox" v-model="showGrid"> Show stud grid
           </label>
           <label class="inline-flex items-center gap-2 text-sm mt-2">
             <input type="checkbox" v-model="useDither"> Dithering (Floyd–Steinberg)
           </label>
           <div class="flex gap-2 pt-2">
-            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40" :disabled="!grid" @click="onExportPng">Export PNG</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!grid" @click="onExportCsv">Export CSV</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!grid" @click="onExportPdf">Export PDF</button>
+            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate mosaic</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.exportCSV">Export CSV</button>
           </div>
         </div>
 
-        <div v-if="bom.length" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
-          <div class="font-semibold mb-2">BOM — {{ mode==='greedy' ? 'Greedy plates' : '1×1 studs' }}</div>
+        <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+          <div class="font-semibold mb-2">BOM — Greedy tiling</div>
           <ul class="max-h-64 overflow-auto text-sm space-y-1">
-            <li v-for="row in bom" :key="row.part + row.color_name" class="flex justify-between">
-              <span class="flex items-center gap-2">
-                <span class="inline-block h-3 w-3 rounded" :style="{background: row.hex}"></span>
-                {{ row.color_name }}
-              </span>
-              <span>{{ row.qty }} pcs</span>
+            <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" class="flex justify-between">
+              <span>{{ row.part.replace('x','×') }} · Color {{ row.colorId }}</span>
+              <span>{{ row.qty }} pcs · ${{ row.estTotal.toFixed(2) }}</span>
             </li>
           </ul>
-          <div class="mt-3 text-sm opacity-80">Est. cost: ${{ cost.toFixed(2) }}</div>
+          <div class="mt-3 text-sm opacity-80">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
         </div>
       </section>
 
@@ -144,11 +138,12 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
              class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">Processing…</div>
         <div v-else-if="grid">
-          <MosaicCanvas v-if="mode==='singles'" :data="grid" :showGrid="showGrid"/>
-          <template v-else>
-            <MosaicCanvas v-if="!steps.length" :data="grid" :showGrid="showGrid" :showTiles="true"/>
-            <StepCanvas v-else :data="grid" :stepItems="steps[stepIdx-1].items" :showGrid="showGrid"/>
-          </template>
+          <MosaicCanvas :data="grid" :showGrid="showGrid" :overlayBricks="mosaic.overlayBricks"/>
+          <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
+            <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
+            <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>
+            <span v-if="mosaic.tilingResult">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
+          </div>
         </div>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
       </section>
