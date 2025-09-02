@@ -17,6 +17,8 @@ export const useMosaicStore = defineStore('mosaic', {
     grid: null as Uint16Array | null,
     width: 0,
     height: 0,
+    // layers visibility (stud rows)
+    visibleLayers: 0,
 
     // settings
     settings: {
@@ -49,8 +51,14 @@ export const useMosaicStore = defineStore('mosaic', {
       this.settings.allowedParts = parts.length ? parts : DEFAULT_PARTS.slice()
     },
 
+    setVisibleLayers(n: number) {
+      const max = this.height || n || 1
+      this.visibleLayers = Math.min(Math.max(1, Math.floor(n)), max)
+    },
+
     setGrid(indexes: Uint16Array, width: number, height: number) {
       this.grid = indexes; this.width = width; this.height = height
+      this.visibleLayers = height
       this.status = 'quantized'
     },
 

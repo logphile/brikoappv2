@@ -3,10 +3,13 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
+import VoxelViewer from '@/components/VoxelViewer.client.vue'
+import LayerSlider from '@/components/LayerSlider.client.vue'
 import { legoPalette } from '@/lib/palette/lego'
 import { chunkSteps } from '@/lib/steps'
 import type { WorkerOut } from '@/types/mosaic'
 import { useMosaicStore } from '@/stores/mosaic'
+import { exportBuildGuidePDF } from '@/lib/pdfExport'
 
 const mosaic = useMosaicStore()
 
@@ -15,6 +18,7 @@ const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
 const showGrid = ref(true)
 const useDither = ref(true)
+const tab = ref<'2D'|'3D'>('2D')
 // drag-n-drop on preview area + global guard
 const dropActive = ref(false)
 
@@ -136,13 +140,29 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
       >
         <div v-if="dropActive"
              class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
+        <div class="flex items-center gap-2 border-b border-white/10 pb-2 mb-3 text-sm">
+          <button :class="['px-3 py-1 rounded', tab==='2D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='2D'">2D Mosaic</button>
+          <button :class="['px-3 py-1 rounded', tab==='3D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='3D'">3D Preview</button>
+          <div class="grow"></div>
+          <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+        </div>
+
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">Processing…</div>
         <div v-else-if="grid">
-          <MosaicCanvas :data="grid" :showGrid="showGrid" :overlayBricks="mosaic.overlayBricks"/>
+          <template v-if="tab==='2D'">
+            <MosaicCanvas :data="grid" :showGrid="showGrid" :overlayBricks="mosaic.overlayBricks"/>
+          </template>
+          <template v-else>
+            <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
+            <div class="mt-3">
+              <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers"/>
+            </div>
+          </template>
           <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
             <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
             <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>
             <span v-if="mosaic.tilingResult">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
+            <span v-if="tab==='3D'" class="ml-auto">Visible: {{ mosaic.visibleLayers }} / {{ mosaic.height }}</span>
           </div>
         </div>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
