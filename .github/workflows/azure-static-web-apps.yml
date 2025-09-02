@@ -2,19 +2,14 @@ name: Deploy — Azure Static Web Apps
 
 on:
   push:
-    branches: ['main']         # production deploys
-    paths-ignore:
-      - '**.md'
-      - '.github/**'
-  pull_request:                 # preview envs for PRs into main
-    branches: ['main']
+    branches: ['main']           # only deploy prod from main
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: swa-${{ github.event_name }}-${{ github.ref || github.event.pull_request.number }}
+  group: swa-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -51,4 +46,4 @@ jobs:
           action: 'upload'
           app_location: '.'
           output_location: '.output/public'
-          skip_app_build: true   # we already generated static files
+          skip_app_build: true   # we already built generated static files
