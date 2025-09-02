@@ -1,6 +1,8 @@
 {
   "routes": [
-    { "route": "/login", "rewrite": "/login/index.html" }
+    { "route": "/login",  "serve": "/login/index.html" },
+    { "route": "/login/", "serve": "/login/index.html" },
+    { "route": "/login/*", "serve": "/login/index.html" }
   ],
   "navigationFallback": {
     "rewrite": "/index.html",
