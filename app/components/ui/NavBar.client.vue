@@ -9,9 +9,10 @@
         <NuxtLink to="/mosaic" class="hover:text-white">Mosaic</NuxtLink>
         <NuxtLink to="/avatar" class="hover:text-white">Avatar</NuxtLink>
         <NuxtLink to="/projects" class="hover:text-white">Projects</NuxtLink>
-        <button v-if="!user" @click="goLogin" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20">Login</button>
+        <div v-if="loading" class="opacity-60 text-sm">…</div>
+        <NuxtLink v-else-if="!user" to="/login" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20">Login</NuxtLink>
         <div v-else class="flex items-center gap-3">
-          <span class="hidden sm:inline">{{ user.email }}</span>
+          <span class="hidden sm:inline">{{ user?.email }}</span>
           <button @click="logout" class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40">Logout</button>
         </div>
       </nav>
@@ -20,27 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter, useNuxtApp } from 'nuxt/app'
-
-const router = useRouter()
-const { $supabase } = useNuxtApp() as any
-const user = ref<any>(null)
-
-async function refreshSession(){
-  if(!$supabase) return
-  const { data } = await $supabase.auth.getUser()
-  user.value = data.user || null
-}
-
-function goLogin(){ router.push('/login') }
-async function logout(){ await $supabase.auth.signOut(); user.value=null }
-
-onMounted(() => {
-  refreshSession()
-  if(!$supabase) return
-  $supabase.auth.onAuthStateChange((_e: any, s: any) => { user.value = s?.user || null })
-})
+import { useAuth } from '@/composables/useAuth'
+const { user, loading, logout } = useAuth()
 </script>
 
 <style scoped>
