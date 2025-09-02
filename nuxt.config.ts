@@ -18,7 +18,7 @@ export default defineNuxtConfig({
       supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
     }
   },
-  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/health'] } },
+  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/avatar', '/health'] } },
   vite: {
     worker: { format: 'es' }
   },
