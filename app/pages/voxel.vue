@@ -1,39 +1,69 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import { useMosaicStore } from '@/stores/mosaic'
 import { downloadPng } from '@/lib/exporters'
 import type { VoxelGrid, VoxelWorkerOut } from '@/types/voxel'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
+import { createWorkerTask } from '@/utils/worker-task'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
 const progress = ref(0)
 const size = ref(64) // 64³ target
 const mosaic = useMosaicStore()
+const srcBitmap = ref<ImageBitmap | null>(null)
+const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
 
 async function onFile(file: File) {
   loading.value = true; vox.value = null; progress.value = 0
-  const img = await createImageBitmap(file)
-  const mod = await import('@/workers/voxel.worker?worker')
-  const worker: Worker = new mod.default()
-  worker.onmessage = (e: MessageEvent<VoxelWorkerOut>) => {
-    const msg = e.data
-    if (msg.type === 'progress') {
-      progress.value = msg.pct
-    } else if (msg.type === 'done') {
+  srcBitmap.value = await createImageBitmap(file)
+  try {
+    const msg = await voxelTask.run(
+      { image: srcBitmap.value, size: size.value },
+      { onProgress: (p) => { if (typeof p?.pct === 'number') progress.value = p.pct } }
+    )
+    if (msg.type === 'done') {
       vox.value = msg.grid
       progress.value = 100
-      loading.value = false
-      worker.terminate()
     }
+  } catch (e) {
+    // likely aborted by a new run
+    console.warn(e)
+  } finally {
+    loading.value = false
   }
-  worker.postMessage({ image: img, size: size.value }, [img])
 }
 
 function exportPng(){ downloadPng('briko-voxel.png') }
 async function uploadPreview(){ await mosaic.uploadPreview() }
+
+// Debounced re-run when resolution changes
+let regenTimer: any = null
+function scheduleRegen(){
+  if (!srcBitmap.value) return
+  if (regenTimer) clearTimeout(regenTimer)
+  regenTimer = setTimeout(async () => {
+    loading.value = true; progress.value = 0
+    try {
+      const msg = await voxelTask.run(
+        { image: srcBitmap.value, size: size.value },
+        { onProgress: (p) => { if (typeof p?.pct === 'number') progress.value = p.pct } }
+      )
+      if (msg.type === 'done') {
+        vox.value = msg.grid
+        progress.value = 100
+      }
+    } catch (e) {
+      console.warn(e)
+    } finally {
+      loading.value = false
+    }
+  }, 150)
+}
+watch(size, scheduleRegen)
+onBeforeUnmount(() => voxelTask.cancel())
 </script>
 
 <template>
