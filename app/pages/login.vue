@@ -19,12 +19,20 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter, useNuxtApp } from 'nuxt/app'
+import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
 import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
 const { loginWithMagicLink } = useAuth()
 const { $supabase } = useNuxtApp() as any
+
+// SEO
+useHead({
+  title: 'Login | Briko',
+  meta: [
+    { name: 'description', content: 'Sign in to Briko to save projects, share your creations, and unlock premium features.' }
+  ]
+})
 
 const email = ref('')
 const loading = ref(false)
