@@ -8,6 +8,7 @@
       <nav class="flex items-center gap-4 text-sm text-white/80">
         <NuxtLink to="/mosaic" class="hover:text-white">Mosaic</NuxtLink>
         <NuxtLink to="/avatar" class="hover:text-white">Avatar</NuxtLink>
+        <NuxtLink to="/gallery" class="hover:text-white">Gallery</NuxtLink>
         <NuxtLink to="/projects" class="hover:text-white">Projects</NuxtLink>
         <div v-if="loading" class="opacity-60 text-sm">…</div>
         <NuxtLink v-else-if="!user" to="/login" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20">Login</NuxtLink>
