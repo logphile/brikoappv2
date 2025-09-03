@@ -5,6 +5,9 @@ import { useHead } from 'nuxt/app'
 const DISCLAIMER_TEXT =
   'Briko is not affiliated with the LEGO Group. Prices are rough estimates; availability and costs vary by supplier and color.'
 
+// Use dynamic binding for the hero image so Vite doesn't transform it into a Rollup import during SSR/Nitro build
+const heroImg = '/favicon.svg'
+
 useHead({
   title: 'Briko — Turn any idea into a brick build',
   meta: [
@@ -39,7 +42,7 @@ useHead({
       <div class="relative">
         <div class="aspect-video rounded-2xl ring-1 ring-white/10 overflow-hidden shadow-xl">
           <!-- Placeholder hero preview canvas image -->
-          <img src="/favicon.svg" alt="Briko preview example" class="w-full h-full object-cover" />
+          <img :src="heroImg" alt="Briko preview example" class="w-full h-full object-cover" />
         </div>
       </div>
     </section>
