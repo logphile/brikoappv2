@@ -1,103 +1,95 @@
+<script setup lang="ts">
+import { useHead } from 'nuxt/app'
+
+// Optional: swap this string for an import from '@/utils/disclaimer'
+const DISCLAIMER_TEXT =
+  'Briko is not affiliated with the LEGO Group. Prices are rough estimates; availability and costs vary by supplier and color.'
+
+useHead({
+  title: 'Briko — Turn any idea into a brick build',
+  meta: [
+    { name: 'description', content: 'Upload an image → instant LEGO-style mosaic or voxel preview → parts list, cost estimate, and one-click exports.' },
+    { property: 'og:title', content: 'Briko — BrickMOC Companion' },
+    { property: 'og:description', content: 'Image → Mosaic/Voxel → BOM + price → PDF/CSV/PNG.' },
+    { property: 'og:image', content: '/favicon.svg' },
+    { name: 'twitter:card', content: 'summary_large_image' }
+  ]
+})
+</script>
+
 <template>
-  <Head>
-    <Title>Briko — BrickMOC Companion</Title>
-    <Meta name="description" content="Turn any idea or image into a LEGO-style build preview with parts & price. Not affiliated with the LEGO Group." />
-    <Meta property="og:title" content="Briko — BrickMOC Companion" />
-    <Meta property="og:description" content="Turn any idea or image into a LEGO-style build preview with parts & price." />
-    <Meta property="og:type" content="website" />
-    <Link rel="preload" as="image" href="/demo/original.jpg" />
-    <Link rel="preload" as="image" href="/demo/mosaic.jpg" />
-  </Head>
-  <main class="min-h-screen bg-midnight text-white">
-    <!-- top bar -->
-    <header class="mx-auto max-w-6xl px-6 py-6 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div aria-hidden="true" class="h-8 w-8 rounded-xl bg-cta-grad ring-1 ring-white/10"></div>
-        <span class="text-xl font-semibold tracking-tight">Briko</span>
-      </div>
-      <nav class="hidden sm:flex items-center gap-6 text-sm text-white/80">
-        <NuxtLink to="/voxel" class="hover:text-white">Voxel demo</NuxtLink>
-        <a href="#how" class="hover:text-white">How it works</a>
-        <a href="#updates" class="hover:text-white">Updates</a>
-        <a href="mailto:hello@briko.app" class="hover:text-white">Contact</a>
-      </nav>
-    </header>
-
-    <!-- hero -->
-    <section class="relative overflow-hidden">
-      <div class="absolute inset-0 -z-10 opacity-30 blur-2xl"
-           :style="{ background: 'radial-gradient(60% 50% at 20% 10%, #FF5A1F33 0%, transparent 60%), radial-gradient(50% 40% at 90% 20%, #2563EB33 0%, transparent 60%), radial-gradient(40% 50% at 70% 80%, #2DD4BF33 0%, transparent 60%)' }"/>
-      <div class="mx-auto max-w-6xl px-6 pt-10 pb-20 grid lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight">
-            Turn any idea or image<br class="hidden sm:block" />
-            into a <span class="bg-cta-grad bg-clip-text text-transparent">brick build</span>.
-          </h1>
-          <p class="mt-5 text-lg text-white/80">
-            Upload a photo or prompt → see a LEGO-style mosaic/voxel preview with a parts list & price — ready to export.
-          </p>
-
-          <div class="mt-8 flex flex-wrap items-center gap-3">
-            <a href="mailto:hello@briko.app"
-               class="px-5 py-3 rounded-2xl font-medium text-midnight bg-cta-grad shadow hover:opacity-95">
-               Get launch updates
-            </a>
-            <a href="#how"
-               class="px-5 py-3 rounded-2xl font-medium border border-white/20 hover:border-white/40">
-               See the plan
-            </a>
-          </div>
-
-          <p class="mt-6 text-xs text-white/60">
-            Not affiliated with the LEGO Group.
-          </p>
+  <main class="mx-auto max-w-6xl px-6 py-16">
+    <!-- Hero -->
+    <section class="grid gap-8 md:grid-cols-2 items-center">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
+          Turn any idea into a <span class="underline decoration-pink-500/60">brick build</span>
+        </h1>
+        <p class="mt-4 text-lg opacity-80">
+          Upload a photo or logo and get an instant LEGO-style mosaic or 3D voxel preview,
+          complete with parts list, rough price, and exportable build steps.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <NuxtLink to="/mosaic" class="btn-primary">Try Mosaic</NuxtLink>
+          <NuxtLink to="/avatar" class="btn-secondary">Make an Avatar</NuxtLink>
+          <NuxtLink to="/voxel" class="btn-ghost">3D Voxel</NuxtLink>
         </div>
-
-        <!-- visual card -->
-        <div>
-          <div class="mb-3 text-sm uppercase tracking-widest text-white/60">Instant preview — drag to compare</div>
-          <HeroDemo originalSrc="/demo/original.jpg" mosaicSrc="/demo/mosaic.jpg" />
+        <p class="mt-4 text-sm opacity-70">Free beta • No signup required to preview • One-click exports</p>
+      </div>
+      <div class="relative">
+        <div class="aspect-video rounded-2xl ring-1 ring-white/10 overflow-hidden shadow-xl">
+          <!-- Placeholder hero preview canvas image -->
+          <img src="/favicon.svg" alt="Briko preview example" class="w-full h-full object-cover" />
         </div>
       </div>
     </section>
 
-    <!-- how it works -->
-    <section id="how" class="mx-auto max-w-6xl px-6 pb-24">
-      <ol class="grid gap-6 sm:grid-cols-3">
-        <li class="rounded-2xl p-5 bg-white/5 ring-1 ring-white/10">
-          <div class="text-sm text-pacific font-semibold">1. Upload or prompt</div>
-          <p class="mt-1 text-white/80 text-sm">We preprocess with OpenCV.js and map to a brick palette.</p>
-        </li>
-        <li class="rounded-2xl p-5 bg-white/5 ring-1 ring-white/10">
-          <div class="text-sm text-pacific font-semibold">2. Preview fast</div>
-          <p class="mt-1 text-white/80 text-sm">Mosaic or 3D voxel (Three.js InstancedMesh). Workers keep UI instant.</p>
-        </li>
-        <li class="rounded-2xl p-5 bg-white/5 ring-1 ring-white/10">
-          <div class="text-sm text-pacific font-semibold">3. Parts & price</div>
-          <p class="mt-1 text-white/80 text-sm">Greedy tiler → BOM & cost. Export CSV/PNG/PDF. Share your MOC.</p>
-        </li>
-      </ol>
-    </section>
-
-    <!-- updates -->
-    <section id="updates" class="bg-black/20">
-      <div class="mx-auto max-w-6xl px-6 py-12">
-        <div class="rounded-2xl p-6 bg-white/5 ring-1 ring-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <div class="text-lg font-semibold">Want early access?</div>
-            <p class="text-white/80 text-sm">Ping us and we’ll add you to the first wave.</p>
-          </div>
-          <a href="mailto:hello@briko.app" class="px-5 py-3 rounded-2xl font-medium text-midnight bg-cta-grad shadow hover:opacity-95">
-            Email hello@briko.app
-          </a>
-        </div>
+    <!-- How it works (quick) -->
+    <section class="mt-16 grid gap-6 md:grid-cols-3">
+      <div class="card p-6">
+        <div class="text-3xl">📤</div>
+        <h3 class="font-semibold mt-2">1) Upload</h3>
+        <p class="opacity-80">Drop an image or paste a URL. We auto-fit size and palette.</p>
+      </div>
+      <div class="card p-6">
+        <div class="text-3xl">🧱</div>
+        <h3 class="font-semibold mt-2">2) Preview</h3>
+        <p class="opacity-80">See a mosaic or voxel preview instantly with plate/part counts.</p>
+      </div>
+      <div class="card p-6">
+        <div class="text-3xl">📦</div>
+        <h3 class="font-semibold mt-2">3) Export</h3>
+        <p class="opacity-80">Download PDF build steps, CSV BOM, and PNG plan. Share a link.</p>
       </div>
     </section>
 
-    <footer class="mx-auto max-w-6xl px-6 py-10 text-white/60 text-xs">
-      © {{ new Date().getFullYear() }} Briko — BrickMOC Companion
-      <span class="mx-2">•</span>
-      <NuxtLink to="/legal" class="hover:text-white">Legal</NuxtLink>
-    </footer>
+    <!-- Why Briko -->
+    <section class="mt-16 grid gap-6 md:grid-cols-2">
+      <div class="card p-6">
+        <h3 class="font-semibold text-xl">Fast & free-tier focused</h3>
+        <ul class="mt-3 space-y-2 opacity-80 list-disc pl-5">
+          <li>Progressive previews; no blocking UI</li>
+          <li>Greedy tiler for 2×N plates → fewer parts, lower rough cost</li>
+          <li>Works in the browser — no installs</li>
+        </ul>
+      </div>
+      <div class="card p-6">
+        <h3 class="font-semibold text-xl">Exports you can use</h3>
+        <ul class="mt-3 space-y-2 opacity-80 list-disc pl-5">
+          <li>PDF build guide with per-step pages</li>
+          <li>CSV BOM with estimated costs</li>
+          <li>PNG plan and shareable project links</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="mt-12 text-xs opacity-70">{{ DISCLAIMER_TEXT }}</p>
   </main>
 </template>
+
+<style scoped>
+.btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white shadow; }
+.btn-secondary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white; }
+.btn-ghost{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-transparent hover:bg-white/5 ring-1 ring-white/10; }
+.card{ @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10; }
+</style>

@@ -37,6 +37,8 @@ watch(selectedParts, (val)=>{ mosaic.setAllowedParts(val as any) }, { immediate:
 async function onFile(file: File) {
   loading.value = true; grid.value = null; progress.value = 0
   srcBitmap.value = await createImageBitmap(file)
+  // Cancel any in-flight tiling when a new image is loaded
+  mosaic.cancelTiling()
 
   // Progressive: fast thumb (no tiling yet), then full-size indexes
   const thumb = await mosaicTask.run(
@@ -88,13 +90,15 @@ function preventWindowDrop(e: DragEvent) {
   }
 }
 onMounted(()=>{ window.addEventListener('dragover', preventWindowDrop); window.addEventListener('drop', preventWindowDrop) })
-onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop); mosaicTask.cancel() })
+onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop); mosaicTask.cancel(); mosaic.cancelTiling() })
 
 // Debounced regeneration when size/dither changes
 let regenTimer: any = null
 function scheduleRegen(){
   if (!srcBitmap.value) return
   if (regenTimer) clearTimeout(regenTimer)
+  // Cancel any in-flight tiling when parameters change and we regenerate the quantized grid
+  mosaic.cancelTiling()
   regenTimer = setTimeout(async () => {
     try {
       loading.value = true; progress.value = 0
