@@ -63,7 +63,9 @@ onMounted(async () => {
       proj.value = row.project
       tiling.value = row.tiling
       assets.value = row.assets || []
-      const preview = (assets.value as any[]).find(a => a.kind === 'preview_png')
+      // Prefer mosaic preview, fallback to avatar preview
+      const list = (assets.value as any[])
+      const preview = list.find(a => a.kind === 'preview_png') || list.find(a => a.kind === 'avatar_png')
       if (preview) {
         const { data: urlData } = $supabase.storage.from('public').getPublicUrl(preview.storage_path)
         previewUrl.value = urlData.publicUrl
