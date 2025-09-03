@@ -16,6 +16,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -39,6 +42,14 @@ jobs:
           echo "NUXT_PUBLIC_BUILD_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
           echo "NUXT_PUBLIC_BUILD_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
           echo "NUXT_PUBLIC_BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+
+      - name: "Preflight: ensure Supabase env"
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "ERROR: Missing SUPABASE_URL or SUPABASE_ANON_KEY secrets"
+            exit 1
+          fi
+          echo "Supabase env present."
 
       - name: Generate static site
         run: |
