@@ -7,8 +7,12 @@ import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { downloadBomCsvWeek1, downloadPng } from '@/lib/exporters'
 import { legoPalette } from '@/lib/palette/lego'
+import { createWorkerTask } from '@/utils/worker-task'
 
 export type Status = 'idle' | 'quantized' | 'tiling' | 'tiled' | 'error'
+
+// Abortable greedy tiler task shared across runs
+const tilingTask = createWorkerTask<any>(() => import('@/workers/greedyTiler?worker').then((m: any) => new m.default()))
 
 const DEFAULT_PARTS: StudSize[] = [
   '2x4','2x3','2x2','1x4','1x3','1x2','1x1'
@@ -84,34 +88,39 @@ export const useMosaicStore = defineStore('mosaic', {
       this.tilingResult = null
       this.status = 'tiling'
 
-      const mod = await import('@/workers/greedyTiler?worker')
-      const worker: Worker = new (mod as any).default()
-
-      const handler = (e: MessageEvent) => {
-        const data: any = e.data
-        if (data.type === 'progress') {
-          this.overlayBricks.push(...data.bricksPartial as TiledBrick[])
-          this.coveragePct = data.coveragePct
-        } else if (data.type === 'done') {
-          const bricks = data.bricks as TiledBrick[]
-          const { rows, total } = buildBOMWithBuckets(bricks, priceTable as any, legoPalette as any)
-          this.tilingResult = { bricks, bom: rows, estTotalCost: total }
-          this.status = 'tiled'
-          worker.removeEventListener('message', handler)
-          worker.terminate()
-          // trigger a debounced save when tiling finishes
-          this.saveProjectDebounced()
-          try { useToasts().show('Tiling complete — estimate updated', 'success') } catch {}
+      try {
+        const msg: any = await tilingTask.run(
+          { grid: this.grid, width: this.width, height: this.height, settings: this.settings },
+          {
+            onProgress: (data: any) => {
+              if (data && data.type === 'progress') {
+                this.overlayBricks.push(...(data.bricksPartial as TiledBrick[]))
+                this.coveragePct = data.coveragePct
+              }
+            },
+            resolveWhen: (d: any) => d && d.type === 'done'
+          }
+        )
+        const bricks = msg.bricks as TiledBrick[]
+        const { rows, total } = buildBOMWithBuckets(bricks, priceTable as any, legoPalette as any)
+        this.tilingResult = { bricks, bom: rows, estTotalCost: total }
+        this.status = 'tiled'
+        // trigger a debounced save when tiling finishes
+        this.saveProjectDebounced()
+        try { useToasts().show('Tiling complete — estimate updated', 'success') } catch {}
+      } catch (e: any) {
+        if (e && e.name === 'AbortError') {
+          // silently ignore aborted runs
+          return
         }
+        console.error(e)
+        this.status = 'error'
       }
-      worker.addEventListener('message', handler)
+    },
 
-      worker.postMessage({
-        grid: this.grid,
-        width: this.width,
-        height: this.height,
-        settings: this.settings,
-      })
+    cancelTiling() {
+      try { tilingTask.cancel() } catch {}
+      if (this.status === 'tiling') this.status = this.grid ? 'quantized' as Status : 'idle'
     },
 
     exportPNG() {
