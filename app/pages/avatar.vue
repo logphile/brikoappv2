@@ -30,6 +30,11 @@
           <span>Dither (FS)</span>
         </label>
 
+        <label class="inline-flex items-center gap-2 mt-6">
+          <input type="checkbox" v-model="studStyle" />
+          <span>Stud style</span>
+        </label>
+
         <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-50 mt-6"
                 :disabled="loading || !imgReady"
                 @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
@@ -60,14 +65,15 @@
 import { ref, onMounted } from 'vue'
 import { useToasts } from '@/composables/useToasts'
 import { legoPalette } from '@/lib/palette/lego'
-import { rgbToLab, deltaE } from '@/utils/color'
-import { exportPng } from '@/utils/exportPng'
+import { mapBitmapToPalette } from '@/lib/color-distance'
+import { downloadPng } from '@/lib/exporters'
 
 const { show } = useToasts()
 
 // UI state
 const size = ref(128)
 const dither = ref(false)
+const studStyle = ref(true)
 const loading = ref(false)
 const cvReady = ref(false)
 const imgReady = ref(false)
@@ -129,33 +135,86 @@ function onFileChange(ev: Event) {
   }).catch((e) => { console.error(e); try { show('Failed to read image', 'error') } catch {} })
 }
 
-// Precompute palette in Lab for nearest-color mapping
-const paletteLab = legoPalette.map(c => rgbToLab(c.rgb))
-function nearestColorIndex(rgb: [number, number, number]) {
-  const lab = rgbToLab(rgb)
-  let best = 0, bestD = Number.POSITIVE_INFINITY
-  for (let i = 0; i < paletteLab.length; i++) {
-    const d = deltaE(lab as any, paletteLab[i] as any)
-    if (d < bestD) { bestD = d; best = i }
-  }
-  return best
-}
-
-function quantizeToLego(image: ImageData, useDither = false) {
-  const { data, width, height } = image
-  // Basic per-pixel quantization (dithering stub optional)
-  // If dithering enabled, you could wire through a FS pass here.
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4
-      const r = data[i], g = data[i+1], b = data[i+2]
-      const idx = nearestColorIndex([r, g, b])
-      const rgb = legoPalette[idx].rgb
-      data[i] = rgb[0]; data[i+1] = rgb[1]; data[i+2] = rgb[2]
-      data[i+3] = 255
+// Render helpers
+function imageDataFromIndices(indices: Uint16Array, w: number, h: number): ImageData {
+  const img = new ImageData(w, h)
+  const data = img.data
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const idx = indices[y * w + x]
+      const [r, g, b] = legoPalette[idx]?.rgb || [204, 204, 204]
+      const o = (y * w + x) * 4
+      data[o] = r; data[o + 1] = g; data[o + 2] = b; data[o + 3] = 255
     }
   }
-  return image
+  return img
+}
+
+function buildStudTile(hex: string, s: number): HTMLCanvasElement {
+  const cvs = document.createElement('canvas')
+  cvs.width = s; cvs.height = s
+  const ctx = cvs.getContext('2d')!
+  ctx.clearRect(0, 0, s, s)
+
+  // Base disc
+  const cx = s * 0.5, cy = s * 0.5, r = Math.floor(s * 0.42)
+  ctx.fillStyle = hex
+  ctx.beginPath()
+  ctx.arc(cx, cy, r, 0, Math.PI * 2)
+  ctx.fill()
+
+  // Shadow (multiply) from bottom-right
+  const shadow = ctx.createRadialGradient(s * 0.75, s * 0.75, r * 0.1, s * 0.8, s * 0.8, r)
+  shadow.addColorStop(0, 'rgba(0,0,0,0.0)')
+  shadow.addColorStop(1, 'rgba(0,0,0,0.35)')
+  ctx.globalCompositeOperation = 'multiply'
+  ctx.fillStyle = shadow
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill()
+
+  // Highlight (screen) near top-left
+  const hl = ctx.createRadialGradient(s * 0.28, s * 0.28, 0, s * 0.28, s * 0.28, r * 0.9)
+  hl.addColorStop(0, 'rgba(255,255,255,0.6)')
+  hl.addColorStop(1, 'rgba(255,255,255,0.0)')
+  ctx.globalCompositeOperation = 'screen'
+  ctx.fillStyle = hl
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill()
+
+  // Rim
+  ctx.globalCompositeOperation = 'source-over'
+  ctx.strokeStyle = 'rgba(0,0,0,0.35)'
+  ctx.lineWidth = Math.max(1, Math.floor(s * 0.06))
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke()
+
+  return cvs
+}
+
+function renderStuds(indices: Uint16Array, w: number, h: number, out: HTMLCanvasElement) {
+  // Aim for ~512px output width
+  const px = Math.max(6, Math.floor(512 / w))
+  out.width = w * px
+  out.height = h * px
+  const ctx = out.getContext('2d')!
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.clearRect(0, 0, out.width, out.height)
+
+  // Background
+  ctx.fillStyle = '#0b0b0b'
+  ctx.fillRect(0, 0, out.width, out.height)
+
+  // Cache tiles by palette index
+  const cache = new Map<number, HTMLCanvasElement>()
+  for (let i = 0; i < legoPalette.length; i++) {
+    cache.set(i, buildStudTile(legoPalette[i].hex, px))
+  }
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const idx = indices[y * w + x]
+      const tile = cache.get(idx)
+      if (tile) ctx.drawImage(tile, x * px, y * px)
+    }
+  }
 }
 
 async function process() {
@@ -180,15 +239,20 @@ async function process() {
       }
     }
 
-    // Read pixels and quantize to LEGO palette
+    // Read pixels and map to LEGO palette indices (supports optional FS dithering)
     const ctx = srcCanvas.value.getContext('2d', { willReadFrequently: true })!
     const img = ctx.getImageData(0, 0, srcCanvas.value.width, srcCanvas.value.height)
-    const q = quantizeToLego(img, dither.value)
+    const indices = mapBitmapToPalette(img, legoPalette, { dither: dither.value ? 'floyd-steinberg' : 'none' })
 
-    // Paint output
-    const octx = outCanvas.value.getContext('2d')!
-    outCanvas.value.width = q.width; outCanvas.value.height = q.height
-    octx.putImageData(q, 0, 0)
+    // Paint output: pixels or stud-style
+    if (!studStyle.value) {
+      const q = imageDataFromIndices(indices, img.width, img.height)
+      const octx = outCanvas.value.getContext('2d')!
+      outCanvas.value.width = q.width; outCanvas.value.height = q.height
+      octx.putImageData(q, 0, 0)
+    } else {
+      renderStuds(indices, img.width, img.height, outCanvas.value)
+    }
 
     // Expose canvas for unified export/upload hooks
     ;(window as any).__brikoCanvas = outCanvas.value
@@ -203,11 +267,9 @@ async function process() {
 }
 
 function doExportPng() {
-  if (!outCanvas.value) return
-  exportPng(outCanvas.value, 'briko-avatar.png')
+  downloadPng('briko-avatar.png')
 }
 
 onMounted(async () => {
   try { await loadOpenCV() } catch (e) { console.warn(e); try { show('OpenCV failed to load — continuing without it', 'error') } catch {} }
 })
-</script>
