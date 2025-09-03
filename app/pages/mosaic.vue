@@ -10,6 +10,7 @@ import { chunkSteps } from '@/lib/steps'
 import type { WorkerOut } from '@/types/mosaic'
 import { useMosaicStore } from '@/stores/mosaic'
 import { exportBuildGuidePDF } from '@/lib/pdfExport'
+import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 
 const mosaic = useMosaicStore()
 
@@ -135,6 +136,7 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
             </li>
           </ul>
           <div class="mt-3 text-sm opacity-80">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
+          <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
         </div>
       </section>
 
@@ -169,6 +171,7 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
             <span v-if="mosaic.tilingResult">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
             <span v-if="tab==='3D'" class="ml-auto">Visible: {{ mosaic.visibleLayers }} / {{ mosaic.height }}</span>
           </div>
+          <p v-if="mosaic.tilingResult" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
         </div>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
       </section>

@@ -5,6 +5,7 @@ import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import { useMosaicStore } from '@/stores/mosaic'
 import { downloadPng } from '@/lib/exporters'
 import type { VoxelGrid, VoxelWorkerOut } from '@/types/voxel'
+import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
@@ -50,6 +51,7 @@ async function uploadPreview(){ await mosaic.uploadPreview() }
             <option :value="64">64³</option>
           </select>
         </div>
+        <p v-if="vox" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
       <section class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-2">
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
@@ -66,6 +68,7 @@ async function uploadPreview(){ await mosaic.uploadPreview() }
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
           <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
         </div>
+        <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
     </div>
   </main>
