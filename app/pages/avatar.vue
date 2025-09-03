@@ -9,6 +9,14 @@
         <button class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15"
                 :disabled="!outReady"
                 @click="doExportPng">Export PNG</button>
+        <button class="px-3 py-2 rounded-xl bg-cta-grad disabled:opacity-50"
+                :disabled="saving || !$supabase || !outReady"
+                @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</button>
+        <label class="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" v-model="isPublic" :disabled="!projectId || !canShare" @change="onTogglePublic" />
+          <span>Make Public</span>
+        </label>
+        <NuxtLink v-if="shareToken" :to="sharePath" class="text-sm underline">Share link</NuxtLink>
       </div>
     </div>
 
@@ -85,6 +93,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
+import { useNuxtApp } from 'nuxt/app'
 import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
@@ -106,7 +115,16 @@ type BgMode = 'transparent' | 'keep' | 'solid'
 const paletteName = ref<'lego16' | 'lego32'>('lego32')
 const activePalette = computed(() => (paletteName.value === 'lego16' ? lego16 : lego32))
 const bgMode = ref<BgMode>('keep')
-const bgSolid = ref('#0b0b0b')
+const bgSolid = ref('#111827')
+
+// Supabase and persistence
+const { $supabase } = useNuxtApp() as any
+const saving = ref(false)
+const projectId = ref<string>('')
+const isPublic = ref(false)
+const shareToken = ref('')
+const canShare = computed(() => !!$supabase)
+const sharePath = computed(() => shareToken.value ? `/s/${shareToken.value}` : '')
 
 // DOM refs
 const fileEl = ref<HTMLInputElement | null>(null)
@@ -319,6 +337,75 @@ async function process() {
 
 function doExportPng() {
   downloadPng('briko-avatar.png')
+}
+
+// Utilities
+function rand(n = 12) { return Math.random().toString(36).slice(2, 2 + n) }
+
+async function canvasToBlob(cvs: HTMLCanvasElement, type = 'image/png', quality?: number): Promise<Blob> {
+  return await new Promise<Blob>((resolve, reject) => {
+    cvs.toBlob((b) => b ? resolve(b) : reject(new Error('toBlob failed')), type, quality)
+  })
+}
+
+async function saveAvatar() {
+  try {
+    if (!$supabase) { try { show('Saving unavailable (Supabase disabled)', 'error') } catch {}; return }
+    const u = await $supabase.auth.getUser()
+    const uid = u?.data?.user?.id
+    if (!uid) { try { show('Please login to save', 'error') } catch {}; return }
+    if (!outCanvas.value) { try { await process() } catch {} }
+    if (!outCanvas.value) { try { show('Nothing to save yet', 'error') } catch {}; return }
+    saving.value = true
+
+    // Create project if needed
+    if (!projectId.value) {
+      const slug = `avatar-${rand(8)}`
+      const insert = { owner: uid, title: 'Avatar', slug, width: size.value, height: size.value }
+      const { data, error } = await $supabase.from('projects').insert(insert).select('*').single()
+      if (error) throw error
+      projectId.value = data.id
+      isPublic.value = !!data.is_public
+      shareToken.value = data.share_token || ''
+    }
+
+    // Create 256px thumb and upload
+    const thumb = document.createElement('canvas')
+    thumb.width = 256; thumb.height = 256
+    const tctx = thumb.getContext('2d')!
+    tctx.clearRect(0, 0, 256, 256)
+    // For transparent bg preserve alpha; for others draw as-is
+    tctx.drawImage(outCanvas.value, 0, 0, 256, 256)
+    const blob = await canvasToBlob(thumb, 'image/png')
+    const path = `projects/${projectId.value}/avatar_${Date.now()}.png`
+    const up = await $supabase.storage.from('public').upload(path, blob, { upsert: true, contentType: 'image/png' })
+    if (up.error) throw up.error
+
+    // Record asset row
+    const { error: aerr } = await $supabase.from('assets').insert({ project_id: projectId.value, kind: 'avatar_png', storage_path: path })
+    if (aerr) throw aerr
+
+    try { show('Avatar saved', 'success') } catch {}
+  } catch (e: any) {
+    console.error(e)
+    try { show(e?.message || 'Save failed', 'error') } catch {}
+  } finally {
+    saving.value = false
+  }
+}
+
+async function onTogglePublic() {
+  try {
+    if (!$supabase || !projectId.value) return
+    const updates: any = { is_public: isPublic.value }
+    if (isPublic.value && !shareToken.value) updates.share_token = rand(12)
+    const { data, error } = await $supabase.from('projects').update(updates).eq('id', projectId.value).select('*').single()
+    if (error) throw error
+    shareToken.value = data.share_token || ''
+    try { show(isPublic.value ? 'Project is public' : 'Project is private', 'success') } catch {}
+  } catch (e: any) {
+    try { show(e?.message || 'Failed to update sharing', 'error') } catch {}
+  }
 }
 
 onMounted(async () => {
