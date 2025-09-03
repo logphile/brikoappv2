@@ -6,6 +6,6 @@
   ],
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg"]
+    "exclude": ["/_nuxt/*", "/assets/*", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg"]
   }
 }
