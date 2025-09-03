@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useNuxtApp, useHead } from 'nuxt/app'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 import { useToasts } from '@/composables/useToasts'

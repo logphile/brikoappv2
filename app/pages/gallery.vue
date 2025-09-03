@@ -35,7 +35,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
-import { useAuth } from '@/composables/useAuth'
 import { useToasts } from '@/composables/useToasts'
 import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
@@ -44,7 +43,6 @@ import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 interface GalleryRow { id: string; public_id: string; name: string; kind: string; thumb_url?: string | null; likes: number; created_at: string; updated_at: string }
 
 const { $supabase } = useNuxtApp() as any
-const { user, loading: authLoading } = useAuth()
 
 const sorts = ['Trending', 'New', 'Top'] as const
 const kinds = ['all', 'mosaic', 'voxel', 'avatar'] as const

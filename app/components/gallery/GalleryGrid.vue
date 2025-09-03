@@ -34,7 +34,7 @@ export type GalleryItem = {
   trending?: number
 }
 
-const props = defineProps<{
+defineProps<{
   items: GalleryItem[]
   likedByMeMap: Record<string, boolean>
 }>()
