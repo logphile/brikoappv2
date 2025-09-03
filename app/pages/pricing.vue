@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
 useHead({
-  title: 'Pricing — Briko',
+  title: 'Pricing | Briko',
   meta: [
-    { name: 'description', content: 'Free beta with unlimited previews and exports. Future Premium adds bigger builds and advanced tiling.' },
-    { property: 'og:title', content: 'Briko Pricing' },
-    { property: 'og:description', content: 'Free beta today; Premium coming soon.' }
+    { name: 'description', content: 'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.' },
+    { property: 'og:title', content: 'Pricing | Briko' },
+    { property: 'og:description', content: 'Start free; Premium upgrades coming soon.' }
   ]
 })
 </script>

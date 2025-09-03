@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
 useHead({
-  title: 'How it works — Briko',
+  title: 'How It Works | Briko',
   meta: [
-    { name: 'description', content: 'Upload → Preview → Export. See how Briko turns images into LEGO-style mosaics or voxels with parts lists and build steps.' },
-    { property: 'og:title', content: 'How Briko Works' },
+    { name: 'description', content: 'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.' },
+    { property: 'og:title', content: 'How It Works | Briko' },
     { property: 'og:description', content: 'Fast previews, smart tiling, and practical exports.' }
   ]
 })

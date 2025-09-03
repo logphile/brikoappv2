@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useHead } from 'nuxt/app'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
@@ -14,6 +15,14 @@ import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 
 const mosaic = useMosaicStore()
+
+// SEO
+useHead({
+  title: 'Mosaic Builder | Briko',
+  meta: [
+    { name: 'description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' }
+  ]
+})
 
 const target = ref<{w:number,h:number}>({ w: 128, h: 128 })
 const grid = ref<WorkerOut|null>(null)

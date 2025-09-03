@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue'
+import { useHead } from 'nuxt/app'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import { useMosaicStore } from '@/stores/mosaic'
@@ -15,6 +16,14 @@ const size = ref(64) // 64³ target
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
+
+// SEO
+useHead({
+  title: 'Voxel Builder | Briko',
+  meta: [
+    { name: 'description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' }
+  ]
+})
 
 async function onFile(file: File) {
   loading.value = true; vox.value = null; progress.value = 0
