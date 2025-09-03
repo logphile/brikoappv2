@@ -8,7 +8,10 @@
           <h1 class="text-2xl font-semibold">{{ proj?.title }}</h1>
           <p class="text-sm opacity-80">{{ proj?.width }}×{{ proj?.height }} studs · Public view</p>
         </div>
-        <NuxtLink to="/login" class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40 text-sm">Login to edit</NuxtLink>
+        <div class="flex items-center gap-2">
+          <button class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40 text-sm disabled:opacity-50" :disabled="!previewUrl" @click="downloadPreview">Export PNG</button>
+          <NuxtLink to="/login" class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40 text-sm">Login to edit</NuxtLink>
+        </div>
       </header>
 
       <section class="mt-6 grid gap-4">
@@ -77,4 +80,13 @@ onMounted(async () => {
     loading.value = false
   }
 })
+function downloadPreview(){
+  if(!previewUrl.value) return
+  const a = document.createElement('a')
+  a.href = previewUrl.value
+  a.download = 'briko-share.png'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+}
 </script>
