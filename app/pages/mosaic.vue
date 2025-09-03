@@ -11,17 +11,23 @@ import type { WorkerOut } from '@/types/mosaic'
 import { useMosaicStore } from '@/stores/mosaic'
 import { exportBuildGuidePDF } from '@/lib/pdfExport'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
+import { createWorkerTask } from '@/utils/worker-task'
 
 const mosaic = useMosaicStore()
 
 const target = ref<{w:number,h:number}>({ w: 128, h: 128 })
 const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
+const progress = ref(0)
 const showGrid = ref(true)
 const useDither = ref(true)
 const tab = ref<'2D'|'3D'>('2D')
 // drag-n-drop on preview area + global guard
 const dropActive = ref(false)
+
+// Keep the last ImageBitmap to support re-runs without re-decoding
+const srcBitmap = ref<ImageBitmap|null>(null)
+const mosaicTask = createWorkerTask<WorkerOut>(() => import('@/workers/mosaic.worker?worker').then((m:any) => new m.default()))
 
 // Allowed parts multiselect
 const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
@@ -29,25 +35,25 @@ const selectedParts = ref<string[]>([...ALL_PARTS])
 watch(selectedParts, (val)=>{ mosaic.setAllowedParts(val as any) }, { immediate: true })
 
 async function onFile(file: File) {
-  loading.value = true; grid.value = null
-  const mod = await import('@/workers/mosaic.worker?worker')
-  const worker: Worker = new (mod as any).default()
-  const img = await createImageBitmap(file)
-
-  const run = (w:number,h:number, dither:boolean) => new Promise<WorkerOut>((resolve)=>{
-    worker.onmessage = (e)=> resolve(e.data as WorkerOut)
-    worker.postMessage({ type:'process', image: img, width:w, height:h, palette: legoPalette, greedy: false, dither })
-  })
+  loading.value = true; grid.value = null; progress.value = 0
+  srcBitmap.value = await createImageBitmap(file)
 
   // Progressive: fast thumb (no tiling yet), then full-size indexes
-  grid.value = await run(64, 64, useDither.value)
-  const full = await run(target.value.w, target.value.w, useDither.value)
+  const thumb = await mosaicTask.run(
+    { type: 'process', image: srcBitmap.value, width: 64, height: 64, palette: legoPalette, greedy: false, dither: useDither.value },
+    { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
+  )
+  grid.value = thumb
+
+  const full = await mosaicTask.run(
+    { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.w, palette: legoPalette, greedy: false, dither: useDither.value },
+    { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
+  )
   grid.value = full
-  worker.terminate()
   // Hook to store for tiling
   mosaic.setTargetSize(full.width, full.height)
   mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
-  loading.value = false
+  loading.value = false; progress.value = 0
 }
 
 function onGenerate(){ mosaic.runGreedyTiling() }
@@ -82,7 +88,33 @@ function preventWindowDrop(e: DragEvent) {
   }
 }
 onMounted(()=>{ window.addEventListener('dragover', preventWindowDrop); window.addEventListener('drop', preventWindowDrop) })
-onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop) })
+onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop); mosaicTask.cancel() })
+
+// Debounced regeneration when size/dither changes
+let regenTimer: any = null
+function scheduleRegen(){
+  if (!srcBitmap.value) return
+  if (regenTimer) clearTimeout(regenTimer)
+  regenTimer = setTimeout(async () => {
+    try {
+      loading.value = true; progress.value = 0
+      const full = await mosaicTask.run(
+        { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.w, palette: legoPalette, greedy: false, dither: useDither.value },
+        { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
+      )
+      grid.value = full
+      mosaic.setTargetSize(full.width, full.height)
+      mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
+    } catch (e) {
+      // swallow aborted runs
+      console.warn(e)
+    } finally {
+      loading.value = false; progress.value = 0
+    }
+  }, 150)
+}
+watch(() => target.value.w, scheduleRegen)
+watch(useDither, scheduleRegen)
 </script>
 
 <template>
@@ -154,7 +186,14 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
           <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
         </div>
 
-        <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">Processing…</div>
+        <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
+          <div class="w-2/3 max-w-md text-center space-y-3">
+            <div>Processing… <span v-if="progress">{{ Math.round(progress) }}%</span></div>
+            <div class="h-2 w-full bg-white/10 rounded">
+              <div class="h-2 bg-white/60 rounded" :style="{ width: Math.max(2, Math.round(progress)) + '%' }"></div>
+            </div>
+          </div>
+        </div>
         <div v-else-if="grid">
           <template v-if="tab==='2D'">
             <MosaicCanvas :data="grid" :showGrid="showGrid" :overlayBricks="mosaic.overlayBricks"/>
