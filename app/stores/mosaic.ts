@@ -3,9 +3,10 @@ import { useNuxtApp } from 'nuxt/app'
 import { useToasts } from '@/composables/useToasts'
 import type { MosaicSettings, TiledBrick, TilingResult, StudSize } from '@/types/mosaic'
 import { MosaicSettingsSchema } from '@/schemas/mosaic'
-import { buildBOM } from '@/lib/bom'
+import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { downloadBomCsvWeek1, downloadPng } from '@/lib/exporters'
+import { legoPalette } from '@/lib/palette/lego'
 
 export type Status = 'idle' | 'quantized' | 'tiling' | 'tiled' | 'error'
 
@@ -93,7 +94,7 @@ export const useMosaicStore = defineStore('mosaic', {
           this.coveragePct = data.coveragePct
         } else if (data.type === 'done') {
           const bricks = data.bricks as TiledBrick[]
-          const { rows, total } = buildBOM(bricks, priceTable as any)
+          const { rows, total } = buildBOMWithBuckets(bricks, priceTable as any, legoPalette as any)
           this.tilingResult = { bricks, bom: rows, estTotalCost: total }
           this.status = 'tiled'
           worker.removeEventListener('message', handler)

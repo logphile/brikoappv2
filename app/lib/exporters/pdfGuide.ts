@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
 import type { WorkerOut, BomRow } from '@/types/mosaic'
 import { chunkSteps, bomTotal } from '@/lib/steps'
+import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
 
 export async function exportMosaicPdf(rootEl: HTMLElement, data: WorkerOut, bom: BomRow[], maxPerStep=300) {
   const steps = chunkSteps(data.placements || [], maxPerStep)
@@ -18,6 +19,11 @@ export async function exportMosaicPdf(rootEl: HTMLElement, data: WorkerOut, bom:
   doc.setFont('helvetica', 'normal'); doc.setFontSize(12)
   doc.text(`Size: ${data.width}×${data.height} • Palette: ${data.palette.length} colors`, M, 95)
   doc.text(`Estimated cost: $${bomTotal(bom).toFixed(2)}`, M, 112)
+  // Disclaimer (cover)
+  doc.setFontSize(9)
+  const coverWidth = (doc as any).internal.pageSize.getWidth() - 2*M
+  const coverLines = (doc as any).splitTextToSize ? (doc as any).splitTextToSize(PRICE_ESTIMATE_LONG, coverWidth) : [PRICE_ESTIMATE_LONG]
+  doc.text(coverLines, M, 130)
 
   // Snapshot main canvas if available
   const canvas = (window as any).__brikoCanvas as HTMLCanvasElement | undefined
@@ -44,7 +50,14 @@ export async function exportMosaicPdf(rootEl: HTMLElement, data: WorkerOut, bom:
     doc.text(`${r.qty} pcs`, W - M - 80, y, { align: 'right' })
     y += 18; if (y > 760) { doc.addPage(); y = 60 }
   }
-  doc.setFont('helvetica', 'bold'); doc.text(`Total est. cost: $${bomTotal(bom).toFixed(2)}`, M, Math.min(y+20, 780))
+  doc.setFont('helvetica', 'bold'); const totalText = `Total est. cost: $${bomTotal(bom).toFixed(2)}`
+  const totalY = Math.min(y+20, 760)
+  doc.text(totalText, M, totalY)
+  // Footer disclaimer on BOM page
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9)
+  const usableW = (doc as any).internal.pageSize.getWidth() - 2*M
+  const lines = (doc as any).splitTextToSize ? (doc as any).splitTextToSize(PRICE_ESTIMATE_LONG, usableW) : [PRICE_ESTIMATE_LONG]
+  doc.text(lines, M, Math.min(totalY+16, 790))
 
   // Step pages — render each step canvas via html2canvas
   for (let i=0; i<steps.length; i++) {

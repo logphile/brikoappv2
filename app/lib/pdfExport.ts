@@ -1,8 +1,9 @@
 import { jsPDF } from 'jspdf'
 import type { TiledBrick, StudSize } from '@/types/mosaic'
 import { legoPalette } from '@/lib/palette/lego'
-import { buildBOM } from '@/lib/bom'
+import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
+import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
 
 function hexToRgb(hex: string): [number, number, number] {
   const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex)
@@ -71,7 +72,7 @@ export function exportBuildGuidePDF(opts: {
   doc.addPage()
   doc.setFontSize(14)
   doc.text('Bill of Materials', margin, margin)
-  const { rows, total } = buildBOM(bricks, priceTable as Record<StudSize, number>)
+  const { rows, total } = buildBOMWithBuckets(bricks, priceTable as Record<StudSize, number>, legoPalette as any)
   doc.setFontSize(10)
   let yy = margin + 6
   doc.text('Part', margin, yy)
@@ -92,7 +93,14 @@ export function exportBuildGuidePDF(opts: {
   }
 
   doc.setFontSize(12)
-  doc.text(`Estimated total: $${total.toFixed(2)}`, margin, Math.min(yy + 6, pageH - margin))
+  const totalY = Math.min(yy + 6, pageH - margin - 16)
+  doc.text(`Estimated total: $${total.toFixed(2)}`, margin, totalY)
+  // Disclaimer
+  doc.setFontSize(9)
+  const lines = (doc as any).splitTextToSize
+    ? (doc as any).splitTextToSize(PRICE_ESTIMATE_LONG, usableW)
+    : [PRICE_ESTIMATE_LONG]
+  doc.text(lines, margin, Math.min(totalY + 8, pageH - margin))
 
   doc.save(fileName)
 }

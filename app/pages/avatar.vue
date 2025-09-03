@@ -273,3 +273,5 @@ function doExportPng() {
 onMounted(async () => {
   try { await loadOpenCV() } catch (e) { console.warn(e); try { show('OpenCV failed to load — continuing without it', 'error') } catch {} }
 })
+
+</script>

@@ -96,6 +96,8 @@
 
     <footer class="mx-auto max-w-6xl px-6 py-10 text-white/60 text-xs">
       © {{ new Date().getFullYear() }} Briko — BrickMOC Companion
+      <span class="mx-2">•</span>
+      <NuxtLink to="/legal" class="hover:text-white">Legal</NuxtLink>
     </footer>
   </main>
 </template>
