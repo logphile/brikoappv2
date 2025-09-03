@@ -35,6 +35,28 @@
           <span>Stud style</span>
         </label>
 
+        <label class="block">
+          <span class="block">Palette</span>
+          <select v-model="paletteName" class="mt-2 bg-white/10 rounded-lg px-2 py-1.5">
+            <option value="lego32">LEGO 32 (default)</option>
+            <option value="lego16">LEGO 16 (portrait)</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="block">Background</span>
+          <select v-model="bgMode" class="mt-2 bg-white/10 rounded-lg px-2 py-1.5">
+            <option value="keep">Keep quantized image</option>
+            <option value="solid">Solid color</option>
+            <option value="transparent">Transparent</option>
+          </select>
+        </label>
+
+        <label v-if="bgMode==='solid'" class="block">
+          <span class="block">Solid color</span>
+          <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/10 rounded" />
+        </label>
+
         <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-50 mt-6"
                 :disabled="loading || !imgReady"
                 @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
@@ -59,12 +81,12 @@
     </section>
   </main>
   
-</template>
+ </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useToasts } from '@/composables/useToasts'
-import { legoPalette } from '@/lib/palette/lego'
+import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
 import { downloadPng } from '@/lib/exporters'
 
@@ -78,6 +100,13 @@ const loading = ref(false)
 const cvReady = ref(false)
 const imgReady = ref(false)
 const outReady = ref(false)
+
+// Avatar options
+type BgMode = 'transparent' | 'keep' | 'solid'
+const paletteName = ref<'lego16' | 'lego32'>('lego32')
+const activePalette = computed(() => (paletteName.value === 'lego16' ? lego16 : lego32))
+const bgMode = ref<BgMode>('keep')
+const bgSolid = ref('#0b0b0b')
 
 // DOM refs
 const fileEl = ref<HTMLInputElement | null>(null)
@@ -136,13 +165,13 @@ function onFileChange(ev: Event) {
 }
 
 // Render helpers
-function imageDataFromIndices(indices: Uint16Array, w: number, h: number): ImageData {
+function imageDataFromIndices(indices: Uint16Array, w: number, h: number, palette = activePalette.value): ImageData {
   const img = new ImageData(w, h)
   const data = img.data
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const idx = indices[y * w + x]
-      const [r, g, b] = legoPalette[idx]?.rgb || [204, 204, 204]
+      const [r, g, b] = palette[idx]?.rgb || [204, 204, 204]
       const o = (y * w + x) * 4
       data[o] = r; data[o + 1] = g; data[o + 2] = b; data[o + 3] = 255
     }
@@ -188,7 +217,14 @@ function buildStudTile(hex: string, s: number): HTMLCanvasElement {
   return cvs
 }
 
-function renderStuds(indices: Uint16Array, w: number, h: number, out: HTMLCanvasElement) {
+function renderStuds(
+  indices: Uint16Array,
+  w: number,
+  h: number,
+  out: HTMLCanvasElement,
+  opts: { bgMode: BgMode; bgColor: string; quantized?: ImageData },
+  palette = activePalette.value
+) {
   // Aim for ~512px output width
   const px = Math.max(6, Math.floor(512 / w))
   out.width = w * px
@@ -199,13 +235,21 @@ function renderStuds(indices: Uint16Array, w: number, h: number, out: HTMLCanvas
   ctx.clearRect(0, 0, out.width, out.height)
 
   // Background
-  ctx.fillStyle = '#0b0b0b'
-  ctx.fillRect(0, 0, out.width, out.height)
+  if (opts.bgMode === 'solid') {
+    ctx.fillStyle = opts.bgColor || '#0b0b0b'
+    ctx.fillRect(0, 0, out.width, out.height)
+  } else if (opts.bgMode === 'keep' && opts.quantized) {
+    const bgCvs = document.createElement('canvas')
+    bgCvs.width = w; bgCvs.height = h
+    const bctx = bgCvs.getContext('2d')!
+    bctx.putImageData(opts.quantized, 0, 0)
+    ctx.drawImage(bgCvs, 0, 0, out.width, out.height)
+  } // transparent => leave clear
 
   // Cache tiles by palette index
   const cache = new Map<number, HTMLCanvasElement>()
-  for (let i = 0; i < legoPalette.length; i++) {
-    cache.set(i, buildStudTile(legoPalette[i].hex, px))
+  for (let i = 0; i < palette.length; i++) {
+    cache.set(i, buildStudTile(palette[i].hex, px))
   }
 
   for (let y = 0; y < h; y++) {
@@ -239,19 +283,26 @@ async function process() {
       }
     }
 
-    // Read pixels and map to LEGO palette indices (supports optional FS dithering)
+    // Read pixels and map to selected LEGO palette (supports optional FS dithering)
     const ctx = srcCanvas.value.getContext('2d', { willReadFrequently: true })!
     const img = ctx.getImageData(0, 0, srcCanvas.value.width, srcCanvas.value.height)
-    const indices = mapBitmapToPalette(img, legoPalette, { dither: dither.value ? 'floyd-steinberg' : 'none' })
+    const indices = mapBitmapToPalette(img, activePalette.value, { dither: dither.value ? 'floyd-steinberg' : 'none' })
+    const q = imageDataFromIndices(indices, img.width, img.height, activePalette.value)
 
     // Paint output: pixels or stud-style
     if (!studStyle.value) {
-      const q = imageDataFromIndices(indices, img.width, img.height)
       const octx = outCanvas.value.getContext('2d')!
       outCanvas.value.width = q.width; outCanvas.value.height = q.height
       octx.putImageData(q, 0, 0)
     } else {
-      renderStuds(indices, img.width, img.height, outCanvas.value)
+      renderStuds(
+        indices,
+        img.width,
+        img.height,
+        outCanvas.value,
+        { bgMode: bgMode.value, bgColor: bgSolid.value, quantized: bgMode.value === 'keep' ? q : undefined },
+        activePalette.value
+      )
     }
 
     // Expose canvas for unified export/upload hooks
@@ -272,6 +323,14 @@ function doExportPng() {
 
 onMounted(async () => {
   try { await loadOpenCV() } catch (e) { console.warn(e); try { show('OpenCV failed to load — continuing without it', 'error') } catch {} }
+})
+
+// Instant preview updates on control changes
+watch([size, dither, studStyle, paletteName, bgMode, bgSolid], () => {
+  if (imgReady.value && !loading.value) {
+    // Debounce via microtask to batch rapid changes
+    Promise.resolve().then(() => process())
+  }
 })
 
 </script>
