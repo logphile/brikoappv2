@@ -3,18 +3,26 @@ import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import * as THREE from 'three'
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array } }>()
 const host = ref<HTMLDivElement|null>(null)
-let renderer: THREE.WebGLRenderer | null = null
-let scene: THREE.Scene | null = null
-let camera: THREE.PerspectiveCamera | null = null
-let inst: THREE.InstancedMesh | null = null
+let renderer: any | null = null
+let scene: any | null = null
+let camera: any | null = null
+let inst: any | null = null
 let animId = 0
+let glCanvas: HTMLCanvasElement | null = null
 
 const PALETTE = ['#1B1B1B','#6D6E6E','#A3A3A3','#F4F4F4','#C91A09','#F2CD37','#FE8A18','#2DD4BF']
 
 function disposeScene(){
   if(animId) cancelAnimationFrame(animId)
-  if(inst){ inst.geometry.dispose(); (inst.material as THREE.Material).dispose(); inst = null }
-  if(renderer){ renderer.dispose(); if(renderer.domElement.parentElement) renderer.domElement.parentElement.removeChild(renderer.domElement); renderer=null }
+  if(inst){ inst.geometry.dispose(); (inst.material as any).dispose(); inst = null }
+  if(renderer){
+    const dom = renderer.domElement
+    renderer.dispose()
+    if(dom.parentElement) dom.parentElement.removeChild(dom)
+    if(((window as any).__brikoCanvas) === dom){ (window as any).__brikoCanvas = undefined }
+    renderer=null
+    glCanvas = null
+  }
   scene = null; camera = null
 }
 
@@ -27,6 +35,8 @@ function build(){
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
   renderer.setSize(host.value.clientWidth, 480)
   host.value.appendChild(renderer.domElement)
+  glCanvas = renderer.domElement
+  ;(window as any).__brikoCanvas = glCanvas
 
   scene = new THREE.Scene()
   camera = new THREE.PerspectiveCamera(45, host.value.clientWidth/480, 0.1, 2000)
@@ -51,7 +61,7 @@ function build(){
         m.makeTranslation(x - w/2, z, y - h/2)
         inst.setMatrixAt(i, m)
         color.set(PALETTE[c])
-        ;(inst as THREE.InstancedMesh).setColorAt(i, color)
+        ;(inst as any).setColorAt(i, color)
         i++
       }
     }

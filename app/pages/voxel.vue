@@ -2,10 +2,13 @@
 import { ref } from 'vue'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
+import { useMosaicStore } from '@/stores/mosaic'
+import { downloadPng } from '@/lib/exporters'
 
 const vox = ref<{ w:number; h:number; depth:number; colors: Uint8Array }|null>(null)
 const loading = ref(false)
 const size = ref(64) // 64³ target
+const mosaic = useMosaicStore()
 
 async function onFile(file: File) {
   loading.value = true; vox.value = null
@@ -18,6 +21,9 @@ async function onFile(file: File) {
   })
   vox.value = out; loading.value = false
 }
+
+function exportPng(){ downloadPng('briko-voxel.png') }
+async function uploadPreview(){ await mosaic.uploadPreview() }
 </script>
 
 <template>
@@ -40,6 +46,10 @@ async function onFile(file: File) {
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">Processing…</div>
         <VoxelPreview v-else-if="vox" :vox="vox"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
+        <div v-if="vox" class="px-2 pb-2 flex gap-2">
+          <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
+          <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
+        </div>
       </section>
     </div>
   </main>
