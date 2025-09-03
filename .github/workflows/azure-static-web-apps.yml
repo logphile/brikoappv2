@@ -45,11 +45,10 @@ jobs:
           pnpm run -s generate || pnpm run -s build
           test -d .output/public
 
-      - name: Ensure SWA config in artifact and /login exists
+      - name: Ensure SWA config in artifact
         run: |
           cp -f public/staticwebapp.config.json .output/public/staticwebapp.config.json || true
           test -f .output/public/staticwebapp.config.json
-          test -d .output/public/login
           echo "Artifact root:"; ls -la .output/public | sed -n '1,200p'
 
       - name: "Preflight: ensure SWA token exists"

@@ -1,7 +1,7 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  ssr: true,
+  ssr: false,
   srcDir: 'app',
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   typescript: { strict: true },
@@ -18,11 +18,7 @@ export default defineNuxtConfig({
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY || ''
     }
   },
-  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/avatar', '/login', '/login/', '/health'] } },
-  routeRules: {
-    '/login': { prerender: true },
-    '/login/**': { prerender: true }
-  },
+  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/avatar', '/health'] } },
   vite: {
     worker: { format: 'es' }
   },
