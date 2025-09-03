@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
+import heroUrl from '@/assets/banner.svg?url'
 
 // Optional: swap this string for an import from '@/utils/disclaimer'
 const DISCLAIMER_TEXT =
   'Briko is not affiliated with the LEGO Group. Prices are rough estimates; availability and costs vary by supplier and color.'
 
-// Use dynamic binding for the hero image so Vite doesn't transform it into a Rollup import during SSR/Nitro build
-const heroImg = '/favicon.svg'
+// Use asset URL import to avoid absolute-path import resolution issues in SSR/Nitro build
+const heroImg = heroUrl
 
 useHead({
   title: 'Briko — Turn any idea into a brick build',
@@ -14,7 +15,7 @@ useHead({
     { name: 'description', content: 'Upload an image → instant LEGO-style mosaic or voxel preview → parts list, cost estimate, and one-click exports.' },
     { property: 'og:title', content: 'Briko — BrickMOC Companion' },
     { property: 'og:description', content: 'Image → Mosaic/Voxel → BOM + price → PDF/CSV/PNG.' },
-    { property: 'og:image', content: '/favicon.svg' },
+    { property: 'og:image', content: heroImg },
     { name: 'twitter:card', content: 'summary_large_image' }
   ]
 })
