@@ -51,6 +51,9 @@ async function onFile(file: File) {
 
 function onGenerate(){ mosaic.runGreedyTiling() }
 
+async function saveNow(){ await mosaic.saveProject() }
+async function uploadPrev(){ await mosaic.uploadPreview() }
+
 // Steps (kept for compatibility when using legacy greedy placements)
 const stepIdx = ref(1)
 const steps = computed(()=> (grid.value?.placements) ? chunkSteps(grid.value.placements, 300) : [])
@@ -118,6 +121,8 @@ onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop);
             <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate mosaic</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.exportPNG">Export PNG</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.exportCSV">Export CSV</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
 

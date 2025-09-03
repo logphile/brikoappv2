@@ -37,6 +37,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
 import { useMosaicStore } from '@/stores/mosaic'
+import { useToasts } from '@/composables/useToasts'
 
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any
@@ -55,7 +56,7 @@ function rand(n=8){ return Math.random().toString(36).slice(2, 2+n) }
 async function fetchProject(){
   if(!$supabase) return
   const { data, error } = await $supabase.from('projects').select('*').eq('id', pid).single()
-  if(error){ err.value = error.message; return }
+  if(error){ err.value = error.message; try{ useToasts().show('Failed to load project', 'error') }catch{}; return }
   project.value = data
   projectPublic.value = !!data.is_public
 }
@@ -66,20 +67,23 @@ async function togglePublic(){
   const updates: any = { is_public: projectPublic.value }
   if (projectPublic.value && !project.value.share_token) updates.share_token = rand(12)
   const { data, error } = await $supabase.from('projects').update(updates).eq('id', pid).select('*').single()
-  if(error){ err.value = error.message; return }
+  if(error){ err.value = error.message; try{ useToasts().show('Failed to update sharing', 'error') }catch{}; return }
   project.value = data
+  try{ useToasts().show(projectPublic.value ? 'Project is public' : 'Project is private', 'success') }catch{}
 }
 
 async function regenerate(){
   if(!project.value) return
   const { data, error } = await $supabase.from('projects').update({ share_token: rand(12) }).eq('id', pid).select('*').single()
-  if(error){ err.value = error.message; return }
+  if(error){ err.value = error.message; try{ useToasts().show('Failed to regenerate link', 'error') }catch{}; return }
   project.value = data
+  try{ useToasts().show('Share link regenerated', 'success') }catch{}
 }
 
 async function copyLink(){
   if(!shareUrl.value) return
-  try{ await navigator.clipboard.writeText(shareUrl.value) }catch(e){ console.warn(e) }
+  try{ await navigator.clipboard.writeText(shareUrl.value); try{ useToasts().show('Link copied', 'success') }catch{} }
+  catch(e){ console.warn(e); try{ useToasts().show('Copy failed', 'error') }catch{} }
 }
 
 async function uploadPreview(){
