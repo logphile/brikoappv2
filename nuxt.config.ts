@@ -15,10 +15,12 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       supabaseUrl: process.env.SUPABASE_URL || '',
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY || ''
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
+      cloudflareAnalyticsToken: process.env.NUXT_PUBLIC_CF_ANALYTICS_TOKEN || '',
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || ''
     }
   },
-  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/login'] } },
+  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login'] } },
   vite: {
     worker: { format: 'es' }
   },

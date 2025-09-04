@@ -4,36 +4,42 @@
     <loc>https://briko.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-04</lastmod>
   </url>
   <url>
     <loc>https://briko.app/mosaic</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-04</lastmod>
   </url>
   <url>
     <loc>https://briko.app/voxel</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-04</lastmod>
   </url>
   <url>
     <loc>https://briko.app/how-it-works</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-04</lastmod>
   </url>
   <url>
     <loc>https://briko.app/pricing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
-    <lastmod>2025-09-03</lastmod>
+    <lastmod>2025-09-04</lastmod>
   </url>
   <url>
-    <loc>https://briko.app/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-    <lastmod>2025-09-03</lastmod>
+    <loc>https://briko.app/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <lastmod>2025-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://briko.app/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <lastmod>2025-09-04</lastmod>
   </url>
 </urlset>
