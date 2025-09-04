@@ -1,6 +1,19 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/_nuxt/*", "/assets/*", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg"]
+    "exclude": [
+      "/_nuxt/*",
+      "/assets/*",
+      "/*.js",
+      "/*.css",
+      "/*.ico",
+      "/*.png",
+      "/*.svg",
+      "/robots.txt",
+      "/sitemap.xml"
+    ]
+  },
+  "mimeTypes": {
+    ".xml": "application/xml"
   }
 }
