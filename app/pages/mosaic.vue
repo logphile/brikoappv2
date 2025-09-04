@@ -46,7 +46,7 @@ const mosaicWebPage = webPageJsonLd(
 )
 const mosaicBreadcrumbs = breadcrumbJsonLd(siteUrl, [
   { name: 'Home', path: '/' },
-  { name: 'Mosaic', path: '/mosaic' }
+  { name: 'Mosaic Builder', path: '/mosaic' }
 ])
 
 useHead({

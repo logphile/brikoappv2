@@ -47,7 +47,7 @@ const voxelWebPage = webPageJsonLd(
 )
 const voxelBreadcrumbs = breadcrumbJsonLd(siteUrl, [
   { name: 'Home', path: '/' },
-  { name: 'Voxel', path: '/voxel' }
+  { name: 'Voxel Builder', path: '/voxel' }
 ])
 
 useHead({
