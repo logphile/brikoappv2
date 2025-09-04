@@ -8,7 +8,7 @@
       <NuxtLink to="/privacy" class="hover:opacity-100">Privacy</NuxtLink>
       <NuxtLink to="/terms" class="hover:opacity-100">Terms</NuxtLink>
       <a href="/sitemap.xml" class="hover:opacity-100">Sitemap</a>
-      <span class="ml-auto">© {{ new Date().getFullYear() }} Briko</span>
+      <span class="ml-auto">© {{ new Date().getFullYear() }} {{ siteName }}</span>
     </div>
   </footer>
   <ToastHost />
@@ -18,12 +18,13 @@
 import { useHead } from 'nuxt/app'
 import AppHeader from '@/components/AppHeader.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
+import { useSiteMeta } from '@/composables/useSiteMeta'
 
-const siteUrl = 'https://briko.app'
+const { siteName, siteUrl } = useSiteMeta()
 const appJsonLd = {
   '@context': 'https://schema.org',
   '@type': ['WebApplication','SoftwareApplication'],
-  name: 'Briko',
+  name: siteName,
   url: siteUrl,
   applicationCategory: 'DesignApplication',
   operatingSystem: 'Web',
