@@ -8,6 +8,7 @@ import { downloadPng } from '@/lib/exporters'
 import type { VoxelGrid, VoxelWorkerOut } from '@/types/voxel'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
@@ -33,6 +34,26 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/voxel' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const voxelWebPage = webPageJsonLd(
+  siteUrl,
+  '/voxel',
+  'Voxel Builder | Briko',
+  'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.'
+)
+const voxelBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'Voxel', path: '/voxel' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(voxelWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(voxelBreadcrumbs) }
   ]
 })
 

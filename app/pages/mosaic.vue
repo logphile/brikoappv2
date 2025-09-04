@@ -13,6 +13,7 @@ import { useMosaicStore } from '@/stores/mosaic'
 import { exportBuildGuidePDF } from '@/lib/pdfExport'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 
 const mosaic = useMosaicStore()
 
@@ -32,6 +33,26 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/mosaic' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const mosaicWebPage = webPageJsonLd(
+  siteUrl,
+  '/mosaic',
+  'Mosaic Builder | Briko',
+  'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.'
+)
+const mosaicBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'Mosaic', path: '/mosaic' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(mosaicWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(mosaicBreadcrumbs) }
   ]
 })
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 useHead({
   title: 'How It Works | Briko',
   meta: [
@@ -15,6 +16,26 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/how-it-works' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const hiwWebPage = webPageJsonLd(
+  siteUrl,
+  '/how-it-works',
+  'How It Works | Briko',
+  'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.'
+)
+const hiwBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'How it works', path: '/how-it-works' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(hiwWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(hiwBreadcrumbs) }
   ]
 })
 </script>

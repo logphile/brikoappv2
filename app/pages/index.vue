@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
 import heroUrl from '@/assets/banner.svg?url'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 
 // Optional: swap this string for an import from '@/utils/disclaimer'
 const DISCLAIMER_TEXT =
@@ -8,6 +9,8 @@ const DISCLAIMER_TEXT =
 
 // Use asset URL import to avoid absolute-path import resolution issues in SSR/Nitro build
 const heroImg = heroUrl
+
+const siteUrl = 'https://briko.app'
 
 useHead({
   title: 'Briko | Turn Any Idea Into a Brick Build',
@@ -24,6 +27,24 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const homeWebPage = webPageJsonLd(
+  siteUrl,
+  '/',
+  'Briko | Turn Any Idea Into a Brick Build',
+  'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.'
+)
+const homeBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(homeWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(homeBreadcrumbs) }
   ]
 })
 </script>

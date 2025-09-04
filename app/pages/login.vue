@@ -21,6 +21,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
 import { useAuth } from '@/composables/useAuth'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 
 const router = useRouter()
 const { loginWithMagicLink } = useAuth()
@@ -42,6 +43,26 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/login' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const loginWebPage = webPageJsonLd(
+  siteUrl,
+  '/login',
+  'Login | Briko',
+  'Sign in to Briko to save projects, share your creations, and unlock premium features.'
+)
+const loginBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'Login', path: '/login' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(loginWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(loginBreadcrumbs) }
   ]
 })
 
