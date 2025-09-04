@@ -3,7 +3,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   ssr: false,
   srcDir: 'app',
-  modules: ['@pinia/nuxt', '@vueuse/nuxt'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/sitemap'],
   typescript: { strict: true },
   css: ['@/assets/styles/globals.css'],
   postcss: {
@@ -18,7 +18,11 @@ export default defineNuxtConfig({
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY || ''
     }
   },
-  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/avatar', '/gallery', '/health', '/legal', '/pricing', '/how-it-works'] } },
+  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/avatar', '/gallery', '/health', '/legal', '/pricing', '/how-it-works', '/login'] } },
+  sitemap: {
+    siteUrl: 'https://briko.app',
+    routes: ['/', '/mosaic', '/voxel', '/how-it-works', '/pricing', '/login']
+  },
   vite: {
     worker: { format: 'es' }
   },
