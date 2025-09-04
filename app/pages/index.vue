@@ -27,6 +27,9 @@ const onDemoImgError = (e: Event) => {
   (e.target as HTMLImageElement).src = '/og-default.png'
 }
 
+// Image path as a simple string (served from /public). Using a const avoids Vite asset import rewriting.
+const demoImg = '/demo-mosaic.png'
+
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
   siteUrl,
@@ -63,7 +66,7 @@ useHead({
 
     <!-- Quick Demo -->
     <section class="mt-14 grid md:grid-cols-2 gap-8 items-center">
-      <img src="/demo-mosaic.png" @error="onDemoImgError" alt="Mosaic preview demo" class="rounded-2xl shadow" />
+      <img :src="demoImg" @error="onDemoImgError" alt="Mosaic preview demo" class="rounded-2xl shadow" />
       <ul class="space-y-3 text-base md:text-lg">
         <li>• Instant LEGO-style color mapping</li>
         <li>• Greedy tiling → fewer plates, cleaner look</li>
