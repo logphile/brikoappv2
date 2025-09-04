@@ -29,6 +29,9 @@ useHead({
     { name: 'twitter:title', content: 'Mosaic Builder | Briko' },
     { name: 'twitter:description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/mosaic' }
   ]
 })
 

@@ -39,6 +39,9 @@ useHead({
     { name: 'twitter:title', content: 'Login | Briko' },
     { name: 'twitter:description', content: 'Sign in to Briko to save projects, share your creations, and unlock premium features.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/login' }
   ]
 })
 

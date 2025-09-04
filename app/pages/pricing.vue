@@ -12,6 +12,9 @@ useHead({
     { name: 'twitter:title', content: 'Pricing | Briko' },
     { name: 'twitter:description', content: 'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/pricing' }
   ]
 })
 </script>

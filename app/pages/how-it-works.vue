@@ -12,6 +12,9 @@ useHead({
     { name: 'twitter:title', content: 'How It Works | Briko' },
     { name: 'twitter:description', content: 'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/how-it-works' }
   ]
 })
 </script>
