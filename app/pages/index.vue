@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
-import heroUrl from '@/assets/banner.svg?url'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
-
-// Optional: swap this string for an import from '@/utils/disclaimer'
-const DISCLAIMER_TEXT =
-  'Briko is not affiliated with the LEGO Group. Prices are rough estimates; availability and costs vary by supplier and color.'
-
-// Use asset URL import to avoid absolute-path import resolution issues in SSR/Nitro build
-const heroImg = heroUrl
 
 const siteUrl = 'https://briko.app'
 
@@ -30,6 +22,11 @@ useHead({
   ]
 })
 
+// Fallback demo image handler
+const onDemoImgError = (e: Event) => {
+  (e.target as HTMLImageElement).src = '/og-default.png'
+}
+
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
   siteUrl,
@@ -50,72 +47,67 @@ useHead({
 </script>
 
 <template>
-  <main class="mx-auto max-w-6xl px-6 py-16">
+  <main class="px-6 py-16 max-w-6xl mx-auto">
     <!-- Hero -->
-    <section class="grid gap-8 md:grid-cols-2 items-center">
-      <div>
-        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
-          Turn any idea into a <span class="underline decoration-pink-500/60">brick build</span>
-        </h1>
-        <p class="mt-4 text-lg opacity-80">
-          Upload a photo or logo and get an instant LEGO-style mosaic or 3D voxel preview,
-          complete with parts list, rough price, and exportable build steps.
-        </p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <NuxtLink to="/mosaic" class="btn-primary">Try Mosaic</NuxtLink>
-          <NuxtLink to="/avatar" class="btn-secondary">Make an Avatar</NuxtLink>
-          <NuxtLink to="/voxel" class="btn-ghost">3D Voxel</NuxtLink>
-        </div>
-        <p class="mt-4 text-sm opacity-70">Free beta • No signup required to preview • One-click exports</p>
+    <section class="text-center">
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">Turn any idea into a brick build</h1>
+      <p class="mt-4 text-lg md:text-xl opacity-80">
+        Upload an image → get a LEGO-style mosaic or 3D voxel preview → export parts & cost in seconds.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3 justify-center">
+        <NuxtLink to="/mosaic" class="btn-primary">Try Mosaic Builder</NuxtLink>
+        <NuxtLink to="/how-it-works" class="px-5 py-3 rounded-2xl border border-white/20">See How It Works</NuxtLink>
       </div>
-      <div class="relative">
-        <div class="aspect-video rounded-2xl ring-1 ring-white/10 overflow-hidden shadow-xl">
-          <!-- Placeholder hero preview canvas image -->
-          <img :src="heroImg" alt="Briko preview example" class="w-full h-full object-cover" />
-        </div>
+      <div class="mt-4 text-sm opacity-70">Free to try · No signup required · Not affiliated with LEGO® Group</div>
+    </section>
+
+    <!-- Quick Demo -->
+    <section class="mt-14 grid md:grid-cols-2 gap-8 items-center">
+      <img src="/demo-mosaic.png" @error="onDemoImgError" alt="Mosaic preview demo" class="rounded-2xl shadow" />
+      <ul class="space-y-3 text-base md:text-lg">
+        <li>• Instant LEGO-style color mapping</li>
+        <li>• Greedy tiling → fewer plates, cleaner look</li>
+        <li>• Bill of Materials + cost estimate</li>
+        <li>• PNG / CSV / PDF exports</li>
+      </ul>
+    </section>
+
+    <!-- Feature Grid -->
+    <section class="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h3 class="font-semibold text-lg">Mosaic Engine</h3>
+        <p class="opacity-80 mt-1">Photo → brick palette → greedy tiling</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h3 class="font-semibold text-lg">3D Voxel Preview</h3>
+        <p class="opacity-80 mt-1">Rotate, zoom, and step through layers</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h3 class="font-semibold text-lg">Smart BOM</h3>
+        <p class="opacity-80 mt-1">Accurate parts list with size breakdown</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h3 class="font-semibold text-lg">Fast Exports</h3>
+        <p class="opacity-80 mt-1">PNG, CSV, PDF build steps</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h3 class="font-semibold text-lg">Save & Share</h3>
+        <p class="opacity-80 mt-1">Supabase projects (coming soon)</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h3 class="font-semibold text-lg">Performance</h3>
+        <p class="opacity-80 mt-1">256×256 in &lt;2s • 64³ voxels in &lt;2s</p>
       </div>
     </section>
 
-    <!-- How it works (quick) -->
-    <section class="mt-16 grid gap-6 md:grid-cols-3">
-      <div class="card p-6">
-        <div class="text-3xl">📤</div>
-        <h3 class="font-semibold mt-2">1) Upload</h3>
-        <p class="opacity-80">Drop an image or paste a URL. We auto-fit size and palette.</p>
-      </div>
-      <div class="card p-6">
-        <div class="text-3xl">🧱</div>
-        <h3 class="font-semibold mt-2">2) Preview</h3>
-        <p class="opacity-80">See a mosaic or voxel preview instantly with plate/part counts.</p>
-      </div>
-      <div class="card p-6">
-        <div class="text-3xl">📦</div>
-        <h3 class="font-semibold mt-2">3) Export</h3>
-        <p class="opacity-80">Download PDF build steps, CSV BOM, and PNG plan. Share a link.</p>
-      </div>
+    <!-- How It Works teaser -->
+    <section class="mt-16 rounded-2xl border border-white/10 p-6 md:p-8 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold">How it works</h2>
+      <p class="mt-2 opacity-80">1) Upload  2) Pick size & palette  3) Generate  4) Export</p>
+      <NuxtLink to="/how-it-works" class="inline-block mt-5 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15">See Full Guide</NuxtLink>
     </section>
 
-    <!-- Why Briko -->
-    <section class="mt-16 grid gap-6 md:grid-cols-2">
-      <div class="card p-6">
-        <h3 class="font-semibold text-xl">Fast & free-tier focused</h3>
-        <ul class="mt-3 space-y-2 opacity-80 list-disc pl-5">
-          <li>Progressive previews; no blocking UI</li>
-          <li>Greedy tiler for 2×N plates → fewer parts, lower rough cost</li>
-          <li>Works in the browser — no installs</li>
-        </ul>
-      </div>
-      <div class="card p-6">
-        <h3 class="font-semibold text-xl">Exports you can use</h3>
-        <ul class="mt-3 space-y-2 opacity-80 list-disc pl-5">
-          <li>PDF build guide with per-step pages</li>
-          <li>CSV BOM with estimated costs</li>
-          <li>PNG plan and shareable project links</li>
-        </ul>
-      </div>
-    </section>
-
-    <p class="mt-12 text-xs opacity-70">{{ DISCLAIMER_TEXT }}</p>
+    <p class="mt-8 text-xs opacity-60">Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.</p>
   </main>
 </template>
 

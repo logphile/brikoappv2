@@ -41,50 +41,52 @@ useHead({
 </script>
 
 <template>
-  <main class="mx-auto max-w-5xl px-6 py-16 prose prose-invert">
-    <h1>How it works</h1>
-    <p>Briko’s pipeline is optimized for speed and clarity, using Web Workers, Three.js, and a LEGO-like palette.</p>
+  <main class="px-6 py-16 max-w-6xl mx-auto">
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">How Briko Works</h1>
+    <p class="mt-3 text-lg opacity-80">
+      Briko turns images into LEGO-style mosaics or 3D voxel builds. It’s optimized for speed and clarity so your preview feels instant and your parts list is accurate.
+    </p>
 
-    <h2>Mosaic</h2>
-    <ol>
-      <li><strong>Upload.</strong> We downscale and normalize the image to your chosen stud size.</li>
-      <li><strong>Palette map.</strong> Each pixel is mapped to the nearest LEGO-style color (LAB space; optional dithering).</li>
-      <li><strong>Greedy tiler.</strong> We fuse studs into 2×N and 1×N plates by color and region to reduce parts and cost.</li>
-      <li><strong>Preview.</strong> Toggle seams/legend, view part count and rough price.</li>
-      <li><strong>Export.</strong> Download PDF build steps, CSV BOM, and PNG plan.</li>
-    </ol>
+    <!-- Steps -->
+    <section class="mt-10 grid gap-4 md:grid-cols-4">
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h2 class="font-semibold">1) Upload</h2>
+        <p class="opacity-80 mt-1">Drag & drop or select a file. Briko preprocesses the image for clean edges.</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h2 class="font-semibold">2) Choose Mode & Palette</h2>
+        <p class="opacity-80 mt-1">Mosaic or Voxel. Pick sizes, dimensions, and a brick color palette.</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h2 class="font-semibold">3) Generate</h2>
+        <p class="opacity-80 mt-1">Greedy tiler / voxelizer optimizes for fewer plates and a clean look.</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 p-5">
+        <h2 class="font-semibold">4) Export</h2>
+        <p class="opacity-80 mt-1">Download PNG, CSV parts list, or PDF build steps.</p>
+      </div>
+    </section>
 
-    <h3>Tips</h3>
-    <ul>
-      <li>Logos and high-contrast photos tile best. Try reducing “Max plate” if fine detail is lost.</li>
-      <li>For posters, export PNG and print large; for builds, use the PDF steps.</li>
-    </ul>
+    <!-- Tips -->
+    <section class="mt-12 rounded-2xl border border-white/10 p-6">
+      <h2 class="text-2xl font-bold">Tips</h2>
+      <ul class="mt-3 space-y-2 opacity-90 list-disc pl-5">
+        <li><strong>Image quality:</strong> Higher contrast images tile better.</li>
+        <li><strong>Palette:</strong> Start with default; refine later for a specific look.</li>
+        <li><strong>Performance:</strong> Targeting &lt;2s for 256×256 mosaics and 64³ voxels on modern hardware.</li>
+      </ul>
+    </section>
 
-    <h2>Voxel (3D)</h2>
-    <ol>
-      <li><strong>Generate.</strong> We voxelize with your parameters and show a 3D InstancedMesh preview.</li>
-      <li><strong>Layers.</strong> Slide through Z-layers and export layer snapshots to PDF.</li>
-      <li><strong>Save & share.</strong> Keep projects in your account and publish a read-only link.</li>
-    </ol>
+    <!-- CTA -->
+    <div class="text-center mt-10">
+      <NuxtLink to="/mosaic" class="px-5 py-3 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white font-semibold shadow">Try Mosaic Builder</NuxtLink>
+    </div>
 
-    <h2>Avatar</h2>
-    <ol>
-      <li><strong>Headshot in.</strong> Choose palette and background (keep/solid/transparent).</li>
-      <li><strong>Stud render.</strong> We simulate plastic sheen for a LEGO-like look.</li>
-      <li><strong>Export.</strong> One-click PNG; save/share optional.</li>
-    </ol>
-
-    <h2>What Briko is (and isn’t)</h2>
-    <ul>
-      <li>We generate <em>plans and previews</em>, not official LEGO instructions.</li>
-      <li>Prices are approximate; real-world availability varies by seller and color.</li>
-      <li><strong>Not affiliated</strong> with the LEGO Group.</li>
-    </ul>
-
-    <p class="opacity-70 text-sm">Questions? <a href="mailto:support@briko.app">support@briko.app</a></p>
+    <p class="mt-10 text-xs opacity-60">Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.</p>
   </main>
 </template>
 
 <style scoped>
-.prose :where(h1,h2,h3){ scroll-margin-top: 96px; }
+/* spacing for anchor jumps if we add IDs later */
+h1, h2, h3{ scroll-margin-top: 96px; }
 </style>

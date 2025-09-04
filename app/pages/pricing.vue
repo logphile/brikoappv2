@@ -19,6 +19,8 @@ useHead({
   ]
 })
 
+// (No local components needed)
+
 // JSON-LD: WebPage + Breadcrumbs
 const siteUrl = 'https://briko.app'
 const pricingWebPage = webPageJsonLd(
@@ -41,43 +43,57 @@ useHead({
 </script>
 
 <template>
-  <main class="mx-auto max-w-5xl px-6 py-16">
+  <main class="px-6 py-16 max-w-6xl mx-auto">
     <h1 class="text-4xl font-extrabold">Pricing</h1>
-    <p class="mt-2 opacity-75">Simple and fair. Free while we’re in beta.</p>
 
-    <section class="mt-10 grid gap-6 md:grid-cols-2">
-      <!-- Free Beta -->
-      <div class="card p-6">
-        <h2 class="text-2xl font-semibold">Free Beta</h2>
-        <p class="opacity-80 mt-1">Unlimited (fair-use)</p>
-        <ul class="mt-4 space-y-2 opacity-90 list-disc pl-5">
-          <li>Mosaic & Avatar & Voxel previews</li>
-          <li>Greedy tiler (2×N plates) & cost estimate</li>
-          <li>Exports: PDF build guide, CSV BOM, PNG plan</li>
-          <li>Save projects & share public links</li>
+    <div class="mt-10 grid md:grid-cols-2 gap-6">
+      <!-- Free Plan -->
+      <div class="rounded-2xl p-6 border border-white/10">
+        <h3 class="text-xl font-bold">Free</h3>
+        <div class="mt-2 text-3xl font-extrabold">$0</div>
+        <ul class="mt-4 space-y-2 opacity-90">
+          <li>• Mosaic builder</li>
+          <li>• PNG / CSV exports</li>
+          <li>• Basic voxel preview</li>
         </ul>
-        <NuxtLink to="/mosaic" class="btn-primary mt-6 inline-block">Start for free</NuxtLink>
+        <NuxtLink to="/mosaic" class="inline-block mt-6 px-5 py-3 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white font-semibold">Try Mosaic</NuxtLink>
       </div>
 
-      <!-- Premium (teaser) -->
-      <div class="card p-6">
-        <h2 class="text-2xl font-semibold">Premium <span class="text-sm opacity-70">(coming soon)</span></h2>
-        <p class="opacity-80 mt-1">For power builders and poster-makers</p>
-        <ul class="mt-4 space-y-2 opacity-90 list-disc pl-5">
-          <li>Bigger builds (e.g., 512×512 mosaics)</li>
-          <li>Advanced tiling strategies & part constraints</li>
-          <li>High-res printable posters & ZIP bundles</li>
-          <li>Priority rendering & early features</li>
+      <!-- Pro Plan (coming soon) -->
+      <div class="rounded-2xl p-6 border border-pink-500/40 shadow">
+        <h3 class="text-xl font-bold">Pro (coming soon)</h3>
+        <ul class="mt-4 space-y-2 opacity-90">
+          <li>• Unlimited exports</li>
+          <li>• Avatar posters</li>
+          <li>• Curated MOC packs</li>
+          <li>• Save & share projects</li>
         </ul>
-        <p class="text-sm opacity-70 mt-4">Want early access? Email <a class="underline" href="mailto:support@briko.app">support@briko.app</a>.</p>
+        <NuxtLink to="#waitlist" class="inline-block mt-6 px-5 py-3 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white font-semibold">Join Waitlist</NuxtLink>
       </div>
-    </section>
+    </div>
 
-    <p class="mt-10 text-xs opacity-70">
-      Notes: We do not sell bricks; prices shown are rough estimates based on common parts/colors.
-      Briko is not affiliated with the LEGO Group.
+    <div class="mt-12">
+      <h2 class="text-2xl font-bold">FAQ</h2>
+      <details class="mt-4 p-4 rounded-xl border border-white/10">
+        <summary class="font-semibold cursor-pointer">Is Briko affiliated with LEGO®?</summary>
+        <p class="mt-2 opacity-80">No. Briko is independent and not affiliated with the LEGO® Group.</p>
+      </details>
+      <details class="mt-3 p-4 rounded-xl border border-white/10">
+        <summary class="font-semibold cursor-pointer">Will my projects be public?</summary>
+        <p class="mt-2 opacity-80">You control sharing. Projects will be private by default when accounts launch.</p>
+      </details>
+      <details class="mt-3 p-4 rounded-xl border border-white/10">
+        <summary class="font-semibold cursor-pointer">What’s the refund policy?</summary>
+        <p class="mt-2 opacity-80">Pro isn’t live yet; we’ll publish terms before launch.</p>
+      </details>
+    </div>
+
+    <div id="waitlist" class="mt-2"></div>
+    <p class="mt-10 text-xs opacity-60">
+      Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.
     </p>
   </main>
+  
 </template>
 
 <style scoped lang="postcss">
