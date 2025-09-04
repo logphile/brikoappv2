@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useNuxtApp, useHead } from 'nuxt/app'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 import { useToasts } from '@/composables/useToasts'
@@ -78,16 +78,23 @@ const editingTags = ref(false)
 const tagSuggestions = ref<TagItem[]>([])
 const reportText = ref('')
 
-// Quick pass OG/meta
-useHead({
+// SEO
+const shareUrl = computed(() => `https://briko.app/share/${String(route.params.id || '')}`)
+useHead(() => ({
   title: 'Briko — Shared Project',
   meta: [
     { name: 'description', content: 'View and remix community LEGO builds made with Briko.' },
     { property: 'og:title', content: 'Briko — Shared Project' },
     { property: 'og:description', content: 'View and remix community LEGO builds made with Briko.' },
-    { property: 'og:type', content: 'website' }
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: shareUrl.value },
+    { property: 'og:image', content: previewUrl.value || 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Briko — Shared Project' },
+    { name: 'twitter:description', content: 'View and remix community LEGO builds made with Briko.' },
+    { name: 'twitter:image', content: previewUrl.value || 'https://briko.app/og-default.png' }
   ]
-})
+}))
 
 onMounted(async () => {
   loading.value = true

@@ -9,8 +9,26 @@
 import { onMounted } from 'vue'
 import { useProjectStore } from '@/stores/project'
 import { usePalette } from '@/composables/usePalette'
+import { useHead } from 'nuxt/app'
 const store = useProjectStore()
 const { load } = usePalette()
+
+// SEO
+useHead({
+  title: 'Studio | Briko',
+  meta: [
+    { name: 'description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
+    { property: 'og:title', content: 'Studio | Briko' },
+    { property: 'og:description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: 'https://briko.app/studio' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Studio | Briko' },
+    { name: 'twitter:description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ]
+})
 
 onMounted(() => load())
 

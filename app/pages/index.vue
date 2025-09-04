@@ -15,8 +15,12 @@ useHead({
     { name: 'description', content: 'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.' },
     { property: 'og:title', content: 'Briko | Turn Any Idea Into a Brick Build' },
     { property: 'og:description', content: 'Image → Mosaic/Voxel → BOM + price → PDF/CSV/PNG.' },
-    { property: 'og:image', content: heroImg },
-    { name: 'twitter:card', content: 'summary_large_image' }
+    { property: 'og:url', content: 'https://briko.app/' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Briko | Turn Any Idea Into a Brick Build' },
+    { name: 'twitter:description', content: 'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ]
 })
 </script>

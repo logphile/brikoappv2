@@ -5,7 +5,13 @@ useHead({
   meta: [
     { name: 'description', content: 'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.' },
     { property: 'og:title', content: 'How It Works | Briko' },
-    { property: 'og:description', content: 'Fast previews, smart tiling, and practical exports.' }
+    { property: 'og:description', content: 'Fast previews, smart tiling, and practical exports.' },
+    { property: 'og:url', content: 'https://briko.app/how-it-works' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'How It Works | Briko' },
+    { name: 'twitter:description', content: 'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ]
 })
 </script>
