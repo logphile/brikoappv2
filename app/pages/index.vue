@@ -21,6 +21,9 @@ useHead({
     { name: 'twitter:title', content: 'Briko | Turn Any Idea Into a Brick Build' },
     { name: 'twitter:description', content: 'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/' }
   ]
 })
 </script>

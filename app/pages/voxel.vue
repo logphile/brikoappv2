@@ -30,6 +30,9 @@ useHead({
     { name: 'twitter:title', content: 'Voxel Builder | Briko' },
     { name: 'twitter:description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/voxel' }
   ]
 })
 
