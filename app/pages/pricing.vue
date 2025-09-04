@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 useHead({
   title: 'Pricing | Briko',
   meta: [
@@ -15,6 +16,26 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/pricing' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const pricingWebPage = webPageJsonLd(
+  siteUrl,
+  '/pricing',
+  'Pricing | Briko',
+  'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.'
+)
+const pricingBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'Pricing', path: '/pricing' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(pricingWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(pricingBreadcrumbs) }
   ]
 })
 </script>
@@ -59,7 +80,7 @@ useHead({
   </main>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white shadow; }
 .card{ @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10; }
 </style>
