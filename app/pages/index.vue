@@ -5,7 +5,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 const siteUrl = 'https://briko.app'
 
 useHead({
-  title: 'Briko | Turn Any Idea Into a Brick Build',
+  title: 'Turn Any Idea Into a Brick Build',
   meta: [
     { name: 'description', content: 'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.' },
     { property: 'og:title', content: 'Briko | Turn Any Idea Into a Brick Build' },
@@ -34,7 +34,7 @@ const demoImg = '/demo-mosaic.png'
 const homeWebPage = webPageJsonLd(
   siteUrl,
   '/',
-  'Briko | Turn Any Idea Into a Brick Build',
+  'Turn Any Idea Into a Brick Build',
   'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.'
 )
 const homeBreadcrumbs = breadcrumbJsonLd(siteUrl, [

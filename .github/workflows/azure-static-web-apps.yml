@@ -19,6 +19,8 @@ jobs:
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      NUXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ secrets.NUXT_PUBLIC_CF_ANALYTICS_TOKEN }}
+      NUXT_PUBLIC_SENTRY_DSN: ${{ secrets.NUXT_PUBLIC_SENTRY_DSN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +52,19 @@ jobs:
             exit 1
           fi
           echo "Supabase env present."
+
+      - name: "Preflight: optional analytics env"
+        run: |
+          if [ -z "$NUXT_PUBLIC_CF_ANALYTICS_TOKEN" ]; then
+            echo "NOTE: NUXT_PUBLIC_CF_ANALYTICS_TOKEN not set — Cloudflare beacon will not be injected."
+          else
+            echo "Cloudflare Analytics token is set (masked)."
+          fi
+          if [ -z "$NUXT_PUBLIC_SENTRY_DSN" ]; then
+            echo "NOTE: NUXT_PUBLIC_SENTRY_DSN not set — Sentry will be disabled."
+          else
+            echo "Sentry DSN is set (masked)."
+          fi
 
       - name: Generate static site
         run: |

@@ -41,7 +41,7 @@ import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 
 // SEO
 useHead({
-  title: 'Community Gallery | Briko',
+  title: 'Community Gallery',
   meta: [
     { name: 'description', content: 'Explore public remixes and builds from the Briko community.' },
     { property: 'og:title', content: 'Community Gallery | Briko' },
@@ -52,6 +52,9 @@ useHead({
     { name: 'twitter:title', content: 'Community Gallery | Briko' },
     { name: 'twitter:description', content: 'Explore public remixes and builds from the Briko community.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/gallery' }
   ]
 })
 

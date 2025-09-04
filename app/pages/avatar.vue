@@ -103,7 +103,7 @@ const { show } = useToasts()
 
 // SEO
 useHead({
-  title: 'Avatar Builder | Briko',
+  title: 'Avatar Builder',
   meta: [
     { name: 'description', content: 'Upload a photo, map it to the LEGO palette, and export a stud-style avatar.' },
     { property: 'og:title', content: 'Avatar Builder | Briko' },
@@ -115,6 +115,9 @@ useHead({
     { name: 'twitter:title', content: 'Avatar Builder | Briko' },
     { name: 'twitter:description', content: 'Upload a photo, map it to the LEGO palette, and export a stud-style avatar.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/avatar' }
   ]
 })
 

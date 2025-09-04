@@ -19,7 +19,7 @@ const mosaic = useMosaicStore()
 
 // SEO
 useHead({
-  title: 'Mosaic Builder | Briko',
+  title: 'Mosaic Builder',
   meta: [
     { name: 'description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' },
     { property: 'og:title', content: 'Mosaic Builder | Briko' },
@@ -41,7 +41,7 @@ const siteUrl = 'https://briko.app'
 const mosaicWebPage = webPageJsonLd(
   siteUrl,
   '/mosaic',
-  'Mosaic Builder | Briko',
+  'Mosaic Builder',
   'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.'
 )
 const mosaicBreadcrumbs = breadcrumbJsonLd(siteUrl, [
