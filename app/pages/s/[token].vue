@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRoute, useNuxtApp } from 'nuxt/app'
+import { useRoute, useNuxtApp, useHead } from 'nuxt/app'
 
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any
@@ -42,6 +42,23 @@ const proj = ref<any | null>(null)
 const tiling = ref<any | null>(null)
 const assets = ref<any[] | null>(null)
 const previewUrl = ref('')
+
+// SEO
+const absUrl = computed(() => `https://briko.app/s/${String(route.params.token || '')}`)
+useHead(() => ({
+  title: 'Briko — Public Share',
+  meta: [
+    { name: 'description', content: 'View a public Briko mosaic or avatar preview and export PNG.' },
+    { property: 'og:title', content: 'Briko — Public Share' },
+    { property: 'og:description', content: 'View a public Briko mosaic or avatar preview and export PNG.' },
+    { property: 'og:url', content: absUrl.value },
+    { property: 'og:image', content: previewUrl.value || 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Briko — Public Share' },
+    { name: 'twitter:description', content: 'View a public Briko mosaic or avatar preview and export PNG.' },
+    { name: 'twitter:image', content: previewUrl.value || 'https://briko.app/og-default.png' }
+  ]
+}))
 
 const estTotal = computed(() => {
   const v = tiling.value?.est_total as any

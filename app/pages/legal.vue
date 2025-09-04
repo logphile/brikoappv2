@@ -2,8 +2,14 @@
   <Head>
     <Title>Legal — Briko</Title>
     <Meta name="description" content="Terms, Privacy, Pricing Disclaimer and Trademarks for Briko (BrickMOC Companion)." />
-    <Meta property="og:title" content="Briko Legal" />
+    <Meta property="og:title" content="Legal — Briko" />
     <Meta property="og:description" content="Terms, Privacy, Pricing Disclaimer and Trademarks." />
+    <Meta property="og:url" content="https://briko.app/legal" />
+    <Meta property="og:image" content="https://briko.app/og-default.png" />
+    <Meta name="twitter:card" content="summary_large_image" />
+    <Meta name="twitter:title" content="Legal — Briko" />
+    <Meta name="twitter:description" content="Terms, Privacy, Pricing Disclaimer and Trademarks for Briko (BrickMOC Companion)." />
+    <Meta name="twitter:image" content="https://briko.app/og-default.png" />
   </Head>
   <main class="mx-auto max-w-3xl px-6 py-12 text-white">
     <h1 class="text-3xl font-bold mb-6">Legal</h1>

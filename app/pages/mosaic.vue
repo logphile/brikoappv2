@@ -20,7 +20,15 @@ const mosaic = useMosaicStore()
 useHead({
   title: 'Mosaic Builder | Briko',
   meta: [
-    { name: 'description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' }
+    { name: 'description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' },
+    { property: 'og:title', content: 'Mosaic Builder | Briko' },
+    { property: 'og:description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' },
+    { property: 'og:url', content: 'https://briko.app/mosaic' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Mosaic Builder | Briko' },
+    { name: 'twitter:description', content: 'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ]
 })
 

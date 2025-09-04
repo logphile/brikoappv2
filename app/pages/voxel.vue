@@ -21,7 +21,15 @@ const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel
 useHead({
   title: 'Voxel Builder | Briko',
   meta: [
-    { name: 'description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' }
+    { name: 'description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
+    { property: 'og:title', content: 'Voxel Builder | Briko' },
+    { property: 'og:description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
+    { property: 'og:url', content: 'https://briko.app/voxel' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Voxel Builder | Briko' },
+    { name: 'twitter:description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ]
 })
 

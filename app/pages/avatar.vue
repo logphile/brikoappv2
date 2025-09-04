@@ -93,13 +93,30 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
-import { useNuxtApp } from 'nuxt/app'
+import { useNuxtApp, useHead } from 'nuxt/app'
 import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
 import { downloadPng } from '@/lib/exporters'
 
 const { show } = useToasts()
+
+// SEO
+useHead({
+  title: 'Avatar Builder | Briko',
+  meta: [
+    { name: 'description', content: 'Upload a photo, map it to the LEGO palette, and export a stud-style avatar.' },
+    { property: 'og:title', content: 'Avatar Builder | Briko' },
+    { property: 'og:description', content: 'Upload a photo, map it to the LEGO palette, and export a stud-style avatar.' },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:url', content: 'https://briko.app/avatar' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Avatar Builder | Briko' },
+    { name: 'twitter:description', content: 'Upload a photo, map it to the LEGO palette, and export a stud-style avatar.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ]
+})
 
 // UI state
 const size = ref(128)

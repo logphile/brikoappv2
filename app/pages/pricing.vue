@@ -5,7 +5,13 @@ useHead({
   meta: [
     { name: 'description', content: 'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.' },
     { property: 'og:title', content: 'Pricing | Briko' },
-    { property: 'og:description', content: 'Start free; Premium upgrades coming soon.' }
+    { property: 'og:description', content: 'Start free; Premium upgrades coming soon.' },
+    { property: 'og:url', content: 'https://briko.app/pricing' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Pricing | Briko' },
+    { name: 'twitter:description', content: 'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ]
 })
 </script>

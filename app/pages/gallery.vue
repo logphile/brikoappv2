@@ -34,10 +34,26 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useNuxtApp } from 'nuxt/app'
+import { useNuxtApp, useHead } from 'nuxt/app'
 import { useToasts } from '@/composables/useToasts'
 import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
+
+// SEO
+useHead({
+  title: 'Community Gallery | Briko',
+  meta: [
+    { name: 'description', content: 'Explore public remixes and builds from the Briko community.' },
+    { property: 'og:title', content: 'Community Gallery | Briko' },
+    { property: 'og:description', content: 'Explore public remixes and builds from the Briko community.' },
+    { property: 'og:url', content: 'https://briko.app/gallery' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Community Gallery | Briko' },
+    { name: 'twitter:description', content: 'Explore public remixes and builds from the Briko community.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ]
+})
 
 // Data types from gallery view
 interface GalleryRow { id: string; public_id: string; name: string; kind: string; thumb_url?: string | null; likes: number; created_at: string; updated_at: string }
