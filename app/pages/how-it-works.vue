@@ -29,7 +29,7 @@ const hiwWebPage = webPageJsonLd(
 )
 const hiwBreadcrumbs = breadcrumbJsonLd(siteUrl, [
   { name: 'Home', path: '/' },
-  { name: 'How it works', path: '/how-it-works' }
+  { name: 'How It Works', path: '/how-it-works' }
 ])
 
 useHead({
