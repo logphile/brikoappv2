@@ -2,7 +2,7 @@
 import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 useHead({
-  title: 'How It Works | Briko',
+  title: 'How It Works',
   meta: [
     { name: 'description', content: 'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.' },
     { property: 'og:title', content: 'How It Works | Briko' },
@@ -24,7 +24,7 @@ const siteUrl = 'https://briko.app'
 const hiwWebPage = webPageJsonLd(
   siteUrl,
   '/how-it-works',
-  'How It Works | Briko',
+  'How It Works',
   'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.'
 )
 const hiwBreadcrumbs = breadcrumbJsonLd(siteUrl, [

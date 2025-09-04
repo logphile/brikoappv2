@@ -29,7 +29,7 @@ const { $supabase } = useNuxtApp() as any
 
 // SEO
 useHead({
-  title: 'Login | Briko',
+  title: 'Login',
   meta: [
     { name: 'robots', content: 'noindex,follow' },
     { name: 'description', content: 'Sign in to Briko to save projects, share your creations, and unlock premium features.' },
@@ -52,7 +52,7 @@ const siteUrl = 'https://briko.app'
 const loginWebPage = webPageJsonLd(
   siteUrl,
   '/login',
-  'Login | Briko',
+  'Login',
   'Sign in to Briko to save projects, share your creations, and unlock premium features.'
 )
 const loginBreadcrumbs = breadcrumbJsonLd(siteUrl, [

@@ -24,19 +24,19 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 
 const siteUrl = 'https://briko.app'
-const name = 'Privacy Policy | Briko'
+const name = 'Privacy Policy'
 const description = 'Learn how Briko collects and uses data. We use privacy-friendly analytics and keep your data safe.'
 
 useHead({
   title: name,
   meta: [
     { name: 'description', content: description },
-    { property: 'og:title', content: name },
+    { property: 'og:title', content: 'Privacy Policy | Briko' },
     { property: 'og:description', content: description },
     { property: 'og:url', content: `${siteUrl}/privacy` },
     { property: 'og:image', content: `${siteUrl}/og-default.png` },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: name },
+    { name: 'twitter:title', content: 'Privacy Policy | Briko' },
     { name: 'twitter:description', content: description },
     { name: 'twitter:image', content: `${siteUrl}/og-default.png` }
   ],

@@ -14,6 +14,7 @@
     ]
   },
   "mimeTypes": {
-    ".xml": "application/xml"
+    ".xml": "application/xml",
+    ".png": "image/png"
   }
 }

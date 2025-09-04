@@ -15,7 +15,7 @@ const { load } = usePalette()
 
 // SEO
 useHead({
-  title: 'Studio | Briko',
+  title: 'Studio',
   meta: [
     { name: 'description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
     { property: 'og:title', content: 'Studio | Briko' },
@@ -27,6 +27,9 @@ useHead({
     { name: 'twitter:title', content: 'Studio | Briko' },
     { name: 'twitter:description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/studio' }
   ]
 })
 

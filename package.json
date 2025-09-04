@@ -1,5 +1,5 @@
 {
-  "name": "brickmoc",
+  "name": "briko",
   "private": true,
   "scripts": {
     "dev": "nuxt dev",

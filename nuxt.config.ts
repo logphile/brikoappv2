@@ -1,7 +1,7 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
-  ssr: false,
+  ssr: true,
   srcDir: 'app',
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   typescript: { strict: true },
@@ -22,7 +22,7 @@ export default defineNuxtConfig({
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://briko.app'
     }
   },
-  nitro: { prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login'] } },
+  nitro: { preset: 'static', prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login'] } },
   vite: {
     worker: { format: 'es' }
   },

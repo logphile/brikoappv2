@@ -20,7 +20,7 @@ const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel
 
 // SEO
 useHead({
-  title: 'Voxel Builder | Briko',
+  title: 'Voxel Builder',
   meta: [
     { name: 'description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
     { property: 'og:title', content: 'Voxel Builder | Briko' },
@@ -42,7 +42,7 @@ const siteUrl = 'https://briko.app'
 const voxelWebPage = webPageJsonLd(
   siteUrl,
   '/voxel',
-  'Voxel Builder | Briko',
+  'Voxel Builder',
   'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.'
 )
 const voxelBreadcrumbs = breadcrumbJsonLd(siteUrl, [

@@ -2,7 +2,7 @@
 import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 useHead({
-  title: 'Pricing | Briko',
+  title: 'Pricing',
   meta: [
     { name: 'description', content: 'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.' },
     { property: 'og:title', content: 'Pricing | Briko' },
@@ -26,7 +26,7 @@ const siteUrl = 'https://briko.app'
 const pricingWebPage = webPageJsonLd(
   siteUrl,
   '/pricing',
-  'Pricing | Briko',
+  'Pricing',
   'Start free with Briko’s mosaic builder. Upgrade for unlimited exports, avatars, and premium MOC packs.'
 )
 const pricingBreadcrumbs = breadcrumbJsonLd(siteUrl, [
