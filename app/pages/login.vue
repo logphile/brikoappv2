@@ -31,6 +31,7 @@ const { $supabase } = useNuxtApp() as any
 useHead({
   title: 'Login | Briko',
   meta: [
+    { name: 'robots', content: 'noindex,follow' },
     { name: 'description', content: 'Sign in to Briko to save projects, share your creations, and unlock premium features.' },
     { property: 'og:title', content: 'Login | Briko' },
     { property: 'og:description', content: 'Sign in to Briko to save projects, share your creations, and unlock premium features.' },
