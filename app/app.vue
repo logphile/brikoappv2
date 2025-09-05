@@ -51,12 +51,15 @@ useHead({
           ad_personalization: 'denied'
         });
 
-        // Load GTM
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
-          j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-WZ7ST45X');
+        // Load GTM (deferred)
+        function loadGtm(){
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;
+            j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WZ7ST45X');
+        }
+        if ('requestIdleCallback' in window) { requestIdleCallback(loadGtm) } else { setTimeout(loadGtm, 0) }
       `
     },
     {
@@ -80,6 +83,15 @@ useHead({
     key: 'gtm-noscript',
     innerHTML: '<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ7ST45X" height="0" width="0" style="display:none;visibility:hidden"></iframe>'
   }]
+})
+// Global preconnects for critical origins
+useHead({
+  link: [
+    { rel: 'preconnect', href: 'https://briko.app' },
+    { rel: 'preconnect', href: 'https://www.googletagmanager.com', crossorigin: '' },
+    { rel: 'preconnect', href: 'https://www.google-analytics.com', crossorigin: '' },
+    { rel: 'preconnect', href: 'https://static.cloudflareinsights.com', crossorigin: '' }
+  ]
 })
 const appJsonLd = {
   '@context': 'https://schema.org',
