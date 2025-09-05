@@ -16,6 +16,7 @@ import { exportBuildGuidePDF } from '@/lib/pdfExport'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
+import { imageBitmapToBuffer } from '@/utils/image-to-buffer'
 
 const mosaic = useMosaicStore()
 
@@ -89,15 +90,17 @@ async function onFile(file: File) {
     mosaic.cancelTiling()
 
     // Progressive: fast thumb (no tiling yet), then full-size indexes
+    const { buffer: buf64, width: w64, height: h64 } = await imageBitmapToBuffer(srcBitmap.value!, 64, 64)
     const thumb = await mosaicTask.run(
-      { type: 'process', image: srcBitmap.value, width: 64, height: 64, palette: legoPalette, greedy: false, dither: useDither.value },
-      { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000 }
+      { type: 'process', buffer: buf64, width: w64, height: h64, palette: legoPalette, greedy: false, dither: useDither.value },
+      { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000, transfer: [buf64] }
     )
     grid.value = thumb
 
+    const { buffer: bufFull0, width: w0, height: h0 } = await imageBitmapToBuffer(srcBitmap.value!, target.value.w, target.value.h)
     const full = await mosaicTask.run(
-      { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
-      { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000 }
+      { type: 'process', buffer: bufFull0, width: w0, height: h0, palette: legoPalette, greedy: false, dither: useDither.value },
+      { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000, transfer: [bufFull0] }
     )
     grid.value = full
     // Hook to store for tiling: always use undithered quantizedIndexes for better merging
@@ -167,9 +170,10 @@ function scheduleRegen(){
       progress.value = 0
       // Cancel any in-flight tiling right before we start the new quantization
       mosaic.cancelTiling()
+      const { buffer: bufFull, width: w, height: h } = await imageBitmapToBuffer(srcBitmap.value!, target.value.w, target.value.h)
       const full = await mosaicTask.run(
-        { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
-        { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000 }
+        { type: 'process', buffer: bufFull, width: w, height: h, palette: legoPalette, greedy: false, dither: useDither.value },
+        { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000, transfer: [bufFull] }
       )
       grid.value = full
       mosaic.setTargetSize(full.width, full.height)

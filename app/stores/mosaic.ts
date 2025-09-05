@@ -8,6 +8,7 @@ import priceTable from '@/data/brick_prices.json'
 import { downloadBomCsvWeek1, downloadPng } from '@/lib/exporters'
 import { legoPalette } from '@/lib/palette/lego'
 import { createWorkerTask } from '@/utils/worker-task'
+import { toPlain } from '@/utils/deproxy'
 import { canvasToPngBlob } from '@/utils/canvas-to-png'
 
 export type Status = 'idle' | 'working' | 'quantized' | 'tiling' | 'tiled' | 'error'
@@ -102,7 +103,7 @@ export const useMosaicStore = defineStore('mosaic', {
 
       try {
         const msg: any = await tilingTask.run(
-          { grid: this.grid, width: this.width, height: this.height, settings: this.settings },
+          { grid: this.grid, width: this.width, height: this.height, settings: toPlain(this.settings) },
           {
             onProgress: (data: any) => {
               if (data && data.type === 'progress') {
