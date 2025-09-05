@@ -9,7 +9,7 @@ import { downloadBomCsvWeek1, downloadPng } from '@/lib/exporters'
 import { legoPalette } from '@/lib/palette/lego'
 import { createWorkerTask } from '@/utils/worker-task'
 
-export type Status = 'idle' | 'quantized' | 'tiling' | 'tiled' | 'error'
+export type Status = 'idle' | 'working' | 'quantized' | 'tiling' | 'tiled' | 'error'
 
 // Abortable greedy tiler task shared across runs
 const tilingTask = createWorkerTask<any>(() => import('@/workers/greedyTiler?worker').then((m: any) => new m.default()))
@@ -42,13 +42,22 @@ export const useMosaicStore = defineStore('mosaic', {
     // final
     tilingResult: null as TilingResult | null,
     status: 'idle' as Status,
+    // UI mode for operations that trigger regeneration
+    mode: null as null | 'auto' | 'manual',
 
     // persistence
     currentProjectId: null as string | null,
     _saveTimer: null as any,
   }),
+  getters: {
+    canExport: (s): boolean => !!s.tilingResult && s.status !== 'tiling' && s.status !== 'working'
+  },
 
   actions: {
+    setMode(mode: 'auto'|'manual'|null) { this.mode = mode },
+    // Mark UI as working (used during quantization/retile orchestration in the page)
+    setUiWorking(mode: 'auto'|'manual' = 'manual') { this.mode = mode; this.status = 'working' },
+    clearUiWorking() { this.mode = null },
     setTargetSize(w: number, h: number) {
       this.settings.width = w; this.settings.height = h
       if (this.width && this.height && (this.width !== w || this.height !== h)) {

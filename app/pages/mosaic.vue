@@ -7,6 +7,7 @@ import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
 import VoxelViewer from '@/components/VoxelViewer.client.vue'
 import LayerSlider from '@/components/LayerSlider.client.vue'
+import RegeneratingChip from '@/components/RegeneratingChip.vue'
 import { legoPalette } from '@/lib/palette/lego'
 import { chunkSteps } from '@/lib/steps'
 import type { WorkerOut } from '@/types/mosaic'
@@ -79,6 +80,7 @@ watch(selectedParts, (val)=>{ mosaic.setAllowedParts(val as any) }, { immediate:
 
 async function onFile(file: File) {
   loading.value = true; grid.value = null; progress.value = 0
+  mosaic.setUiWorking('manual')
   srcBitmap.value = await createImageBitmap(file)
   // Cancel any in-flight tiling when a new image is loaded
   mosaic.cancelTiling()
@@ -101,9 +103,13 @@ async function onFile(file: File) {
   // auto-run tiling so exports and 3D become available
   await mosaic.runGreedyTiling()
   loading.value = false; progress.value = 0
+  mosaic.clearUiWorking()
 }
 
-function onGenerate(){ mosaic.runGreedyTiling() }
+async function onGenerate(){
+  mosaic.setUiWorking('manual')
+  try { await mosaic.runGreedyTiling() } finally { mosaic.clearUiWorking() }
+}
 
 async function saveNow(){ await mosaic.saveProject() }
 async function uploadPrev(){ await mosaic.uploadPreview() }
@@ -146,7 +152,9 @@ function scheduleRegen(){
   mosaic.cancelTiling()
   regenTimer = setTimeout(async () => {
     try {
-      loading.value = true; progress.value = 0
+      // non-blocking UI regeneration indicator via chip
+      mosaic.setUiWorking('auto');
+      progress.value = 0
       const full = await mosaicTask.run(
         { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
         { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
@@ -160,7 +168,8 @@ function scheduleRegen(){
       // swallow aborted runs
       console.warn(e)
     } finally {
-      loading.value = false; progress.value = 0
+      mosaic.clearUiWorking();
+      progress.value = 0
     }
   }, 150)
 }
@@ -170,7 +179,10 @@ watch(useDither, scheduleRegen)
 // Auto-retile when allowed parts or orientation changes
 watchDebounced(
   () => [mosaic.settings.allowedParts, mosaic.settings.snapOrientation],
-  () => { mosaic.runGreedyTiling() },
+  async () => {
+    mosaic.setUiWorking('auto')
+    try { await mosaic.runGreedyTiling() } finally { mosaic.clearUiWorking() }
+  },
   { debounce: 250, maxWait: 1000, deep: true }
 )
 </script>
@@ -213,9 +225,9 @@ watchDebounced(
           </label>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40 w-full sm:w-auto" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate Mosaic</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="mosaic.exportCSV">Export CSV</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.exportCSV">Export CSV</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
           </div>
@@ -237,15 +249,17 @@ watchDebounced(
       <!-- right preview with dropzone -->
       <section
         class="lg:col-span-2 relative rounded-2xl bg-white/5 ring-1 ring-white/10 p-4"
+        :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
         @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
       >
+        <RegeneratingChip />
         <div v-if="dropActive"
              class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
         <div class="flex items-center gap-2 border-b border-white/10 pb-2 mb-3 text-sm">
           <button :class="['px-3 py-1 rounded', tab==='2D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='2D'">2D Mosaic</button>
           <button :class="['px-3 py-1 rounded', tab==='3D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='3D'">3D Preview</button>
           <div class="grow"></div>
-          <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+          <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
         </div>
 
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
