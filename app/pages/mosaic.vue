@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { watchDebounced } from '@vueuse/core'
 import { useHead } from 'nuxt/app'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
@@ -61,7 +62,8 @@ const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
 const progress = ref(0)
 const showGrid = ref(true)
-const useDither = ref(true)
+// Default dithering off so larger tiles can merge; users can enable if desired
+const useDither = ref(false)
 const tab = ref<'2D'|'3D'>('2D')
 // drag-n-drop on preview area + global guard
 const dropActive = ref(false)
@@ -89,13 +91,15 @@ async function onFile(file: File) {
   grid.value = thumb
 
   const full = await mosaicTask.run(
-    { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.w, palette: legoPalette, greedy: false, dither: useDither.value },
+    { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
     { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
   )
   grid.value = full
   // Hook to store for tiling
   mosaic.setTargetSize(full.width, full.height)
   mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
+  // auto-run tiling so exports and 3D become available
+  await mosaic.runGreedyTiling()
   loading.value = false; progress.value = 0
 }
 
@@ -144,12 +148,14 @@ function scheduleRegen(){
     try {
       loading.value = true; progress.value = 0
       const full = await mosaicTask.run(
-        { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.w, palette: legoPalette, greedy: false, dither: useDither.value },
+        { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
         { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
       )
       grid.value = full
       mosaic.setTargetSize(full.width, full.height)
       mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
+      // auto-run tiling after any re-quantization
+      await mosaic.runGreedyTiling()
     } catch (e) {
       // swallow aborted runs
       console.warn(e)
@@ -159,7 +165,14 @@ function scheduleRegen(){
   }, 150)
 }
 watch(() => target.value.w, scheduleRegen)
+watch(() => target.value.h, scheduleRegen)
 watch(useDither, scheduleRegen)
+// Auto-retile when allowed parts or orientation changes
+watchDebounced(
+  () => [mosaic.settings.allowedParts, mosaic.settings.snapOrientation],
+  () => { mosaic.runGreedyTiling() },
+  { debounce: 250, maxWait: 1000, deep: true }
+)
 </script>
 
 <template>
@@ -174,8 +187,8 @@ watch(useDither, scheduleRegen)
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 space-y-3">
           <label class="block text-sm">Output size (studs)</label>
           <div class="grid grid-cols-2 gap-3 text-sm">
-            <label>Width: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.w)" class="w-full"></label>
-            <label>Height: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.w)" class="w-full"></label>
+            <label>Width: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.h)" class="w-full"></label>
+            <label>Height: {{ target.h }}<input type="range" min="8" max="256" v-model.number="target.h" @change="mosaic.setTargetSize(target.w, target.h)" class="w-full"></label>
           </div>
           <label class="block text-sm mt-3">Allowed parts</label>
           <div class="grid grid-cols-3 gap-2 text-sm">
@@ -199,8 +212,9 @@ watch(useDither, scheduleRegen)
             <input type="checkbox" v-model="useDither"> Dithering (Floyd–Steinberg)
           </label>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
-            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40 w-full sm:w-auto" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate mosaic</button>
+            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40 w-full sm:w-auto" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate Mosaic</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="mosaic.exportCSV">Export CSV</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
@@ -247,7 +261,9 @@ watch(useDither, scheduleRegen)
             <MosaicCanvas :data="grid" :showGrid="showGrid" :overlayBricks="mosaic.overlayBricks"/>
           </template>
           <template v-else>
-            <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
+            <ClientOnly>
+              <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
+            </ClientOnly>
             <div class="mt-3">
               <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers"/>
             </div>
