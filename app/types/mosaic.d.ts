@@ -13,7 +13,9 @@ export type Placement = { x:number; y:number; w:number; h:number; color:number; 
 
 export type WorkerIn = {
   type:'process'
-  image: ImageBitmap
+  image?: ImageBitmap
+  // Optional raw RGBA pixel buffer (width*height*4). Prefer this to avoid cloning DOM objects.
+  buffer?: ArrayBuffer
   width:number
   height:number
   palette:PaletteColor[]

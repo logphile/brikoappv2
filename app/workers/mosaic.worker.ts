@@ -6,7 +6,7 @@ import { buildSingles as buildSinglesBom, buildFromTiles as buildBomFromTiles } 
 
 self.onmessage = async (e: MessageEvent<WorkerIn>) => {
   try {
-    const { image, width, height, palette, greedy = true, dither = true, distance = 'ciede2000' } = e.data
+    const { image, buffer, width, height, palette, greedy = true, dither = true, distance = 'ciede2000' } = e.data
 
     const post = (data: any, transfer?: Transferable[]) => {
       ;(self as any).postMessage(data, transfer || [])
@@ -15,7 +15,13 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
     const t0 = (self as any).performance.now()
     post({ type: 'progress', stage: 'start', pct: 1 })
 
-    const imgData = await preprocessToImageData(image, width, height)
+    // Accept either a raw RGBA buffer or an ImageBitmap
+    let imgData: ImageData
+    if (buffer && buffer.byteLength === width * height * 4) {
+      imgData = new ImageData(new Uint8ClampedArray(buffer), width, height)
+    } else {
+      imgData = await preprocessToImageData(image as ImageBitmap, width, height)
+    }
     const t1 = (self as any).performance.now()
     post({ type: 'progress', stage: 'preprocess', pct: 30 })
 
