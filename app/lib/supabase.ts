@@ -6,8 +6,8 @@ let client: SupabaseClient | null = null
 export function getSupabase(): SupabaseClient {
   if (client) return client
   const config = useRuntimeConfig()
-  const url = config.public.supabaseUrl
-  const key = config.public.supabaseAnonKey
+  const url = String((config.public as any).supabaseUrl || '')
+  const key = String((config.public as any).supabaseAnonKey || '')
   if (!url || !key) throw new Error('Supabase not configured')
   client = createClient(url, key)
   return client
