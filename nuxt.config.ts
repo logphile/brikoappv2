@@ -1,4 +1,8 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
+
+const rootDir = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
   ssr: true,
@@ -22,7 +26,13 @@ export default defineNuxtConfig({
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://briko.app'
     }
   },
-  nitro: { preset: 'static', prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login'] } },
+  nitro: {
+    preset: 'static',
+    publicAssets: [
+      { dir: resolve(rootDir, 'public') }
+    ],
+    prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login'] }
+  },
   vite: {
     worker: { format: 'es' }
   },
