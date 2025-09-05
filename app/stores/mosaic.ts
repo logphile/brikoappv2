@@ -8,6 +8,7 @@ import priceTable from '@/data/brick_prices.json'
 import { downloadBomCsvWeek1, downloadPng } from '@/lib/exporters'
 import { legoPalette } from '@/lib/palette/lego'
 import { createWorkerTask } from '@/utils/worker-task'
+import { canvasToPngBlob } from '@/utils/canvas-to-png'
 
 export type Status = 'idle' | 'working' | 'quantized' | 'tiling' | 'tiled' | 'error'
 
@@ -42,6 +43,7 @@ export const useMosaicStore = defineStore('mosaic', {
     // final
     tilingResult: null as TilingResult | null,
     status: 'idle' as Status,
+    errorMsg: '' as string,
     // UI mode for operations that trigger regeneration
     mode: null as null | 'auto' | 'manual',
 
@@ -96,6 +98,7 @@ export const useMosaicStore = defineStore('mosaic', {
       this.coveragePct = 0
       this.tilingResult = null
       this.status = 'tiling'
+      this.errorMsg = ''
 
       try {
         const msg: any = await tilingTask.run(
@@ -107,7 +110,8 @@ export const useMosaicStore = defineStore('mosaic', {
                 this.coveragePct = data.coveragePct
               }
             },
-            resolveWhen: (d: any) => d && d.type === 'done'
+            resolveWhen: (d: any) => d && d.type === 'done',
+            timeoutMs: 45000
           }
         )
         const bricks = msg.bricks as TiledBrick[]
@@ -124,6 +128,7 @@ export const useMosaicStore = defineStore('mosaic', {
         }
         console.error(e)
         this.status = 'error'
+        this.errorMsg = e?.message ? String(e.message) : String(e)
       }
     },
 
@@ -202,9 +207,17 @@ export const useMosaicStore = defineStore('mosaic', {
       if (!this.currentProjectId) return
       const { $supabase } = useNuxtApp() as any
       if (!$supabase) { try { useToasts().show('Auth unavailable — cannot upload', 'error') } catch {} ; return }
-      const cvs: HTMLCanvasElement | undefined = (window as any).__brikoCanvas
+      const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
       if (!cvs) return
-      const blob: Blob | null = await new Promise((resolve) => cvs.toBlob(b => resolve(b), 'image/png'))
+      let blob: Blob | null = null
+      try {
+        blob = await canvasToPngBlob(cvs as any)
+      } catch (err) {
+        // fallback: try HTMLCanvasElement.toBlob
+        try {
+          blob = await new Promise((resolve) => (cvs as HTMLCanvasElement).toBlob(b => resolve(b), 'image/png'))
+        } catch {}
+      }
       if (!blob) return
       const storage_path = `previews/${this.currentProjectId}.png`
       const { error: upErr } = await $supabase.storage.from('public').upload(storage_path, blob, { upsert: true, contentType: 'image/png' })
