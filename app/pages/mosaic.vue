@@ -83,29 +83,36 @@ watch(selectedParts, (val)=>{ mosaic.setAllowedParts(val as any) }, { immediate:
 async function onFile(file: File) {
   loading.value = true; grid.value = null; progress.value = 0
   mosaic.setUiWorking('manual')
-  srcBitmap.value = await createImageBitmap(file)
-  // Cancel any in-flight tiling when a new image is loaded
-  mosaic.cancelTiling()
+  try {
+    srcBitmap.value = await createImageBitmap(file)
+    // Cancel any in-flight tiling when a new image is loaded
+    mosaic.cancelTiling()
 
-  // Progressive: fast thumb (no tiling yet), then full-size indexes
-  const thumb = await mosaicTask.run(
-    { type: 'process', image: srcBitmap.value, width: 64, height: 64, palette: legoPalette, greedy: false, dither: useDither.value },
-    { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
-  )
-  grid.value = thumb
+    // Progressive: fast thumb (no tiling yet), then full-size indexes
+    const thumb = await mosaicTask.run(
+      { type: 'process', image: srcBitmap.value, width: 64, height: 64, palette: legoPalette, greedy: false, dither: useDither.value },
+      { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000 }
+    )
+    grid.value = thumb
 
-  const full = await mosaicTask.run(
-    { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
-    { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
-  )
-  grid.value = full
-  // Hook to store for tiling: always use undithered quantizedIndexes for better merging
-  mosaic.setTargetSize(full.width, full.height)
-  mosaic.setGrid((full.quantizedIndexes || full.indexes) as Uint16Array, full.width, full.height)
-  // auto-run tiling so exports and 3D become available
-  await mosaic.runGreedyTiling()
-  loading.value = false; progress.value = 0
-  mosaic.clearUiWorking()
+    const full = await mosaicTask.run(
+      { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
+      { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000 }
+    )
+    grid.value = full
+    // Hook to store for tiling: always use undithered quantizedIndexes for better merging
+    mosaic.setTargetSize(full.width, full.height)
+    mosaic.setGrid((full.quantizedIndexes || full.indexes) as Uint16Array, full.width, full.height)
+    // auto-run tiling so exports and 3D become available
+    await mosaic.runGreedyTiling()
+  } catch (e: any) {
+    console.error(e)
+    mosaic.status = 'error'
+    ;(mosaic as any).errorMsg = e?.message ? String(e.message) : String(e)
+  } finally {
+    loading.value = false; progress.value = 0
+    mosaic.clearUiWorking()
+  }
 }
 
 async function onGenerate(){
@@ -162,16 +169,21 @@ function scheduleRegen(){
       mosaic.cancelTiling()
       const full = await mosaicTask.run(
         { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
-        { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
+        { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000 }
       )
       grid.value = full
       mosaic.setTargetSize(full.width, full.height)
       mosaic.setGrid((full.quantizedIndexes || full.indexes) as Uint16Array, full.width, full.height)
       // auto-run tiling after any re-quantization
       await mosaic.runGreedyTiling()
-    } catch (e) {
+    } catch (e: any) {
       // swallow aborted runs
       console.warn(e)
+      // surface non-abort errors to store
+      if (!(e && e.name === 'AbortError')) {
+        mosaic.status = 'error'
+        ;(mosaic as any).errorMsg = e?.message ? String(e.message) : String(e)
+      }
     } finally {
       mosaic.clearUiWorking();
       progress.value = 0
@@ -284,7 +296,10 @@ watchDebounced(
             <input type="checkbox" v-model="showPlates" />
             <span>Show plate outlines</span>
           </label>
-          <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+          <div v-if="mosaic.status==='error'" class="ml-2 text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
+            Generation failed — {{ mosaic.errorMsg }}
+          </div>
+          <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
         </div>
 
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">

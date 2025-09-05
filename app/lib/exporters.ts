@@ -1,4 +1,5 @@
 import type { BomRow } from '@/types/mosaic'
+import { canvasToPngBlob } from '@/utils/canvas-to-png'
 
 export function downloadCsv(rows: BomRow[], name='briko_bom.csv'){
   const esc = (v: unknown) => '"' + String(v).replace(/"/g, '""') + '"'
@@ -11,11 +12,22 @@ export function downloadCsv(rows: BomRow[], name='briko_bom.csv'){
   a.click(); URL.revokeObjectURL(a.href)
 }
 
-export function downloadPng(filename='mosaic.png'){
-  const cvs: HTMLCanvasElement | undefined = (window as any).__brikoCanvas
+export async function downloadPng(filename='mosaic.png'){
+  const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
   if(!cvs) return
-  const a = document.createElement('a')
-  a.href = cvs.toDataURL('image/png'); a.download = filename; a.click()
+  try {
+    const blob = await canvasToPngBlob(cvs as any)
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+    URL.revokeObjectURL(a.href)
+  } catch (err) {
+    // Fallback: attempt toDataURL on HTMLCanvasElement only
+    try {
+      const htmlCvs = cvs as HTMLCanvasElement
+      const a = document.createElement('a')
+      a.href = htmlCvs.toDataURL('image/png'); a.download = filename; a.click()
+    } catch {}
+  }
 }
 
 // Week-1 CSV exporter for new BOM shape

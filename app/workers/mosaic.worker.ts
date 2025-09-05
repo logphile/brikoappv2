@@ -47,6 +47,9 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
 
     const t3 = (self as any).performance.now()
 
+    // Ensure a final progress event so UIs don't appear stuck (e.g., at 85%)
+    post({ type: 'progress', stage: 'finalize', pct: 100 })
+
     const out: WorkerOut = {
       width: W,
       height: H,
