@@ -19,7 +19,12 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
     const t1 = (self as any).performance.now()
     post({ type: 'progress', stage: 'preprocess', pct: 30 })
 
-    const indexes = mapBitmapToPalette(imgData, palette, { dither: dither ? 'floyd-steinberg' : 'none', distance })
+    // Always compute undithered for tiler
+    const quantizedIndexes = mapBitmapToPalette(imgData, palette, { dither: 'none', distance })
+    // Optionally compute dithered for prettier preview; fallback to undithered
+    const indexes = dither
+      ? mapBitmapToPalette(imgData, palette, { dither: 'floyd-steinberg', distance })
+      : quantizedIndexes
     const t2 = (self as any).performance.now()
     post({ type: 'progress', stage: 'quantize', pct: greedy ? 70 : 85 })
 
@@ -33,7 +38,8 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
 
     const W = imgData.width, H = imgData.height
     if (greedy) {
-      const tiles = greedyTile(indexes, W, H, [[4,8],[4,4],[2,4],[2,2],[1,2],[1,1]])
+      // IMPORTANT: Use undithered grid for tiling to allow larger merges
+      const tiles = greedyTile(quantizedIndexes, W, H, [[4,8],[4,4],[2,4],[2,2],[1,2],[1,1]])
       placements = tiles.map(t => ({ x: t.x, y: t.y, w: t.w, h: t.h, color: t.colorId, part: `Plate ${t.w}×${t.h}` }))
       bomGreedy = buildBomFromTiles(tiles as any, palette as any)
       post({ type: 'progress', stage: 'tiling', pct: 90 })
@@ -46,12 +52,13 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
       height: H,
       palette: palette as any,
       indexes,
+      quantizedIndexes,
       bomSingles,
       placements,
       bomGreedy,
       timings: { preprocess: t1 - t0, quantize: t2 - t1, tile: (greedy ? t3 - t2 : 0), bom: 0, total: t3 - t0 }
     }
-    post(out, [out.indexes.buffer])
+    post(out, [out.indexes.buffer, out.quantizedIndexes!.buffer])
   } catch (err: any) {
     ;(self as any).postMessage({ type: 'error', message: err?.message || String(err) })
   }
