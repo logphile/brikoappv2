@@ -184,23 +184,26 @@ watch(useDither, scheduleRegen)
             </label>
           </div>
           <label class="block text-sm mt-3">Orientation</label>
-          <select v-model="mosaic.settings.snapOrientation" class="bg-black/40 rounded px-3 py-2">
-            <option value="both">Both</option>
-            <option value="horizontal">Horizontal</option>
-            <option value="vertical">Vertical</option>
-          </select>
-          <label class="inline-flex items-center gap-2 text-sm mt-2">
-            <input type="checkbox" v-model="showGrid"> Show stud grid
-          </label>
+          <div class="flex items-center mt-1">
+            <select v-model="mosaic.settings.snapOrientation" class="bg-black/40 rounded px-3 py-2">
+              <option value="both">Both</option>
+              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+            <label class="ml-3 flex items-center gap-1 select-none">
+              <input type="checkbox" v-model="showGrid" class="accent-current" />
+              <span>Show stud grid</span>
+            </label>
+          </div>
           <label class="inline-flex items-center gap-2 text-sm mt-2">
             <input type="checkbox" v-model="useDither"> Dithering (Floyd–Steinberg)
           </label>
-          <div class="flex gap-2 pt-2">
-            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate mosaic</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult" @click="mosaic.exportCSV">Export CSV</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
+          <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
+            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40 w-full sm:w-auto" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate mosaic</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult" @click="mosaic.exportCSV">Export CSV</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
 
