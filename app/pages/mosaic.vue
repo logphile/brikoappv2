@@ -68,6 +68,8 @@ const useDither = ref(false)
 const tab = ref<'2D'|'3D'>('2D')
 // drag-n-drop on preview area + global guard
 const dropActive = ref(false)
+// UI toggles
+const showPlates = ref(false)
 
 // Keep the last ImageBitmap to support re-runs without re-decoding
 const srcBitmap = ref<ImageBitmap|null>(null)
@@ -97,9 +99,9 @@ async function onFile(file: File) {
     { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
   )
   grid.value = full
-  // Hook to store for tiling
+  // Hook to store for tiling: always use undithered quantizedIndexes for better merging
   mosaic.setTargetSize(full.width, full.height)
-  mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
+  mosaic.setGrid((full.quantizedIndexes || full.indexes) as Uint16Array, full.width, full.height)
   // auto-run tiling so exports and 3D become available
   await mosaic.runGreedyTiling()
   loading.value = false; progress.value = 0
@@ -143,25 +145,28 @@ function preventWindowDrop(e: DragEvent) {
 onMounted(()=>{ window.addEventListener('dragover', preventWindowDrop); window.addEventListener('drop', preventWindowDrop) })
 onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop); mosaicTask.cancel(); mosaic.cancelTiling() })
 
-// Debounced regeneration when size/dither changes
+// Debounced regeneration when size/dither changes (with queue)
 let regenTimer: any = null
+let regenQueued = false
 function scheduleRegen(){
   if (!srcBitmap.value) return
+  // If a regeneration/tiling is already in progress, queue a follow-up
+  if (mosaic.status === 'working' || mosaic.status === 'tiling') { regenQueued = true; return }
   if (regenTimer) clearTimeout(regenTimer)
-  // Cancel any in-flight tiling when parameters change and we regenerate the quantized grid
-  mosaic.cancelTiling()
   regenTimer = setTimeout(async () => {
     try {
       // non-blocking UI regeneration indicator via chip
       mosaic.setUiWorking('auto');
       progress.value = 0
+      // Cancel any in-flight tiling right before we start the new quantization
+      mosaic.cancelTiling()
       const full = await mosaicTask.run(
         { type: 'process', image: srcBitmap.value, width: target.value.w, height: target.value.h, palette: legoPalette, greedy: false, dither: useDither.value },
         { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct } }
       )
       grid.value = full
       mosaic.setTargetSize(full.width, full.height)
-      mosaic.setGrid(full.indexes as Uint16Array, full.width, full.height)
+      mosaic.setGrid((full.quantizedIndexes || full.indexes) as Uint16Array, full.width, full.height)
       // auto-run tiling after any re-quantization
       await mosaic.runGreedyTiling()
     } catch (e) {
@@ -170,19 +175,35 @@ function scheduleRegen(){
     } finally {
       mosaic.clearUiWorking();
       progress.value = 0
+      if (regenQueued) { regenQueued = false; // flush queued change
+        // Let tick apply latest reactive values before rerun
+        requestAnimationFrame(() => scheduleRegen())
+      }
     }
   }, 150)
 }
 watch(() => target.value.w, scheduleRegen)
 watch(() => target.value.h, scheduleRegen)
 watch(useDither, scheduleRegen)
-// Auto-retile when allowed parts or orientation changes
+// Debounced retile when allowed parts or orientation changes (with queue)
+let retileTimer: any = null
+let retileQueued = false
+function scheduleRetile(){
+  if (!mosaic.grid) return
+  if (mosaic.status === 'working' || mosaic.status === 'tiling') { retileQueued = true; return }
+  if (retileTimer) clearTimeout(retileTimer)
+  retileTimer = setTimeout(async () => {
+    mosaic.setUiWorking('auto')
+    try { await mosaic.runGreedyTiling() }
+    finally {
+      mosaic.clearUiWorking()
+      if (retileQueued) { retileQueued = false; requestAnimationFrame(() => scheduleRetile()) }
+    }
+  }, 200)
+}
 watchDebounced(
   () => [mosaic.settings.allowedParts, mosaic.settings.snapOrientation],
-  async () => {
-    mosaic.setUiWorking('auto')
-    try { await mosaic.runGreedyTiling() } finally { mosaic.clearUiWorking() }
-  },
+  () => scheduleRetile(),
   { debounce: 250, maxWait: 1000, deep: true }
 )
 </script>
@@ -259,6 +280,10 @@ watchDebounced(
           <button :class="['px-3 py-1 rounded', tab==='2D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='2D'">2D Mosaic</button>
           <button :class="['px-3 py-1 rounded', tab==='3D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='3D'">3D Preview</button>
           <div class="grow"></div>
+          <label v-if="tab==='2D'" class="inline-flex items-center gap-2 opacity-80 hover:opacity-100">
+            <input type="checkbox" v-model="showPlates" />
+            <span>Show plate outlines</span>
+          </label>
           <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
         </div>
 
@@ -272,7 +297,7 @@ watchDebounced(
         </div>
         <div v-else-if="grid">
           <template v-if="tab==='2D'">
-            <MosaicCanvas :data="grid" :showGrid="showGrid" :overlayBricks="mosaic.overlayBricks"/>
+            <MosaicCanvas :data="grid" :showGrid="showGrid" :showTiles="showPlates" :overlayBricks="mosaic.overlayBricks"/>
           </template>
           <template v-else>
             <ClientOnly>

@@ -25,20 +25,20 @@ function render(){
       }
     }
   }
-  // tile outlines when provided
+  // tile outlines when provided (legacy placements)
   if(props.showTiles && props.data.placements){
     ctx.lineWidth = Math.max(1, Math.floor(scale/6))
-    ctx.strokeStyle = 'rgba(255,255,255,.6)'
+    ctx.strokeStyle = 'rgba(255,255,255,.12)'
     for(const t of props.data.placements as Placement[]){
-      ctx.strokeRect(t.x*scale+.5, t.y*scale+.5, t.w*scale-1, t.h*scale-1)
+      if (t.w>1 || t.h>1) ctx.strokeRect(t.x*scale+.5, t.y*scale+.5, t.w*scale-1, t.h*scale-1)
     }
   }
-  // streaming overlay from tiler (new)
-  if(props.overlayBricks && props.overlayBricks.length){
+  // streaming or final overlay from tiler (new)
+  if(props.showTiles && props.overlayBricks && props.overlayBricks.length){
     ctx.lineWidth = Math.max(1, Math.floor(scale/6))
-    ctx.strokeStyle = 'rgba(255,255,255,.6)'
+    ctx.strokeStyle = 'rgba(255,255,255,.12)'
     for(const t of props.overlayBricks as TiledBrick[]){
-      ctx.strokeRect(t.x*scale+.5, t.y*scale+.5, t.w*scale-1, t.h*scale-1)
+      if (t.w>1 || t.h>1) ctx.strokeRect(t.x*scale+.5, t.y*scale+.5, t.w*scale-1, t.h*scale-1)
     }
   }
   // save canvas globally for PNG export

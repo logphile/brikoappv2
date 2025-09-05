@@ -27,6 +27,8 @@ export type WorkerOut = {
   height:number
   palette:PaletteColor[]
   indexes:Uint16Array
+  // Always-provided undithered mapping used for tiler
+  quantizedIndexes?: Uint16Array
   bomSingles: BomRow[]
   placements?: Placement[]
   bomGreedy?: BomRow[]
