@@ -18,7 +18,9 @@ useHead({
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ],
   link: [
-    { rel: 'canonical', href: 'https://briko.app/' }
+    { rel: 'canonical', href: 'https://briko.app/' },
+    // Preload LCP image for faster discovery
+    { rel: 'preload', as: 'image', href: '/demo-mosaic.png' }
   ]
 })
 
@@ -66,7 +68,18 @@ useHead({
 
     <!-- Quick Demo -->
     <section class="mt-14 grid md:grid-cols-2 gap-8 items-center">
-      <img :src="demoImg" @error="onDemoImgError" alt="Mosaic preview demo" class="rounded-2xl shadow" />
+      <img
+        :src="demoImg"
+        @error="onDemoImgError"
+        alt="Mosaic preview demo"
+        class="rounded-2xl shadow"
+        width="400"
+        height="212"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        sizes="(max-width: 768px) 100vw, 50vw"
+      />
       <ul class="space-y-3 text-base md:text-lg">
         <li>• Instant LEGO-style color mapping</li>
         <li>• Greedy tiling → fewer plates, cleaner look</li>
