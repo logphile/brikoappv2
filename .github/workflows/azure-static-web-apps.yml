@@ -19,8 +19,8 @@ jobs:
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      NUXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ secrets.NUXT_PUBLIC_CF_ANALYTICS_TOKEN }}
-      NUXT_PUBLIC_SENTRY_DSN: ${{ secrets.NUXT_PUBLIC_SENTRY_DSN }}
+      NUXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ secrets.CF_WEB_ANALYTICS_TOKEN }}
+      NUXT_PUBLIC_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -67,6 +67,9 @@ jobs:
           fi
 
       - name: Generate static site
+        env:
+          NUXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ secrets.CF_WEB_ANALYTICS_TOKEN }}
+          NUXT_PUBLIC_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           pnpm exec nuxi generate
           test -d .output/public
