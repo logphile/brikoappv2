@@ -61,7 +61,8 @@ self.onmessage = async (e: MessageEvent<WorkerIn>) => {
       bomGreedy,
       timings: { preprocess: t1 - t0, quantize: t2 - t1, tile: (greedy ? t3 - t2 : 0), bom: 0, total: t3 - t0 }
     }
-    post(out, [out.indexes.buffer, out.quantizedIndexes!.buffer])
+    // Do not transfer pixel buffers; structured clone is fine here.
+    post(out)
   } catch (err: any) {
     ;(self as any).postMessage({ type: 'error', message: err?.message || String(err) })
   }
