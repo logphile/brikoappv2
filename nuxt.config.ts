@@ -31,7 +31,10 @@ export default defineNuxtConfig({
     publicAssets: [
       { dir: resolve(rootDir, 'public') }
     ],
-    prerender: { crawlLinks: true, routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login'] }
+    prerender: {
+      crawlLinks: true,
+      routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login', '/studio', '/community-studio']
+    }
   },
   vite: {
     worker: { format: 'es' }

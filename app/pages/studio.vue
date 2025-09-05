@@ -1,31 +1,36 @@
 <template>
-  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-8 md:grid-cols-4">
-    <div class="md:col-span-1"><StudioControls @run="onRun" @export="onExport" /></div>
-    <div class="md:col-span-2"><StudioCanvas /></div>
-    <div class="md:col-span-1"><StudioStats /></div>
-  </div>
+  <main class="mx-auto max-w-5xl px-6 py-10 text-white">
+    <h1 class="text-2xl font-semibold">Briko Studio</h1>
+    <p class="opacity-80 text-sm">Loading your Studio…</p>
+    <div class="mt-6 text-sm">
+      <p>If you are not redirected, go to <NuxtLink to="/community-studio" class="underline">Community Studio</NuxtLink> or <NuxtLink to="/projects" class="underline">Your Projects</NuxtLink>.</p>
+    </div>
+  </main>
+  
+  <!-- noscript fallback -->
+  <noscript>
+    <div class="mx-auto max-w-5xl px-6 py-6 text-white/80">
+      JavaScript is required to load your Studio. Visit <a href="/community-studio" class="underline">Community Studio</a>.
+    </div>
+  </noscript>
 </template>
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useProjectStore } from '@/stores/project'
-import { usePalette } from '@/composables/usePalette'
-import { useHead } from 'nuxt/app'
-const store = useProjectStore()
-const { load } = usePalette()
+import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
 
 // SEO
 useHead({
-  title: 'Studio',
+  title: 'Briko Studio',
   meta: [
-    { name: 'description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
-    { property: 'og:title', content: 'Studio | Briko' },
-    { property: 'og:description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
+    { name: 'description', content: 'Your creative hub — explore community builds or manage your own projects.' },
+    { property: 'og:title', content: 'Briko Studio | Briko' },
+    { property: 'og:description', content: 'Your creative hub — explore community builds or manage your own projects.' },
     { property: 'og:type', content: 'website' },
     { property: 'og:url', content: 'https://briko.app/studio' },
     { property: 'og:image', content: 'https://briko.app/og-default.png' },
     { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Studio | Briko' },
-    { name: 'twitter:description', content: 'Advanced brick-building tools in one workspace. Run, preview, and export builds.' },
+    { name: 'twitter:title', content: 'Briko Studio | Briko' },
+    { name: 'twitter:description', content: 'Your creative hub — explore community builds or manage your own projects.' },
     { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
   ],
   link: [
@@ -33,8 +38,20 @@ useHead({
   ]
 })
 
-onMounted(() => load())
+const router = useRouter()
+const { $supabase } = useNuxtApp() as any
 
-function onRun() { store.setBOM([], 0) }
-function onExport() { /* TODO: export */ }
+onMounted(async () => {
+  try {
+    if (!$supabase) {
+      await router.replace('/community-studio')
+      return
+    }
+    const { data } = await $supabase.auth.getUser()
+    if (data?.user) await router.replace('/projects')
+    else await router.replace('/community-studio')
+  } catch {
+    await router.replace('/community-studio')
+  }
+})
 </script>

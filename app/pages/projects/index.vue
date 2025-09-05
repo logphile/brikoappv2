@@ -5,11 +5,14 @@
         <h1 class="text-2xl font-semibold">Your Projects</h1>
         <p class="opacity-80 text-sm">Private by default. Make them public to share.</p>
       </div>
-      <NuxtLink to="/projects/new" class="px-4 py-2 rounded-xl bg-cta-grad">New Project</NuxtLink>
+      <div class="flex items-center gap-2">
+        <NuxtLink to="/community-studio" class="px-4 py-2 rounded-2xl border border-white/20 hover:border-white/40">Community Studio</NuxtLink>
+        <NuxtLink to="/projects/new" class="px-4 py-2 rounded-2xl bg-cta-grad">New Project</NuxtLink>
+      </div>
     </div>
 
     <div v-if="!user" class="mt-6 text-sm">
-      Please <NuxtLink to="/login" class="underline">login</NuxtLink> to manage projects.
+      Please <NuxtLink to="/login" class="underline">login</NuxtLink> to manage projects, or explore the <NuxtLink to="/community-studio" class="underline">Community Studio</NuxtLink>.
     </div>
 
     <section v-else class="mt-6 grid gap-4">
