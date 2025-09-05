@@ -1,15 +1,7 @@
-import { defineNuxtPlugin, useHead, useRuntimeConfig } from 'nuxt/app'
+import { defineNuxtPlugin } from 'nuxt/app'
 
+// Cloudflare Web Analytics is injected during SSR/SSG via useHead in app/app.vue.
+// This client plugin is intentionally a no-op to avoid duplicate beacons.
 export default defineNuxtPlugin(() => {
-  const token = useRuntimeConfig().public.cloudflareAnalyticsToken
-  if (!token) return
-  useHead({
-    script: [
-      {
-        src: 'https://static.cloudflareinsights.com/beacon.min.js',
-        defer: true,
-        'data-cf-beacon': `{"token":"${token}"}`
-      } as any
-    ]
-  })
+  // no-op
 })
