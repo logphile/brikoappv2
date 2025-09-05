@@ -15,12 +15,23 @@
 </template>
 
 <script setup lang="ts">
-import { useHead } from 'nuxt/app'
+import { useHead, useRuntimeConfig } from 'nuxt/app'
 import AppHeader from '@/components/AppHeader.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
 import { useSiteMeta } from '@/composables/useSiteMeta'
 
 const { siteName, siteUrl } = useSiteMeta()
+// Inject the Cloudflare Web Analytics beacon during SSR/SSG so it appears in View-Source
+const token = useRuntimeConfig().public.cloudflareAnalyticsToken
+useHead({
+  script: token
+    ? [{
+      key: 'cf-beacon',
+      src: `https://static.cloudflareinsights.com/beacon.min.js?token=${token}`,
+      defer: true
+    }]
+    : []
+})
 const appJsonLd = {
   '@context': 'https://schema.org',
   '@type': ['WebApplication','SoftwareApplication'],
