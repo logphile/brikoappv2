@@ -88,8 +88,6 @@ useHead({
         Photo to Bricks
       </NuxtLink>
     </div>
-
-    <p class="mt-10 text-xs opacity-60">Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.</p>
   </main>
 </template>
 
