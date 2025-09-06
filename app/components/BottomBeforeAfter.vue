@@ -4,9 +4,9 @@ import { defineAsyncComponent } from 'vue'
 // Avoid SSR issues in Nuxt by async-loading on client
 const VueCompareImage = defineAsyncComponent(() => import('vue-compare-image'))
 
-// You can switch to '/slider-original.jpg' and '/slider-mosaic.jpg' if you rename the assets
-const leftImage = '/demo-original.jpg'
-const rightImage = '/demo-mosaic.jpg'
+// Use slider-specific demo images placed in /public
+const leftImage = '/slider-original.jpg'
+const rightImage = '/slider-mosaic.jpg'
 </script>
 
 <template>
