@@ -11,6 +11,7 @@
       <span class="ml-auto">© {{ new Date().getFullYear() }} {{ siteName }}</span>
     </div>
   </footer>
+  <FooterDisclaimer />
   <ToastHost />
   <ConsentBanner />
 </template>
@@ -20,6 +21,7 @@ import { useHead, useRuntimeConfig } from 'nuxt/app'
 import AppHeader from '@/components/AppHeader.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
 import ConsentBanner from '@/components/ConsentBanner.vue'
+import FooterDisclaimer from '@/components/FooterDisclaimer.vue'
 import { useSiteMeta } from '@/composables/useSiteMeta'
 
 const { siteName, siteUrl } = useSiteMeta()
