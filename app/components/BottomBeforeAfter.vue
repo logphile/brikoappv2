@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue'
-
-// Avoid SSR issues in Nuxt by async-loading on client
-const VueCompareImage = defineAsyncComponent(() => import('vue-compare-image'))
-
 // Use slider-specific demo images placed in /public
 const leftImage = '/slider-original.jpg'
 const rightImage = '/slider-mosaic.jpg'
@@ -18,10 +13,10 @@ const rightImage = '/slider-mosaic.jpg'
         <div class="relative mx-auto w-full rounded-2xl border border-white/10 bg-white/5 p-3">
           <div class="rounded-xl overflow-hidden h-[420px] md:h-[560px]">
             <VueCompareImage
-              :leftImage="leftImage"
-              :rightImage="rightImage"
-              :sliderLineColor="'#00E5A0'"
-              :sliderLineWidth="3"
+              :left-image="leftImage"
+              :right-image="rightImage"
+              :slider-line-color="'#00E5A0'"
+              :slider-line-width="3"
               hover
             />
           </div>

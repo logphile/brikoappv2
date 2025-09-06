@@ -4,7 +4,6 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import HeroSection from '~/components/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
 import BottomBeforeAfter from '~/components/BottomBeforeAfter.vue'
-import { defineAsyncComponent } from 'vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -24,12 +23,12 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery
-    { rel: 'preload', as: 'image', href: '/slider-mosaic.jpg' }
+    { rel: 'preload', as: 'image', href: '/slider-mosaic.jpg' },
+    { rel: 'preload', as: 'image', href: '/slider-original.jpg' }
   ]
 })
 
-// Async-load the before/after slider to avoid SSR issues
-const VueCompareImage = defineAsyncComponent(() => import('vue-compare-image'))
+// VueCompareImage is globally registered by plugins/vue-compare-image.client.ts
 
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
@@ -59,22 +58,9 @@ useHead({
     <main class="px-6 py-16 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
       <section class="mt-4 grid md:grid-cols-2 gap-8 items-center">
-        <ClientOnly>
-          <div class="relative rounded-2xl border border-white/10 bg-white/5 p-3">
-            <div class="rounded-xl overflow-hidden h-[340px] md:h-[420px]">
-              <VueCompareImage
-                :leftImage="'/slider-original.jpg'"
-                :rightImage="'/slider-mosaic.jpg'"
-                :sliderLineColor="'#00E5A0'"
-                :sliderLineWidth="3"
-                hover
-              />
-            </div>
-          </div>
-          <template #fallback>
-            <div class="rounded-2xl h-[340px] md:h-[420px] bg-white/5 border border-white/10" />
-          </template>
-        </ClientOnly>
+        <div class="rounded-2xl overflow-hidden h-[340px] md:h-[420px]">
+          <HeroDemo :original-src="'/slider-original.jpg'" :mosaic-src="'/slider-mosaic.jpg'" :fixed-height="true" />
+        </div>
         <ul class="space-y-3 text-base md:text-lg">
           <li>• Instant LEGO-style color mapping</li>
           <li>• Greedy tiling → fewer plates, cleaner look</li>
