@@ -18,22 +18,26 @@ const mosaicOk = ref(true)
 defineProps<{
   originalSrc?: string
   mosaicSrc?: string
+  fixedHeight?: boolean
 }>()
 </script>
 
 <template>
-  <div class="hero-demo relative rounded-3xl bg-white/5 ring-1 ring-white/10 p-4">
+  <div class="hero-demo relative rounded-3xl bg-white/5 ring-1 ring-white/10 p-4 h-full">
     <div class="rounded-2xl overflow-hidden shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
       <!-- canvas -->
-      <div class="relative aspect-[3/4] sm:aspect-[4/3] bg-gradient-to-br from-neutral-100/60 to-neutral-800/40">
+      <div :class="[
+             fixedHeight ? 'relative h-full' : 'relative aspect-[3/4] sm:aspect-[4/3]',
+             'bg-gradient-to-br from-neutral-100/60 to-neutral-800/40'
+           ]">
         <!-- base: original -->
-        <img v-show="originalOk" :src="originalSrc || '/demo/original.jpg'" @error="originalOk=false"
+        <img v-show="originalOk" :src="originalSrc || '/demo/original.jpg'" @error="(e)=>{ (e.target as HTMLImageElement).src = '/og-default.png' }"
              alt="Original photo"
              class="absolute inset-0 h-full w-full object-cover select-none pointer-events-none" />
 
         <!-- overlay: mosaic, clipped by slider -->
         <div class="absolute inset-0 overflow-hidden" :style="{ width: pos + '%' }">
-          <img v-show="mosaicOk" :src="mosaicSrc || '/demo/mosaic.jpg'" @error="mosaicOk=false"
+          <img v-show="mosaicOk" :src="mosaicSrc || '/demo/mosaic.jpg'" @error="(e)=>{ (e.target as HTMLImageElement).src = '/demo-mosaic.png' }"
                alt="Mosaic preview"
                class="h-full w-full object-cover select-none pointer-events-none" />
           <!-- studs texture overlay -->
@@ -69,7 +73,7 @@ defineProps<{
         <!-- slider control -->
         <input type="range" min="0" max="100" v-model="pos" aria-label="Compare slider"
                class="absolute bottom-10 sm:bottom-4 left-1/2 -translate-x-1/2 w-[70%]
-                      [--c:#FF5A1F] appearance-none h-2 rounded-full bg-white/20
+                      [--c:#00E5A0] appearance-none h-2 rounded-full bg-white/20
                       [&::-webkit-slider-thumb]:appearance-none
                       [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4
                       [&::-webkit-slider-thumb]:rounded-full

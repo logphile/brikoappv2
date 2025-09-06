@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // No props needed yet
 // Bind image sources via runtime strings to prevent Vite from transforming into static imports during build
-const originalImg = '/hero-demo-original.jpg'
-const mosaicImg = '/hero-demo-mosaic.jpg'
+const originalImg = '/demo-original.jpg'
+const mosaicImg = '/demo-mosaic.jpg'
 </script>
 
 <template>

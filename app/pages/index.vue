@@ -3,6 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import HeroSection from '~/components/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
+import HeroDemo from '~/components/HeroDemo.client.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -91,6 +92,23 @@ useHead({
 
       <p class="mt-8 text-xs opacity-60">Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.</p>
     </main>
+
+    <!-- Before/After slider section (full-width) -->
+    <section class="py-16">
+      <div class="mx-auto max-w-7xl px-6">
+        <h2 class="text-center text-2xl sm:text-3xl font-bold mb-6">
+          See the Magic in Action
+        </h2>
+      </div>
+      <div class="mx-auto max-w-6xl px-6 h-[400px] md:h-[500px]">
+        <ClientOnly>
+          <HeroDemo :originalSrc="'/og-default.png'" :mosaicSrc="'/demo-mosaic.png'" :fixedHeight="true" />
+        </ClientOnly>
+        <p class="mt-4 text-center text-sm text-gray-400">
+          Slide to compare → Original vs. Briko mosaic
+        </p>
+      </div>
+    </section>
   </div>
 </template>
 
