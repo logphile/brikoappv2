@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const pos = ref(60) // slider position (percent)
 let drag = false
@@ -15,29 +15,47 @@ function onDrag(e: PointerEvent) {
 }
 const originalOk = ref(true)
 const mosaicOk = ref(true)
-defineProps<{
+const props = defineProps<{
   originalSrc?: string
   mosaicSrc?: string
   fixedHeight?: boolean
 }>()
+
+const originalUrl = ref(props.originalSrc || '/slider-original.jpg')
+const mosaicUrl = ref(props.mosaicSrc || '/slider-mosaic.jpg')
+
+function loadWithFallback(src: string, fallback: string, setter: (v: string) => void) {
+  const img = new Image()
+  img.onload = () => setter(src)
+  img.onerror = () => setter(fallback)
+  img.src = src
+}
+
+function refreshSources() {
+  loadWithFallback(props.originalSrc || '/slider-original.jpg', '/og-default.png', (v) => (originalUrl.value = v))
+  loadWithFallback(props.mosaicSrc || '/slider-mosaic.jpg', '/demo-mosaic.png', (v) => (mosaicUrl.value = v))
+}
+
+onMounted(refreshSources)
+watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
 </script>
 
 <template>
   <div class="hero-demo relative rounded-3xl bg-white/5 ring-1 ring-white/10 p-4 h-full">
-    <div class="rounded-2xl overflow-hidden shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+    <div class="rounded-2xl overflow-hidden shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] h-full">
       <!-- canvas -->
       <div :class="[
              fixedHeight ? 'relative h-full' : 'relative aspect-[3/4] sm:aspect-[4/3]',
              'bg-gradient-to-br from-neutral-100/60 to-neutral-800/40'
            ]">
         <!-- base: original -->
-        <img v-show="originalOk" :src="originalSrc || '/demo/original.jpg'" @error="(e)=>{ (e.target as HTMLImageElement).src = '/og-default.png' }"
+        <img :src="originalUrl"
              alt="Original photo"
              class="absolute inset-0 h-full w-full object-cover select-none pointer-events-none" />
 
         <!-- overlay: mosaic, clipped by slider -->
         <div class="absolute inset-0 overflow-hidden" :style="{ width: pos + '%' }">
-          <img v-show="mosaicOk" :src="mosaicSrc || '/demo/mosaic.jpg'" @error="(e)=>{ (e.target as HTMLImageElement).src = '/demo-mosaic.png' }"
+          <img :src="mosaicUrl"
                alt="Mosaic preview"
                class="h-full w-full object-cover select-none pointer-events-none" />
           <!-- studs texture overlay -->
