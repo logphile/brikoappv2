@@ -24,7 +24,7 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery
-    { rel: 'preload', as: 'image', href: '/demo-mosaic.jpg' }
+    { rel: 'preload', as: 'image', href: '/slider-mosaic.jpg' }
   ]
 })
 
@@ -63,8 +63,8 @@ useHead({
           <div class="relative rounded-2xl border border-white/10 bg-white/5 p-3">
             <div class="rounded-xl overflow-hidden h-[340px] md:h-[420px]">
               <VueCompareImage
-                :leftImage="'/demo-original.jpg'"
-                :rightImage="'/demo-mosaic.jpg'"
+                :leftImage="'/slider-original.jpg'"
+                :rightImage="'/slider-mosaic.jpg'"
                 :sliderLineColor="'#00E5A0'"
                 :sliderLineWidth="3"
                 hover
