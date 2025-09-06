@@ -79,7 +79,14 @@ useHead({
 
     <!-- CTA -->
     <div class="text-center mt-10">
-      <NuxtLink to="/mosaic" class="px-5 py-3 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white font-semibold shadow">Try Mosaic Builder</NuxtLink>
+      <NuxtLink
+        to="/mosaic"
+        class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-base font-semibold
+               shadow-sm ring-1 ring-transparent transition
+               bg-[#00E5A0] text-[#111827] hover:opacity-90"
+      >
+        Photo to Bricks
+      </NuxtLink>
     </div>
 
     <p class="mt-10 text-xs opacity-60">Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.</p>
