@@ -7,7 +7,7 @@ const mosaicImg = '/hero-demo-mosaic.jpg'
 
 <template>
   <section class="relative overflow-hidden bg-[#0B1220] text-white">
-    <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
       <!-- Brand compact header (optional if already in layout) -->
       <!-- Headline -->
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
@@ -23,7 +23,7 @@ const mosaicImg = '/hero-demo-mosaic.jpg'
       </p>
 
       <!-- Process Flow: Upload → Preview → Export -->
-      <ol class="mt-6 flex flex-wrap items-center gap-3 text-sm font-medium">
+      <ol class="mt-6 flex flex-wrap items-center gap-3 text-sm font-medium justify-center">
         <li class="inline-flex items-center gap-2 rounded-full border border-gray-700/70 bg-white/5 px-4 py-2">
           <span class="i-lucide-upload" aria-hidden="true"></span><span>Upload</span>
         </li>
@@ -38,7 +38,7 @@ const mosaicImg = '/hero-demo-mosaic.jpg'
       </ol>
 
       <!-- CTAs -->
-      <div class="mt-8 flex flex-wrap items-center gap-4">
+      <div class="mt-8 flex flex-wrap items-center gap-4 justify-center">
         <!-- Primary: Photo to Bricks -->
         <NuxtLink
           to="/mosaic"
@@ -61,8 +61,11 @@ const mosaicImg = '/hero-demo-mosaic.jpg'
         </NuxtLink>
       </div>
 
+      <!-- Visual divider -->
+      <div class="h-px w-24 bg-[#00E5A0] mx-auto my-10"></div>
+
       <!-- Demo: replace purple gradient with a simple before/after -->
-      <div class="mt-12 grid gap-6 md:grid-cols-2">
+      <div class="mt-12 grid gap-6 md:grid-cols-2 mx-auto max-w-4xl md:max-w-5xl justify-center">
         <!-- Original -->
         <figure class="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
           <img
@@ -89,7 +92,7 @@ const mosaicImg = '/hero-demo-mosaic.jpg'
       </div>
 
       <!-- Caption under demo -->
-      <p class="mt-4 text-sm text-gray-400">
+      <p class="mt-4 text-sm text-gray-400 text-center">
         Here’s what Briko can do in seconds! Not affiliated with LEGO® Group.
       </p>
     </div>
