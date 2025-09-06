@@ -1,7 +1,5 @@
 <script setup lang="ts">
-// Use large slider images placed in /public (with cache-busting)
-const leftImage = '/lg-slider-original.jpg?v=1'
-const rightImage = '/large-slider-mosaic.jpg?v=1'
+import HeroDemo from '~/components/HeroDemo.client.vue'
 </script>
 
 <template>
@@ -12,13 +10,7 @@ const rightImage = '/large-slider-mosaic.jpg?v=1'
       <ClientOnly>
         <div class="relative mx-auto w-full rounded-2xl border border-white/10 bg-white/5 p-3">
           <div class="rounded-xl overflow-hidden h-[420px] md:h-[560px]">
-            <VueCompareImage
-              :left-image="leftImage"
-              :right-image="rightImage"
-              :slider-line-color="'#00E5A0'"
-              :slider-line-width="3"
-              hover
-            />
+            <HeroDemo :original-src="'/lg-slider-original.jpg?v=1'" :mosaic-src="'/large-slider-mosaic.jpg?v=1'" :fixed-height="true" />
           </div>
         </div>
         <template #fallback>
