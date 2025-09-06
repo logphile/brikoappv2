@@ -78,27 +78,43 @@
       </li>
     </ul>
 
-    <!-- Micro-badges / trust row -->
-    <div class="mt-5 flex flex-wrap items-center gap-2">
-      <span class="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1.5 text-xs text-gray-300 ring-1 ring-white/10">
-        <!-- Clock -->
-        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 text-[#00E5A0]" fill="currentColor">
+    <!-- Trust badges / stats row (equal width, fills the column) -->
+    <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+      <!-- Badge 1 -->
+      <div
+        class="flex items-center justify-center gap-2 rounded-full bg-white/5
+               py-2.5 px-4 text-sm text-gray-200 ring-1 ring-white/10
+               hover:ring-[#00E5A0]/30 transition min-h-[44px]"
+      >
+        <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#00E5A0]" fill="currentColor" aria-hidden="true">
           <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5h-2v6l5 3 1-1-4-2V7Z"/>
         </svg>
-        <span>&lt; 2s preview</span>
-      </span>
-      <span class="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1.5 text-xs text-gray-300 ring-1 ring-white/10">
-        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 text-[#00E5A0]" fill="currentColor">
+        <span class="whitespace-nowrap">&lt; 2s preview</span>
+      </div>
+
+      <!-- Badge 2 -->
+      <div
+        class="flex items-center justify-center gap-2 rounded-full bg-white/5
+               py-2.5 px-4 text-sm text-gray-200 ring-1 ring-white/10
+               hover:ring-[#00E5A0]/30 transition min-h-[44px]"
+      >
+        <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#00E5A0]" fill="currentColor" aria-hidden="true">
           <path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2Z"/>
         </svg>
-        <span>Free to try</span>
-      </span>
-      <span class="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1.5 text-xs text-gray-300 ring-1 ring-white/10">
-        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 text-[#00E5A0]" fill="currentColor">
+        <span class="whitespace-nowrap">Free to try</span>
+      </div>
+
+      <!-- Badge 3 -->
+      <div
+        class="flex items-center justify-center gap-2 rounded-full bg-white/5
+               py-2.5 px-4 text-sm text-gray-200 ring-1 ring-white/10
+               hover:ring-[#00E5A0]/30 transition min-h-[44px]"
+      >
+        <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#00E5A0]" fill="currentColor" aria-hidden="true">
           <path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Z"/>
         </svg>
-        <span>No signup required</span>
-      </span>
+        <span class="whitespace-nowrap">No signup required</span>
+      </div>
     </div>
   </div>
 </template>
