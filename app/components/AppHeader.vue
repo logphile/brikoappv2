@@ -1,36 +1,74 @@
 <template>
-  <header class="w-full border-b border-white/10 bg-black/40 backdrop-blur sticky top-0 z-40">
-    <nav class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between text-white">
-      <NuxtLink to="/" class="font-bold text-xl">Briko</NuxtLink>
-      <div class="flex items-center gap-4 text-sm">
-        <NuxtLink to="/mosaic" class="hover:underline" title="Turn any photo into brick art in seconds.">Photo to Bricks</NuxtLink>
-        <NuxtLink to="/voxel" class="hover:underline" title="Build and explore your creation in 3D.">3D Builder</NuxtLink>
-        <NuxtLink to="/avatar" class="hover:underline" title="Make a fun brick avatar of you.">Brick Yourself</NuxtLink>
-        <NuxtLink to="/studio" class="hover:underline" title="Your creative hub — explore builds and save your own.">Briko Studio</NuxtLink>
-        <div class="h-5 w-px bg-white/20 mx-1"></div>
-        <div v-if="loading" class="opacity-70">…</div>
-        <NuxtLink v-else-if="!user" to="/login" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20">Login</NuxtLink>
-        <div v-else class="relative">
-          <button @click="open = !open" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 flex items-center gap-2">
-            <span class="hidden sm:inline">{{ user?.email }}</span>
-            <span class="sm:hidden">Account</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 opacity-80"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+  <header class="sticky top-0 z-50 bg-[#0B0E13]/95 border-b border-white/5 backdrop-blur">
+    <nav class="mx-auto max-w-7xl px-4 md:px-6">
+      <div class="h-14 md:h-16 flex items-center justify-between">
+        <!-- Brand -->
+        <NuxtLink to="/" class="flex items-center gap-2">
+          <img src="/brand/briko-icon-mono.svg" class="h-6 w-6 md:h-7 md:w-7" alt="" />
+          <span class="text-white font-semibold text-lg md:text-xl">Briko</span>
+        </NuxtLink>
+
+        <!-- Main nav -->
+        <ul class="hidden md:flex items-center gap-3 lg:gap-5">
+          <li v-for="item in items" :key="item.href">
+            <NuxtLink
+              :to="item.href"
+              :aria-current="isActive(item.href) ? 'page' : undefined"
+              class="group relative inline-flex items-center px-3 py-2 rounded-lg
+                     text-[15px] lg:text-base font-medium
+                     text-white/75 hover:text-white transition-colors
+                     focus-visible:outline-none focus-visible:ring-2
+                     focus-visible:ring-[#00E5A0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0E13]">
+              {{ item.name }}
+              <!-- mint underbar -->
+              <span
+                class="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-0.5 w-0
+                       rounded-full bg-[#00E5A0] transition-all duration-200
+                       group-hover:w-3/5"
+                :class="isActive(item.href) ? 'w-3/5' : ''"></span>
+              <!-- subtle pill hover bg -->
+              <span class="absolute inset-0 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+            </NuxtLink>
+          </li>
+        </ul>
+
+        <!-- Account / CTA -->
+        <div class="flex items-center gap-2">
+          <NuxtLink v-if="!loading && user" to="/login"
+            class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
+                   text-white/90 hover:bg-white/15 transition-colors">
+            {{ user.email }}
+          </NuxtLink>
+          <NuxtLink v-else to="/login"
+            class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
+                   text-white/90 hover:bg-white/15 transition-colors">
+            Login
+          </NuxtLink>
+          <!-- mobile menu button placeholder -->
+          <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-white/80 hover:text-white hover:bg-white/10">
+            <span class="i-lucide-menu h-5 w-5">≡</span>
           </button>
-          <div v-if="open" class="absolute right-0 mt-2 w-48 rounded-lg bg-black/90 ring-1 ring-white/15 p-1 shadow-lg">
-            <NuxtLink to="/account/login" class="block px-3 py-2 rounded hover:bg-white/10">Settings</NuxtLink>
-            <button @click="logoutAndClose" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Sign out</button>
-          </div>
         </div>
       </div>
     </nav>
   </header>
+  
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-const { user, loading, logout, refreshUser } = useAuth()
-const open = ref(false)
-function logoutAndClose(){ open.value = false; logout() }
-onMounted(() => { refreshUser() })
+
+const route = useRoute()
+const items = [
+  { name: 'Photo to Bricks', href: '/mosaic' },
+  { name: '3D Builder',      href: '/voxel' },
+  { name: 'Brick Yourself',  href: '/avatar' },
+  { name: 'Briko Studio',    href: '/studio' },
+]
+const isActive = (href: string) => route.path.startsWith(href)
+
+const { user, loading, refreshUser } = useAuth()
+onMounted(() => { try { refreshUser() } catch {} })
 </script>
