@@ -15,7 +15,7 @@ const mosaicImg = '/hero-demo-mosaic.jpg'
       </h1>
 
       <!-- Subtext -->
-      <p class="mt-4 max-w-3xl text-lg sm:text-xl text-gray-300">
+      <p class="mt-4 max-w-3xl text-lg sm:text-xl text-gray-300 text-center mx-auto">
         Upload your favorite photo <span class="mx-1 text-[#00E5A0]">→</span>
         see it transformed into a LEGO-style mosaic or 3D model
         <span class="mx-1 text-[#00E5A0]">→</span>
