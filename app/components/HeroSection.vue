@@ -1,5 +1,8 @@
 <script setup lang="ts">
 // No props needed yet
+// Bind image sources via runtime strings to prevent Vite from transforming into static imports during build
+const originalImg = '/hero-demo-original.jpg'
+const mosaicImg = '/hero-demo-mosaic.jpg'
 </script>
 
 <template>
@@ -63,7 +66,7 @@
         <!-- Original -->
         <figure class="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
           <img
-            src="/hero-demo-original.jpg"
+            :src="originalImg"
             @error="(e) => ((e.target as HTMLImageElement).src = '/og-default.png')"
             alt="Original photo uploaded to Briko"
             class="w-full h-64 md:h-72 object-cover"
@@ -74,7 +77,7 @@
         <!-- Mosaic Result -->
         <figure class="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
           <img
-            src="/hero-demo-mosaic.jpg"
+            :src="mosaicImg"
             @error="(e) => ((e.target as HTMLImageElement).src = '/demo-mosaic.png')"
             alt="Photo transformed into a LEGO-style mosaic"
             class="w-full h-64 md:h-72 object-cover"
