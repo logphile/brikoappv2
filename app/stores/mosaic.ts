@@ -5,7 +5,7 @@ import type { MosaicSettings, TiledBrick, TilingResult, StudSize } from '@/types
 import { MosaicSettingsSchema } from '@/schemas/mosaic'
 import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
-import { downloadBomCsvWeek1, downloadPng } from '@/lib/exporters'
+import { downloadBomCsvWeek1, downloadPng, downloadBomCsvV2 } from '@/lib/exporters'
 import { legoPalette } from '@/lib/palette/lego'
 import { createWorkerTask } from '@/utils/worker-task'
 import { toPlain } from '@/utils/deproxy'
@@ -144,7 +144,8 @@ export const useMosaicStore = defineStore('mosaic', {
 
     exportCSV() {
       if (!this.tilingResult) return
-      downloadBomCsvWeek1(this.tilingResult.bom, 'briko-bom.csv')
+      // Normalized CSV v2
+      downloadBomCsvV2(this.tilingResult.bom as any, 'briko-shopping-list.csv')
     },
 
     setCurrentProject(id: string | null) { this.currentProjectId = id },

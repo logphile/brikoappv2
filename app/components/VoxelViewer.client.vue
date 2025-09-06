@@ -72,6 +72,8 @@ function buildGroup() {
   }
 
   scene.add(group)
+  // After building, frame the camera & controls around the content
+  frameToContent()
 }
 
 function resize() {
@@ -113,17 +115,17 @@ onMounted(() => {
   // Controls
   controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
+  controls.dampingFactor = 0.07
+  // Keep interaction mostly top-down; allow gentle orbit
+  controls.maxPolarAngle = Math.PI / 2.1
+  // Tweak navigation feel
   controls.minDistance = 10
   controls.maxDistance = 2000
-  controls.enablePan = false
+  controls.enablePan = true
+  controls.panSpeed = 0.3
 
-  // Frame mosaic centrally at start
-  const s = props.studSize ?? 1
-  const maxX = Math.max(1, ...props.bricks.map(b => b.x + b.w)) * s
-  const maxY = Math.max(1, ...props.bricks.map(b => b.y + b.h)) * s
-  const size = Math.max(maxX, maxY)
-  camera.position.set(size * 0.8, -size * 0.8, size * 1.2)
-  camera.lookAt(new (THREE as any).Vector3(size / 2, size / 2, 0))
+  // Initial frame
+  frameToContent()
 
   buildGroup()
   animate()
@@ -142,4 +144,36 @@ onBeforeUnmount(() => {
 // Rebuild on layer change quickly; on bricks change when a new tiling result arrives
 watch(() => props.visibleLayers, () => requestAnimationFrame(buildGroup))
 watch(() => props.bricks, () => requestAnimationFrame(buildGroup))
+
+// Frame camera and controls to fit current group content
+function frameToContent() {
+  if (!camera || !controls) return
+  // Compute bounds from group if available; fallback to bricks extents
+  const s = props.studSize ?? 1
+  let box: any
+  if (group && group.children && group.children.length) {
+    box = new (THREE as any).Box3().setFromObject(group)
+  } else {
+    const min = new (THREE as any).Vector3(0, 0, 0)
+    const maxX = Math.max(1, ...props.bricks.map(b => b.x + b.w)) * s
+    const maxY = Math.max(1, ...props.bricks.map(b => b.y + b.h)) * s
+    const max = new (THREE as any).Vector3(maxX, maxY, s)
+    box = new (THREE as any).Box3(min, max)
+  }
+  const center = box.getCenter(new (THREE as any).Vector3())
+  const sizeV = box.getSize(new (THREE as any).Vector3())
+  const maxSize = Math.max(sizeV.x, sizeV.y)
+  const fov = (camera.fov ?? 45) * Math.PI / 180
+  const dist = (maxSize / 2) / Math.tan(fov / 2)
+  // Place camera slightly offset for a top-down-ish feel
+  const eye = new (THREE as any).Vector3(center.x, center.y - dist * 0.9, dist * 1.1)
+  camera.position.copy(eye)
+  controls.target.copy(center)
+  camera.near = Math.max(0.1, dist / 100)
+  camera.far = Math.max(1000, dist * 10)
+  camera.updateProjectionMatrix()
+  // Adjust navigation ranges relative to content size
+  controls.minDistance = Math.max(2, maxSize * 0.3)
+  controls.maxDistance = Math.max(controls.minDistance + 1, maxSize * 3)
+}
 </script>

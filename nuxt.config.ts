@@ -45,7 +45,10 @@ export default defineNuxtConfig({
       titleTemplate: `%s | ${process.env.NUXT_PUBLIC_SITE_NAME || 'Briko'}`,
       meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
       link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/png', href: '/briko-favicon-32.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/briko-icon-apple-180.png' },
+        { rel: 'manifest', href: '/manifest.webmanifest' }
       ]
     }
   }

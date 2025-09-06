@@ -40,6 +40,7 @@ function mark(covered: Uint8Array, width: number, x: number, y: number, w: numbe
 self.onmessage = (e: MessageEvent<InMsg>) => {
   const { grid, width, height, settings } = e.data
   const candidates = makeCandidates(settings)
+  const allowOne = candidates.some(([w, h]) => w === 1 && h === 1)
   const covered = new Uint8Array(width * height)
   const bricks: TiledBrick[] = []
   let coveredCount = 0
@@ -67,11 +68,18 @@ self.onmessage = (e: MessageEvent<InMsg>) => {
         }
       }
       if (!placed) {
-        mark(covered, width, x, y, 1, 1)
-        const brick = { x, y, w: 1, h: 1, colorId: color }
-        bricks.push(brick)
-        partial.push(brick)
-        coveredCount += 1
+        if (allowOne) {
+          // Only place singles if allowed
+          mark(covered, width, x, y, 1, 1)
+          const brick = { x, y, w: 1, h: 1, colorId: color }
+          bricks.push(brick)
+          partial.push(brick)
+          coveredCount += 1
+        } else {
+          // Strict enforcement: mark covered but do not place disallowed 1×1
+          mark(covered, width, x, y, 1, 1)
+          coveredCount += 1
+        }
       }
 
       const now = performance.now()
