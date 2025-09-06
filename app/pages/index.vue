@@ -5,6 +5,7 @@ import HeroSection from '~/components/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
 import FeatureBites from '~/components/FeatureBites.vue'
 import BottomBeforeAfter from '~/components/BottomBeforeAfter.vue'
+import HowItWorksSection from '~/components/HowItWorksSection.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -67,12 +68,8 @@ useHead({
         </div>
       </section>
 
-      <!-- How It Works teaser -->
-      <section class="mt-16 rounded-2xl border border-white/10 p-6 md:p-8 text-center">
-        <h2 class="text-2xl md:text-3xl font-bold">How it works</h2>
-        <p class="mt-2 opacity-80">1) Upload  2) Pick size & palette  3) Generate  4) Export</p>
-        <NuxtLink to="/how-it-works" class="inline-block mt-5 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15">See Full Guide</NuxtLink>
-      </section>
+      <!-- How It Works -->
+      <HowItWorksSection />
 
       <p class="mt-8 text-xs opacity-60">Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.</p>
     </main>
