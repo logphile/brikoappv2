@@ -4,30 +4,27 @@
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
         <NuxtLink to="/" class="flex items-center gap-2">
-          <img src="/brand/briko-icon-mono.svg" class="h-6 w-6 md:h-7 md:w-7" alt="" />
+          <img src="/brand/briko-icon-accent.svg" class="h-6 w-6 md:h-7 md:w-7" alt="Briko" />
           <span class="text-white font-semibold text-lg md:text-xl">Briko</span>
         </NuxtLink>
 
         <!-- Main nav -->
-        <ul class="hidden md:flex items-center gap-3 lg:gap-5">
+        <ul class="hidden md:flex items-center gap-4 lg:gap-6">
           <li v-for="item in items" :key="item.href">
             <NuxtLink
               :to="item.href"
               :aria-current="isActive(item.href) ? 'page' : undefined"
-              class="group relative inline-flex items-center px-3 py-2 rounded-lg
+              class="group relative inline-flex items-center px-3 py-2 rounded-md
                      text-[15px] lg:text-base font-medium
                      text-white/75 hover:text-white transition-colors
                      focus-visible:outline-none focus-visible:ring-2
-                     focus-visible:ring-[#00E5A0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0E13]">
+                     focus-visible:ring-[#00E5A0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0E13]
+                     after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5
+                     after:h-0.5 after:rounded-full after:bg-[#00E5A0]
+                     after:origin-center after:scale-x-0 group-hover:after:scale-x-100
+                     after:transition-transform after:duration-200"
+              :class="isActive(item.href) ? 'text-white after:scale-x-100' : ''">
               {{ item.name }}
-              <!-- mint underbar -->
-              <span
-                class="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-0.5 w-0
-                       rounded-full bg-[#00E5A0] transition-all duration-200
-                       group-hover:w-3/5"
-                :class="isActive(item.href) ? 'w-3/5' : ''"></span>
-              <!-- subtle pill hover bg -->
-              <span class="absolute inset-0 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></span>
             </NuxtLink>
           </li>
         </ul>
