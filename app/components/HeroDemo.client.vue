@@ -71,36 +71,23 @@ watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
           Mosaic preview
         </div>
 
-        <!-- drag overlay: divider + handle -->
+        <!-- drag overlay: divider + handle (teal) -->
         <div class="absolute inset-0 z-10" style="touch-action:none"
              @pointerdown="onDrag" @pointermove="onDrag" @pointerup="drag=false" @pointerleave="drag=false">
-          <!-- divider -->
-          <div class="absolute inset-y-4 w-[2px] rounded bg-white/80 shadow-[0_0_0_1px_rgba(255,255,255,.2)]"
+          <!-- divider (teal) -->
+          <div class="absolute inset-y-4 w-[3px] rounded bg-[#00E5A0] shadow-[0_0_0_1px_rgba(0,229,160,.35)]"
                :style="{ left: `calc(${pos}% - 1px)` }"></div>
 
-          <!-- handle -->
+          <!-- handle (larger teal) -->
           <div class="handle absolute bottom-10 sm:bottom-8 -translate-x-1/2 grid place-items-center"
                :style="{ left: `${pos}%` }" aria-hidden="true"
                role="slider" aria-label="Compare slider" aria-valuemin="0" aria-valuemax="100"
                :aria-valuenow="Math.round(pos)">
-            <div class="h-6 w-6 sm:h-5 sm:w-5 rounded-full bg-white shadow-[0_4px_16px_rgba(255,90,31,.35)]
-                        ring-2 ring-white/70 outline-none"></div>
+            <div class="h-8 w-8 sm:h-7 sm:w-7 rounded-full bg-[#00E5A0] shadow-[0_4px_16px_rgba(0,229,160,.35)]
+                        ring-2 ring-[#00E5A0]/70 outline-none"></div>
           </div>
         </div>
 
-        <!-- slider control -->
-        <input type="range" min="0" max="100" v-model="pos" aria-label="Compare slider"
-               class="absolute bottom-10 sm:bottom-4 left-1/2 -translate-x-1/2 w-[70%]
-                      [--c:#00E5A0] appearance-none h-2 rounded-full bg-white/20
-                      [&::-webkit-slider-thumb]:appearance-none
-                      [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4
-                      [&::-webkit-slider-thumb]:rounded-full
-                      [&::-webkit-slider-thumb]:bg-[var(--c)]
-                      [&::-webkit-slider-thumb]:border
-                      [&::-webkit-slider-thumb]:border-white/70
-                      [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4
-                      [&::-moz-range-thumb]:border [&::-moz-range-thumb]:border-white/70
-                      [&::-moz-range-thumb]:bg-[var(--c)]" />
       </div>
     </div>
   </div>
