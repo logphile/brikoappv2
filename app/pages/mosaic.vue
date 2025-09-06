@@ -16,9 +16,11 @@ import { exportBuildGuidePDF } from '@/lib/pdfExport'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
+import { useToasts } from '@/composables/useToasts'
 import { imageBitmapToBuffer } from '@/utils/image-to-buffer'
 
 const mosaic = useMosaicStore()
+const { show: showToast } = useToasts()
 
 // SEO
 useHead({
@@ -71,6 +73,17 @@ const tab = ref<'2D'|'3D'>('2D')
 const dropActive = ref(false)
 // UI toggles
 const showPlates = ref(false)
+// Advanced options gate
+const showAdvanced = ref(false)
+// Preview quality for first pass
+const previewQuality = ref(64) // studs on first progressive run
+// Size readouts helpers
+const mmPerStud = 8
+const inPerMm = 1/25.4
+const widthInches = computed(()=> ((target.value.w * mmPerStud) * inPerMm))
+const heightInches = computed(()=> ((target.value.h * mmPerStud) * inPerMm))
+const widthCm = computed(()=> (target.value.w * mmPerStud) / 10)
+const heightCm = computed(()=> (target.value.h * mmPerStud) / 10)
 
 // Keep the last ImageBitmap to support re-runs without re-decoding
 const srcBitmap = ref<ImageBitmap|null>(null)
@@ -79,7 +92,10 @@ const mosaicTask = createWorkerTask<WorkerOut>(() => import('@/workers/mosaic.wo
 // Allowed parts multiselect
 const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
 const selectedParts = ref<string[]>([...ALL_PARTS])
-watch(selectedParts, (val)=>{ mosaic.setAllowedParts(val as any) }, { immediate: true })
+watch(selectedParts, (val)=>{
+  mosaic.setAllowedParts(val as any)
+  try { showToast('Re-generating with your piece choices…', 'info', 1800) } catch {}
+}, { immediate: true })
 
 async function onFile(file: File) {
   loading.value = true; grid.value = null; progress.value = 0
@@ -90,7 +106,7 @@ async function onFile(file: File) {
     mosaic.cancelTiling()
 
     // Progressive: fast thumb (no tiling yet), then full-size indexes
-    const { buffer: buf64, width: w64, height: h64 } = await imageBitmapToBuffer(srcBitmap.value!, 64, 64)
+    const { buffer: buf64, width: w64, height: h64 } = await imageBitmapToBuffer(srcBitmap.value!, previewQuality.value, previewQuality.value)
     const thumb = await mosaicTask.run(
       { type: 'process', buffer: buf64, width: w64, height: h64, palette: legoPalette, greedy: false, dither: useDither.value },
       { onProgress: (p)=> { if (typeof p?.pct === 'number') progress.value = p.pct }, timeoutMs: 30000, transfer: [buf64] }
@@ -125,6 +141,19 @@ async function onGenerate(){
 
 async function saveNow(){ await mosaic.saveProject() }
 async function uploadPrev(){ await mosaic.uploadPreview() }
+
+// Share & buy helpers
+function currentUrl(){ try { return window.location.href } catch { return 'https://briko.app/mosaic' } }
+function copyLink(){
+  const url = currentUrl()
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(()=>{ try { showToast('Link copied to clipboard', 'success') } catch {} })
+  }
+}
+function shareX(){ const u = encodeURIComponent(currentUrl()); const t = encodeURIComponent('Check out my Briko mosaic!'); window.open(`https://twitter.com/intent/tweet?url=${u}&text=${t}`,'_blank') }
+function shareFB(){ const u = encodeURIComponent(currentUrl()); window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`,'_blank') }
+function shareReddit(){ const u = encodeURIComponent(currentUrl()); const t = encodeURIComponent('My Briko mosaic'); window.open(`https://www.reddit.com/submit?url=${u}&title=${t}`,'_blank') }
+function whereToBuy(){ window.open('https://briko.app/help/buy-bricks','_blank') }
 
 // Steps (kept for compatibility when using legacy greedy placements)
 const stepIdx = ref(1)
@@ -234,36 +263,58 @@ watchDebounced(
       <section class="lg:col-span-1 space-y-4">
         <MosaicUploader @file="onFile" />
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 space-y-3">
-          <label class="block text-sm">Output size (studs)</label>
+          <div class="flex items-center justify-between">
+            <label class="block text-sm">Output size (studs)</label>
+            <div class="text-xs bg-white/10 rounded-md overflow-hidden">
+              <button :class="['px-2 py-1', !showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=false">Simple</button>
+              <button :class="['px-2 py-1', showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=true">Advanced</button>
+            </div>
+          </div>
           <div class="grid grid-cols-2 gap-3 text-sm">
             <label>Width: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.h)" class="w-full"></label>
             <label>Height: {{ target.h }}<input type="range" min="8" max="256" v-model.number="target.h" @change="mosaic.setTargetSize(target.w, target.h)" class="w-full"></label>
           </div>
-          <label class="block text-sm mt-3">Allowed parts</label>
-          <div class="grid grid-cols-3 gap-2 text-sm">
-            <label v-for="p in ALL_PARTS" :key="p" class="inline-flex items-center gap-2">
-              <input type="checkbox" :value="p" v-model="selectedParts"> {{ p.replace('x','×') }}
-            </label>
+          <div class="text-xs opacity-70">≈ {{ target.w }}×{{ target.h }} studs · {{ widthInches.toFixed(1) }}×{{ heightInches.toFixed(1) }} in · {{ widthCm.toFixed(1) }}×{{ heightCm.toFixed(1) }} cm</div>
+
+          <div class="mt-3" v-if="showAdvanced">
+            <label class="block text-sm" title="Pieces you want to build with">Allowed parts</label>
+            <div class="grid grid-cols-3 gap-2 text-sm">
+              <label v-for="p in ALL_PARTS" :key="p" class="inline-flex items-center gap-2">
+                <input type="checkbox" :value="p" v-model="selectedParts"> {{ p.replace('x','×') }}
+              </label>
+            </div>
           </div>
-          <label class="block text-sm mt-3">Orientation</label>
-          <div class="flex items-center mt-1">
-            <select v-model="mosaic.settings.snapOrientation" class="bg-black/40 rounded px-3 py-2">
-              <option value="both">Both</option>
-              <option value="horizontal">Horizontal</option>
-              <option value="vertical">Vertical</option>
-            </select>
-            <label class="ml-3 flex items-center gap-1 select-none">
-              <input type="checkbox" v-model="showGrid" class="accent-current" />
-              <span>Show stud grid</span>
-            </label>
+          <div class="mt-3" v-if="showAdvanced">
+            <label class="block text-sm">Orientation</label>
+            <div class="flex items-center mt-1">
+              <select v-model="mosaic.settings.snapOrientation" class="bg-black/40 rounded px-3 py-2">
+                <option value="both">Both</option>
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+              </select>
+              <label class="ml-3 flex items-center gap-1 select-none">
+                <input type="checkbox" v-model="showGrid" class="accent-current" />
+                <span>Show stud grid</span>
+              </label>
+            </div>
           </div>
-          <label class="inline-flex items-center gap-2 text-sm mt-2">
-            <input type="checkbox" v-model="useDither"> Dithering (Floyd–Steinberg)
+          <label class="inline-flex items-center gap-2 text-sm mt-2" v-if="showAdvanced">
+            <input type="checkbox" v-model="useDither"> Smoother shading (dithering)
           </label>
+          <div class="mt-2 text-sm">
+            <label>Preview quality
+              <select v-model.number="previewQuality" class="ml-2 bg-black/40 rounded px-2 py-1">
+                <option :value="32">Fast (32×32)</option>
+                <option :value="64">Balanced (64×64)</option>
+                <option :value="96">Sharper (96×96)</option>
+                <option :value="128">High (128×128)</option>
+              </select>
+            </label>
+          </div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40 w-full sm:w-auto" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate Mosaic</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, fileName: `mosaic_${mosaic.width}x${mosaic.height}_${Date.now()}.pdf` })">Export PDF</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.exportCSV">Export CSV</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
             <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
@@ -271,11 +322,18 @@ watchDebounced(
         </div>
 
         <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
-          <div class="font-semibold mb-2">BOM — Greedy tiling</div>
+          <div class="font-semibold mb-2">Shopping List</div>
           <ul class="max-h-64 overflow-auto text-sm space-y-1">
-            <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" class="flex justify-between">
-              <span>{{ row.part.replace('x','×') }} · Color {{ row.colorId }}</span>
-              <span>{{ row.qty }} pcs · ${{ row.estTotal.toFixed(2) }}</span>
+            <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
+                <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }}</span>
+                <span class="opacity-60">· Plate {{ row.part.replace('x','×') }}</span>
+              </div>
+              <div class="text-right">
+                <div>{{ row.qty }} pcs</div>
+                <div class="opacity-70 text-xs">${{ row.estTotal.toFixed(2) }}</div>
+              </div>
             </li>
           </ul>
           <div class="mt-3 text-sm opacity-80">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
@@ -333,6 +391,16 @@ watchDebounced(
             <span v-if="tab==='3D'" class="ml-auto">Visible: {{ mosaic.visibleLayers }} / {{ mosaic.height }}</span>
           </div>
           <p v-if="mosaic.tilingResult" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
+          <!-- Share & buy hooks -->
+          <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+            <span class="opacity-70 mr-1">Share:</span>
+            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareX">X</button>
+            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareFB">Facebook</button>
+            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareReddit">Reddit</button>
+            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="copyLink">Copy link</button>
+            <div class="grow"></div>
+            <button class="px-3 py-1 rounded bg-cta-grad/70 hover:bg-cta-grad text-white" @click="whereToBuy">Where to buy pieces</button>
+          </div>
         </div>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
       </section>
