@@ -41,6 +41,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "three": "^0.165.0",
+    "vue-compare-image": "^0.2.0",
     "zod": "^3.23.8"
   },
   "engines": {
