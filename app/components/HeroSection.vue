@@ -15,30 +15,19 @@ const mosaicImg = '/demo-mosaic.jpg'
       </h1>
 
       <!-- Subtext -->
-      <p class="mt-4 max-w-3xl text-lg sm:text-xl text-gray-300 text-center mx-auto">
-        Upload your favorite photo <span class="mx-1 text-[#00E5A0]">→</span>
+      <p
+        class="mt-4 text-lg sm:text-xl text-gray-300 mx-auto text-center
+               lg:whitespace-nowrap lg:max-w-none"
+      >
+        Upload your favorite photo
+        <span class="mx-1 text-[#00E5A0]">→</span>
         see it transformed into a LEGO-style mosaic or 3D model
         <span class="mx-1 text-[#00E5A0]">→</span>
         download parts &amp; cost in seconds.
       </p>
 
-      <!-- Process Flow: Upload → Preview → Export -->
-      <ol class="mt-6 flex flex-wrap items-center gap-3 text-sm font-medium justify-center">
-        <li class="inline-flex items-center gap-2 rounded-full border border-gray-700/70 bg-white/5 px-4 py-2">
-          <span class="i-lucide-upload" aria-hidden="true"></span><span>Upload</span>
-        </li>
-        <li aria-hidden="true" class="text-[#00E5A0]">→</li>
-        <li class="inline-flex items-center gap-2 rounded-full border border-gray-700/70 bg-white/5 px-4 py-2">
-          <span class="i-lucide-sparkles" aria-hidden="true"></span><span>Preview</span>
-        </li>
-        <li aria-hidden="true" class="text-[#00E5A0]">→</li>
-        <li class="inline-flex items-center gap-2 rounded-full border border-gray-700/70 bg-white/5 px-4 py-2">
-          <span class="i-lucide-download" aria-hidden="true"></span><span>Export</span>
-        </li>
-      </ol>
-
       <!-- CTAs -->
-      <div class="mt-8 flex flex-wrap items-center gap-4 justify-center">
+      <div class="mt-6 flex flex-wrap items-center gap-4 justify-center">
         <!-- Primary: Photo to Bricks -->
         <NuxtLink
           to="/mosaic"
@@ -90,11 +79,6 @@ const mosaicImg = '/demo-mosaic.jpg'
           </figcaption>
         </figure>
       </div>
-
-      <!-- Caption under demo -->
-      <p class="mt-4 text-sm text-gray-400 text-center">
-        Here’s what Briko can do in seconds! Not affiliated with LEGO® Group.
-      </p>
     </div>
   </section>
 </template>
