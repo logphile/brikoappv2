@@ -48,15 +48,15 @@ watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
              fixedHeight ? 'relative h-full' : 'relative aspect-[3/4] sm:aspect-[4/3]',
              'bg-gradient-to-br from-neutral-100/60 to-neutral-800/40'
            ]">
-        <!-- base: original -->
-        <img :src="originalUrl"
-             alt="Original photo"
+        <!-- base: mosaic -->
+        <img :src="mosaicUrl"
+             alt="Mosaic preview"
              class="absolute inset-0 h-full w-full object-cover select-none pointer-events-none" />
 
         <!-- overlay: mosaic, clipped by slider -->
         <div class="absolute inset-0 overflow-hidden" :style="{ width: pos + '%' }">
-          <img :src="mosaicUrl"
-               alt="Mosaic preview"
+          <img :src="originalUrl"
+               alt="Original photo"
                class="h-full w-full object-cover select-none pointer-events-none" />
           <!-- studs texture overlay -->
           <div class="absolute inset-0 opacity-[.18] mix-blend-overlay"
