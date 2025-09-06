@@ -3,6 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import HeroSection from '~/components/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
+import FeatureBites from '~/components/FeatureBites.vue'
 import BottomBeforeAfter from '~/components/BottomBeforeAfter.vue'
 
 const siteUrl = 'https://briko.app'
@@ -57,16 +58,13 @@ useHead({
 
     <main class="px-6 py-16 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
-      <section class="mt-4 grid md:grid-cols-2 gap-8 items-center">
+      <section class="mt-4 grid md:grid-cols-2 gap-8">
         <div class="rounded-2xl overflow-hidden h-[340px] md:h-[420px]">
           <HeroDemo :original-src="'/slider-original.jpg?v=2'" :mosaic-src="'/slider-mosaic.jpg?v=2'" :fixed-height="true" />
         </div>
-        <ul class="space-y-3 text-base md:text-lg">
-          <li>• Instant LEGO-style color mapping</li>
-          <li>• Greedy tiling → fewer plates, cleaner look</li>
-          <li>• Bill of Materials + cost estimate</li>
-          <li>• PNG / CSV / PDF exports</li>
-        </ul>
+        <div class="my-auto">
+          <FeatureBites />
+        </div>
       </section>
 
       <!-- How It Works teaser -->
