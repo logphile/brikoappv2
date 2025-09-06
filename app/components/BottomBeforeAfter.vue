@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// Use slider-specific demo images placed in /public
-const leftImage = '/slider-original.jpg'
-const rightImage = '/slider-mosaic.jpg'
+// Use slider-specific demo images placed in /public (with cache-busting)
+const leftImage = '/slider-original.jpg?v=2'
+const rightImage = '/slider-mosaic.jpg?v=2'
 </script>
 
 <template>
