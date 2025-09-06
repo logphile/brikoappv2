@@ -4,6 +4,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import HeroSection from '~/components/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
 import BottomBeforeAfter from '~/components/BottomBeforeAfter.vue'
+import { defineAsyncComponent } from 'vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -23,17 +24,12 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery
-    { rel: 'preload', as: 'image', href: '/demo-mosaic.png' }
+    { rel: 'preload', as: 'image', href: '/demo-mosaic.jpg' }
   ]
 })
 
-// Fallback demo image handler
-const onDemoImgError = (e: Event) => {
-  (e.target as HTMLImageElement).src = '/og-default.png'
-}
-
-// Image path as a simple string (served from /public). Using a const avoids Vite asset import rewriting.
-const demoImg = '/demo-mosaic.png'
+// Async-load the before/after slider to avoid SSR issues
+const VueCompareImage = defineAsyncComponent(() => import('vue-compare-image'))
 
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
@@ -61,20 +57,24 @@ useHead({
     <FeatureList />
 
     <main class="px-6 py-16 max-w-6xl mx-auto">
-      <!-- Quick Demo -->
+      <!-- Quick Demo: interactive before/after slider -->
       <section class="mt-4 grid md:grid-cols-2 gap-8 items-center">
-        <img
-          :src="demoImg"
-          @error="onDemoImgError"
-          alt="Mosaic preview demo"
-          class="rounded-2xl shadow"
-          width="400"
-          height="212"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
+        <ClientOnly>
+          <div class="relative rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div class="rounded-xl overflow-hidden h-[340px] md:h-[420px]">
+              <VueCompareImage
+                :leftImage="'/demo-original.jpg'"
+                :rightImage="'/demo-mosaic.jpg'"
+                :sliderLineColor="'#00E5A0'"
+                :sliderLineWidth="3"
+                hover
+              />
+            </div>
+          </div>
+          <template #fallback>
+            <div class="rounded-2xl h-[340px] md:h-[420px] bg-white/5 border border-white/10" />
+          </template>
+        </ClientOnly>
         <ul class="space-y-3 text-base md:text-lg">
           <li>• Instant LEGO-style color mapping</li>
           <li>• Greedy tiling → fewer plates, cleaner look</li>
