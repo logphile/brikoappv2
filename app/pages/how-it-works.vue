@@ -81,9 +81,7 @@ useHead({
     <div class="text-center mt-10">
       <NuxtLink
         to="/mosaic"
-        class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-base font-semibold
-               shadow-sm ring-1 ring-transparent transition
-               bg-[#00E5A0] text-[#111827] hover:opacity-90"
+        class="inline-flex items-center justify-center btn-mint"
       >
         Photo to Bricks
       </NuxtLink>

@@ -1,7 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useIntersectionObserver } from '@vueuse/core'
+
+const inView = ref(false)
+const sentinel = ref<HTMLElement | null>(null)
+useIntersectionObserver(sentinel, ([entry]) => {
+  if (entry.isIntersecting) inView.value = true
+}, { threshold: 0.15 })
+</script>
 
 <template>
+  <div ref="sentinel" aria-hidden="true" class="h-px"></div>
   <Transition
+    v-if="inView"
     appear
     enter-active-class="transition ease-out duration-700"
     enter-from-class="opacity-0 translate-y-4"
@@ -35,7 +46,7 @@
           <li class="group">
             <div
               class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-[#00E5A0]/[0.05]
-                     p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg"
+                     p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg hover:-translate-y-0.5"
             >
               <!-- Number badge -->
               <div class="absolute -top-3 left-5">
@@ -151,8 +162,7 @@
       <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
         <NuxtLink
           to="/how-it-works"
-          class="inline-flex items-center gap-2 rounded-xl bg-[#00E5A0] px-5 py-3 font-semibold text-[#111827]
-                 ring-1 ring-transparent transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-[#00E5A0]/40"
+          class="inline-flex items-center gap-2 btn-mint"
           aria-label="See Full Guide"
         >
           See Full Guide

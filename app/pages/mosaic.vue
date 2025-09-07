@@ -265,7 +265,7 @@ watchDebounced(
                   enter-to-class="opacity-100 translate-y-0">
       <section class="lg:col-span-1 space-y-4">
         <MosaicUploader @file="onFile" />
-        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card hover:shadow-mint-glow/30 transition space-y-3 divide-y divide-white/5">
+        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 divide-y divide-white/5 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
           <div class="flex items-center justify-between">
             <label class="block text-sm">Output size (studs)</label>
             <div class="text-xs bg-white/10 rounded-md overflow-hidden">
@@ -359,7 +359,7 @@ watchDebounced(
                   enter-from-class="opacity-0 translate-y-2"
                   enter-to-class="opacity-100 translate-y-0">
       <section
-        class="lg:col-span-2 relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card"
+        class="lg:col-span-2 relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
         :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
         @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
       >

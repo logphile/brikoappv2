@@ -1,4 +1,7 @@
 <template>
+  <Transition appear enter-active-class="transition ease-out duration-600"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0">
   <main class="mx-auto max-w-5xl px-6 py-10 text-white">
     <div class="flex items-center justify-between gap-4">
       <div>
@@ -9,7 +12,7 @@
         <button class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15"
                 :disabled="!outReady"
                 @click="doExportPng">Export PNG</button>
-        <button class="px-3 py-2 rounded-xl bg-cta-grad disabled:opacity-50"
+        <button class="btn-mint"
                 :disabled="saving || !$supabase || !outReady"
                 @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</button>
         <label class="inline-flex items-center gap-2 text-sm">
@@ -29,7 +32,7 @@
 
         <label class="block">
           <span class="block">Target size (studs)</span>
-          <input type="range" min="32" max="256" step="16" v-model.number="size" class="mt-2 w-64"/>
+          <input type="range" min="32" max="256" step="16" v-model.number="size" class="range-mint mt-2 w-64"/>
           <div class="opacity-70 mt-1">{{ size }} × {{ size }}</div>
         </label>
 
@@ -65,7 +68,7 @@
           <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/10 rounded" />
         </label>
 
-        <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-50 mt-6"
+        <button class="btn-mint mt-6"
                 :disabled="loading || !imgReady"
                 @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
 
@@ -73,13 +76,13 @@
       </div>
 
       <div class="grid md:grid-cols-2 gap-6 mt-4">
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3">
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5">
           <div class="text-sm opacity-80 mb-2">Source (scaled)</div>
           <div class="aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="srcCanvas" class="max-w-full"></canvas>
           </div>
         </div>
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3">
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5">
           <div class="text-sm opacity-80 mb-2">LEGO-mapped Output</div>
           <div class="aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="outCanvas" class="max-w-full"></canvas>
@@ -88,6 +91,7 @@
       </div>
     </section>
   </main>
+  </Transition>
   
  </template>
 
