@@ -254,7 +254,7 @@ watchDebounced(
 </script>
 
 <template>
-  <main class="mx-auto max-w-6xl px-6 py-10 text-white">
+  <main class="mx-auto max-w-7xl px-6 py-10 text-white">
     <h1 class="text-3xl font-bold">Mosaic</h1>
     <p class="opacity-80">Upload an image → map to brick colors → preview & export.</p>
 
@@ -328,11 +328,11 @@ watchDebounced(
           </div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
-            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, fileName: `mosaic_${mosaic.width}x${mosaic.height}_${Date.now()}.pdf` })">Export PDF</button>
-            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
-            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
-            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, fileName: `mosaic_${mosaic.width}x${mosaic.height}_${Date.now()}.pdf` })">Export PDF</button>
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
           </Transition>
@@ -395,17 +395,24 @@ watchDebounced(
           </div>
         </div>
         <div v-else-if="grid">
-          <template v-if="tab==='2D'">
-            <MosaicCanvas :data="grid" :showGrid="showGrid" :showTiles="showPlates" :overlayBricks="mosaic.overlayBricks"/>
-          </template>
-          <template v-else>
-            <ClientOnly>
-              <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
-            </ClientOnly>
-            <div class="mt-3">
-              <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers"/>
+          <Transition mode="out-in"
+                      enter-active-class="transition ease-out duration-300"
+                      enter-from-class="opacity-0 translate-y-1"
+                      enter-to-class="opacity-100 translate-y-0">
+            <div :key="tab">
+              <template v-if="tab==='2D'">
+                <MosaicCanvas :data="grid" :showGrid="showGrid" :showTiles="showPlates" :overlayBricks="mosaic.overlayBricks"/>
+              </template>
+              <template v-else>
+                <ClientOnly>
+                  <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
+                </ClientOnly>
+                <div class="mt-3">
+                  <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers"/>
+                </div>
+              </template>
             </div>
-          </template>
+          </Transition>
           <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
             <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
             <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>
