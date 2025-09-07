@@ -6,8 +6,14 @@ const mosaicImg = '/demo-mosaic.jpg'
 </script>
 
 <template>
-  <section class="relative overflow-hidden bg-[#0B1220] text-white">
-    <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
+  <Transition
+    appear
+    enter-active-class="transition ease-out duration-700"
+    enter-from-class="opacity-0 translate-y-4"
+    enter-to-class="opacity-100 translate-y-0"
+  >
+    <section class="relative overflow-hidden bg-[#0B1220] text-white">
+      <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
       <!-- Brand compact header (optional if already in layout) -->
       <!-- Headline -->
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
@@ -79,8 +85,9 @@ const mosaicImg = '/demo-mosaic.jpg'
           </figcaption>
         </figure>
       </div>
-    </div>
-  </section>
+      </div>
+    </section>
+  </Transition>
 </template>
 
 <style scoped>
