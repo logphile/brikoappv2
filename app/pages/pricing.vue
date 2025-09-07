@@ -48,7 +48,7 @@ useHead({
 
     <div class="mt-10 grid md:grid-cols-2 gap-6">
       <!-- Free Plan -->
-      <div class="rounded-2xl p-6 border border-white/10">
+      <div class="rounded-2xl p-6 bg-white/5 backdrop-blur border border-white/10 shadow-soft-card transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
         <h3 class="text-xl font-bold">Free</h3>
         <div class="mt-2 text-3xl font-extrabold">$0</div>
         <ul class="mt-4 space-y-2 opacity-90">
@@ -56,11 +56,11 @@ useHead({
           <li>• PNG / CSV exports</li>
           <li>• Basic voxel preview</li>
         </ul>
-        <NuxtLink to="/mosaic" class="inline-block mt-6 px-5 py-3 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white font-semibold">Try Mosaic</NuxtLink>
+        <NuxtLink to="/mosaic" class="inline-block mt-6 btn-mint">Try Mosaic</NuxtLink>
       </div>
 
       <!-- Pro Plan (coming soon) -->
-      <div class="rounded-2xl p-6 border border-pink-500/40 shadow">
+      <div class="rounded-2xl p-6 bg-white/5 backdrop-blur border border-white/10 shadow-soft-card transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
         <h3 class="text-xl font-bold">Pro (coming soon)</h3>
         <ul class="mt-4 space-y-2 opacity-90">
           <li>• Unlimited exports</li>
@@ -68,7 +68,7 @@ useHead({
           <li>• Curated MOC packs</li>
           <li>• Save & share projects</li>
         </ul>
-        <NuxtLink to="#waitlist" class="inline-block mt-6 px-5 py-3 rounded-2xl bg-pink-600 hover:bg-pink-500 text-white font-semibold">Join Waitlist</NuxtLink>
+        <NuxtLink to="#waitlist" class="inline-block mt-6 btn-mint">Join Waitlist</NuxtLink>
       </div>
     </div>
 
@@ -89,9 +89,6 @@ useHead({
     </div>
 
     <div id="waitlist" class="mt-2"></div>
-    <p class="mt-10 text-xs opacity-60">
-      Briko is an independent tool and is not affiliated with, endorsed by, or associated with the LEGO® Group.
-    </p>
   </main>
   
 </template>

@@ -1,4 +1,7 @@
 <template>
+  <Transition appear enter-active-class="transition ease-out duration-600"
+              enter-from-class="opacity-0 translate-y-2"
+              enter-to-class="opacity-100 translate-y-0">
   <main class="mx-auto max-w-md px-6 py-12 text-white">
     <h1 class="text-2xl font-semibold mb-2">Login</h1>
     <p class="opacity-80 mb-6">Enter your email and we’ll send a one-time login link.</p>
@@ -8,13 +11,14 @@
         <span>Email</span>
         <input v-model="email" type="email" required class="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2" placeholder="you@example.com"/>
       </label>
-      <button class="w-full py-2 rounded-xl bg-cta-grad disabled:opacity-50" :disabled="sent || loading">
+      <button class="btn-mint w-full" :disabled="sent || loading">
         {{ sent ? 'Link sent — check email' : (loading ? 'Sending…' : 'Send magic link') }}
       </button>
     </form>
 
     <p v-if="error" class="mt-4 text-sm text-red-300">{{ error }}</p>
   </main>
+  </Transition>
   </template>
 
 <script setup lang="ts">
