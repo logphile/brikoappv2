@@ -258,14 +258,19 @@ watchDebounced(
     <h1 class="text-3xl font-bold">Mosaic</h1>
     <p class="opacity-80">Upload an image → map to brick colors → preview & export.</p>
 
-    <div class="mt-6 grid lg:grid-cols-[380px,1fr] gap-6">
+    <div class="mt-6 grid lg:grid-cols-[460px,1fr] gap-6 items-start">
       <!-- left column -->
-      <Transition appear enter-active-class="transition ease-out duration-600"
-                  enter-from-class="opacity-0 translate-y-2"
-                  enter-to-class="opacity-100 translate-y-0">
-      <section class="lg:col-span-1 space-y-4">
-        <MosaicUploader @file="onFile" />
+      <div class="lg:col-span-1 space-y-4">
+        <aside class="lg:sticky lg:top-6">
+          <Transition appear enter-active-class="transition ease-out duration-600"
+                      enter-from-class="opacity-0 translate-y-2"
+                      enter-to-class="opacity-100 translate-y-0">
         <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 divide-y divide-white/5 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
+          <!-- Upload embedded -->
+          <div>
+            <label class="block text-sm font-medium text-white/80 mb-2">Upload</label>
+            <MosaicUploader embedded @file="onFile" />
+          </div>
           <div class="flex items-center justify-between">
             <label class="block text-sm">Output size (studs)</label>
             <div class="text-xs bg-white/10 rounded-md overflow-hidden">
@@ -273,7 +278,7 @@ watchDebounced(
               <button :class="['px-2 py-1', showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=true">Advanced</button>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="grid grid-cols-2 gap-5 text-sm">
             <label>Width
               <input type="range" min="16" max="256" step="1" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.h)" class="range-mint">
             </label>
@@ -313,14 +318,13 @@ watchDebounced(
             <input type="checkbox" v-model="useDither"> Smoother shading (dithering)
           </label>
           <div class="mt-2 text-sm">
-            <label>Preview quality
-              <select v-model.number="previewQuality" class="ml-2 bg-black/40 rounded px-2 py-1">
-                <option :value="32">Fast (32×32)</option>
-                <option :value="64">Balanced (64×64)</option>
-                <option :value="96">Sharper (96×96)</option>
-                <option :value="128">High (128×128)</option>
-              </select>
-            </label>
+            <label class="block text-sm text-white/80 mb-2">Preview quality</label>
+            <select v-model.number="previewQuality" class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white/90 focus:outline-none focus:ring-2 focus:ring-mint/50">
+              <option :value="32">Fast (32×32)</option>
+              <option :value="64">Balanced (64×64)</option>
+              <option :value="96">Sharper (96×96)</option>
+              <option :value="128">High (128×128)</option>
+            </select>
           </div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
@@ -331,6 +335,9 @@ watchDebounced(
             <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
+          </Transition>
+        </aside>
+
         <!-- Shopping List inside left column -->
         <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <div class="font-semibold mb-2">Shopping List</div>
@@ -350,8 +357,7 @@ watchDebounced(
           <div class="mt-3 text-sm opacity-80">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
           <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
         </div>
-      </section>
-      </Transition>
+      </div>
       
 
       <!-- right preview with dropzone -->
