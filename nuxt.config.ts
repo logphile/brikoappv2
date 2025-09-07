@@ -9,7 +9,11 @@ export default defineNuxtConfig({
   srcDir: 'app',
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   typescript: { strict: true },
-  css: ['@/assets/styles/globals.css'],
+  css: [
+    '@/assets/styles/globals.css',
+    '@/assets/css/controls.css',
+    '@/assets/css/buttons.css'
+  ],
   postcss: {
     plugins: {
       tailwindcss: {},
