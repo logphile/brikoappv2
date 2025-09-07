@@ -258,11 +258,14 @@ watchDebounced(
     <h1 class="text-3xl font-bold">Mosaic</h1>
     <p class="opacity-80">Upload an image → map to brick colors → preview & export.</p>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
+    <div class="mt-6 grid lg:grid-cols-[380px,1fr] gap-6">
       <!-- left column -->
+      <Transition appear enter-active-class="transition ease-out duration-600"
+                  enter-from-class="opacity-0 translate-y-2"
+                  enter-to-class="opacity-100 translate-y-0">
       <section class="lg:col-span-1 space-y-4">
         <MosaicUploader @file="onFile" />
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4 space-y-3">
+        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card hover:shadow-mint-glow/30 transition space-y-3 divide-y divide-white/5">
           <div class="flex items-center justify-between">
             <label class="block text-sm">Output size (studs)</label>
             <div class="text-xs bg-white/10 rounded-md overflow-hidden">
@@ -271,8 +274,16 @@ watchDebounced(
             </div>
           </div>
           <div class="grid grid-cols-2 gap-3 text-sm">
-            <label>Width: {{ target.w }}<input type="range" min="8" max="256" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.h)" class="w-full"></label>
-            <label>Height: {{ target.h }}<input type="range" min="8" max="256" v-model.number="target.h" @change="mosaic.setTargetSize(target.w, target.h)" class="w-full"></label>
+            <label>Width
+              <input type="range" min="16" max="256" step="1" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.h)" class="range-mint">
+            </label>
+            <label>Height
+              <input type="range" min="16" max="256" step="1" v-model.number="target.h" @change="mosaic.setTargetSize(target.w, target.h)" class="range-mint">
+            </label>
+          </div>
+          <div class="flex justify-between items-center text-sm mt-2">
+            <span class="text-white/70">Output size (studs)</span>
+            <span class="font-medium text-mint">{{ target.w }} × {{ target.h }}</span>
           </div>
           <div class="text-xs opacity-70">≈ {{ target.w }}×{{ target.h }} studs · {{ widthInches.toFixed(1) }}×{{ heightInches.toFixed(1) }} in · {{ widthCm.toFixed(1) }}×{{ heightCm.toFixed(1) }} cm</div>
 
@@ -312,15 +323,15 @@ watchDebounced(
             </label>
           </div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
-            <button class="px-4 py-2 rounded-xl bg-cta-grad disabled:opacity-40 w-full sm:w-auto" :disabled="!grid || mosaic.status==='tiling'" @click="onGenerate">Generate Mosaic</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, fileName: `mosaic_${mosaic.width}x${mosaic.height}_${Date.now()}.pdf` })">Export PDF</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.exportCSV">Export CSV</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId" @click="saveNow">Save Project</button>
-            <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" @click="uploadPrev">Upload Preview</button>
+            <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
+            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, fileName: `mosaic_${mosaic.width}x${mosaic.height}_${Date.now()}.pdf` })">Export PDF</button>
+            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
+            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
+            <button class="px-4 py-2 rounded-2xl bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
-
+        <!-- Shopping List inside left column -->
         <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <div class="font-semibold mb-2">Shopping List</div>
           <ul class="max-h-64 overflow-auto text-sm space-y-1">
@@ -340,28 +351,33 @@ watchDebounced(
           <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
         </div>
       </section>
+      </Transition>
+      
 
       <!-- right preview with dropzone -->
+      <Transition appear enter-active-class="transition ease-out duration-700 delay-150"
+                  enter-from-class="opacity-0 translate-y-2"
+                  enter-to-class="opacity-100 translate-y-0">
       <section
-        class="lg:col-span-2 relative rounded-2xl bg-white/5 ring-1 ring-white/10 p-4"
+        class="lg:col-span-2 relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card"
         :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
         @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
       >
         <RegeneratingChip />
         <div v-if="dropActive"
              class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
-        <div class="flex items-center gap-2 border-b border-white/10 pb-2 mb-3 text-sm">
-          <button :class="['px-3 py-1 rounded', tab==='2D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='2D'">2D Mosaic</button>
-          <button :class="['px-3 py-1 rounded', tab==='3D' ? 'bg-white/15' : 'hover:bg-white/10']" @click="tab='3D'">3D Preview</button>
+        <div class="flex items-center gap-3 text-sm mb-4">
+          <button :class="['px-3 py-1.5 rounded-full transition', tab==='2D' ? 'bg-mint/15 text-white border border-mint/40' : 'text-white/70 hover:text-white']" @click="tab='2D'">2D Mosaic</button>
+          <button :class="['px-3 py-1.5 rounded-full transition', tab==='3D' ? 'bg-mint/15 text-white border border-mint/40' : 'text-white/70 hover:text-white']" @click="tab='3D'">3D Preview</button>
           <div class="grow"></div>
-          <label v-if="tab==='2D'" class="inline-flex items-center gap-2 opacity-80 hover:opacity-100">
-            <input type="checkbox" v-model="showPlates" />
+          <label v-if="tab==='2D'" class="ml-auto inline-flex items-center gap-2 text-white/80">
+            <input type="checkbox" class="accent-mint" v-model="showPlates" />
             <span>Show plate outlines</span>
           </label>
           <div v-if="mosaic.status==='error'" class="ml-2 text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
             Generation failed — {{ mosaic.errorMsg }}
           </div>
-          <button class="px-3 py-1 rounded bg-white/10 disabled:opacity-40" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+          <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
         </div>
 
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
@@ -404,6 +420,7 @@ watchDebounced(
         </div>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
       </section>
+      </Transition>
     </div>
   </main>
 </template>
