@@ -301,11 +301,13 @@ watchDebounced(
 
     <div class="mt-6 grid lg:grid-cols-[460px,1fr] gap-6 items-start">
       <!-- left column -->
-      <div class="lg:col-span-1 space-y-4">
-        <aside class="lg:sticky lg:top-6">
-          <Transition appear enter-active-class="transition ease-out duration-600"
-                      enter-from-class="opacity-0 translate-y-2"
-                      enter-to-class="opacity-100 translate-y-0">
+      <div class="lg:col-span-1">
+        <aside class="space-y-6">
+          <!-- Sticky controls ONLY -->
+          <div class="lg:sticky lg:top-6">
+            <Transition appear enter-active-class="transition ease-out duration-600"
+                        enter-from-class="opacity-0 translate-y-2"
+                        enter-to-class="opacity-100 translate-y-0">
         <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 divide-y divide-white/5 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
           <!-- Upload embedded -->
           <div>
@@ -373,35 +375,41 @@ watchDebounced(
           </div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="() => exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, fileName: `mosaic_${mosaic.width}x${mosaic.height}_${Date.now()}.pdf` })">Export PDF</button>
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
             <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
             <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
-          </Transition>
+            </Transition>
+          </div>
+
+          <!-- Non-sticky BOM -->
+          <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
+            <header class="mb-3 flex items-center justify-between">
+              <h3 class="text-white font-semibold">Parts list</h3>
+              <div class="text-sm text-white/60">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
+            </header>
+
+            <!-- Export buttons belong here so they scroll with the list -->
+            <div class="mb-3 flex flex-wrap gap-3">
+              <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
+              <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+              <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
+            </div>
+
+            <!-- BOM items -->
+            <ul class="divide-y divide-white/5 text-sm">
+              <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" :id="'bom-' + row.part + '-' + row.colorId" class="py-2 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
+                  <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }} · Plate {{ row.part.replace('x','×') }}</span>
+                </div>
+                <div class="text-white/70 text-sm">{{ row.qty }} pcs</div>
+              </li>
+            </ul>
+            <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
+          </div>
         </aside>
 
-        <!-- Shopping List inside left column -->
-        <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
-          <div class="font-semibold mb-2">Shopping List</div>
-          <ul class="max-h-64 overflow-auto text-sm space-y-1">
-            <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" :id="'bom-' + row.part + '-' + row.colorId" class="flex justify-between items-center">
-              <div class="flex items-center gap-2">
-                <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
-                <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }}</span>
-                <span class="opacity-60">· Plate {{ row.part.replace('x','×') }}</span>
-              </div>
-              <div class="text-right">
-                <div>{{ row.qty }} pcs</div>
-                <div class="opacity-70 text-xs">${{ row.estTotal.toFixed(2) }}</div>
-              </div>
-            </li>
-          </ul>
-          <div class="mt-3 text-sm opacity-80">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
-          <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
-        </div>
       </div>
       
 
