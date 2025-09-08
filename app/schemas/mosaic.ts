@@ -5,6 +5,7 @@ export const MosaicSettingsSchema = z.object({
   height: z.number().int().min(8).max(512),
   allowedParts: z.array(z.string().regex(/^\d+x\d+$/)).nonempty(),
   snapOrientation: z.enum(["both", "horizontal", "vertical"]),
+  topSurface: z.enum(['plates','tiles']).default('plates'),
   seed: z.number().optional()
 })
 

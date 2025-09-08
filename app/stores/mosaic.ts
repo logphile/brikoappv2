@@ -35,6 +35,7 @@ export const useMosaicStore = defineStore('mosaic', {
       height: 128,
       allowedParts: DEFAULT_PARTS.slice(),
       snapOrientation: 'both' as const,
+      topSurface: 'plates' as const,
     } as MosaicSettings,
 
     // tiling streaming
@@ -72,6 +73,11 @@ export const useMosaicStore = defineStore('mosaic', {
 
     setAllowedParts(parts: StudSize[]) {
       this.settings.allowedParts = parts.length ? parts : DEFAULT_PARTS.slice()
+    },
+
+    setTopSurface(surface: 'plates'|'tiles') {
+      this.settings.topSurface = surface
+      try { localStorage.setItem('briko.topSurface', surface) } catch {}
     },
 
     setVisibleLayers(n: number) {

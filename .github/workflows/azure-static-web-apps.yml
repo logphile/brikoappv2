@@ -37,9 +37,7 @@ jobs:
           cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: Install
-        # TEMP: Allow lockfile updates until pnpm-lock.yaml is committed for the new dev deps.
-        # Follow-up: revert to --frozen-lockfile after lockfile is updated in main.
-        run: pnpm install --frozen-lockfile=false
+        run: pnpm install --frozen-lockfile
 
       - name: Expose build metadata
         run: |
