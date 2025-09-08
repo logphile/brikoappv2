@@ -1,10 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!-- Dark-mode favicon: ink background, white keyline ring, mint stud -->
   <rect width="64" height="64" rx="12" fill="#111827"/>
-  <!-- Keyline ring (10% width stroke) -->
   <circle cx="32" cy="32" r="18" fill="none" stroke="#FFFFFF" stroke-width="6"/>
-  <!-- Stud -->
   <circle cx="32" cy="32" r="12" fill="#00E5A0"/>
-  <!-- Subtle soft shadow to hint depth -->
   <ellipse cx="32" cy="36" rx="10" ry="4" fill="#000" opacity="0.08"/>
 </svg>

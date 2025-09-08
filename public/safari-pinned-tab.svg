@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Monochrome mask: stud silhouette -->
+  <g fill="#000">
+    <!-- Outer circle (mask shape) -->
+    <circle cx="256" cy="256" r="220"/>
+    <!-- Inner stud core cutout to form ring look (use smaller circle as negative when Safari applies mask color) -->
+    <circle cx="256" cy="256" r="120" fill="#fff"/>
+  </g>
+</svg>
