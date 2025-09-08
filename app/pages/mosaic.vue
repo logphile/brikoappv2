@@ -10,7 +10,7 @@ import LayerSlider from '@/components/LayerSlider.client.vue'
 import RegeneratingChip from '@/components/RegeneratingChip.vue'
 import { legoPalette } from '@/lib/palette/lego'
 import { chunkSteps } from '@/lib/steps'
-import type { WorkerOut } from '@/types/mosaic'
+import type { WorkerOut, TiledBrick } from '@/types/mosaic'
 import { useMosaicStore } from '@/stores/mosaic'
 import { exportBuildGuidePDF } from '@/lib/pdfExport'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
@@ -136,7 +136,7 @@ function buildTileMap(bricks: {x:number;y:number;w:number;h:number}[]){
   }
   tileMap.value = map
 }
-watch(() => mosaic.tilingResult?.bricks, (bricks) => {
+watch(() => mosaic.tilingResult?.bricks, (bricks?: TiledBrick[]) => {
   if (Array.isArray(bricks) && bricks.length) buildTileMap(bricks)
   else tileMap.value = null
 })
@@ -144,7 +144,7 @@ watch(() => mosaic.tilingResult?.bricks, (bricks) => {
 // Allowed parts multiselect
 const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
 const selectedParts = ref<string[]>([...ALL_PARTS])
-watch(selectedParts, (val)=>{
+watch(selectedParts, (val: readonly string[])=>{
   mosaic.setAllowedParts(val as any)
   try { showToast(copy.mosaic.toasts.regenerating, 'info', 1500) } catch {}
 }, { immediate: true })
@@ -226,7 +226,8 @@ async function onDownloadPdf(){
 }
 function onDownloadCsv(){
   if (!mosaic.tilingResult) return
-  const rows = mosaic.tilingResult.bom.map(r => ({ part: r.part, colorId: r.colorId, qty: r.qty }))
+  type SimpleBomRow = { part: string; colorId: number; qty: number }
+  const rows = mosaic.tilingResult.bom.map((r: SimpleBomRow) => ({ part: r.part, colorId: r.colorId, qty: r.qty }))
   downloadPartsListCsvSimple(rows)
 }
 
@@ -254,6 +255,11 @@ function onViewBom(part: string, colorId: number){
       setTimeout(() => el.classList.remove('ring-2','ring-mint/60'), 1200)
     }
   } catch {}
+}
+
+// Typed event proxy for template to avoid implicit any on $event
+function onViewBomEvt(e: { part: string; colorId: number }){
+  onViewBom(e.part, e.colorId)
 }
 
 // Steps (kept for compatibility when using legacy greedy placements)
@@ -365,11 +371,11 @@ watchDebounced(
       <div class="lg:col-span-1">
         <aside class="space-y-6">
           <!-- Sticky controls ONLY -->
-          <div class="lg:sticky lg:top-6">
+          <div class="lg:sticky lg:top-6 z-0">
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
-        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
+        <div class="z-0 rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
           <!-- Upload embedded -->
           <div>
             <label class="block text-sm font-medium text-white/80 mb-2">Upload</label>
@@ -493,7 +499,7 @@ watchDebounced(
           </div>
 
           <!-- Non-sticky BOM -->
-          <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
+          <div v-if="mosaic.tilingResult" class="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
             <header class="mb-3 flex items-center justify-between">
               <h3 class="text-white font-semibold">Parts list</h3>
               <div class="text-sm text-white/60">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
@@ -572,7 +578,7 @@ watchDebounced(
                   :tileMap="tileMap"
                   :bricks="mosaic.tilingResult?.bricks || null"
                   :bomRows="mosaic.tilingResult?.bom || null"
-                  @view-bom="({part, colorId}) => onViewBom(part, colorId)"
+                  @view-bom="onViewBomEvt"
                 />
               </template>
               <template v-else>
