@@ -1,11 +1,12 @@
 <template>
-  <div class="fixed top-4 right-4 z-[1000] space-y-2 w-80">
+  <div class="toast-viewport fixed z-[1000] right-3 space-y-2 w-full max-w-sm pointer-events-none"
+       :style="{ top: `calc(var(--app-header-h, 64px) + env(safe-area-inset-top) + 12px)` }">
     <transition-group name="toast">
       <div
         v-for="t in toasts"
         :key="t.id"
         :class="[
-          'rounded-xl px-4 py-3 shadow ring-1 text-sm flex items-start gap-3',
+          'pointer-events-auto rounded-xl px-4 py-3 shadow ring-1 text-sm flex items-start gap-3',
           t.type === 'success' ? 'bg-green-500/15 ring-green-400/30 text-green-50' :
           t.type === 'error' ? 'bg-red-500/15 ring-red-400/30 text-red-50' :
                                'bg-white/10 ring-white/20 text-white'
@@ -32,4 +33,14 @@ const { toasts, dismiss } = useToasts()
 .toast-enter-active, .toast-leave-active { transition: all .2s ease; }
 .toast-enter-from { opacity: 0; transform: translateY(-8px); }
 .toast-leave-to { opacity: 0; transform: translateY(-8px); }
+
+@media (max-width: 640px) {
+  .toast-viewport {
+    top: auto !important;
+    bottom: calc(env(safe-area-inset-bottom) + 12px) !important;
+    right: 12px !important;
+    left: 12px !important;
+    max-width: none !important;
+  }
+}
 </style>
