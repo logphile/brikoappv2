@@ -1,9 +1,12 @@
 <template>
   <section class="mt-16">
     <header class="mb-4 flex items-center justify-between">
-      <h2 class="text-xl font-semibold text-white">Community Projects</h2>
+      <div>
+        <h2 class="text-xl font-semibold text-white">{{ copy.studio.communitySectionTitle }}</h2>
+        <p class="mt-1 text-white/70">{{ copy.studio.communitySubhead }}</p>
+      </div>
       <NuxtLink to="/studio/community" class="text-sm text-mint hover:underline underline-offset-4 decoration-2">
-        See all →
+        {{ copy.studio.seeAll }} →
       </NuxtLink>
     </header>
 
@@ -16,8 +19,8 @@
     </div>
 
     <div class="mt-6 flex items-center justify-center gap-3">
-      <NuxtLink to="/studio/community" class="btn-outline-mint">See All</NuxtLink>
-      <button v-if="hasMore" @click="loadMore" class="btn-mint">Load More</button>
+      <NuxtLink to="/studio/community" class="btn-outline-mint">{{ copy.studio.seeAll }}</NuxtLink>
+      <button v-if="hasMore" @click="loadMore" class="btn-mint">{{ copy.studio.loadMore }}</button>
     </div>
   </section>
 </template>
@@ -26,6 +29,7 @@
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
 import ProjectCard from '@/components/ProjectCard.vue'
+import { copy } from '@/lib/copy'
 
 const { $supabase } = useNuxtApp() as any
 

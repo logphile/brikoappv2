@@ -5,8 +5,9 @@
   <main class="mx-auto max-w-5xl px-6 py-10 text-white">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-semibold">Avatar Builder</h1>
-        <p class="opacity-80 text-sm">Upload a photo and map it to the LEGO palette. OpenCV.js loads on demand.</p>
+        <h1 class="text-2xl font-semibold">{{ copy.avatar.title }}</h1>
+        <p class="opacity-80 text-sm">{{ copy.avatar.subtitle }}</p>
+        <StepChips :steps="copy.avatar.steps" />
       </div>
       <div class="flex items-center gap-3">
         <button class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15"
@@ -102,6 +103,8 @@ import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
 import { downloadPng } from '@/lib/exporters'
+import { copy } from '@/lib/copy'
+import StepChips from '@/components/StepChips.vue'
 
 const { show } = useToasts()
 

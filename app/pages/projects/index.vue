@@ -2,11 +2,11 @@
   <main class="mx-auto max-w-5xl px-6 py-10 text-white">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold">Your Projects</h1>
-        <p class="opacity-80 text-sm">Private by default. Make them public to share.</p>
+        <h1 class="text-2xl font-semibold">{{ copy.studio.title }}</h1>
+        <p class="opacity-80 text-sm">{{ copy.studio.subtitle }}</p>
       </div>
       <div class="flex items-center gap-2">
-        <NuxtLink to="/studio/community" class="btn-outline-mint">Community Studio</NuxtLink>
+        <NuxtLink to="/studio/community" class="btn-outline-mint" :aria-label="copy.studio.communityButtonAria">{{ copy.studio.communityButton }}</NuxtLink>
         <NuxtLink to="/projects/new" class="btn-mint">New Project</NuxtLink>
       </div>
     </div>
@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useNuxtApp } from 'nuxt/app'
+import { copy } from '@/lib/copy'
 import CommunityGrid from '@/components/CommunityGrid.vue'
 
 const { $supabase } = useNuxtApp() as any

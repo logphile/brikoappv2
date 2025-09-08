@@ -18,6 +18,8 @@ import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { useToasts } from '@/composables/useToasts'
 import { imageBitmapToBuffer } from '@/utils/image-to-buffer'
+import { copy } from '@/lib/copy'
+import StepChips from '@/components/StepChips.vue'
 
 const mosaic = useMosaicStore()
 const { show: showToast } = useToasts()
@@ -94,13 +96,14 @@ const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
 const selectedParts = ref<string[]>([...ALL_PARTS])
 watch(selectedParts, (val)=>{
   mosaic.setAllowedParts(val as any)
-  try { showToast('Re-generating with your piece choices…', 'info', 1800) } catch {}
+  try { showToast(copy.mosaic.toasts.regenerating, 'info', 1500) } catch {}
 }, { immediate: true })
 
 async function onFile(file: File) {
   loading.value = true; grid.value = null; progress.value = 0
   mosaic.setUiWorking('manual')
   try {
+    try { showToast(copy.mosaic.toasts.generating, 'info', 1500) } catch {}
     srcBitmap.value = await createImageBitmap(file)
     // Cancel any in-flight tiling when a new image is loaded
     mosaic.cancelTiling()
@@ -136,7 +139,10 @@ async function onFile(file: File) {
 
 async function onGenerate(){
   mosaic.setUiWorking('manual')
-  try { await mosaic.runGreedyTiling() } finally { mosaic.clearUiWorking() }
+  try {
+    try { showToast(copy.mosaic.toasts.generating, 'info', 1200) } catch {}
+    await mosaic.runGreedyTiling()
+  } finally { mosaic.clearUiWorking() }
 }
 
 async function saveNow(){ await mosaic.saveProject() }
@@ -255,8 +261,9 @@ watchDebounced(
 
 <template>
   <main class="mx-auto max-w-7xl px-6 py-10 text-white">
-    <h1 class="text-3xl font-bold">Mosaic</h1>
-    <p class="opacity-80">Upload an image → map to brick colors → preview & export.</p>
+    <h1 class="text-3xl font-bold">{{ copy.mosaic.title }}</h1>
+    <p class="opacity-80">{{ copy.mosaic.subtitle }}</p>
+    <StepChips :steps="copy.mosaic.steps" />
 
     <div class="mt-6 grid lg:grid-cols-[460px,1fr] gap-6 items-start">
       <!-- left column -->
@@ -291,6 +298,7 @@ watchDebounced(
             <span class="font-medium text-mint">{{ target.w }} × {{ target.h }}</span>
           </div>
           <div class="text-xs opacity-70">≈ {{ target.w }}×{{ target.h }} studs · {{ widthInches.toFixed(1) }}×{{ heightInches.toFixed(1) }} in · {{ widthCm.toFixed(1) }}×{{ heightCm.toFixed(1) }} cm</div>
+          <p class="mt-1 text-xs text-white/60">{{ copy.mosaic.controls.outputSizeHelp }}</p>
 
           <div class="mt-3" v-if="showAdvanced">
             <label class="block text-sm" title="Pieces you want to build with">Allowed parts</label>
@@ -320,7 +328,8 @@ watchDebounced(
             <input type="checkbox" v-model="useDither"> Smoother shading (dithering)
           </label>
           <div class="mt-2 text-sm">
-            <label class="block text-sm text-white/80 mb-2">Preview quality</label>
+            <label class="block text-sm text-white/80 mb-1">{{ copy.mosaic.controls.previewQuality }}</label>
+            <p class="text-xs text-white/55 mb-2">{{ copy.mosaic.controls.previewQualityHelp }}</p>
             <select v-model.number="previewQuality" class="select-mint">
               <option :value="32">Fast (32×32)</option>
               <option :value="64">Balanced (64×64)</option>
@@ -378,9 +387,9 @@ watchDebounced(
           <button :class="['px-3 py-1.5 rounded-full transition', tab==='2D' ? 'bg-mint/15 text-white border border-mint/40' : 'text-white/70 hover:text-white']" @click="tab='2D'">2D Mosaic</button>
           <button :class="['px-3 py-1.5 rounded-full transition', tab==='3D' ? 'bg-mint/15 text-white border border-mint/40' : 'text-white/70 hover:text-white']" @click="tab='3D'">3D Preview</button>
           <div class="grow"></div>
-          <label v-if="tab==='2D'" class="ml-auto inline-flex items-center gap-2 text-white/80">
+          <label v-if="tab==='2D'" class="ml-auto inline-flex items-center gap-2 text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
             <input type="checkbox" class="accent-mint" v-model="showPlates" />
-            <span>Show plate outlines</span>
+            <span>{{ copy.mosaic.controls.showPlateOutlines }}</span>
           </label>
           <div v-if="mosaic.status==='error'" class="ml-2 text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
             Generation failed — {{ mosaic.errorMsg }}
@@ -410,7 +419,7 @@ watchDebounced(
                   <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
                 </ClientOnly>
                 <div class="mt-3">
-                  <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers"/>
+                  <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers" :title="copy.builder3d.controls.layerSliderHelp"/>
                 </div>
               </template>
             </div>
@@ -433,7 +442,7 @@ watchDebounced(
             <button class="px-3 py-1 rounded bg-cta-grad/70 hover:bg-cta-grad text-white" @click="whereToBuy">Where to buy pieces</button>
           </div>
         </div>
-        <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
+        <div v-else class="h-[480px] grid place-items-center opacity-60">{{ copy.mosaic.emptyState }}</div>
       </section>
       </Transition>
     </div>
