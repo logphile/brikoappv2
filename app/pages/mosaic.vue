@@ -23,6 +23,7 @@ import StepChips from '@/components/StepChips.vue'
 import InfoTip from '@/components/InfoTip.vue'
 import InlineStats from '@/components/InlineStats.vue'
 import { downloadPartsListCsvSimple } from '@/lib/exporters'
+import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 
 const mosaic = useMosaicStore()
 const { show: showToast } = useToasts()
@@ -84,6 +85,10 @@ const tab = ref<'2D'|'3D'>('2D')
 const dropActive = ref(false)
 // UI toggles
 const showPlates = ref(false)
+// BrickLink export dialog state
+const showBL = ref(false)
+const blCondition = ref<'N'|'U'>('N')
+const blAddRemarks = ref(true)
 // Advanced options gate
 const showAdvanced = ref(false)
 // Preview quality for first pass
@@ -235,6 +240,30 @@ function onDownloadCsv(){
   type SimpleBomRow = { part: string; colorId: number; qty: number }
   const rows = mosaic.tilingResult.bom.map((r: SimpleBomRow) => ({ part: r.part, colorId: r.colorId, qty: r.qty }))
   downloadPartsListCsvSimple(rows)
+}
+
+function openBLDialog(){ showBL.value = true }
+function closeBLDialog(){ showBL.value = false }
+function onDownloadBrickLink(){
+  if (!mosaic.tilingResult) return
+  try {
+    // Map BOM to BrickLink generator input
+    const rows = mosaic.tilingResult.bom.map((r: any) => {
+      const partKey = `plate-${r.part}` // current tiler outputs plates
+      const colorName = legoPalette[r.colorId]?.name
+      if (!colorName) { throw new Error(`Unknown color id: ${r.colorId}`) }
+      return { partKey, colorKey: colorName, qty: r.qty }
+    })
+    const remarks = blAddRemarks.value ? `Briko • Mosaic ${mosaic.width}×${mosaic.height}` : undefined
+    const xml = generateBrickLinkWantedXML(rows, { condition: blCondition.value, remarks })
+    downloadWantedXml(xml)
+    try { showToast('BrickLink file ready. Upload it at Wanted → Upload.', 'success', 2000) } catch {}
+  } catch (e: any) {
+    const msg = e?.message ? String(e.message) : 'Failed to generate BrickLink XML'
+    try { showToast(msg, 'error', 4000) } catch {}
+  } finally {
+    closeBLDialog()
+  }
 }
 
 // Share & buy helpers
@@ -598,9 +627,32 @@ watchDebounced(
             </div>
           </Transition>
           <!-- Export actions under preview -->
-          <div class="mt-4 flex flex-wrap gap-3">
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadPdf">Download Build Guide (PDF)</button>
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadCsv">Download Parts List (CSV)</button>
+          <div class="mt-4 relative">
+            <div class="flex flex-wrap gap-3">
+              <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadPdf">Download Build Guide (PDF)</button>
+              <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadCsv">Download Parts List (CSV)</button>
+              <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">Export for BrickLink (.xml)</button>
+            </div>
+
+            <!-- BrickLink export small dialog -->
+            <div v-if="showBL" class="absolute right-0 z-20 mt-2 w-80 rounded-2xl border border-white/10 bg-black/70 p-4 shadow-soft-card">
+              <div class="flex items-center justify-between mb-2">
+                <div class="font-medium">BrickLink Export</div>
+                <button class="text-white/60 hover:text-white" @click="closeBLDialog">✕</button>
+              </div>
+              <div class="space-y-3 text-sm">
+                <div>
+                  <div class="text-white/80 mb-1">Condition</div>
+                  <label class="mr-3 inline-flex items-center gap-2"><input type="radio" value="N" v-model="blCondition"> New</label>
+                  <label class="inline-flex items-center gap-2"><input type="radio" value="U" v-model="blCondition"> Used</label>
+                </div>
+                <label class="inline-flex items-center gap-2"><input type="checkbox" v-model="blAddRemarks"> Add remarks “Briko • Mosaic”</label>
+                <div class="flex justify-end gap-2 pt-2">
+                  <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:text-white hover:border-mint/40" @click="closeBLDialog">Cancel</button>
+                  <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white bg-mint/20 hover:border-mint/50" @click="onDownloadBrickLink">Export XML</button>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
             <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
