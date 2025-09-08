@@ -1,6 +1,8 @@
 import type { BomRow } from '@/types/mosaic'
 import { canvasToPngBlob } from '@/utils/canvas-to-png'
 import { legoPalette } from '@/lib/palette/lego'
+import { PARTS_MAP } from '@/lib/parts-map'
+import { BRICKLINK_PART_IDS } from '@/lib/bricklink/parts-map'
 
 export function downloadCsv(rows: BomRow[], name='briko_bom.csv'){
   const esc = (v: unknown) => '"' + String(v).replace(/"/g, '""') + '"'
@@ -80,15 +82,21 @@ const PLATE_PART_IDS: Record<string, string> = {
 }
 
 type SimpleBomRow = { part: string; colorId: number; qty: number }
-export function downloadPartsListCsvSimple(rows: SimpleBomRow[], name=`briko-partslist-${Date.now()}.csv`){
+export function downloadPartsListCsvSimple(rows: SimpleBomRow[], surface: 'plates'|'tiles' = 'plates', name?: string){
   const esc = (v: unknown) => '"' + String(v).replace(/"/g, '""') + '"'
   const header = 'Part ID,Color,Quantity\r\n'
+  const ALLOWED = ['1x1','1x2','1x3','1x4','2x2','2x3','2x4'] as const
+  type SizeKey = typeof ALLOWED[number]
+  const asSize = (p: string): SizeKey | null => (ALLOWED as readonly string[]).includes(p) ? (p as SizeKey) : null
   const body = rows.map(r => {
-    const pid = PLATE_PART_IDS[r.part] || r.part
+    const size = asSize(r.part)
+    const key = size ? (PARTS_MAP[surface] as Record<SizeKey,string>)[size] : undefined
+    const pid = key ? BRICKLINK_PART_IDS[key] : (PLATE_PART_IDS[r.part] || r.part)
     const colorName = legoPalette[r.colorId]?.name || `Color ${r.colorId}`
     return [pid, esc(colorName), r.qty].join(',')
   }).join('\r\n')
   const blob = new Blob([header + body + '\r\n'], { type: 'text/csv' })
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name })
+  const filename = name || `briko-partslist-${surface}-${Date.now()}.csv`
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: filename })
   a.click(); URL.revokeObjectURL(a.href)
 }

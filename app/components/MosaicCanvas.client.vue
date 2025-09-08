@@ -3,7 +3,7 @@ import { onMounted, ref, watch, computed } from 'vue'
 import type { WorkerOut, Placement, BOMRow } from '@/types/mosaic'
 // Local shape for streaming overlay bricks
 interface TiledBrick { x:number; y:number; w:number; h:number; colorId:number }
-const props = defineProps<{ data: WorkerOut, showGrid?: boolean, showTiles?: boolean, overlayBricks?: TiledBrick[], tileMap?: Uint32Array | null, bricks?: TiledBrick[] | null, bomRows?: BOMRow[] | null }>()
+const props = defineProps<{ data: WorkerOut, showGrid?: boolean, showTiles?: boolean, overlayBricks?: TiledBrick[], tileMap?: Uint32Array | null, bricks?: TiledBrick[] | null, bomRows?: BOMRow[] | null, surface?: 'plates'|'tiles' }>()
 const emit = defineEmits<{(e:'view-bom', payload:{ part: string, colorId: number }): void}>()
 const cvs = ref<HTMLCanvasElement|null>(null)
 const ov = ref<HTMLCanvasElement|null>(null)
@@ -135,7 +135,7 @@ watch(() => props.tileMap, () => { clearOverlay(); hover.value = null; tooltip.v
       <div class="rounded-xl bg-white/10 border border-white/10 backdrop-blur px-3 py-2 text-xs shadow-soft-card">
         <div class="flex items-center gap-2">
           <span class="inline-block w-3.5 h-3.5 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: spec.colorHex }"></span>
-          <span class="font-medium text-white/90">Plate {{ spec.part.replace('x','×') }}</span>
+          <span class="font-medium text-white/90">{{ (props.surface==='tiles' ? 'Tile' : 'Plate') }} {{ spec.part.replace('x','×') }}</span>
           <span class="opacity-70">({{ spec.pn }})</span>
         </div>
         <div class="mt-1 text-white/80">{{ spec.colorName }}</div>

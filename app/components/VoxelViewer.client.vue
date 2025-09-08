@@ -13,6 +13,7 @@ const props = defineProps<{
   bricks: TiledBrick[]
   studSize?: number
   visibleLayers: number
+  surface?: 'plates'|'tiles'
 }>()
 
 const host = ref<HTMLDivElement | null>(null)
@@ -21,6 +22,7 @@ let scene: any = null
 let camera: any = null
 let controls: any = null
 let group: any = null
+let studsMesh: any = null
 let raf = 0
 
 const hexToColor = (hex: string) => new (THREE as any).Color(hex)
@@ -69,6 +71,43 @@ function buildGroup() {
     }
     ;(mesh as any).computeBoundingSphere?.()
     group.add(mesh)
+  }
+
+  // Optional studs layer when using plates surface
+  if (props.surface !== 'tiles') {
+    // Build one instanced mesh for studs across all bricks to keep it efficient
+    const studRadius = 0.28 * s
+    const studHeight = 0.2 * s
+    const segs = 12
+    const studGeom = new (THREE as any).CylinderGeometry(studRadius, studRadius, studHeight, segs)
+    const mat = new (THREE as any).MeshLambertMaterial({ color: 0xffffff, vertexColors: false, opacity: 0.9, transparent: true })
+
+    // Count studs first
+    let totalStuds = 0
+    for (const rec of byKey.values()) {
+      totalStuds += rec.items.length * rec.w * rec.h
+    }
+    studsMesh = new (THREE as any).InstancedMesh(studGeom, mat, totalStuds)
+    ;(studsMesh.instanceMatrix as any).setUsage((THREE as any).DynamicDrawUsage)
+
+    const dummy = new (THREE as any).Object3D()
+    let i = 0
+    for (const rec of byKey.values()) {
+      for (const it of rec.items) {
+        for (let dx = 0; dx < rec.w; dx++) {
+          for (let dy = 0; dy < rec.h; dy++) {
+            const cx = (it.x + dx + 0.5) * s
+            const cy = (it.y + dy + 0.5) * s
+            const cz = (1 * s) / 2 + studHeight / 2 // sit on top surface
+            dummy.position.set(cx, cy, cz)
+            dummy.updateMatrix()
+            studsMesh.setMatrixAt(i++, (dummy as any).matrix)
+          }
+        }
+      }
+    }
+    ;(studsMesh as any).computeBoundingSphere?.()
+    group.add(studsMesh)
   }
 
   scene.add(group)
@@ -144,6 +183,7 @@ onBeforeUnmount(() => {
 // Rebuild on layer change quickly; on bricks change when a new tiling result arrives
 watch(() => props.visibleLayers, () => requestAnimationFrame(buildGroup))
 watch(() => props.bricks, () => requestAnimationFrame(buildGroup))
+watch(() => props.surface, () => requestAnimationFrame(buildGroup))
 
 // Frame camera and controls to fit current group content
 function frameToContent() {

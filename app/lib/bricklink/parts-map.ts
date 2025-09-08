@@ -11,6 +11,9 @@ export const BRICKLINK_PART_IDS: Record<string, string> = {
   // Tiles (kept for future tile-mode)
   'tile-1x1': '3070b',
   'tile-1x2': '3069b',
+  'tile-1x3': '63864',
+  'tile-1x4': '2431',
   'tile-2x2': '3068b',
+  'tile-2x3': '26603',
   'tile-2x4': '87079'
 }

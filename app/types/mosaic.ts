@@ -31,6 +31,7 @@ export interface MosaicSettings {
   height: number
   allowedParts: StudSize[]
   snapOrientation: 'both' | 'horizontal' | 'vertical'
+  topSurface?: 'plates' | 'tiles'
   seed?: number
 }
 

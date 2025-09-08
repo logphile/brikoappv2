@@ -73,6 +73,17 @@ onMounted(() => {
   if (mosaic.width && mosaic.height) {
     target.value = { w: mosaic.width, h: mosaic.height }
   }
+  // Initialize topSurface from URL or localStorage
+  try {
+    const url = new URL(window.location.href)
+    const q = url.searchParams.get('surface')
+    if (q === 'tiles' || q === 'plates') {
+      mosaic.setTopSurface(q)
+    } else {
+      const saved = localStorage.getItem('briko.topSurface')
+      if (saved === 'tiles' || saved === 'plates') mosaic.setTopSurface(saved)
+    }
+  } catch {}
 })
 const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
@@ -99,6 +110,21 @@ const inchesW = computed(()=> fmt1(target.value.w * 0.315))
 const inchesH = computed(()=> fmt1(target.value.h * 0.315))
 const cmW = computed(()=> fmt1(target.value.w * 0.8))
 const cmH = computed(()=> fmt1(target.value.h * 0.8))
+
+// React to top surface for preview defaults
+watch(() => mosaic.settings.topSurface, (mode) => {
+  try { showToast('Updating preview…', 'info', 1000) } catch {}
+  if (mode === 'tiles') {
+    // Hide stud grid for tiles by default
+    showGrid.value = false
+  }
+  // Reflect in URL for persistence
+  try {
+    const url = new URL(window.location.href)
+    url.searchParams.set('surface', mode || 'plates')
+    window.history.replaceState({}, '', url.toString())
+  } catch {}
+})
 
 // Dimension dropdowns and units
 const dimOptions = [16, 20, 24, 32, 48, 64, 96, 128]
@@ -233,13 +259,13 @@ async function uploadPrev(){ await mosaic.uploadPreview() }
 async function onDownloadPdf(){
   if (!mosaic.tilingResult) return
   try { showToast('Generating Build Guide…', 'info', 1500) } catch {}
-  await exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height, fileName: `briko-mosaic-${mosaic.width}x${mosaic.height}.pdf` })
+  await exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height, topSurface: mosaic.settings.topSurface })
 }
 function onDownloadCsv(){
   if (!mosaic.tilingResult) return
   type SimpleBomRow = { part: string; colorId: number; qty: number }
   const rows = mosaic.tilingResult.bom.map((r: SimpleBomRow) => ({ part: r.part, colorId: r.colorId, qty: r.qty }))
-  downloadPartsListCsvSimple(rows)
+  downloadPartsListCsvSimple(rows, mosaic.settings.topSurface || 'plates')
 }
 
 function openBLDialog(){ showBL.value = true }
@@ -249,14 +275,14 @@ function onDownloadBrickLink(){
   try {
     // Map BOM to BrickLink generator input
     const rows = mosaic.tilingResult.bom.map((r: any) => {
-      const partKey = `plate-${r.part}` // current tiler outputs plates
+      const partKey = ((mosaic.settings.topSurface || 'plates') === 'tiles') ? `tile-${r.part}` : `plate-${r.part}`
       const colorName = legoPalette[r.colorId]?.name
       if (!colorName) { throw new Error(`Unknown color id: ${r.colorId}`) }
       return { partKey, colorKey: colorName, qty: r.qty }
     })
     const remarks = blAddRemarks.value ? `Briko • Mosaic ${mosaic.width}×${mosaic.height}` : undefined
     const xml = generateBrickLinkWantedXML(rows, { condition: blCondition.value, remarks })
-    downloadWantedXml(xml)
+    downloadWantedXml(xml, `briko-wanted-list-${mosaic.settings.topSurface || 'plates'}-${Date.now()}.xml`)
     try { showToast('BrickLink file ready. Upload it at Wanted → Upload.', 'success', 2000) } catch {}
   } catch (e: any) {
     const msg = e?.message ? String(e.message) : 'Failed to generate BrickLink XML'
@@ -491,6 +517,22 @@ watchDebounced(
             </div>
           </div>
           <div class="mt-3" v-if="showAdvanced">
+            <div class="flex items-center gap-2">
+              <label class="block text-sm">Top surface</label>
+              <InfoTip label="About top surface">
+                <div>
+                  Studded = plates (classic LEGO look).<br/>
+                  Smooth = tiles (poster finish).
+                </div>
+              </InfoTip>
+              <div class="grow"></div>
+            </div>
+            <div class="mt-2 inline-flex rounded-lg overflow-hidden border border-white/10">
+              <button :class="['px-3 py-1.5 text-sm', mosaic.settings.topSurface==='plates' ? 'bg-white/15 text-white' : 'text-white/70 hover:text-white']" @click="mosaic.setTopSurface('plates')">Studded (plates)</button>
+              <button :class="['px-3 py-1.5 text-sm', mosaic.settings.topSurface==='tiles' ? 'bg-white/15 text-white' : 'text-white/70 hover:text-white']" @click="mosaic.setTopSurface('tiles')">Smooth (tiles)</button>
+            </div>
+          </div>
+          <div class="mt-3" v-if="showAdvanced">
             <label class="block text-sm">Orientation</label>
             <div class="flex items-center mt-1">
               <div class="min-w-[160px] max-w-[220px]">
@@ -542,17 +584,17 @@ watchDebounced(
 
             <!-- Export buttons belong here so they scroll with the list -->
             <div class="mb-3 flex flex-wrap gap-3">
-              <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
-              <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
-              <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
-            </div>
+            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
+            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, topSurface: mosaic.settings.topSurface })">Export PDF</button>
+            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
+          </div>
 
             <!-- BOM items -->
             <ul class="divide-y divide-white/5 text-sm">
               <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" :id="'bom-' + row.part + '-' + row.colorId" class="py-2 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
-                  <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }} · Plate {{ row.part.replace('x','×') }}</span>
+                  <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }} · {{ (mosaic.settings.topSurface==='tiles' ? 'Tile' : 'Plate') }} {{ row.part.replace('x','×') }}</span>
                 </div>
                 <div class="text-white/70 text-sm">{{ row.qty }} pcs</div>
               </li>
@@ -613,12 +655,13 @@ watchDebounced(
                   :tileMap="tileMap"
                   :bricks="mosaic.tilingResult?.bricks || null"
                   :bomRows="mosaic.tilingResult?.bom || null"
+                  :surface="(mosaic.settings.topSurface || 'plates') as any"
                   @view-bom="onViewBomEvt"
                 />
               </template>
               <template v-else>
                 <ClientOnly>
-                  <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1"/>
+                  <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1" :surface="(mosaic.settings.topSurface || 'plates') as any"/>
                 </ClientOnly>
                 <div class="mt-3">
                   <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers" :title="copy.builder3d.controls.layerSliderHelp"/>

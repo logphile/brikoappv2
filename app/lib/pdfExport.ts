@@ -16,8 +16,11 @@ export async function exportBuildGuidePDF(opts: {
   width: number
   height: number
   fileName?: string
+  topSurface?: 'plates'|'tiles'
 }) {
-  const { bricks, width, height, fileName = 'briko-build-guide.pdf' } = opts
+  const tileMode = opts.topSurface === 'tiles'
+  const { bricks, width, height } = opts
+  const fileName = opts.fileName || `briko-build-guide-${tileMode ? 'tiles' : 'plates'}.pdf`
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true })
   const pageW = doc.internal.pageSize.getWidth()
   const pageH = doc.internal.pageSize.getHeight()
@@ -84,13 +87,19 @@ export async function exportBuildGuidePDF(opts: {
     // Grid row
     const x0 = margin
     const y0 = margin + headerH
-    doc.setDrawColor(200)
-    doc.rect(x0, y0, gridW, gridH)
-    // vertical lines
-    doc.setLineWidth(0.1)
-    for (let x = 1; x < width; x++) {
-      const xx = x0 + x * cell
-      doc.line(xx, y0, xx, y0 + gridH)
+    if (!tileMode) {
+      doc.setDrawColor(200)
+      doc.rect(x0, y0, gridW, gridH)
+      // vertical stud guides
+      doc.setLineWidth(0.1)
+      for (let x = 1; x < width; x++) {
+        const xx = x0 + x * cell
+        doc.line(xx, y0, xx, y0 + gridH)
+      }
+    } else {
+      // Smooth tiles: minimal boundary only
+      doc.setDrawColor(220)
+      doc.rect(x0, y0, gridW, gridH)
     }
 
     // Dim bricks overlapping this layer, except those starting on this layer
