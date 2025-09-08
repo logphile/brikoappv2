@@ -94,6 +94,27 @@ const inchesH = computed(()=> fmt1(target.value.h * 0.315))
 const cmW = computed(()=> fmt1(target.value.w * 0.8))
 const cmH = computed(()=> fmt1(target.value.h * 0.8))
 
+// Dimension dropdowns and units
+const dimOptions = [16, 20, 24, 32, 48, 64, 96, 128]
+type UnitsT = 'studs' | 'inches' | 'centimeters'
+const units = ref<UnitsT>('studs')
+
+function clamp(n:number, min:number, max:number){ return Math.max(min, Math.min(max, n)) }
+function nearestOption(val:number, opts:number[]){
+  let best = opts[0], bestD = Math.abs(opts[0] - val)
+  for (const o of opts){ const d = Math.abs(o - val); if (d < bestD){ best = o; bestD = d } }
+  return best
+}
+// Keep select values in studs; labels adapt to chosen units
+const widthSelStuds = computed<number>({
+  get(){ return nearestOption(target.value.w, dimOptions) },
+  set(v:number){ const s = clamp(v, 16, 256); target.value.w = s; mosaic.setTargetSize(target.value.w, target.value.h) }
+})
+const heightSelStuds = computed<number>({
+  get(){ return nearestOption(target.value.h, dimOptions) },
+  set(v:number){ const s = clamp(v, 16, 256); target.value.h = s; mosaic.setTargetSize(target.value.w, target.value.h) }
+})
+
 // Keep the last ImageBitmap to support re-runs without re-decoding
 const srcBitmap = ref<ImageBitmap|null>(null)
 const mosaicTask = createWorkerTask<WorkerOut>(() => import('@/workers/mosaic.worker?worker').then((m:any) => new m.default()))
@@ -177,6 +198,20 @@ async function onGenerate(){
 function choosePreset(w: number, h: number){
   target.value = { w, h }
   mosaic.setTargetSize(w, h)
+}
+
+// Snap sliders to nearest allowed value on commit and surface a subtle toast
+function snapDim(which: 'w'|'h'){
+  const cur = target.value[which]
+  const nearest = nearestOption(cur, dimOptions)
+  if (cur !== nearest) {
+    target.value = { ...target.value, [which]: nearest }
+    mosaic.setTargetSize(target.value.w, target.value.h)
+    try { showToast('Snapped to nearest supported size', 'info', 1200) } catch {}
+  } else {
+    // still propagate to store to keep pipeline in sync
+    mosaic.setTargetSize(target.value.w, target.value.h)
+  }
 }
 
 async function saveNow(){ await mosaic.saveProject() }
@@ -347,10 +382,10 @@ watchDebounced(
           </div>
           <div class="grid grid-cols-2 gap-5 text-sm">
             <label>Width
-              <input type="range" min="16" max="256" step="1" v-model.number="target.w" @change="mosaic.setTargetSize(target.w, target.h)" class="range-mint">
+              <input type="range" min="16" max="256" step="1" v-model.number="target.w" @change="snapDim('w')" class="range-mint">
             </label>
             <label>Height
-              <input type="range" min="16" max="256" step="1" v-model.number="target.h" @change="mosaic.setTargetSize(target.w, target.h)" class="range-mint">
+              <input type="range" min="16" max="256" step="1" v-model.number="target.h" @change="snapDim('h')" class="range-mint">
             </label>
           </div>
           <InlineStats :items="[
@@ -358,6 +393,40 @@ watchDebounced(
             `${inchesW}×${inchesH} in`,
             `${cmW}×${cmH} cm`
           ]" />
+
+          <!-- Precise inputs -->
+          <div class="h-px bg-white/5 my-3"></div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="text-sm font-medium text-white/80">What size mosaic would you like?</h4>
+            </div>
+            <p class="mt-1 text-xs text-white/60">Pick exact dimensions, or use the sliders above.</p>
+            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <div>
+                <label class="block text-xs text-white/60 mb-1">Width</label>
+                <select v-model.number="widthSelStuds" class="select-mint" :aria-describedby="'desc-width'">
+                  <option v-for="n in dimOptions" :key="'w'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
+                </select>
+                <span id="desc-width" class="sr-only">Exact mosaic width. Matches the sliders above.</span>
+              </div>
+              <div>
+                <label class="block text-xs text-white/60 mb-1">Height</label>
+                <select v-model.number="heightSelStuds" class="select-mint" :aria-describedby="'desc-height'">
+                  <option v-for="n in dimOptions" :key="'h'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
+                </select>
+                <span id="desc-height" class="sr-only">Exact mosaic height. Matches the sliders above.</span>
+              </div>
+              <div>
+                <label class="block text-xs text-white/60 mb-1">Units</label>
+                <select v-model="units" class="select-mint" :aria-describedby="'desc-units'">
+                  <option value="studs">Studs</option>
+                  <option value="inches">Inches</option>
+                  <option value="centimeters">Centimeters</option>
+                </select>
+                <span id="desc-units" class="sr-only">Change display units only; brick count stays the same.</span>
+              </div>
+            </div>
+          </div>
 
           <div class="mt-3" v-if="showAdvanced">
             <label class="block text-sm" title="Pieces you want to build with">Allowed parts</label>
