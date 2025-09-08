@@ -20,6 +20,8 @@ import { useToasts } from '@/composables/useToasts'
 import { imageBitmapToBuffer } from '@/utils/image-to-buffer'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
+import InfoTip from '@/components/InfoTip.vue'
+import InlineStats from '@/components/InlineStats.vue'
 
 const mosaic = useMosaicStore()
 const { show: showToast } = useToasts()
@@ -63,7 +65,13 @@ useHead({
   ]
 })
 
-const target = ref<{w:number,h:number}>({ w: 128, h: 128 })
+const target = ref<{w:number,h:number}>({ w: 20, h: 20 })
+// If hydrating from a saved project, respect saved dimensions
+onMounted(() => {
+  if (mosaic.width && mosaic.height) {
+    target.value = { w: mosaic.width, h: mosaic.height }
+  }
+})
 const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
 const progress = ref(0)
@@ -79,13 +87,12 @@ const showPlates = ref(false)
 const showAdvanced = ref(false)
 // Preview quality for first pass
 const previewQuality = ref(64) // studs on first progressive run
-// Size readouts helpers
-const mmPerStud = 8
-const inPerMm = 1/25.4
-const widthInches = computed(()=> ((target.value.w * mmPerStud) * inPerMm))
-const heightInches = computed(()=> ((target.value.h * mmPerStud) * inPerMm))
-const widthCm = computed(()=> (target.value.w * mmPerStud) / 10)
-const heightCm = computed(()=> (target.value.h * mmPerStud) / 10)
+// Size readouts helpers (rounded to 1 decimal for compact chips)
+const fmt1 = (n:number)=> (Math.round(n*10)/10).toFixed(1)
+const inchesW = computed(()=> fmt1(target.value.w * 0.315))
+const inchesH = computed(()=> fmt1(target.value.h * 0.315))
+const cmW = computed(()=> fmt1(target.value.w * 0.8))
+const cmH = computed(()=> fmt1(target.value.h * 0.8))
 
 // Keep the last ImageBitmap to support re-runs without re-decoding
 const srcBitmap = ref<ImageBitmap|null>(null)
@@ -164,6 +171,12 @@ async function onGenerate(){
     try { showToast(copy.mosaic.toasts.generating, 'info', 1200) } catch {}
     await mosaic.runGreedyTiling()
   } finally { mosaic.clearUiWorking() }
+}
+
+// Optional preset handler
+function choosePreset(w: number, h: number){
+  target.value = { w, h }
+  mosaic.setTargetSize(w, h)
 }
 
 async function saveNow(){ await mosaic.saveProject() }
@@ -308,18 +321,29 @@ watchDebounced(
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
-        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 divide-y divide-white/5 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
+        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
           <!-- Upload embedded -->
           <div>
             <label class="block text-sm font-medium text-white/80 mb-2">Upload</label>
             <MosaicUploader embedded @file="onFile" />
           </div>
-          <div class="flex items-center justify-between">
-            <label class="block text-sm">Output size (studs)</label>
-            <div class="text-xs bg-white/10 rounded-md overflow-hidden">
+          <div class="flex items-center gap-2">
+            <h3 class="text-white text-base font-semibold">Output size</h3>
+            <InfoTip label="About output size">
+              Bigger sizes use more bricks and show more detail.
+            </InfoTip>
+            <div class="ml-auto text-xs bg-white/10 rounded-md overflow-hidden">
               <button :class="['px-2 py-1', !showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=false">Simple</button>
               <button :class="['px-2 py-1', showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=true">Advanced</button>
             </div>
+          </div>
+          <!-- Optional preset size chips -->
+          <div class="mt-2 flex flex-wrap gap-2">
+            <button v-for="preset in [[16,16],[20,20],[32,32],[48,48],[64,64]]" :key="(preset as any).join('x')"
+                    class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80 hover:border-mint/40"
+                    @click="choosePreset((preset as any)[0], (preset as any)[1])">
+              {{ (preset as any)[0] }}×{{ (preset as any)[1] }}
+            </button>
           </div>
           <div class="grid grid-cols-2 gap-5 text-sm">
             <label>Width
@@ -329,12 +353,11 @@ watchDebounced(
               <input type="range" min="16" max="256" step="1" v-model.number="target.h" @change="mosaic.setTargetSize(target.w, target.h)" class="range-mint">
             </label>
           </div>
-          <div class="flex justify-between items-center text-sm mt-2">
-            <span class="text-white/70">Output size (studs)</span>
-            <span class="font-medium text-mint">{{ target.w }} × {{ target.h }}</span>
-          </div>
-          <div class="text-xs opacity-70">≈ {{ target.w }}×{{ target.h }} studs · {{ widthInches.toFixed(1) }}×{{ heightInches.toFixed(1) }} in · {{ widthCm.toFixed(1) }}×{{ heightCm.toFixed(1) }} cm</div>
-          <p class="mt-1 text-xs text-white/60">{{ copy.mosaic.controls.outputSizeHelp }}</p>
+          <InlineStats :items="[
+            `${target.w}×${target.h} studs`,
+            `${inchesW}×${inchesH} in`,
+            `${cmW}×${cmH} cm`
+          ]" />
 
           <div class="mt-3" v-if="showAdvanced">
             <label class="block text-sm" title="Pieces you want to build with">Allowed parts</label>
@@ -363,9 +386,13 @@ watchDebounced(
           <label class="inline-flex items-center gap-2 text-sm mt-2" v-if="showAdvanced">
             <input type="checkbox" v-model="useDither"> Smoother shading (dithering)
           </label>
-          <div class="mt-2 text-sm">
-            <label class="block text-sm text-white/80 mb-1">{{ copy.mosaic.controls.previewQuality }}</label>
-            <p class="text-xs text-white/55 mb-2">{{ copy.mosaic.controls.previewQualityHelp }}</p>
+          <div class="mt-4 text-sm">
+            <div class="flex items-center gap-2">
+              <label class="block text-sm text-white/80">Preview quality</label>
+              <InfoTip label="About preview quality">
+                Faster preview = fewer bricks. Detail = more bricks, sharper look.
+              </InfoTip>
+            </div>
             <select v-model.number="previewQuality" class="select-mint">
               <option :value="32">Fast (32×32)</option>
               <option :value="64">Balanced (64×64)</option>
@@ -373,6 +400,7 @@ watchDebounced(
               <option :value="128">High (128×128)</option>
             </select>
           </div>
+          <div class="h-px bg-white/5 my-3"></div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
             <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
