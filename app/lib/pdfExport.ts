@@ -33,13 +33,20 @@ export async function exportBuildGuidePDF(opts: {
   try {
     doc.setFontSize(18)
     doc.text('Briko Mosaic Build Guide', margin, margin + 4)
-    // Attempt to include the mosaic preview image from the app canvas
+    // Attempt to include the mosaic preview image of the UI via html2canvas (fallback to __brikoCanvas)
     let dataUrl: string | null = null
     try {
       const anyWin: any = (typeof window !== 'undefined') ? window : null
-      const cvs: any = anyWin && anyWin.__brikoCanvas
-      if (cvs && typeof cvs.toDataURL === 'function') {
-        dataUrl = cvs.toDataURL('image/png')
+      const targetEl = typeof document !== 'undefined' ? document.getElementById('mosaic-preview-capture') : null
+      if (targetEl) {
+        const { default: html2canvas } = await import('html2canvas')
+        const canvas = await html2canvas(targetEl as HTMLElement, { backgroundColor: '#ffffff', scale: 2, useCORS: true })
+        dataUrl = canvas.toDataURL('image/png')
+      } else {
+        const cvs: any = anyWin && anyWin.__brikoCanvas
+        if (cvs && typeof cvs.toDataURL === 'function') {
+          dataUrl = cvs.toDataURL('image/png')
+        }
       }
     } catch {}
     if (dataUrl) {
@@ -50,6 +57,17 @@ export async function exportBuildGuidePDF(opts: {
       const imgH = Math.min(maxH, imgW)
       doc.addImage(dataUrl, 'PNG', margin, margin + 10, imgW, imgH)
     }
+    // Small original photo (if app provided it on window)
+    try {
+      const anyWin: any = (typeof window !== 'undefined') ? window : null
+      const originalUrl: string | null = anyWin?.__brikoOriginalDataUrl || null
+      if (originalUrl) {
+        const thumbW = 35, thumbH = 35
+        doc.setFontSize(9)
+        doc.text('Original', pageW - margin - thumbW, margin + 12)
+        doc.addImage(originalUrl, 'PNG', pageW - margin - thumbW, margin + 14, thumbW, thumbH)
+      }
+    } catch {}
     // Small footer wordmark text
     doc.setFontSize(9)
     doc.text('briko.app', pageW - margin - 22, pageH - margin)
@@ -61,7 +79,7 @@ export async function exportBuildGuidePDF(opts: {
   for (let layer = 0; layer < height; layer++) {
     if (layer > 0) doc.addPage()
     doc.setFontSize(12)
-    doc.text(`Layer ${layer + 1} / ${height}`, margin, margin)
+    doc.text(`Step ${layer + 1}`, margin, margin)
 
     // Grid row
     const x0 = margin
@@ -75,8 +93,36 @@ export async function exportBuildGuidePDF(opts: {
       doc.line(xx, y0, xx, y0 + gridH)
     }
 
-    // Bricks that start on this layer (b.y === layer)
-    const starts = bricks.filter(b => b.y === layer)
+    // Dim bricks overlapping this layer, except those starting on this layer
+    const overlaps = bricks.filter(b => layer >= b.y && layer < (b.y + b.h))
+    const starts = overlaps.filter(b => b.y === layer)
+    const others = overlaps.filter(b => b.y !== layer)
+
+    // Utility: lighten a hex color by factor (toward white)
+    const lighten = (hex: string, factor = 0.75) => {
+      const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex)
+      let r = 204, g = 204, bb = 204
+      if (m) {
+        r = parseInt(m[1], 16); g = parseInt(m[2], 16); bb = parseInt(m[3], 16)
+      }
+      const lr = Math.round(r + (255 - r) * factor)
+      const lg = Math.round(g + (255 - g) * factor)
+      const lb = Math.round(bb + (255 - bb) * factor)
+      return [lr, lg, lb] as [number, number, number]
+    }
+
+    // Draw dimmed others first
+    for (const b of others) {
+      const color = legoPalette[b.colorId]?.hex || '#cccccc'
+      const [r, g, bb] = lighten(color, 0.78)
+      doc.setFillColor(r, g, bb)
+      const bx = x0 + b.x * cell
+      const bw = b.w * cell
+      const bh = 1 * cell // only current row slice
+      doc.rect(bx, y0, bw, bh, 'F')
+    }
+
+    // Draw highlighted current starts
     for (const b of starts) {
       const color = legoPalette[b.colorId]?.hex || '#cccccc'
       const [r, g, bb] = hexToRgb(color)
@@ -93,7 +139,7 @@ export async function exportBuildGuidePDF(opts: {
 
     // Count
     doc.setFontSize(10)
-    doc.text(`New bricks this layer: ${starts.length}`, margin, y0 + gridH + 6)
+    doc.text(`New bricks this step: ${starts.length}`, margin, y0 + gridH + 6)
 
     // Periodically yield to keep UI responsive
     if (layer % 8 === 7) {
@@ -118,7 +164,8 @@ export async function exportBuildGuidePDF(opts: {
   for (const r of rows) {
     if (yy > pageH - margin) { doc.addPage(); yy = margin }
     doc.text(r.part.replace('x','×'), margin, yy)
-    doc.text(String(r.colorId), margin + 40, yy)
+    const colorName = legoPalette[(r as any).colorId]?.name || `Color ${(r as any).colorId}`
+    doc.text(String(colorName), margin + 40, yy)
     doc.text(String(r.qty), margin + 70, yy, { align: 'right' })
     doc.text(r.estUnitPrice.toFixed(2), margin + 100, yy, { align: 'right' })
     doc.text(r.estTotal.toFixed(2), margin + 124, yy, { align: 'right' })

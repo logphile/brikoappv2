@@ -37,8 +37,8 @@ jobs:
           cache-dependency-path: 'pnpm-lock.yaml'
 
       - name: Install
-        # NOTE: Temporarily allow lockfile updates because package.json gained dev deps (sharp, to-ico)
-        # and pnpm-lock.yaml is not updated yet in this PR. Restore --frozen-lockfile after lock is committed.
+        # TEMP: Allow lockfile updates until pnpm-lock.yaml is committed for the new dev deps.
+        # Follow-up: revert to --frozen-lockfile after lockfile is updated in main.
         run: pnpm install --frozen-lockfile=false
 
       - name: Expose build metadata
