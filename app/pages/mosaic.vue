@@ -155,6 +155,12 @@ async function onFile(file: File) {
   try {
     try { showToast(copy.mosaic.toasts.generating, 'info', 1500) } catch {}
     srcBitmap.value = await createImageBitmap(file)
+    // Save a small original preview data URL for PDF cover (optional)
+    try {
+      const fr = new FileReader()
+      fr.onload = () => { (window as any).__brikoOriginalDataUrl = fr.result as string }
+      fr.readAsDataURL(file)
+    } catch {}
     // Cancel any in-flight tiling when a new image is loaded
     mosaic.cancelTiling()
 
@@ -533,7 +539,7 @@ watchDebounced(
       <Transition appear enter-active-class="transition ease-out duration-700 delay-150"
                   enter-from-class="opacity-0 translate-y-2"
                   enter-to-class="opacity-100 translate-y-0">
-      <section
+      <section id="mosaic-preview-capture"
         class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
         :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
         @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
