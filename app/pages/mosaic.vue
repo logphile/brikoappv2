@@ -22,6 +22,7 @@ import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
 import InfoTip from '@/components/InfoTip.vue'
 import InlineStats from '@/components/InlineStats.vue'
+import { downloadPartsListCsvSimple } from '@/lib/exporters'
 
 const mosaic = useMosaicStore()
 const { show: showToast } = useToasts()
@@ -216,6 +217,18 @@ function snapDim(which: 'w'|'h'){
 
 async function saveNow(){ await mosaic.saveProject() }
 async function uploadPrev(){ await mosaic.uploadPreview() }
+
+// Exports under preview
+async function onDownloadPdf(){
+  if (!mosaic.tilingResult) return
+  try { showToast('Generating Build Guide…', 'info', 1500) } catch {}
+  await exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height, fileName: `briko-mosaic-${mosaic.width}x${mosaic.height}.pdf` })
+}
+function onDownloadCsv(){
+  if (!mosaic.tilingResult) return
+  const rows = mosaic.tilingResult.bom.map(r => ({ part: r.part, colorId: r.colorId, qty: r.qty }))
+  downloadPartsListCsvSimple(rows)
+}
 
 // Share & buy helpers
 function currentUrl(){ try { return window.location.href } catch { return 'https://briko.app/mosaic' } }
@@ -572,6 +585,11 @@ watchDebounced(
               </template>
             </div>
           </Transition>
+          <!-- Export actions under preview -->
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadPdf">Download Build Guide (PDF)</button>
+            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadCsv">Download Parts List (CSV)</button>
+          </div>
           <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
             <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
             <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>

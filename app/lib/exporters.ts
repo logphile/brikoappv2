@@ -66,3 +66,29 @@ export function downloadBomCsvWeek1(rows: Week1Row[], name='briko-bom.csv'){
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name })
   a.click(); URL.revokeObjectURL(a.href)
 }
+
+// Simple parts list CSV for BrickLink/Rebrickable import
+// Columns: Part ID, Color, Quantity
+const PLATE_PART_IDS: Record<string, string> = {
+  '2x4': '3020',
+  '2x3': '3021',
+  '2x2': '3022',
+  '1x4': '3710',
+  '1x3': '3623',
+  '1x2': '3023',
+  '1x1': '3024',
+}
+
+type SimpleBomRow = { part: string; colorId: number; qty: number }
+export function downloadPartsListCsvSimple(rows: SimpleBomRow[], name=`briko-partslist-${Date.now()}.csv`){
+  const esc = (v: unknown) => '"' + String(v).replace(/"/g, '""') + '"'
+  const header = 'Part ID,Color,Quantity\r\n'
+  const body = rows.map(r => {
+    const pid = PLATE_PART_IDS[r.part] || r.part
+    const colorName = legoPalette[r.colorId]?.name || `Color ${r.colorId}`
+    return [pid, esc(colorName), r.qty].join(',')
+  }).join('\r\n')
+  const blob = new Blob([header + body + '\r\n'], { type: 'text/csv' })
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: name })
+  a.click(); URL.revokeObjectURL(a.href)
+}

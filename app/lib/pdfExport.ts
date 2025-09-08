@@ -11,7 +11,7 @@ function hexToRgb(hex: string): [number, number, number] {
   return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)]
 }
 
-export function exportBuildGuidePDF(opts: {
+export async function exportBuildGuidePDF(opts: {
   bricks: TiledBrick[]
   width: number
   height: number
@@ -28,6 +28,34 @@ export function exportBuildGuidePDF(opts: {
   const cell = Math.min(5, usableW / Math.max(1, width))
   const gridW = cell * width
   const gridH = cell * 1
+
+  // Cover page
+  try {
+    doc.setFontSize(18)
+    doc.text('Briko Mosaic Build Guide', margin, margin + 4)
+    // Attempt to include the mosaic preview image from the app canvas
+    let dataUrl: string | null = null
+    try {
+      const anyWin: any = (typeof window !== 'undefined') ? window : null
+      const cvs: any = anyWin && anyWin.__brikoCanvas
+      if (cvs && typeof cvs.toDataURL === 'function') {
+        dataUrl = cvs.toDataURL('image/png')
+      }
+    } catch {}
+    if (dataUrl) {
+      const maxW = usableW
+      const maxH = pageH * 0.55
+      // Assume square-ish; preserve aspect by sizing to width
+      const imgW = maxW
+      const imgH = Math.min(maxH, imgW)
+      doc.addImage(dataUrl, 'PNG', margin, margin + 10, imgW, imgH)
+    }
+    // Small footer wordmark text
+    doc.setFontSize(9)
+    doc.text('briko.app', pageW - margin - 22, pageH - margin)
+  } catch {}
+  // Start steps on a new page
+  doc.addPage()
 
   // Pages: one per layer (row), 0..height-1
   for (let layer = 0; layer < height; layer++) {
@@ -66,6 +94,11 @@ export function exportBuildGuidePDF(opts: {
     // Count
     doc.setFontSize(10)
     doc.text(`New bricks this layer: ${starts.length}`, margin, y0 + gridH + 6)
+
+    // Periodically yield to keep UI responsive
+    if (layer % 8 === 7) {
+      await new Promise<void>(r => setTimeout(r))
+    }
   }
 
   // Final BOM summary page
