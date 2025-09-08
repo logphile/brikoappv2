@@ -365,7 +365,7 @@ watchDebounced(
                   enter-from-class="opacity-0 translate-y-2"
                   enter-to-class="opacity-100 translate-y-0">
       <section
-        class="lg:col-span-2 relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
+        class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
         :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
         @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
       >
