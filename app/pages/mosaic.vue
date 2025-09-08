@@ -91,6 +91,27 @@ const heightCm = computed(()=> (target.value.h * mmPerStud) / 10)
 const srcBitmap = ref<ImageBitmap|null>(null)
 const mosaicTask = createWorkerTask<WorkerOut>(() => import('@/workers/mosaic.worker?worker').then((m:any) => new m.default()))
 
+// Hover hit-test lookup and handlers
+const tileMap = ref<Uint32Array | null>(null)
+function buildTileMap(bricks: {x:number;y:number;w:number;h:number}[]){
+  const w = mosaic.width, h = mosaic.height
+  if (!w || !h) { tileMap.value = null; return }
+  const map = new Uint32Array(w * h)
+  for (let i = 0; i < bricks.length; i++) {
+    const b = bricks[i]
+    const id = i + 1 // 1-based so 0 stays “none”
+    for (let dy = 0; dy < b.h; dy++) {
+      const row = (b.y + dy) * w + b.x
+      for (let dx = 0; dx < b.w; dx++) { map[row + dx] = id }
+    }
+  }
+  tileMap.value = map
+}
+watch(() => mosaic.tilingResult?.bricks, (bricks) => {
+  if (Array.isArray(bricks) && bricks.length) buildTileMap(bricks)
+  else tileMap.value = null
+})
+
 // Allowed parts multiselect
 const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
 const selectedParts = ref<string[]>([...ALL_PARTS])
@@ -160,6 +181,19 @@ function shareX(){ const u = encodeURIComponent(currentUrl()); const t = encodeU
 function shareFB(){ const u = encodeURIComponent(currentUrl()); window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`,'_blank') }
 function shareReddit(){ const u = encodeURIComponent(currentUrl()); const t = encodeURIComponent('My Briko mosaic'); window.open(`https://www.reddit.com/submit?url=${u}&title=${t}`,'_blank') }
 function whereToBuy(){ window.open('https://briko.app/help/buy-bricks','_blank') }
+
+// Jump to matching BOM row when requested by canvas tooltip
+function onViewBom(part: string, colorId: number){
+  try {
+    const id = `bom-${part}-${colorId}`
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el.classList.add('ring-2','ring-mint/60','rounded-md')
+      setTimeout(() => el.classList.remove('ring-2','ring-mint/60'), 1200)
+    }
+  } catch {}
+}
 
 // Steps (kept for compatibility when using legacy greedy placements)
 const stepIdx = ref(1)
@@ -353,7 +387,7 @@ watchDebounced(
         <div v-if="mosaic.tilingResult" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <div class="font-semibold mb-2">Shopping List</div>
           <ul class="max-h-64 overflow-auto text-sm space-y-1">
-            <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" class="flex justify-between items-center">
+            <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" :id="'bom-' + row.part + '-' + row.colorId" class="flex justify-between items-center">
               <div class="flex items-center gap-2">
                 <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
                 <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }}</span>
@@ -412,7 +446,16 @@ watchDebounced(
                       enter-to-class="opacity-100 translate-y-0">
             <div :key="tab">
               <template v-if="tab==='2D'">
-                <MosaicCanvas :data="grid" :showGrid="showGrid" :showTiles="showPlates" :overlayBricks="mosaic.overlayBricks"/>
+                <MosaicCanvas
+                  :data="grid"
+                  :showGrid="showGrid"
+                  :showTiles="showPlates"
+                  :overlayBricks="mosaic.overlayBricks"
+                  :tileMap="tileMap"
+                  :bricks="mosaic.tilingResult?.bricks || null"
+                  :bomRows="mosaic.tilingResult?.bom || null"
+                  @view-bom="({part, colorId}) => onViewBom(part, colorId)"
+                />
               </template>
               <template v-else>
                 <ClientOnly>
