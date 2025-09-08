@@ -6,7 +6,7 @@
         <p class="opacity-80 text-sm">Private by default. Make them public to share.</p>
       </div>
       <div class="flex items-center gap-2">
-        <NuxtLink to="/community-studio" class="px-4 py-2 rounded-2xl border border-white/20 hover:border-white/40">Community Studio</NuxtLink>
+        <NuxtLink to="/studio/community" class="btn-outline-mint">Community Studio</NuxtLink>
         <NuxtLink to="/projects/new" class="btn-mint">New Project</NuxtLink>
       </div>
     </div>
@@ -29,12 +29,16 @@
         </div>
       </article>
     </section>
+
+    <!-- Community Projects grid -->
+    <CommunityGrid />
   </main>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useNuxtApp } from 'nuxt/app'
+import CommunityGrid from '@/components/CommunityGrid.vue'
 
 const { $supabase } = useNuxtApp() as any
 const router = useRouter()
