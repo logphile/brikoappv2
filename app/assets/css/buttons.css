@@ -7,3 +7,15 @@
          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/60
          disabled:opacity-50 disabled:cursor-not-allowed;
 }
+
+/* Mint outline / ghost button – draws attention without heavy fill */
+.btn-outline-mint{
+  @apply rounded-2xl px-4 py-2 font-semibold text-white
+         border border-mint/40 bg-transparent
+         hover:bg-mint/10 hover:border-mint/60
+         transition;
+  box-shadow: 0 8px 24px -12px rgba(0,229,160,.25);
+}
+.btn-outline-mint:focus-visible{
+  outline: none; box-shadow: 0 0 0 2px rgba(0,229,160,.5), 0 8px 24px -12px rgba(0,229,160,.35);
+}
