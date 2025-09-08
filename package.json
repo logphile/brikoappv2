@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build:static": "nuxt build && nuxt generate",
     "serve:static": "npx http-server .output/public -p 4178 -s",
+    "icons:generate": "node scripts/generate-icons.mjs",
     "e2e": "playwright test --reporter=line",
     "test": "vitest run"
   },
@@ -28,6 +29,8 @@
     "http-server": "^14.1.1",
     "lighthouse": "^12.8.2",
     "nuxt": "^3.12.0",
+    "sharp": "^0.33.3",
+    "to-ico": "^1.1.5",
     "pinia": "^2.1.7",
     "postcss": "^8.4.44",
     "prettier": "^3.3.3",

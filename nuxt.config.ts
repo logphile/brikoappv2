@@ -48,11 +48,31 @@ export default defineNuxtConfig({
     head: {
       title: process.env.NUXT_PUBLIC_SITE_NAME || 'Briko',
       titleTemplate: `%s | ${process.env.NUXT_PUBLIC_SITE_NAME || 'Briko'}`,
-      meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'theme-color', content: '#111827', media: '(prefers-color-scheme: dark)' },
+        { name: 'theme-color', content: '#ffffff', media: '(prefers-color-scheme: light)' }
+      ],
       link: [
+        // Light/Dark aware favicons (SVG for crisp scaling)
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon-dark.svg', media: '(prefers-color-scheme: dark)' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon-light.svg', media: '(prefers-color-scheme: light)' },
+
+        // PNG favicons for light/dark (16/32)
+        { rel: 'icon', type: 'image/png', href: '/favicon-32.png', sizes: '32x32', media: '(prefers-color-scheme: dark)' },
+        { rel: 'icon', type: 'image/png', href: '/favicon-16.png', sizes: '16x16', media: '(prefers-color-scheme: dark)' },
+        { rel: 'icon', type: 'image/png', href: '/favicon-32-light.png', sizes: '32x32', media: '(prefers-color-scheme: light)' },
+        { rel: 'icon', type: 'image/png', href: '/favicon-16-light.png', sizes: '16x16', media: '(prefers-color-scheme: light)' },
+
+        // Existing fallbacks
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/png', href: '/briko-favicon-32.png' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: '/briko-icon-apple-180.png' },
+
+        // Apple / PWA
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon-180.png' },
+        // Fallback ICO (old browsers)
+        { rel: 'icon', href: '/favicon.ico' },
+        { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#00E5A0' },
         { rel: 'manifest', href: '/manifest.webmanifest' }
       ]
     }
