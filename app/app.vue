@@ -1,27 +1,23 @@
 <template>
-  <AppHeader />
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
-  <footer class="mt-10 border-t border-white/10">
-    <div class="mx-auto max-w-7xl px-6 py-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm opacity-80">
-      <NuxtLink to="/privacy" class="hover:opacity-100">Privacy</NuxtLink>
-      <NuxtLink to="/terms" class="hover:opacity-100">Terms</NuxtLink>
-      <a href="/sitemap.xml" class="hover:opacity-100">Sitemap</a>
-      <span class="ml-auto">© {{ new Date().getFullYear() }} {{ siteName }}</span>
+  <div class="min-h-dvh flex flex-col bg-gradient-to-b from-slate-900 to-slate-950 text-white">
+    <AppHeader />
+    <div class="flex-1">
+      <NuxtLayout>
+        <NuxtPage />
+      </NuxtLayout>
     </div>
-  </footer>
-  <FooterDisclaimer />
-  <ToastHost />
-  <ConsentBanner />
+    <AppFooter />
+    <ToastHost />
+    <ConsentBanner />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useHead, useRuntimeConfig } from 'nuxt/app'
 import AppHeader from '@/components/AppHeader.vue'
+import AppFooter from '@/components/AppFooter.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
 import ConsentBanner from '@/components/ConsentBanner.vue'
-import FooterDisclaimer from '@/components/FooterDisclaimer.vue'
 import { useSiteMeta } from '@/composables/useSiteMeta'
 
 const { siteName, siteUrl } = useSiteMeta()
