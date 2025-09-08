@@ -1,5 +1,5 @@
 <template>
-  <header class="sticky top-0 z-50 bg-[#0B0E13]/95 border-b border-white/5 backdrop-blur">
+  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#0B0E13]/95 border-b border-white/5 backdrop-blur" style="--app-header-h: 56px;">
     <nav class="mx-auto max-w-7xl px-4 md:px-6">
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 
@@ -68,4 +68,28 @@ const isActive = (href: string) => route.path.startsWith(href)
 
 const { user, loading, refreshUser } = useAuth()
 onMounted(() => { try { refreshUser() } catch {} })
+
+// Expose header height globally so overlays (toast host) can position below it.
+const headerRef = ref<HTMLElement|null>(null)
+function setRootHeaderVar(){
+  try {
+    const el = headerRef.value
+    if (!el) return
+    const h = el.getBoundingClientRect().height
+    document.documentElement.style.setProperty('--app-header-h', `${Math.round(h)}px`)
+  } catch {}
+}
+onMounted(() => {
+  setRootHeaderVar()
+  window.addEventListener('resize', setRootHeaderVar)
+})
+onBeforeUnmount(() => { window.removeEventListener('resize', setRootHeaderVar) })
 </script>
+
+<style>
+/* Keep a single source of truth for header height via CSS var */
+.app-header { --app-header-h: 56px; }
+@media (min-width: 768px) {
+  .app-header { --app-header-h: 64px; }
+}
+</style>
