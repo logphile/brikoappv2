@@ -117,7 +117,7 @@ onBeforeUnmount(() => voxelTask.cancel())
         <MosaicUploader @file="onFile" />
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <label class="block text-sm">Resolution</label>
-          <select v-model.number="size" class="bg-black/40 rounded px-3 py-2">
+          <select v-model.number="size" class="select-mint">
             <option :value="32">32³</option>
             <option :value="64">64³</option>
           </select>

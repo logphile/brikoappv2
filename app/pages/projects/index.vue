@@ -7,7 +7,7 @@
       </div>
       <div class="flex items-center gap-2">
         <NuxtLink to="/community-studio" class="px-4 py-2 rounded-2xl border border-white/20 hover:border-white/40">Community Studio</NuxtLink>
-        <NuxtLink to="/projects/new" class="px-4 py-2 rounded-2xl bg-cta-grad">New Project</NuxtLink>
+        <NuxtLink to="/projects/new" class="btn-mint">New Project</NuxtLink>
       </div>
     </div>
 
