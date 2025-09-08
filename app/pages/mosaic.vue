@@ -431,8 +431,9 @@ watchDebounced(
       <!-- left column -->
       <div class="lg:col-span-1">
         <aside class="space-y-6">
-          <!-- Sticky controls ONLY -->
-          <div class="lg:sticky lg:top-6 z-0">
+          <!-- A) Sticky parent contains ONLY the controls -->
+          <div class="sticky-parent relative">
+            <div class="lg:sticky lg:top-[calc(var(--app-header-h,64px)+12px)] z-0" aria-label="Mosaic parameters">
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
@@ -573,9 +574,10 @@ watchDebounced(
           </div>
         </div>
             </Transition>
+            </div>
           </div>
 
-          <!-- Non-sticky BOM -->
+          <!-- B) Parts list (NOT inside the sticky parent) -->
           <div v-if="mosaic.tilingResult" class="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
             <header class="mb-3 flex items-center justify-between">
               <h3 class="text-white font-semibold">Parts list</h3>
