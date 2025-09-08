@@ -303,13 +303,15 @@ watchDebounced(
           <div class="mt-3" v-if="showAdvanced">
             <label class="block text-sm">Orientation</label>
             <div class="flex items-center mt-1">
-              <select v-model="mosaic.settings.snapOrientation" class="bg-black/40 rounded px-3 py-2">
-                <option value="both">Both</option>
-                <option value="horizontal">Horizontal</option>
-                <option value="vertical">Vertical</option>
-              </select>
+              <div class="min-w-[160px] max-w-[220px]">
+                <select v-model="mosaic.settings.snapOrientation" class="select-mint">
+                  <option value="both">Both</option>
+                  <option value="horizontal">Horizontal</option>
+                  <option value="vertical">Vertical</option>
+                </select>
+              </div>
               <label class="ml-3 flex items-center gap-1 select-none">
-                <input type="checkbox" v-model="showGrid" class="accent-current" />
+                <input type="checkbox" v-model="showGrid" class="accent-mint" />
                 <span>Show stud grid</span>
               </label>
             </div>
@@ -319,7 +321,7 @@ watchDebounced(
           </label>
           <div class="mt-2 text-sm">
             <label class="block text-sm text-white/80 mb-2">Preview quality</label>
-            <select v-model.number="previewQuality" class="w-full rounded-xl bg-white/5 border border-white/10 px-3 py-2 text-white/90 focus:outline-none focus:ring-2 focus:ring-mint/50">
+            <select v-model.number="previewQuality" class="select-mint">
               <option :value="32">Fast (32×32)</option>
               <option :value="64">Balanced (64×64)</option>
               <option :value="96">Sharper (96×96)</option>

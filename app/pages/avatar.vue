@@ -48,7 +48,7 @@
 
         <label class="block">
           <span class="block">Palette</span>
-          <select v-model="paletteName" class="mt-2 bg-white/10 rounded-lg px-2 py-1.5">
+          <select v-model="paletteName" class="select-mint mt-2">
             <option value="lego32">LEGO 32 (default)</option>
             <option value="lego16">LEGO 16 (portrait)</option>
           </select>
@@ -56,7 +56,7 @@
 
         <label class="block">
           <span class="block">Background</span>
-          <select v-model="bgMode" class="mt-2 bg-white/10 rounded-lg px-2 py-1.5">
+          <select v-model="bgMode" class="select-mint mt-2">
             <option value="keep">Keep quantized image</option>
             <option value="solid">Solid color</option>
             <option value="transparent">Transparent</option>

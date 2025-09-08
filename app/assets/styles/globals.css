@@ -9,5 +9,7 @@
   --brand-text: #EDEFF2;
   --brand-a1:   #7B2CFB;
   --brand-a2:   #00E5FF;
+  /* Hint browsers to render native controls in dark mode (affects <select> popup) */
+  color-scheme: dark;
 }
 html, body { background: var(--brand-bg); color: var(--brand-text); }

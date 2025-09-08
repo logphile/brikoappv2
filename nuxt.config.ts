@@ -12,7 +12,8 @@ export default defineNuxtConfig({
   css: [
     '@/assets/styles/globals.css',
     '@/assets/css/controls.css',
-    '@/assets/css/buttons.css'
+    '@/assets/css/buttons.css',
+    '@/assets/css/forms.css'
   ],
   postcss: {
     plugins: {
