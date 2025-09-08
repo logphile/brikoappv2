@@ -9,6 +9,8 @@ import type { VoxelGrid, VoxelWorkerOut } from '@/types/voxel'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
+import { copy } from '@/lib/copy'
+import StepChips from '@/components/StepChips.vue'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
@@ -109,8 +111,9 @@ onBeforeUnmount(() => voxelTask.cancel())
 
 <template>
   <main class="mx-auto max-w-6xl px-6 py-10 text-white">
-    <h1 class="text-3xl font-bold">Voxel (preview)</h1>
-    <p class="opacity-80">Extruded heightmap from an image → InstancedMesh studs.</p>
+    <h1 class="text-3xl font-bold">{{ copy.builder3d.title }}</h1>
+    <p class="opacity-80">{{ copy.builder3d.subtitle }}</p>
+    <StepChips :steps="copy.builder3d.steps" />
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
       <section class="space-y-4">
