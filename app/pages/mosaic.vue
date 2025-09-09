@@ -19,14 +19,25 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { useToasts } from '@/composables/useToasts'
 import { imageBitmapToBuffer } from '@/utils/image-to-buffer'
 import { copy } from '@/lib/copy'
-import StepChips from '@/components/StepChips.vue'
+import StepBadge from '@/components/StepBadge.vue'
 import InfoTip from '@/components/InfoTip.vue'
 import InlineStats from '@/components/InlineStats.vue'
 import { downloadPartsListCsvSimple } from '@/lib/exporters'
+import { useStepTracker } from '@/composables/useStepTracker'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 
 const mosaic = useMosaicStore()
 const { show: showToast, dismiss: dismissToast } = useToasts()
+
+// Quick guide steps + auto-highlighting while scrolling
+const stepsGuide = [
+  { id: 'step-1', title: 'Upload photo' },
+  { id: 'step-2', title: 'Tune mosaic' },
+  { id: 'step-3', title: 'Build guide' },
+  { id: 'step-4', title: 'Buy parts' },
+]
+const currentStep = ref<string>(stepsGuide[0].id)
+useStepTracker(stepsGuide.map(s => s.id), (id) => { currentStep.value = id })
 
 // SEO
 useHead({
@@ -453,7 +464,12 @@ watchDebounced(
   <main class="mx-auto max-w-7xl px-6 py-10 text-white">
     <h1 class="text-3xl font-bold">{{ copy.mosaic.title }}</h1>
     <p class="opacity-80">{{ copy.mosaic.subtitle }}</p>
-    <StepChips :steps="copy.mosaic.steps" />
+    <nav aria-label="Quick guide" class="mt-2 flex items-center gap-4 flex-wrap">
+      <a v-for="(s, i) in stepsGuide" :key="s.id" :href="'#' + s.id" class="flex items-center gap-2 group">
+        <StepBadge :n="i+1" :active="currentStep===s.id" />
+        <span class="text-sm text-white/60 group-hover:text-white transition">{{ s.title }}</span>
+      </a>
+    </nav>
 
     <div class="mt-6 grid lg:grid-cols-[460px,1fr] gap-6 items-start">
       <!-- left column -->
@@ -466,11 +482,26 @@ watchDebounced(
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
         <div class="z-0 rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
+          <!-- Step 1: Upload -->
+          <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
+            <div class="flex items-center gap-3 mb-1">
+              <StepBadge :n="1" size="lg" :active="currentStep===stepsGuide[0].id" />
+              <h2 class="text-base font-semibold">Upload your photo</h2>
+            </div>
+          </section>
           <!-- Upload embedded -->
           <div>
             <label class="block text-sm font-medium text-white/80 mb-2">Upload</label>
             <MosaicUploader embedded @file="onFile" />
           </div>
+          
+          <!-- Step 2: Tune mosaic -->
+          <section :id="stepsGuide[1].id" class="scroll-mt-28 pt-6">
+            <div class="flex items-center gap-3 mb-1">
+              <StepBadge :n="2" size="lg" :active="currentStep===stepsGuide[1].id" />
+              <h2 class="text-base font-semibold">Tune mosaic</h2>
+            </div>
+          </section>
           <div class="flex items-center gap-2">
             <h3 class="text-white text-base font-semibold">Output size</h3>
             <InfoTip label="About output size">
@@ -606,6 +637,13 @@ watchDebounced(
           </div>
 
           <!-- B) Parts list (NOT inside the sticky parent) -->
+          <!-- Step 4: Buy parts (BOM & exports) -->
+          <section :id="stepsGuide[3].id" class="scroll-mt-28 pt-8">
+            <div class="flex items-center gap-3 mb-3">
+              <StepBadge :n="4" size="lg" :active="currentStep===stepsGuide[3].id" />
+              <h2 class="text-base font-semibold">Buy parts</h2>
+            </div>
+          </section>
           <div v-if="mosaic.tilingResult" class="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
             <header class="mb-3 flex items-center justify-between">
               <h3 class="text-white font-semibold">Parts list</h3>
@@ -640,6 +678,13 @@ watchDebounced(
       <Transition appear enter-active-class="transition ease-out duration-700 delay-150"
                   enter-from-class="opacity-0 translate-y-2"
                   enter-to-class="opacity-100 translate-y-0">
+      <!-- Step 3: Build guide (preview + export) -->
+      <section :id="stepsGuide[2].id" class="scroll-mt-28 pt-6">
+        <div class="flex items-center gap-3 mb-3">
+          <StepBadge :n="3" size="lg" :active="currentStep===stepsGuide[2].id" />
+          <h2 class="text-base font-semibold">Build guide</h2>
+        </div>
+      </section>
       <section id="mosaic-preview-capture"
         class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
         :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
