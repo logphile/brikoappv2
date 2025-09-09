@@ -1,4 +1,4 @@
-import { renderBuildGuideV2 } from '@/lib/pdf/buildGuideV2'
+import { renderBuildGuideV2 } from '@/lib/buildGuideV2'
 import { legoPalette } from '@/lib/palette/lego'
 import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
