@@ -9,13 +9,30 @@ import { urlToDataURL } from "./utils";
 export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
   const pdf = new jsPDF({ unit: "pt", format: (ctx.pageFormat ?? "letter") });
 
-  await registerOutfit(pdf);
+  // Fonts: show a readable error if fonts fail (won’t stop the world)
+  try {
+    await registerOutfit(pdf);
+  } catch (e) {
+    console.warn('[BuildGuide] Outfit font failed to load, falling back:', e);
+    // Continue with default jsPDF font
+  }
 
   // Page 1 — cover v2 (full-bleed)
-  const coverDataUrl = await urlToDataURL("/pdf-templates/cover-v2.png");
+  let coverDataUrl: string | null = null;
+  try {
+    coverDataUrl = await urlToDataURL("/pdf-templates/cover-v2.png");
+  } catch (e) {
+    throw new Error('Cover image "/pdf-templates/cover-v2.png" not found; place a 300-dpi PNG there.');
+  }
   const W = pdf.internal.pageSize.getWidth();
   const H = pdf.internal.pageSize.getHeight();
-  pdf.addImage(coverDataUrl, "PNG", 0, 0, W, H);
+  if (coverDataUrl) {
+    try {
+      pdf.addImage(coverDataUrl, "PNG", 0, 0, W, H);
+    } catch (e) {
+      throw new Error('Cover image is not a valid PNG (got HTML/404 instead).');
+    }
+  }
 
   // Page 2 — overview
   pdf.addPage();

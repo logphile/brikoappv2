@@ -54,7 +54,7 @@ async function captureOriginal(): Promise<{ dataUrl:string; type:'PNG'|'JPEG'; w
   } catch { return null }
 }
 
-export async function exportBuildGuidePDF(opts: BuildGuideOpts){
+export async function prepareBuildGuidePDF(opts: BuildGuideOpts){
   const { bricks, width, height } = opts
 
   // Compute BOM and totals (bucket-aware)
@@ -115,6 +115,11 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts){
     bom
   })
 
+  return pdf
+}
+
+export async function exportBuildGuidePDF(opts: BuildGuideOpts){
+  const pdf = await prepareBuildGuidePDF(opts)
   const fileName = opts.fileName || `briko-build-guide-${opts.topSurface==='tiles'?'tiles':'plates'}.pdf`
   pdf.save(fileName)
 }

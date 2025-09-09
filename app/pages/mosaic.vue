@@ -12,7 +12,7 @@ import { legoPalette } from '@/lib/palette/lego'
 import { chunkSteps } from '@/lib/steps'
 import type { WorkerOut, TiledBrick } from '@/types/mosaic'
 import { useMosaicStore } from '@/stores/mosaic'
-import { exportBuildGuidePDF } from '@/lib/pdf/buildGuideAdapter'
+import { prepareBuildGuidePDF } from '@/lib/pdf/buildGuideAdapter'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
@@ -26,7 +26,7 @@ import { downloadPartsListCsvSimple } from '@/lib/exporters'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 
 const mosaic = useMosaicStore()
-const { show: showToast } = useToasts()
+const { show: showToast, dismiss: dismissToast } = useToasts()
 
 // SEO
 useHead({
@@ -258,8 +258,36 @@ async function uploadPrev(){ await mosaic.uploadPreview() }
 // Exports under preview
 async function onDownloadPdf(){
   if (!mosaic.tilingResult) return
-  try { showToast('Generating Build Guide…', 'info', 1500) } catch {}
-  await exportBuildGuidePDF({ bricks: mosaic.tilingResult.bricks, width: mosaic.width, height: mosaic.height, topSurface: mosaic.settings.topSurface })
+  // Bullet-proof export with persistent toast and robust save
+  const toastId = showToast('Generating build guide…', 'info', 0)
+  try {
+    const pdf = await prepareBuildGuidePDF({
+      bricks: mosaic.tilingResult.bricks,
+      width: mosaic.width,
+      height: mosaic.height,
+      topSurface: mosaic.settings.topSurface
+    })
+    try {
+      pdf.save(`briko-build-guide-${Date.now()}.pdf`)
+    } catch {
+      const blob = pdf.output('blob')
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `briko-build-guide-${Date.now()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    }
+    showToast('Build guide ready.', 'success', 2500)
+  } catch (err: any) {
+    console.error('[BuildGuide] generation failed:', err)
+    const msg = (err?.message ?? err?.toString?.() ?? 'Unknown error').toString().slice(0, 180)
+    showToast(`Failed to generate PDF: ${msg}`, 'error', 6000)
+  } finally {
+    dismissToast(toastId)
+  }
 }
 function onDownloadCsv(){
   if (!mosaic.tilingResult) return
@@ -587,7 +615,7 @@ watchDebounced(
             <!-- Export buttons belong here so they scroll with the list -->
             <div class="mb-3 flex flex-wrap gap-3">
             <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, topSurface: mosaic.settings.topSurface })">Export PDF</button>
+            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">Export PDF</button>
             <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
           </div>
 
@@ -631,7 +659,7 @@ watchDebounced(
           <div v-if="mosaic.status==='error'" class="ml-2 text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
             Generation failed — {{ mosaic.errorMsg }}
           </div>
-          <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, topSurface: mosaic.settings.topSurface })">Export PDF</button>
+          <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="onDownloadPdf">Export PDF</button>
         </div>
 
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
