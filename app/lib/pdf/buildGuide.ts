@@ -5,6 +5,7 @@ import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
 import { renderProjectOverview as renderProjectOverviewV2 } from '@/lib/pdf/renderProjectOverview'
+import { renderStepPage, type StepCell } from '@/lib/pdf/renderStepPage'
 
 // Types kept light to avoid cross-file drift
 export type BuildGuideOpts = {
@@ -443,12 +444,32 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
 
   // Build grid for step pages
   const grid = buildGridFromBricks(bricks, width, height)
+  // Color name resolver by hex
+  const hexNameMap = new Map<string, string>()
+  for (const c of legoPalette as any) { if (c?.hex) hexNameMap.set(String(c.hex).toLowerCase(), String(c.name || c.hex)) }
+  const nameFromHex = (hex: string) => hexNameMap.get(String(hex).toLowerCase()) || hex
 
-  // Step pages: one per row (ghost previous, highlight current)
+  // Step pages: one per row using drop-in renderer
+  let placedBefore: StepCell[] = []
   for (let row = 0; row < height; row++) {
     doc.addPage()
-    const bricksThisStep = bricks.filter(b => b.y === row)
-    renderStep(doc, { index: row + 1, total: height, grid, width, height, bricksThisStep })
+    const placedThisStep: StepCell[] = []
+    const cells = grid[row] || []
+    for (let col = 0; col < width; col++) {
+      const hex = cells[col]
+      if (!hex) continue
+      placedThisStep.push({ col, row, colorHex: hex })
+    }
+    renderStepPage(doc as any, {
+      stepIndex: row,
+      grid: { cols: width, rows: height },
+      placedBefore,
+      placedThisStep,
+      nameFromHex,
+      title: `STEP ${row + 1}`
+    })
+    addFooter(doc)
+    placedBefore = placedBefore.concat(placedThisStep)
     if (row % 8 === 7) { await new Promise<void>(r => setTimeout(r)) }
   }
 
