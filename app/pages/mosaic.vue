@@ -27,7 +27,7 @@ import { useStepTracker } from '@/composables/useStepTracker'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 
 const mosaic = useMosaicStore()
-const { show: showToast, dismiss: dismissToast } = useToasts()
+const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
 
 // Quick guide steps + auto-highlighting while scrolling
 const stepsGuide = [
@@ -38,6 +38,8 @@ const stepsGuide = [
 ]
 const currentStep = ref<string>(stepsGuide[0].id)
 useStepTracker(stepsGuide.map(s => s.id), (id) => { currentStep.value = id })
+// Track hydration completion to suppress initial toasts
+const didMount = ref(false)
 
 // SEO
 useHead({
@@ -95,6 +97,13 @@ onMounted(() => {
       if (saved === 'tiles' || saved === 'plates') mosaic.setTopSurface(saved)
     }
   } catch {}
+  // Sweep any SSR-hydrated stale toasts (e.g., 'Updating preview…')
+  try {
+    toasts.value
+      .filter(t => /Updating preview…|Updating preview/.test(String(t.message)))
+      .forEach(t => dismissToast(t.id))
+  } catch {}
+  didMount.value = true
 })
 const grid = ref<WorkerOut|null>(null)
 const loading = ref(false)
@@ -124,7 +133,6 @@ const cmH = computed(()=> fmt1(target.value.h * 0.8))
 
 // React to top surface for preview defaults
 watch(() => mosaic.settings.topSurface, (mode) => {
-  try { showToast('Updating preview…', 'info', 1000) } catch {}
   if (mode === 'tiles') {
     // Hide stud grid for tiles by default
     showGrid.value = false
@@ -188,7 +196,9 @@ const ALL_PARTS = ['2x4','2x3','2x2','1x4','1x3','1x2','1x1'] as const
 const selectedParts = ref<string[]>([...ALL_PARTS])
 watch(selectedParts, (val: readonly string[])=>{
   mosaic.setAllowedParts(val as any)
-  try { showToast(copy.mosaic.toasts.regenerating, 'info', 1500) } catch {}
+  if (didMount.value && typeof window !== 'undefined') {
+    try { showToast(copy.mosaic.toasts.regenerating, 'info', 1500) } catch {}
+  }
 }, { immediate: true })
 
 async function onFile(file: File) {
@@ -684,12 +694,11 @@ watchDebounced(
           <StepBadge :n="3" size="lg" :active="currentStep===stepsGuide[2].id" />
           <h2 class="text-base font-semibold">Build guide</h2>
         </div>
-      </section>
-      <section id="mosaic-preview-capture"
-        class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
-        :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
-        @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
-      >
+        <div id="mosaic-preview-capture"
+          class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
+          :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
+          @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
+        >
         <RegeneratingChip />
         <div v-if="dropActive"
              class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
@@ -708,7 +717,7 @@ watchDebounced(
         </div>
 
         <!-- Always-present preview window -->
-        <div class="min-h-[520px] rounded-xl bg-white/5">
+        <div class="min-h-[520px] rounded-xl bg-zinc-900/30 ring-1 ring-white/10">
           <!-- Loading state -->
           <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
             <div class="w-2/3 max-w-md text-center space-y-3">
