@@ -8,4 +8,4 @@ Expected path at runtime:
 
 Notes:
 - The PDF generator uses a full-bleed addImage of this asset for page 1.
-- If the asset is missing, the generator will still build the rest of the guide, but the cover page will be blank.
+- If the asset is missing or not a valid PNG (e.g., a 404 HTML page), the generator will throw a readable error instructing you to place `cover-v2.png` here.
