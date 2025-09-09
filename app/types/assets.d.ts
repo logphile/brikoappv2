@@ -3,6 +3,11 @@ declare module '*.ttf?base64' {
   export default data
 }
 
+declare module '*.ttf?url' {
+  const url: string
+  export default url
+}
+
 declare module '*.png' {
   const src: string
   export default src
