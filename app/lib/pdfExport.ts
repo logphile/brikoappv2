@@ -12,6 +12,13 @@ function hexToRgb(hex: string): [number, number, number] {
   return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)]
 }
 
+function fitRect(srcW: number, srcH: number, maxW: number, maxH: number) {
+  const r = srcW / Math.max(1, srcH)
+  let w = maxW, h = w / r
+  if (h > maxH) { h = maxH; w = h * r }
+  return { w, h }
+}
+
 // Attempt to load Outfit fonts dynamically from a CDN (graceful fallback to built-in fonts)
 async function loadOutfitFonts(doc: jsPDF) {
   const URLs = {
@@ -163,6 +170,15 @@ export async function exportBuildGuidePDF(opts: {
   const H = doc.internal.pageSize.getHeight()
   const M = 48
 
+  // Precompute BOM summary for metadata and later table
+  const bom = buildBOMWithBuckets(bricks, priceTable as Record<StudSize, number>, legoPalette as any)
+  const rows = bom.rows
+  const total = bom.total
+  const totalBricks = rows.reduce((sum, r: any) => sum + Number(r.qty || 0), 0)
+  const distinctColors = new Set(rows.map((r: any) => r.colorId)).size
+  const widthIn = width * 0.315
+  const heightIn = height * 0.315
+
   // Cover page
   try {
     // Header bar
@@ -185,13 +201,14 @@ export async function exportBuildGuidePDF(opts: {
     doc.setFontSize(22)
     doc.text('Mosaic Build Guide', M, 130)
 
-    // “2D Mosaic” chip on the right
-    const chipW = 110, chipH = 26
+    // Mode pill on the right
+    const chipW = 120, chipH = 28
     doc.setDrawColor(0,229,160); doc.setLineWidth(1.5)
     ;(doc as any).roundedRect?.(W - M - chipW, 110, chipW, chipH, 6, 6, 'S') || doc.rect(W - M - chipW, 110, chipW, chipH)
     try { doc.setFont('Outfit', 'bold') } catch {}
     doc.setTextColor(0,229,160); doc.setFontSize(12)
-    doc.text('2D Mosaic', W - M - chipW + 18, 128)
+    const modeLabel = tileMode ? 'Tiles' : '2D Mosaic'
+    doc.text(modeLabel, W - M - chipW + 18, 128)
 
     // Prefer Original image; fallback to mosaic preview capture
     const anyWin: any = (typeof window !== 'undefined') ? window : null
@@ -205,21 +222,61 @@ export async function exportBuildGuidePDF(opts: {
       image.src = imgUrl
       await loaded
       const maxW = W - M*2
-      const maxH = H * 0.55
-      const rImg = image.width / Math.max(1, image.height)
-      let drawW = maxW, drawH = drawW / rImg
-      if (drawH > maxH) { drawH = maxH; drawW = drawH * rImg }
-      const yImg = 170
+      const maxH = H - 240
+      const fitted = fitRect(image.width, image.height, maxW - 24, maxH - 24)
+      const drawW = fitted.w
+      const drawH = fitted.h
+      const x = (W - drawW) / 2
+      const y = 165 + (maxH - drawH) / 2
+      // Soft shadow (fallback if alpha unsupported)
+      const rx = 10
+      const ox = 1.5, oy = 2
+      const hasAlpha = !!(doc as any).setFillAlpha
+      if (hasAlpha) { (doc as any).setFillAlpha?.(0.08); doc.setFillColor(0,0,0) }
+      else { doc.setFillColor(232, 232, 232) }
+      ;(doc as any).roundedRect?.(x - 12 + ox, y - 12 + oy, drawW + 24, drawH + 24, rx, rx, 'F') || doc.rect(x - 12 + ox, y - 12 + oy, drawW + 24, drawH + 24, 'F')
+      if (hasAlpha) { (doc as any).setFillAlpha?.(1) }
       // Frame
-      doc.setDrawColor(229); doc.setLineWidth(0.5)
-      ;(doc as any).roundedRect?.(M, yImg - 8, drawW, drawH + 16, 10, 10, 'S') || doc.rect(M, yImg - 8, drawW, drawH + 16)
-      doc.addImage(imgUrl, 'PNG', M + 12, yImg, drawW - 24, drawH - 24)
+      doc.setDrawColor(229); doc.setLineWidth(0.6)
+      ;(doc as any).roundedRect?.(x - 12, y - 12, drawW + 24, drawH + 24, rx, rx, 'S') || doc.rect(x - 12, y - 12, drawW + 24, drawH + 24)
+      doc.addImage(imgUrl, 'PNG', x, y, drawW, drawH)
+      // Palette strip beneath image
+      const uniqueColorIds = Array.from(new Set(rows.map((r: any) => r.colorId))) as number[]
+      const palette = uniqueColorIds.map(id => ({ id, name: legoPalette[id]?.name || `Color ${id}`, hex: legoPalette[id]?.hex || '#ccc' }))
+      const chips = palette.slice(0, 18)
+      const sw = 14, sh = 14, gap = 6
+      let sx = M, sy = y + drawH + 28
+      chips.forEach(c => {
+        const [r, g, b] = hexToRgb(c.hex)
+        doc.setFillColor(r, g, b)
+        doc.rect(sx, sy, sw, sh, 'F')
+        try { doc.setFont('Outfit', 'normal') } catch {}
+        doc.setTextColor(75); doc.setFontSize(8)
+        doc.text(String(c.name), sx, sy + sh + 6)
+        sx += sw + gap
+      })
     }
+
+    // Title + metadata badges line
+    try { doc.setFont('Outfit', 'heavy') } catch {}
+    doc.setTextColor(17); doc.setFontSize(28)
+    doc.text('Mosaic Build Guide', M, 120)
+    try { doc.setFont('Outfit', 'bold') } catch {}
+    doc.setFontSize(11); doc.setTextColor(75)
+    const metaItems = [
+      `${width}×${height} studs`,
+      `${widthIn.toFixed(1)}×${heightIn.toFixed(1)} in`,
+      `${(width*0.8).toFixed(1)}×${(height*0.8).toFixed(1)} cm`,
+      `${totalBricks} bricks`,
+      `${distinctColors} colors`,
+      isFinite(total) ? `Est. $${total.toFixed(2)}` : null
+    ].filter(Boolean) as string[]
+    doc.text(metaItems.join('  ·  '), M, 140)
 
     // Footer (cover-only branding line)
     try { doc.setFont('Outfit', 'normal') } catch {}
     doc.setTextColor(120); doc.setFontSize(9)
-    doc.text('briko.app • Not affiliated with LEGO Group', M, H - 24)
+    doc.text('briko.app • Not affiliated with the LEGO® Group.', M, H - 24)
   } catch {}
 
   // Build a color grid from bricks for progressive fill
@@ -239,10 +296,10 @@ export async function exportBuildGuidePDF(opts: {
   doc.addPage()
   for (let row = 0; row < height; row++) {
     if (row > 0) doc.addPage()
-    // Header
+    // Header (uppercase section label style)
     try { doc.setFont('Outfit', 'bold') } catch {}
-    doc.setFontSize(16); doc.setTextColor(17)
-    doc.text(`Step ${row + 1}`, 40, 50)
+    doc.setFontSize(12); doc.setTextColor(17)
+    doc.text(`STEP ${row + 1}`, 40, 50)
     try { doc.setFont('Outfit', 'normal') } catch {}
     doc.setFontSize(10); doc.setTextColor(107)
     const newStarts = bricks.filter(b => b.y === row).length
@@ -270,8 +327,7 @@ export async function exportBuildGuidePDF(opts: {
   doc.addPage()
   try { doc.setFont('Outfit', 'bold') } catch {}
   doc.setFontSize(18); doc.setTextColor(17)
-  doc.text('Bill of Materials', 40, 64)
-  const { rows, total } = buildBOMWithBuckets(bricks, priceTable as Record<StudSize, number>, legoPalette as any)
+  doc.text('BILL OF MATERIALS', 40, 64)
   const surfaceLabel = (opts.topSurface === 'tiles') ? 'Tile' : 'Plate'
   autoTable(doc, {
     startY: 80,
