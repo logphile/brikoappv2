@@ -707,90 +707,102 @@ watchDebounced(
           <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="onDownloadPdf">Export PDF</button>
         </div>
 
-        <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
-          <div class="w-2/3 max-w-md text-center space-y-3">
-            <div>Processing… <span v-if="progress">{{ Math.round(progress) }}%</span></div>
-            <div class="h-2 w-full bg-white/10 rounded">
-              <div class="h-2 bg-white/60 rounded" :style="{ width: Math.max(2, Math.round(progress)) + '%' }"></div>
+        <!-- Always-present preview window -->
+        <div class="min-h-[520px] rounded-xl bg-white/5">
+          <!-- Loading state -->
+          <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
+            <div class="w-2/3 max-w-md text-center space-y-3">
+              <div>Processing… <span v-if="progress">{{ Math.round(progress) }}%</span></div>
+              <div class="h-2 w-full bg-white/10 rounded">
+                <div class="h-2 bg-white/60 rounded" :style="{ width: Math.max(2, Math.round(progress)) + '%' }"></div>
+              </div>
             </div>
           </div>
-        </div>
-        <div v-else-if="grid">
-          <Transition mode="out-in"
-                      enter-active-class="transition ease-out duration-300"
-                      enter-from-class="opacity-0 translate-y-1"
-                      enter-to-class="opacity-100 translate-y-0">
-            <div :key="tab">
-              <template v-if="tab==='2D'">
-                <MosaicCanvas
-                  :data="grid"
-                  :showGrid="showGrid"
-                  :showTiles="showPlates"
-                  :overlayBricks="mosaic.overlayBricks"
-                  :tileMap="tileMap"
-                  :bricks="mosaic.tilingResult?.bricks || null"
-                  :bomRows="mosaic.tilingResult?.bom || null"
-                  :surface="(mosaic.settings.topSurface || 'plates') as any"
-                  @view-bom="onViewBomEvt"
-                />
-              </template>
-              <template v-else>
-                <ClientOnly>
-                  <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1" :surface="(mosaic.settings.topSurface || 'plates') as any"/>
-                </ClientOnly>
-                <div class="mt-3">
-                  <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers" :title="copy.builder3d.controls.layerSliderHelp"/>
+
+          <!-- Preview content -->
+          <div v-else-if="grid">
+            <Transition mode="out-in"
+                        enter-active-class="transition ease-out duration-300"
+                        enter-from-class="opacity-0 translate-y-1"
+                        enter-to-class="opacity-100 translate-y-0">
+              <div :key="tab">
+                <template v-if="tab==='2D'">
+                  <MosaicCanvas
+                    :data="grid"
+                    :showGrid="showGrid"
+                    :showTiles="showPlates"
+                    :overlayBricks="mosaic.overlayBricks"
+                    :tileMap="tileMap"
+                    :bricks="mosaic.tilingResult?.bricks || null"
+                    :bomRows="mosaic.tilingResult?.bom || null"
+                    :surface="(mosaic.settings.topSurface || 'plates') as any"
+                    @view-bom="onViewBomEvt"
+                  />
+                </template>
+                <template v-else>
+                  <ClientOnly>
+                    <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1" :surface="(mosaic.settings.topSurface || 'plates') as any"/>
+                  </ClientOnly>
+                  <div class="mt-3">
+                    <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers" :title="copy.builder3d.controls.layerSliderHelp"/>
+                  </div>
+                </template>
+              </div>
+            </Transition>
+
+            <!-- Export actions under preview -->
+            <div class="mt-4 relative">
+              <div class="flex flex-wrap gap-3">
+                <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadPdf">Download Build Guide (PDF)</button>
+                <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadCsv">Download Parts List (CSV)</button>
+                <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">Export for BrickLink (.xml)</button>
+              </div>
+
+              <!-- BrickLink export small dialog -->
+              <div v-if="showBL" class="absolute right-0 z-20 mt-2 w-80 rounded-2xl border border-white/10 bg-black/70 p-4 shadow-soft-card">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="font-medium">BrickLink Export</div>
+                  <button class="text-white/60 hover:text-white" @click="closeBLDialog">✕</button>
                 </div>
-              </template>
-            </div>
-          </Transition>
-          <!-- Export actions under preview -->
-          <div class="mt-4 relative">
-            <div class="flex flex-wrap gap-3">
-              <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadPdf">Download Build Guide (PDF)</button>
-              <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadCsv">Download Parts List (CSV)</button>
-              <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">Export for BrickLink (.xml)</button>
+                <div class="space-y-3 text-sm">
+                  <div>
+                    <div class="text-white/80 mb-1">Condition</div>
+                    <label class="mr-3 inline-flex items-center gap-2"><input type="radio" value="N" v-model="blCondition"> New</label>
+                    <label class="inline-flex items-center gap-2"><input type="radio" value="U" v-model="blCondition"> Used</label>
+                  </div>
+                  <label class="inline-flex items-center gap-2"><input type="checkbox" v-model="blAddRemarks"> Add remarks “Briko • Mosaic”</label>
+                  <div class="flex justify-end gap-2 pt-2">
+                    <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:text-white hover:border-mint/40" @click="closeBLDialog">Cancel</button>
+                    <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white bg-mint/20 hover:border-mint/50" @click="onDownloadBrickLink">Export XML</button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- BrickLink export small dialog -->
-            <div v-if="showBL" class="absolute right-0 z-20 mt-2 w-80 rounded-2xl border border-white/10 bg-black/70 p-4 shadow-soft-card">
-              <div class="flex items-center justify-between mb-2">
-                <div class="font-medium">BrickLink Export</div>
-                <button class="text-white/60 hover:text-white" @click="closeBLDialog">✕</button>
-              </div>
-              <div class="space-y-3 text-sm">
-                <div>
-                  <div class="text-white/80 mb-1">Condition</div>
-                  <label class="mr-3 inline-flex items-center gap-2"><input type="radio" value="N" v-model="blCondition"> New</label>
-                  <label class="inline-flex items-center gap-2"><input type="radio" value="U" v-model="blCondition"> Used</label>
-                </div>
-                <label class="inline-flex items-center gap-2"><input type="checkbox" v-model="blAddRemarks"> Add remarks “Briko • Mosaic”</label>
-                <div class="flex justify-end gap-2 pt-2">
-                  <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:text-white hover:border-mint/40" @click="closeBLDialog">Cancel</button>
-                  <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white bg-mint/20 hover:border-mint/50" @click="onDownloadBrickLink">Export XML</button>
-                </div>
-              </div>
+            <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
+              <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
+              <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>
+              <span v-if="mosaic.tilingResult">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
+              <span v-if="tab==='3D'" class="ml-auto">Visible: {{ mosaic.visibleLayers }} / {{ mosaic.height }}</span>
+            </div>
+            <p v-if="mosaic.tilingResult" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
+            <!-- Share & buy hooks -->
+            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
+              <span class="opacity-70 mr-1">Share:</span>
+              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareX">X</button>
+              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareFB">Facebook</button>
+              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareReddit">Reddit</button>
+              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="copyLink">Copy link</button>
+              <div class="grow"></div>
+              <button class="px-3 py-1 rounded bg-cta-grad/70 hover:bg-cta-grad text-white" @click="whereToBuy">Where to buy pieces</button>
             </div>
           </div>
-          <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
-            <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
-            <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>
-            <span v-if="mosaic.tilingResult">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
-            <span v-if="tab==='3D'" class="ml-auto">Visible: {{ mosaic.visibleLayers }} / {{ mosaic.height }}</span>
-          </div>
-          <p v-if="mosaic.tilingResult" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
-          <!-- Share & buy hooks -->
-          <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
-            <span class="opacity-70 mr-1">Share:</span>
-            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareX">X</button>
-            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareFB">Facebook</button>
-            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareReddit">Reddit</button>
-            <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="copyLink">Copy link</button>
-            <div class="grow"></div>
-            <button class="px-3 py-1 rounded bg-cta-grad/70 hover:bg-cta-grad text-white" @click="whereToBuy">Where to buy pieces</button>
+
+          <!-- Placeholder before upload -->
+          <div v-else class="h-[480px] grid place-items-center text-sm text-white/70 opacity-80">
+            Upload a photo to begin.
           </div>
         </div>
-        <div v-else class="h-[480px] grid place-items-center opacity-60">{{ copy.mosaic.emptyState }}</div>
       </section>
       </Transition>
     </div>
