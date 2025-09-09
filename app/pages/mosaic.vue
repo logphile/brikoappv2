@@ -631,7 +631,7 @@ watchDebounced(
           <div v-if="mosaic.status==='error'" class="ml-2 text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
             Generation failed — {{ mosaic.errorMsg }}
           </div>
-          <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height })">Export PDF</button>
+          <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="mosaic.tilingResult && exportBuildGuidePDF({ bricks: mosaic.tilingResult!.bricks, width: mosaic.width, height: mosaic.height, topSurface: mosaic.settings.topSurface })">Export PDF</button>
         </div>
 
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
