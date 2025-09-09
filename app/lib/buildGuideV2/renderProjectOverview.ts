@@ -7,7 +7,7 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   const H = pdf.internal.pageSize.getHeight();
 
   const M = 40, TITLE_Y = 56, GAP_L = 16, GAP_S = 8, FRAME_PAD = 12;
-  const SWATCH = 14, SWATCH_GAP = 6;
+  const IMG_TOP_PAD = 12, IMG_BOTTOM_PAD = 24;
 
   // Title
   pdf.setFont("Outfit", "heavy"); pdf.setTextColor(17); pdf.setFontSize(22);
@@ -18,13 +18,13 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   const IMG_MAX_H = Math.min(H * 0.33, 280);
   const fitted = fitRect(ctx.originalImgW, ctx.originalImgH, IMG_MAX_W, IMG_MAX_H);
   const imgX = (W - fitted.w) / 2;
-  const imgY = TITLE_Y + GAP_L;
+  const imgY = TITLE_Y + GAP_L + IMG_TOP_PAD;
 
   pdf.setDrawColor(229, 231, 235); pdf.setLineWidth(0.6);
   ;(pdf as any).roundedRect?.(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD, 10, 10, "S") || pdf.rect(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD);
   pdf.addImage(ctx.originalImg, ctx.originalType, imgX, imgY, fitted.w, fitted.h);
 
-  let cursorY = imgY + fitted.h + GAP_L;
+  let cursorY = imgY + fitted.h + IMG_BOTTOM_PAD;
 
   // Stats
   const stats = buildStats(ctx);
@@ -36,7 +36,7 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   pdf.text("Colors used in this build", M, cursorY);
 
   cursorY += GAP_S;
-  layoutPaletteRows(pdf as any, M, cursorY, W - 2 * M, ctx.palette, SWATCH, SWATCH_GAP);
+  layoutPaletteGrid(pdf as any, M, cursorY, W - 2 * M, ctx.palette, 14, 12);
 }
 
 function buildStats(ctx: ProjectOverviewCtx) {
@@ -64,6 +64,9 @@ function drawStatsGrid(pdf: any, items: Array<{label:string; value:string}>, x:n
   const useTwoCols = colW >= 200 && items.length >= 4;
   const perCol = useTwoCols ? Math.ceil(items.length / 2) : items.length;
 
+  // Slightly larger line height for readability if supported
+  (pdf as any).setLineHeightFactor?.(1.2);
+
   for (let i=0; i<items.length; i++) {
     const colIndex = useTwoCols ? (i < perCol ? 0 : 1) : 0;
     const rowIndex = useTwoCols ? (i % perCol) : i;
@@ -80,17 +83,54 @@ function drawStatsGrid(pdf: any, items: Array<{label:string; value:string}>, x:n
   return y + rows * (valueSize + rowGap + 14);
 }
 
-function layoutPaletteRows(pdf:any, x:number, y:number, maxW:number, items:PaletteItem[], sw:number, gap:number) {
-  const labelFont = 9, rowH = sw + 4 + labelFont + 2;
-  const perRow = Math.max(6, Math.min(12, Math.floor((maxW + gap) / (sw + gap))));
-  let cx = x, cy = y;
-  items.forEach((c, idx) => {
-    if (idx>0 && idx%perRow===0) { cy += rowH + 8; cx = x; }
-    const [r,g,b] = hexToRgb(c.hex);
-    pdf.setFillColor(r,g,b); pdf.rect(cx, cy, sw, sw, "F");
-    pdf.setFont("Outfit","normal"); pdf.setTextColor(60); pdf.setFontSize(labelFont);
-    pdf.text(truncatePdf(pdf, c.name, sw + 40), cx, cy + sw + 10);
-    cx += sw + gap;
+function layoutPaletteGrid(
+  pdf: any,
+  x: number,
+  y: number,
+  maxW: number,
+  items: PaletteItem[],
+  swatchSize = 14,
+  gutter = 12
+) {
+  // Fixed column width prevents label collisions; rows are centered
+  const CELL_W = 96; // reserved width per swatch+label
+  const LABEL_SIZE = 9;
+  const ROW_H = swatchSize + 6 + LABEL_SIZE + 4;
+
+  const perRow = Math.max(5, Math.floor((maxW + gutter) / (CELL_W + gutter)));
+  const totalRowW = perRow * CELL_W + (perRow - 1) * gutter;
+  const startX = x + Math.max(0, (maxW - totalRowW) / 2);
+
+  pdf.setFont('Outfit', 'normal');
+  pdf.setFontSize(LABEL_SIZE);
+  pdf.setTextColor(60);
+
+  let cx = startX, cy = y, col = 0;
+  items.forEach((c, i) => {
+    if (i > 0 && col === perRow) {
+      col = 0;
+      cx = startX;
+      cy += ROW_H;
+    }
+
+    const [r, g, b] = hexToRgb(c.hex);
+    const swX = cx + (CELL_W - swatchSize) / 2;
+    const swY = cy;
+
+    // Swatch
+    pdf.setFillColor(r, g, b);
+    pdf.rect(swX, swY, swatchSize, swatchSize, 'F');
+
+    // Centered label
+    const labelY = swY + swatchSize + 10;
+    const labelMax = CELL_W - 4;
+    const text = truncatePdf(pdf, c.name, labelMax);
+    const centerX = cx + CELL_W / 2;
+    pdf.text(text, centerX, labelY, { align: 'center' });
+
+    cx += CELL_W + gutter;
+    col += 1;
   });
-  return cy + rowH;
+
+  return cy + ROW_H;
 }
