@@ -669,29 +669,71 @@ watchDebounced(
             </div>
           </section>
           <div v-if="mosaic.tilingResult" class="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
-            <header class="mb-3 flex items-center gap-3">
-              <h3 class="text-white font-semibold">Parts list</h3>
-              <span class="text-sm text-white/70">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
-              <div class="ml-auto flex items-center gap-2">
-                <button class="btn-soft h-10 px-3 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
-                <button class="btn-soft h-10 px-3 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">Export PDF</button>
-                <button class="btn-soft h-10 px-3 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
+            <!-- Header -->
+            <header class="px-4 pt-4">
+              <div class="grid gap-3 md:gap-4 items-center md:grid-cols-[1fr_auto]">
+                <!-- Left: title + cost -->
+                <div class="flex items-baseline gap-3">
+                  <h4 class="font-semibold">Parts list</h4>
+                  <span class="text-sm text-white/70">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
+                </div>
 
-                <!-- Header Buy CTA (right-aligned) -->
-                <a
-                  href="https://briko.app/help/buy-bricks"
-                  target="_blank" rel="noopener"
-                  class="btn-outline h-10 px-3 rounded-lg inline-flex items-center gap-2"
-                  aria-label="Where to buy pieces"
-                  @click="onBuyClickHeader"
-                >
-                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M6 7h12l-1 12H7L6 7Z"/>
-                    <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
-                  </svg>
-                  <span class="hidden sm:inline">Where to buy pieces</span>
-                  <span class="sm:hidden">Buy</span>
-                </a>
+                <!-- Right: actions (wrap cleanly as rows) -->
+                <div class="flex flex-wrap justify-start md:justify-end gap-2">
+                  <button
+                    class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+                    :disabled="!mosaic.canExport"
+                    :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
+                    @click="mosaic.exportPNG"
+                  >
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M4 5h16v14H4z"/>
+                      <path d="M8 14l2.5-3 2 2.5L15 11l3 3"/>
+                    </svg>
+                    <span><span class="hidden sm:inline">Export </span>PNG</span>
+                  </button>
+
+                  <button
+                    class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+                    :disabled="!mosaic.canExport"
+                    :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
+                    @click="onDownloadPdf"
+                  >
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M4 19h16" stroke-linecap="round"/>
+                    </svg>
+                    <span><span class="hidden sm:inline">Export </span>PDF</span>
+                  </button>
+
+                  <button
+                    class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+                    :disabled="!mosaic.canExport"
+                    :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
+                    @click="mosaic.exportCSV"
+                  >
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+                    </svg>
+                    <span><span class="hidden sm:inline">Export </span>CSV</span>
+                  </button>
+
+                  <!-- Buy CTA -->
+                  <a
+                    href="https://briko.app/help/buy-bricks"
+                    target="_blank" rel="noopener"
+                    class="btn-outline h-10 px-3 rounded-lg inline-flex items-center whitespace-nowrap shrink-0"
+                    aria-label="Where to buy pieces"
+                    @click="onBuyClickHeader"
+                  >
+                    <svg viewBox="0 0 24 24" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M6 7h12l-1 12H7L6 7Z"/>
+                      <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
+                    </svg>
+                    <span class="hidden sm:inline">Where to buy pieces</span>
+                    <span class="sm:hidden">Buy parts</span>
+                  </a>
+                </div>
               </div>
             </header>
 
