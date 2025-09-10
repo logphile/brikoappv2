@@ -11,6 +11,7 @@ let scene: any | null = null
 let camera: any | null = null
 let controls: any | null = null
 let inst: any | null = null
+let currentMesh: any | null = null
 let animId = 0
 let glCanvas: HTMLCanvasElement | null = null
 
@@ -35,6 +36,33 @@ function disposeScene () {
     glCanvas = null
   }
   scene = null; camera = null
+}
+
+// View helpers
+type ViewName = 'front' | 'iso' | 'top'
+function setView(view: ViewName) {
+  if (!camera || !controls || !currentMesh) return
+  const box = new THREE.Box3().setFromObject(currentMesh)
+  const size = new THREE.Vector3(); box.getSize(size)
+  const center = new THREE.Vector3(); box.getCenter(center)
+
+  const maxSize = Math.max(size.x, size.y, size.z)
+  const fov = THREE.MathUtils.degToRad((camera as any).fov)
+  const dist = ((maxSize / 2) / Math.tan(fov / 2)) * 1.2
+
+  // Our voxel build extrudes along world Y, so the mosaic face is in XZ plane.
+  // 'front' should position camera along +Y toward center. 'top' looks along +Z.
+  let dir = new THREE.Vector3(0, 1, 0.001).normalize() // front (looking at +Y face)
+  if (view === 'iso') dir = new THREE.Vector3(1, 0.75, 1).normalize()
+  if (view === 'top') dir = new THREE.Vector3(0, 0, 1).normalize()
+
+  camera.position.copy(center).add(dir.multiplyScalar(dist))
+  camera.near = Math.max(0.1, dist / 100)
+  camera.far  = dist * 100
+  camera.updateProjectionMatrix()
+
+  controls.target.copy(center)
+  controls.update()
 }
 
 function fitCameraToObject (obj: any, padding = 1.25) {
@@ -117,10 +145,12 @@ function build () {
     for (let y=0; y<h; y++) {
       for (let x=0; x<w; x++) {
         const ci = colors[(z*w*h) + (y*w + x)]
-        if (!ci) continue
+        if (ci === 255) continue // 255 sentinel = empty voxel
+        const hex = PALETTE[ci]
+        if (hex === undefined) continue
         m.makeTranslation(x - w/2, z, y - h/2)
         ;(inst as any).setMatrixAt(i, m)
-        c.set(PALETTE[ci])
+        c.set(hex)
         ;(inst as any).setColorAt(i, c)
         i++
       }
@@ -131,6 +161,7 @@ function build () {
   ;(inst as any).instanceColor && ((inst as any).instanceColor.needsUpdate = true)
   ;(inst as any).frustumCulled = false
   scene.add(inst)
+  currentMesh = inst
 
   // Ground/grid (optional)
   const grid = new THREE.GridHelper(size, size, 0x444444, 0x222222)
@@ -140,6 +171,8 @@ function build () {
   // Fit and size
   resize()
   fitCameraToObject(inst, 1.35)
+  // Default to a front-facing view for recognizability
+  setView('front')
   window.addEventListener('resize', resize, { passive: true })
 
   // Render loop
@@ -158,6 +191,12 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', resize)
   disposeScene()
 })
+
+// Expose quick view methods to parent
+function toFront(){ setView('front') }
+function toIso(){ setView('iso') }
+function toTop(){ setView('top') }
+defineExpose({ setView, toFront, toIso, toTop })
 </script>
 
 <template><div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div></template>

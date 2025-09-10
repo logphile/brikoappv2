@@ -17,6 +17,7 @@ const loading = ref(false)
 const progress = ref(0)
 const size = ref(64) // 64³ target
 const mode = ref<'layered'|'relief'|'hollow'>('layered')
+const previewRef = ref<any>(null)
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
@@ -109,6 +110,11 @@ function scheduleRegen(){
 watch(size, scheduleRegen)
 watch(mode, scheduleRegen)
 onBeforeUnmount(() => voxelTask.cancel())
+
+// Quick view helpers calling child-exposed methods
+function toFront(){ previewRef.value?.toFront?.() }
+function toIso(){ previewRef.value?.toIso?.() }
+function toTop(){ previewRef.value?.toTop?.() }
 </script>
 
 <template>
@@ -135,6 +141,14 @@ onBeforeUnmount(() => voxelTask.cancel())
             <option value="hollow">Layered (hollow)</option>
           </select>
         </div>
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+          <label class="block text-sm mb-1">View</label>
+          <div class="flex gap-2">
+            <button class="btn-soft h-9 px-3 rounded-md" @click="toFront">Front</button>
+            <button class="btn-soft h-9 px-3 rounded-md" @click="toIso">Iso</button>
+            <button class="btn-soft h-9 px-3 rounded-md" @click="toTop">Top</button>
+          </div>
+        </div>
         <p v-if="vox" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
       <section class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-2">
@@ -146,7 +160,7 @@ onBeforeUnmount(() => voxelTask.cancel())
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox"/>
+        <VoxelPreview v-else-if="vox" :vox="vox" ref="previewRef"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <div v-if="vox" class="px-2 pb-2 flex gap-2">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>

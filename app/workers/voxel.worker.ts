@@ -17,7 +17,8 @@ self.onmessage = async (e: MessageEvent<VoxelWorkerIn>) => {
   const { data } = ctx.getImageData(0,0,size,size)
 
   const depth = size
-  const colors = new Uint8Array(size*size*depth) // index into demo palette bands (0..bands-1)
+  const colors = new Uint8Array(size*size*depth) // index into demo palette bands (0..bands-1), 255 = empty
+  colors.fill(255)
   const totalRows = size
   const progressEvery = Math.max(1, Math.floor(size / 20)) // ~5% increments
 
