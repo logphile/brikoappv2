@@ -100,6 +100,10 @@ function build () {
   scene.add(new THREE.AmbientLight(0xffffff, 0.7))
   const dir1 = new THREE.DirectionalLight(0xffffff, 1.0); dir1.position.set(3,5,4); scene.add(dir1)
   const dir2 = new THREE.DirectionalLight(0xffffff, 0.4); dir2.position.set(-4,2,-3); scene.add(dir2)
+  // Key light attached to camera so the front face is readable
+  scene.add(camera)
+  const key = new THREE.DirectionalLight(0xffffff, 0.9)
+  camera.add(key)
 
   // Instanced mesh
   const geo = new THREE.BoxGeometry(1,1,1)
