@@ -358,6 +358,10 @@ function shareX(){ const u = encodeURIComponent(currentUrl()); const t = encodeU
 function shareFB(){ const u = encodeURIComponent(currentUrl()); window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`,'_blank') }
 function shareReddit(){ const u = encodeURIComponent(currentUrl()); const t = encodeURIComponent('My Briko mosaic'); window.open(`https://www.reddit.com/submit?url=${u}&title=${t}`,'_blank') }
 
+// Lightweight analytics for Buy CTAs (no-op if gtag missing)
+function onBuyClickHeader(){ try { (window as any)?.gtag?.('event', 'click_buy_parts', { location: 'parts_list_header' }) } catch {} }
+function onBuyClickSticky(){ try { (window as any)?.gtag?.('event', 'click_buy_parts', { location: 'parts_list_sticky_mobile' }) } catch {} }
+
 // Jump to matching BOM row when requested by canvas tooltip
 function onViewBom(part: string, colorId: number){
   try {
@@ -665,29 +669,65 @@ watchDebounced(
             </div>
           </section>
           <div v-if="mosaic.tilingResult" class="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
-            <header class="mb-3 flex items-center justify-between">
+            <header class="mb-3 flex items-center gap-3">
               <h3 class="text-white font-semibold">Parts list</h3>
-              <div class="text-sm text-white/60">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</div>
+              <span class="text-sm text-white/70">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
+              <div class="ml-auto flex items-center gap-2">
+                <button class="btn-soft h-10 px-3 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
+                <button class="btn-soft h-10 px-3 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">Export PDF</button>
+                <button class="btn-soft h-10 px-3 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
+
+                <!-- Header Buy CTA (right-aligned) -->
+                <a
+                  href="https://briko.app/help/buy-bricks"
+                  target="_blank" rel="noopener"
+                  class="btn-outline h-10 px-3 rounded-lg inline-flex items-center gap-2"
+                  aria-label="Where to buy pieces"
+                  @click="onBuyClickHeader"
+                >
+                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M6 7h12l-1 12H7L6 7Z"/>
+                    <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
+                  </svg>
+                  <span class="hidden sm:inline">Where to buy pieces</span>
+                  <span class="sm:hidden">Buy</span>
+                </a>
+              </div>
             </header>
 
-            <!-- Export buttons belong here so they scroll with the list -->
-            <div class="mb-3 flex flex-wrap gap-3">
-            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportPNG">Export PNG</button>
-            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">Export PDF</button>
-            <button class="rounded-xl border border-white/10 px-3 py-2 text-white/80 hover:border-mint/40 transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="mosaic.exportCSV">Export CSV</button>
-          </div>
+            <!-- BOM list + mobile sticky CTA wrapper -->
+            <div class="relative -mx-4 mt-3 px-4">
+              <!-- BOM items -->
+              <ul class="divide-y divide-white/5 text-sm">
+                <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" :id="'bom-' + row.part + '-' + row.colorId" class="py-2 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
+                    <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }} · {{ (mosaic.settings.topSurface==='tiles' ? 'Tile' : 'Plate') }} {{ row.part.replace('x','×') }}</span>
+                  </div>
+                  <div class="text-white/70 text-sm">{{ row.qty }} pcs</div>
+                </li>
+              </ul>
+              <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
 
-            <!-- BOM items -->
-            <ul class="divide-y divide-white/5 text-sm">
-              <li v-for="row in mosaic.tilingResult.bom" :key="row.part + '-' + row.colorId" :id="'bom-' + row.part + '-' + row.colorId" class="py-2 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="inline-block w-3 h-3 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: (legoPalette[row.colorId]?.hex || '#ccc') }"></span>
-                  <span class="opacity-80">{{ legoPalette[row.colorId]?.name || ('Color '+row.colorId) }} · {{ (mosaic.settings.topSurface==='tiles' ? 'Tile' : 'Plate') }} {{ row.part.replace('x','×') }}</span>
+              <!-- Mobile-only sticky CTA -->
+              <div class="sticky bottom-0 bg-gradient-to-t from-[#0B0F16]/90 to-transparent pt-3 pb-3 md:hidden">
+                <div class="flex justify-end">
+                  <a
+                    href="https://briko.app/help/buy-bricks"
+                    target="_blank" rel="noopener"
+                    class="btn-mint h-11 px-4 rounded-xl inline-flex items-center gap-2"
+                    aria-label="Where to buy pieces"
+                    @click="onBuyClickSticky"
+                  >
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M6 7h12l-1 12H7L6 7Z"/>
+                      <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
+                    </svg>
+                    <span>Where to buy pieces</span>
+                  </a>
                 </div>
-                <div class="text-white/70 text-sm">{{ row.qty }} pcs</div>
-              </li>
-            </ul>
-            <p class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
+              </div>
+            </div>
           </div>
         </aside>
 
@@ -825,25 +865,13 @@ watchDebounced(
                 </div>
               </div>
 
-              <!-- Metrics + buy link -->
+              <!-- Metrics -->
               <div class="px-4 pb-2 flex items-center gap-4">
                 <p v-if="mosaic.tilingResult" class="text-white/80 text-sm">
                   <span class="font-semibold">Bricks:</span> {{ mosaic.tilingResult.bricks.length }}
                   <span class="mx-3 opacity-30">•</span>
                   <span class="font-semibold">Est. cost:</span> ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}
                 </p>
-                <a
-                  href="https://briko.app/help/buy-bricks"
-                  target="_blank" rel="noopener"
-                  class="ml-auto text-sm inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition"
-                >
-                  <!-- Shopping bag icon -->
-                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                    <path d="M6 7h12l-1 12H7L6 7Z"/>
-                    <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
-                  </svg>
-                  Where to buy pieces
-                </a>
               </div>
 
               <!-- Disclaimer -->
