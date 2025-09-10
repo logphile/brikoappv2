@@ -346,7 +346,7 @@ function onDownloadBrickLink(){
   }
 }
 
-// Share & buy helpers
+// Share helpers
 function currentUrl(){ try { return window.location.href } catch { return 'https://briko.app/mosaic' } }
 function copyLink(){
   const url = currentUrl()
@@ -357,7 +357,6 @@ function copyLink(){
 function shareX(){ const u = encodeURIComponent(currentUrl()); const t = encodeURIComponent('Check out my Briko mosaic!'); window.open(`https://twitter.com/intent/tweet?url=${u}&text=${t}`,'_blank') }
 function shareFB(){ const u = encodeURIComponent(currentUrl()); window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`,'_blank') }
 function shareReddit(){ const u = encodeURIComponent(currentUrl()); const t = encodeURIComponent('My Briko mosaic'); window.open(`https://www.reddit.com/submit?url=${u}&title=${t}`,'_blank') }
-function whereToBuy(){ window.open('https://briko.app/help/buy-bricks','_blank') }
 
 // Jump to matching BOM row when requested by canvas tooltip
 function onViewBom(part: string, colorId: number){
@@ -719,7 +718,6 @@ watchDebounced(
               <div v-if="mosaic.status==='error'" class="text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
                 Generation failed — {{ mosaic.errorMsg }}
               </div>
-              <button class="btn-mint rounded-xl px-3 py-1.5 disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="onDownloadPdf">Export PDF</button>
             </div>
           </div>
 
@@ -776,16 +774,39 @@ watchDebounced(
               </div>
             </Transition>
 
-            <!-- Export actions under preview -->
-            <div class="mt-4 relative">
-              <div class="flex flex-wrap gap-3">
-                <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadPdf">Download Build Guide (PDF)</button>
-                <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="onDownloadCsv">Download Parts List (CSV)</button>
-                <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">Export for BrickLink (.xml)</button>
+            <!-- Build card footer -->
+            <footer class="mt-4 border-t border-white/10 relative">
+              <!-- Actions row: centered, consistent height -->
+              <div class="px-4 pt-4 pb-3 flex flex-wrap items-center justify-center gap-3">
+                <button class="btn-mint inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
+                  <!-- Download icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 19h16" stroke-linecap="round"/>
+                  </svg>
+                  <span>Download Build Guide (PDF)</span>
+                </button>
+
+                <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadCsv">
+                  <!-- List icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+                  </svg>
+                  <span>Download Parts List (CSV)</span>
+                </button>
+
+                <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">
+                  <!-- Package icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3Z" stroke-linejoin="round"/>
+                    <path d="M12 12V21M3 7.5l9 4.5 9-4.5"/>
+                  </svg>
+                  <span>Export for BrickLink (.xml)</span>
+                </button>
               </div>
 
               <!-- BrickLink export small dialog -->
-              <div v-if="showBL" class="absolute right-0 z-20 mt-2 w-80 rounded-2xl border border-white/10 bg-black/70 p-4 shadow-soft-card">
+              <div v-if="showBL" class="absolute right-4 z-20 mt-2 w-80 rounded-2xl border border-white/10 bg-black/70 p-4 shadow-soft-card">
                 <div class="flex items-center justify-between mb-2">
                   <div class="font-medium">BrickLink Export</div>
                   <button class="text-white/60 hover:text-white" @click="closeBLDialog">✕</button>
@@ -803,25 +824,74 @@ watchDebounced(
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="mt-3 text-sm opacity-80 flex items-center gap-4">
-              <span v-if="mosaic.status==='tiling'">Coverage: {{ mosaic.coveragePct.toFixed(1) }}%</span>
-              <span v-if="mosaic.tilingResult">Bricks: {{ mosaic.tilingResult.bricks.length }}</span>
-              <span v-if="mosaic.tilingResult">Est. cost: ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}</span>
-              <span v-if="tab==='3D'" class="ml-auto">Visible: {{ mosaic.visibleLayers }} / {{ mosaic.height }}</span>
-            </div>
-            <p v-if="mosaic.tilingResult" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
-            <!-- Share & buy hooks -->
-            <div class="mt-4 flex flex-wrap items-center gap-2 text-xs">
-              <span class="opacity-70 mr-1">Share:</span>
-              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareX">X</button>
-              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareFB">Facebook</button>
-              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="shareReddit">Reddit</button>
-              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/15" @click="copyLink">Copy link</button>
-              <div class="grow"></div>
-              <button class="px-3 py-1 rounded bg-cta-grad/70 hover:bg-cta-grad text-white" @click="whereToBuy">Where to buy pieces</button>
-            </div>
+              <!-- Metrics + buy link -->
+              <div class="px-4 pb-2 flex items-center gap-4">
+                <p v-if="mosaic.tilingResult" class="text-white/80 text-sm">
+                  <span class="font-semibold">Bricks:</span> {{ mosaic.tilingResult.bricks.length }}
+                  <span class="mx-3 opacity-30">•</span>
+                  <span class="font-semibold">Est. cost:</span> ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}
+                </p>
+                <a
+                  href="https://briko.app/help/buy-bricks"
+                  target="_blank" rel="noopener"
+                  class="ml-auto text-sm inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 transition"
+                >
+                  <!-- Shopping bag icon -->
+                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M6 7h12l-1 12H7L6 7Z"/>
+                    <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
+                  </svg>
+                  Where to buy pieces
+                </a>
+              </div>
+
+              <!-- Disclaimer -->
+              <p v-if="mosaic.tilingResult" class="px-4 text-xs text-white/50 pb-3">
+                {{ PRICE_ESTIMATE_SHORT }}
+              </p>
+
+              <!-- Share row -->
+              <div class="px-4 pb-4 flex items-center gap-3">
+                <span class="text-xs text-white/60">Share:</span>
+                <button
+                  class="share-pill"
+                  aria-label="Share on X"
+                  @click="shareX"
+                  title="Share on X"
+                >
+                  <!-- X icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M4 4l16 16M20 4L4 20" stroke-linecap="round"/>
+                  </svg>
+                </button>
+
+                <button class="share-pill" aria-label="Share on Facebook" @click="shareFB" title="Share on Facebook">
+                  <!-- Facebook icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+                    <path d="M14 8h2V5h-2a3 3 0 0 0-3 3v2H9v3h2v7h3v-7h2.2l.5-3H14V8Z"/>
+                  </svg>
+                </button>
+
+                <button class="share-pill" aria-label="Share on Reddit" @click="shareReddit" title="Share on Reddit">
+                  <!-- Reddit icon (simplified) -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5"/>
+                    <circle cx="9.5" cy="11" r="1" fill="currentColor" stroke="none"/>
+                    <circle cx="14.5" cy="11" r="1" fill="currentColor" stroke="none"/>
+                    <path d="M9 14c1.5 1 4.5 1 6 0" stroke-linecap="round"/>
+                  </svg>
+                </button>
+
+                <button class="share-pill" aria-label="Copy link" @click="copyLink" title="Copy link">
+                  <!-- Link icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M10 13a5 5 0 0 1 0-7l1-1a5 5 0 0 1 7 7l-1 1" stroke-linecap="round"/>
+                    <path d="M14 11a5 5 0 0 1 0 7l-1 1a5 5 0 0 1-7-7l1-1" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </footer>
           </div>
 
           <!-- Fallback 1: show uploaded image before mosaic is ready -->
