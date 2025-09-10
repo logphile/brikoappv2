@@ -831,6 +831,7 @@ watchDebounced(
           <div v-else class="h-[480px] grid place-items-center text-sm text-white/70 opacity-80">Upload a photo to begin.</div>
           </div>
         </div>
+        </div>
         </ClientOnly>
       </section>
       </Transition>
