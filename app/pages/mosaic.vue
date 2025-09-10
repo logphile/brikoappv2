@@ -498,7 +498,7 @@ watchDebounced(
         <aside class="space-y-6">
           <!-- A) Sticky parent contains ONLY the controls -->
           <div class="sticky-parent relative">
-            <div class="lg:sticky lg:top-[calc(var(--app-header-h,64px)+12px)] z-0" aria-label="Mosaic parameters">
+            <div class="lg:sticky lg:top-24 z-0" aria-label="Mosaic parameters">
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
@@ -700,33 +700,38 @@ watchDebounced(
                   enter-from-class="opacity-0 translate-y-2"
                   enter-to-class="opacity-100 translate-y-0">
       <!-- Step 3: Build guide (preview + export) -->
-      <section :id="stepsGuide[2].id" class="scroll-mt-28 pt-6">
-        <div class="flex items-center gap-3 mb-3">
-          <StepBadge :n="3" size="lg" :active="currentStep===stepsGuide[2].id" />
-          <h2 class="text-base font-semibold">Build guide</h2>
-        </div>
+      <section :id="stepsGuide[2].id" class="scroll-mt-28">
         <ClientOnly>
-        <div id="mosaic-preview-capture"
-          class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
-          :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
-          @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
-        >
-        <RegeneratingChip />
-        <div v-if="dropActive"
-             class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
-        <div class="flex items-center gap-3 text-sm mb-4">
-          <button :class="['px-3 py-1.5 rounded-full transition', tab==='2D' ? 'bg-mint/15 text-white border border-mint/40' : 'text-white/70 hover:text-white']" @click="tab='2D'">2D Mosaic</button>
-          <button :class="['px-3 py-1.5 rounded-full transition', tab==='3D' ? 'bg-mint/15 text-white border border-mint/40' : 'text-white/70 hover:text-white']" @click="tab='3D'">3D Preview</button>
-          <div class="grow"></div>
-          <label v-if="tab==='2D'" class="ml-auto inline-flex items-center gap-2 text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
-            <input type="checkbox" class="accent-mint" v-model="showPlates" />
-            <span>{{ copy.mosaic.controls.showPlateOutlines }}</span>
-          </label>
-          <div v-if="mosaic.status==='error'" class="ml-2 text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
-            Generation failed — {{ mosaic.errorMsg }}
+        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 shadow-soft-card overflow-hidden">
+          <!-- Unified header -->
+          <div class="flex flex-wrap items-center gap-3 border-b border-white/10 px-5 py-3">
+            <StepBadge :n="3" :active="currentStep===stepsGuide[2].id" />
+            <h3 class="text-white/90 font-semibold">Build guide</h3>
+            <div class="ml-2 flex items-center gap-2 text-sm">
+              <button :class="['px-3 py-1 rounded-md transition', tab==='2D' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5']" @click="tab='2D'">2D Mosaic</button>
+              <button :class="['px-3 py-1 rounded-md transition', tab==='3D' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5']" @click="tab='3D'">3D Preview</button>
+            </div>
+            <div class="ml-auto flex items-center gap-3">
+              <label v-if="tab==='2D'" class="inline-flex items-center gap-2 text-xs text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
+                <input type="checkbox" class="accent-mint" v-model="showPlates" />
+                <span>{{ copy.mosaic.controls.showPlateOutlines }}</span>
+              </label>
+              <div v-if="mosaic.status==='error'" class="text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
+                Generation failed — {{ mosaic.errorMsg }}
+              </div>
+              <button class="btn-mint rounded-xl px-3 py-1.5 disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="onDownloadPdf">Export PDF</button>
+            </div>
           </div>
-          <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.tilingResult || mosaic.status==='working' || mosaic.status==='tiling'" :title="!mosaic.tilingResult ? 'Upload an image to enable' : ''" @click="onDownloadPdf">Export PDF</button>
-        </div>
+
+          <!-- Card body -->
+          <div id="mosaic-preview-capture"
+            class="relative p-5 transition hover:-translate-y-0.0"
+            :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
+            @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
+          >
+          <RegeneratingChip />
+          <div v-if="dropActive"
+               class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
 
         <!-- Always-present preview window -->
         <div class="min-h-[560px] rounded-xl bg-zinc-900/30 ring-1 ring-white/10 overflow-hidden grid place-items-center">
@@ -824,7 +829,7 @@ watchDebounced(
 
           <!-- Fallback 2: empty state before any upload -->
           <div v-else class="h-[480px] grid place-items-center text-sm text-white/70 opacity-80">Upload a photo to begin.</div>
-        </div>
+          </div>
         </div>
         </ClientOnly>
       </section>
