@@ -16,6 +16,7 @@ const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
 const progress = ref(0)
 const size = ref(64) // 64³ target
+const mode = ref<'layered'|'relief'|'hollow'>('layered')
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
@@ -64,7 +65,7 @@ async function onFile(file: File) {
   srcBitmap.value = await createImageBitmap(file)
   try {
     const msg = await voxelTask.run(
-      { image: srcBitmap.value, size: size.value },
+      { image: srcBitmap.value, size: size.value, mode: mode.value },
       { onProgress: (p) => { if (typeof p?.pct === 'number') progress.value = p.pct } }
     )
     if (msg.type === 'done') {
@@ -91,7 +92,7 @@ function scheduleRegen(){
     loading.value = true; progress.value = 0
     try {
       const msg = await voxelTask.run(
-        { image: srcBitmap.value, size: size.value },
+        { image: srcBitmap.value, size: size.value, mode: mode.value },
         { onProgress: (p) => { if (typeof p?.pct === 'number') progress.value = p.pct } }
       )
       if (msg.type === 'done') {
@@ -106,6 +107,7 @@ function scheduleRegen(){
   }, 150)
 }
 watch(size, scheduleRegen)
+watch(mode, scheduleRegen)
 onBeforeUnmount(() => voxelTask.cancel())
 </script>
 
@@ -123,6 +125,14 @@ onBeforeUnmount(() => voxelTask.cancel())
           <select v-model.number="size" class="select-mint">
             <option :value="32">32³</option>
             <option :value="64">64³</option>
+          </select>
+        </div>
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+          <label class="block text-sm mb-1">3D mode</label>
+          <select v-model="mode" class="select-mint w-full">
+            <option value="layered">Layered Mosaic (default)</option>
+            <option value="relief">Relief (height-map)</option>
+            <option value="hollow">Layered (hollow)</option>
           </select>
         </div>
         <p v-if="vox" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>

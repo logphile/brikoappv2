@@ -10,10 +10,14 @@ export interface VoxelGrid {
 }
 
 // Messages from the worker
+export type BuildMode = 'layered' | 'relief' | 'hollow'
+
 export type VoxelWorkerIn = {
   image: ImageBitmap | OffscreenCanvas | ImageData
   size: number
   bands?: number // number of color bands used for height-based coloring (default 8)
+  mode?: BuildMode // build mode for voxelization
+  wallThickness?: number // for layered/hollow; defaults to ~15% of depth if not provided
 }
 
 export type VoxelProgressMsg = {
