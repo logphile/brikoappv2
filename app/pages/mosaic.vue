@@ -114,6 +114,8 @@ const useDither = ref(false)
 const tab = ref<'2D'|'3D'>('2D')
 // drag-n-drop on preview area + global guard
 const dropActive = ref(false)
+// Blob URL for uploaded image to show as a fallback before mosaic is ready
+const sourceImgUrl = ref<string | null>(null)
 // UI toggles
 const showPlates = ref(false)
 // BrickLink export dialog state
@@ -206,6 +208,9 @@ async function onFile(file: File) {
   mosaic.setUiWorking('manual')
   try {
     try { showToast(copy.mosaic.toasts.generating, 'info', 1500) } catch {}
+    // Update fallback image URL for the preview window
+    try { if (sourceImgUrl.value) URL.revokeObjectURL(sourceImgUrl.value) } catch {}
+    sourceImgUrl.value = URL.createObjectURL(file)
     srcBitmap.value = await createImageBitmap(file)
     // Save a small original preview data URL for PDF cover (optional)
     try {
@@ -399,7 +404,13 @@ function preventWindowDrop(e: DragEvent) {
   }
 }
 onMounted(()=>{ window.addEventListener('dragover', preventWindowDrop); window.addEventListener('drop', preventWindowDrop) })
-onBeforeUnmount(()=>{ window.removeEventListener('dragover', preventWindowDrop); window.removeEventListener('drop', preventWindowDrop); mosaicTask.cancel(); mosaic.cancelTiling() })
+onBeforeUnmount(()=>{
+  window.removeEventListener('dragover', preventWindowDrop);
+  window.removeEventListener('drop', preventWindowDrop);
+  if (sourceImgUrl.value) { try { URL.revokeObjectURL(sourceImgUrl.value) } catch {} }
+  mosaicTask.cancel();
+  mosaic.cancelTiling()
+})
 
 // Debounced regeneration when size/dither changes (with queue)
 let regenTimer: any = null
@@ -481,7 +492,7 @@ watchDebounced(
       </a>
     </nav>
 
-    <div class="mt-6 grid lg:grid-cols-[460px,1fr] gap-6 items-start">
+    <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(360px,420px)_1fr] items-start">
       <!-- left column -->
       <div class="lg:col-span-1">
         <aside class="space-y-6">
@@ -694,6 +705,7 @@ watchDebounced(
           <StepBadge :n="3" size="lg" :active="currentStep===stepsGuide[2].id" />
           <h2 class="text-base font-semibold">Build guide</h2>
         </div>
+        <ClientOnly>
         <div id="mosaic-preview-capture"
           class="relative rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition hover:-translate-y-0.5"
           :aria-busy="mosaic.status==='working' || mosaic.status==='tiling'"
@@ -717,7 +729,7 @@ watchDebounced(
         </div>
 
         <!-- Always-present preview window -->
-        <div class="min-h-[520px] rounded-xl bg-zinc-900/30 ring-1 ring-white/10">
+        <div class="min-h-[560px] rounded-xl bg-zinc-900/30 ring-1 ring-white/10 overflow-hidden grid place-items-center">
           <!-- Loading state -->
           <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
             <div class="w-2/3 max-w-md text-center space-y-3">
@@ -729,7 +741,7 @@ watchDebounced(
           </div>
 
           <!-- Preview content -->
-          <div v-else-if="grid">
+          <div v-else-if="grid" class="w-full">
             <Transition mode="out-in"
                         enter-active-class="transition ease-out duration-300"
                         enter-from-class="opacity-0 translate-y-1"
@@ -807,11 +819,14 @@ watchDebounced(
             </div>
           </div>
 
-          <!-- Placeholder before upload -->
-          <div v-else class="h-[480px] grid place-items-center text-sm text-white/70 opacity-80">
-            Upload a photo to begin.
-          </div>
+          <!-- Fallback 1: show uploaded image before mosaic is ready -->
+          <img v-else-if="sourceImgUrl" :src="sourceImgUrl" alt="Uploaded" class="max-w-full max-h-full object-contain pointer-events-none select-none" />
+
+          <!-- Fallback 2: empty state before any upload -->
+          <div v-else class="h-[480px] grid place-items-center text-sm text-white/70 opacity-80">Upload a photo to begin.</div>
         </div>
+        </div>
+        </ClientOnly>
       </section>
       </Transition>
     </div>
