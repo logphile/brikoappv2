@@ -26,6 +26,8 @@ const previewRef = ref<any>(null)
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
+// Build-time dev flag for template conditions (avoid using import.meta in template expressions)
+const isDev = process.dev
 
 // Mode help copy
 const modeHelp = computed(() => {
@@ -212,7 +214,7 @@ onMounted(async () => {
           <p class="text-xs opacity-70 mt-1">{{ modeHelp }}</p>
         </div>
         <!-- Debug (dev-only) -->
-        <div v-if="import.meta.dev" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <div v-if="isDev" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <label class="block text-sm mb-1">Debug</label>
           <div class="flex flex-col gap-1 text-sm">
             <label class="inline-flex items-center gap-2">
