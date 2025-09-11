@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue'
+import { ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import { useHead } from 'nuxt/app'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
@@ -129,6 +129,19 @@ onBeforeUnmount(() => voxelTask.cancel())
 function toFront(){ previewRef.value?.toFront?.() }
 function toIso(){ previewRef.value?.toIso?.() }
 function toTop(){ previewRef.value?.toTop?.() }
+
+// Auto-load a colorful default image so the palette mapping is obvious
+onMounted(async () => {
+  if (vox.value || loading.value) return
+  try {
+    const res = await fetch('/demo-original.jpg')
+    if (!res.ok) return
+    const blob = await res.blob()
+    await onFile(new File([blob], 'demo-original.jpg', { type: blob.type }))
+  } catch (err) {
+    console.warn('Default demo image load failed', err)
+  }
+})
 </script>
 
 <template>
@@ -174,7 +187,7 @@ function toTop(){ previewRef.value?.toTop?.() }
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox" ref="previewRef"/>
+        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" ref="previewRef"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
