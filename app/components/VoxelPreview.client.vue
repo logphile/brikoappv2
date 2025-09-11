@@ -537,6 +537,13 @@ function testPaintStuds(n:number = 100){
   }
   ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
 }
+// Local debug button handlers (call window.briko hooks if present)
+const dbgSmokeOn = () => { (window as any).briko?.smokeOn?.() }
+const dbgWire    = () => { (window as any).briko?.wire?.() }
+const dbgBasic   = () => { (window as any).briko?.basic?.() }
+const dbgStd     = () => { (window as any).briko?.std?.() }
+const dbgClipOff = () => { (window as any).briko?.clipOff?.() }
+const dbgResetCam= () => { (window as any).briko?.resetCam?.() }
 defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds })
 </script>
 
@@ -570,5 +577,14 @@ defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: (
       <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full range-mint" />
       <div class="text-xs text-white/60">Showing layers 0–{{ layer }} of {{ vox.depth }}</div>
     </div>
+  </div>
+  <!-- On-screen debug bar (debug3d only) -->
+  <div v-if="debug3d" class="fixed bottom-4 right-4 z-50 flex gap-2 rounded-xl bg-black/50 px-3 py-2 text-xs">
+    <button class="btn-soft h-7 px-2 rounded-md" @click="dbgSmokeOn">Smoke</button>
+    <button class="btn-soft h-7 px-2 rounded-md" @click="dbgWire">Wire</button>
+    <button class="btn-soft h-7 px-2 rounded-md" @click="dbgBasic">Basic</button>
+    <button class="btn-soft h-7 px-2 rounded-md" @click="dbgStd">PBR</button>
+    <button class="btn-soft h-7 px-2 rounded-md" @click="dbgClipOff">Clip Off</button>
+    <button class="btn-soft h-7 px-2 rounded-md" @click="dbgResetCam">Reset Cam</button>
   </div>
   </template>
