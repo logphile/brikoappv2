@@ -34,6 +34,7 @@ const isDev = process.dev
 const route = useRoute()
 const debug3d = computed(() => 'debug3d' in route.query)
 const showDebug = computed(() => process.dev || ('debug3d' in route.query))
+const autoDemo = computed(() => 'demo' in route.query)
 
 // Mode help copy
 const modeHelp = computed(() => {
@@ -185,7 +186,7 @@ watch([paletteUsed, instUniqueColors], ([p, m]) => {
 // Auto-load a colorful default image so the palette mapping is obvious
 onMounted(() => { vox.value = null; srcBitmap.value = null })
 onMounted(async () => {
-  if (vox.value || loading.value) return
+  if (!autoDemo.value || vox.value || loading.value) return
   try {
     // Prefer bright parrot sample; fallback to demo image
     let res = await fetch('/samples/parrot-32.png')
