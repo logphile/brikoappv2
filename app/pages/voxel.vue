@@ -21,7 +21,7 @@ const progress = ref(0)
 const size = ref(64) // 64³ target
 const mode = ref<'layered'|'relief'|'hollow'>('layered')
 const exposure = ref(1.1)
-const debug = ref<{ useBasicMaterial: boolean; paintRainbow12: boolean }>({ useBasicMaterial: false, paintRainbow12: false })
+const debug = ref<{ useBasicMaterial: boolean; paintRainbow12: boolean; wireframe: boolean }>({ useBasicMaterial: false, paintRainbow12: false, wireframe: false })
 const previewRef = ref<any>(null)
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
@@ -167,6 +167,15 @@ function toFront(){ previewRef.value?.toFront?.() }
 function toIso(){ previewRef.value?.toIso?.() }
 function toTop(){ previewRef.value?.toTop?.() }
 
+// Debug: capture unique instance-colors from child and assert against palette bar count
+const instUniqueColors = ref<number | null>(null)
+watch([paletteUsed, instUniqueColors], ([p, m]) => {
+  if (m != null) {
+    console.assert(m === p.length, `[Voxel] palette bar count (${p.length}) should equal unique instance colors (${m})`)
+    console.log('[Voxel] palette bar colors vs instance colors:', { paletteBar: p.length, uniqueInstanceColors: m })
+  }
+})
+
 // Auto-load a colorful default image so the palette mapping is obvious
 onMounted(async () => {
   if (vox.value || loading.value) return
@@ -225,6 +234,10 @@ onMounted(async () => {
               <input type="checkbox" v-model="debug.paintRainbow12" />
               Paint First 12 Studs Rainbow
             </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="debug.wireframe" />
+              Wireframe
+            </label>
           </div>
           <p class="text-xs opacity-60 mt-1">Helps verify instanceColor path and lighting/tone mapping.</p>
         </div>
@@ -247,7 +260,7 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" :debug="debug" ref="previewRef"/>
+        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" :debug="debug" ref="previewRef" @unique-colors="(n:number)=> instUniqueColors = n"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <!-- Palette swatch bar -->
         <div v-if="vox && paletteUsed.length" class="px-2 pb-2">

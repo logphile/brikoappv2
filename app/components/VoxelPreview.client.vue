@@ -8,8 +8,8 @@ import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
 import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 
-const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean } }>()
-const emit = defineEmits<{ (e:'layer-change', k:number): void }>()
+const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean } }>()
+const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void }>()
 
 const host = ref<HTMLDivElement|null>(null)
 
@@ -24,6 +24,7 @@ let glCanvas: HTMLCanvasElement | null = null
 let slicePlane: any | null = null
 let appearStart = 0
 let gizmo: AxesGizmo | null = null
+let baseRGB: Float32Array | null = null
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
@@ -140,6 +141,8 @@ function setView(view: ViewName) {
   camera.updateProjectionMatrix()
 
   controls.target.copy(center)
+  ;(controls as any).minDistance = Math.max(0.1, maxSize * 0.5)
+  ;(controls as any).maxDistance = Math.max(1.0, maxSize * 6)
   controls.update()
 }
 
@@ -160,6 +163,8 @@ function fitCameraToObject (obj: any, padding = 1.25) {
   camera.updateProjectionMatrix()
 
   controls.target.copy(center)
+  ;(controls as any).minDistance = Math.max(0.1, maxSize * 0.5)
+  ;(controls as any).maxDistance = Math.max(1.0, maxSize * 6)
   controls.update()
 }
 
@@ -184,7 +189,8 @@ function build () {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
   renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
-  renderer.toneMappingExposure = props.exposure ?? 1.1
+  // Keep exposure neutral; brightness is applied per-instance color
+  renderer.toneMappingExposure = 1.0
   renderer.localClippingEnabled = true
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
@@ -207,11 +213,12 @@ function build () {
   controls.addEventListener('start', stopAuto)
   controls.addEventListener('change', stopAuto)
 
-  // Lights: Hemisphere + key + rim
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x111122, 0.6)
-  const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(2,4,3)
-  const rim = new THREE.DirectionalLight(0xffffff, 0.4); rim.position.set(-3,2,-2)
-  scene.add(hemi, key, rim)
+  // Lights: Ambient + key directional (optionally rim)
+  const amb = new THREE.AmbientLight(0xffffff, 0.4)
+  const key = new THREE.DirectionalLight(0xffffff, 0.8); key.position.set(50, 100, 50)
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35); rim.position.set(-30, 20, -20)
+  key.castShadow = false; rim.castShadow = false
+  scene.add(amb, key, rim)
 
   // Instanced mesh geometry: LEGO-like stud/brick, Z-up
   const geo = createStudGeometry({
@@ -221,7 +228,7 @@ function build () {
     radialSegments: 16,
   })
   function makeMaterial(){
-    const common:any = { vertexColors: true, flatShading: true, color: 0xffffff }
+    const common:any = { vertexColors: true, flatShading: true, color: 0xffffff, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide }
     return props.debug?.useBasicMaterial
       ? new THREE.MeshBasicMaterial(common)
       : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
@@ -232,6 +239,7 @@ function build () {
   let i = 0
   const m = new THREE.Matrix4()
   const c = new THREE.Color()
+  const base: number[] = []
   // Reset color legends for this build
   colorByLayer = Array.from({ length: depth }, () => ({}))
   for (let z=0; z<depth; z++) {
@@ -245,7 +253,14 @@ function build () {
         m.makeTranslation(x - w/2, y - h/2, z)
         ;(inst as any).setMatrixAt(i, m)
         c.set(hex)
-        ;(inst as any).setColorAt(i, c)
+        // store base linear RGB
+        base.push(c.r, c.g, c.b)
+        // apply brightness per-instance (not via lights)
+        const bf = Math.max(0, props.exposure ?? 1.0)
+        const cr = Math.min(1, c.r * bf)
+        const cg = Math.min(1, c.g * bf)
+        const cb = Math.min(1, c.b * bf)
+        ;(inst as any).setColorAt(i, new THREE.Color(cr, cg, cb))
         // Tally per-layer color counts (by hex)
         const rec = colorByLayer[z]
         rec[hex] = (rec[hex] ?? 0) + 1
@@ -254,6 +269,7 @@ function build () {
     }
   }
   ;(inst as any).count = i
+  baseRGB = new Float32Array(base)
   instanceTotal.value = i
   ;(inst as any).instanceMatrix.needsUpdate = true
   ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
@@ -269,6 +285,16 @@ function build () {
   scene.add(inst)
   currentMesh = inst
   appearStart = (performance as any).now?.() ?? Date.now()
+  // Debug: log unique base colors in the instanced mesh
+  try {
+    const uniq = new Set<string>()
+    for (let j=0; j<base.length; j+=3) {
+      const key = `${Math.round(base[j]*255)},${Math.round(base[j+1]*255)},${Math.round(base[j+2]*255)}`
+      uniq.add(key)
+    }
+    console.log('[VoxelPreview] Unique instance colors:', uniq.size)
+    emit('unique-colors', uniq.size)
+  } catch {}
 
   // Ground grid (faint)
   const gridSize = Math.max(size * 2, 200)
@@ -350,7 +376,21 @@ onMounted(() => {
 watch(() => props.vox, async () => { await nextTick(); build() })
 watch(() => props.mode, async () => { await nextTick(); build() })
 watch(() => props.debug, async () => { await nextTick(); build() }, { deep: true })
-watch(() => props.exposure, (val) => { if (renderer) renderer.toneMappingExposure = val ?? 1.1 })
+function reapplyBrightness() {
+  if (!inst || !baseRGB) return
+  const count = (inst as any).count || 0
+  const bf = Math.max(0, (typeof props.exposure === 'number' ? props.exposure : 1.0))
+  const c = new THREE.Color()
+  for (let j=0; j<count; j++) {
+    const r0 = baseRGB[j*3 + 0]
+    const g0 = baseRGB[j*3 + 1]
+    const b0 = baseRGB[j*3 + 2]
+    c.setRGB(Math.min(1, r0 * bf), Math.min(1, g0 * bf), Math.min(1, b0 * bf))
+    ;(inst as any).setColorAt(j, c)
+  }
+  ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
+}
+watch(() => props.exposure, () => { reapplyBrightness() })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resize)
   disposeScene()
