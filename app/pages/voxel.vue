@@ -36,6 +36,9 @@ const debug3d = computed(() => 'debug3d' in route.query)
 const showDebug = computed(() => process.dev || ('debug3d' in route.query))
 const autoDemo = computed(() => 'demo' in route.query)
 
+// Empty placeholder grid for debug3d mounting (all empty voxels)
+const emptyVox: VoxelGrid = { w: 32, h: 32, depth: 1, colors: new Uint8Array(32 * 32 * 1).fill(255) as Uint8Array }
+
 // Mode help copy
 const modeHelp = computed(() => {
   return mode.value === 'relief'
@@ -279,7 +282,9 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef" @unique-colors="(n:number)=> instUniqueColors = n"/>
+        <VoxelPreview v-if="vox || debug3d" :vox="vox ?? emptyVox"
+          :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef"
+          @unique-colors="(n:number)=> instUniqueColors = n" />
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <!-- Palette swatch bar -->
         <div v-if="vox && paletteUsed.length" class="px-2 pb-2">

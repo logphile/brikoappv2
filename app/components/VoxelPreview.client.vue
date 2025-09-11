@@ -227,7 +227,7 @@ function build () {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
-  renderer.toneMapping = (DBG || props.debug?.useBasicMaterial) ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping
+  renderer.toneMapping = (DEBUG || props.debug?.useBasicMaterial) ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping
   // Keep exposure neutral; brightness is applied per-instance color
   renderer.toneMappingExposure = 1.0
   // Start with clipping OFF; arm later after first successful render
@@ -268,10 +268,15 @@ function build () {
     pitch: 1.0,
     radialSegments: 16,
   })
-  function makeMaterial(){
-    const common:any = { vertexColors: true, flatShading: true, color: 0xffffff, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide, toneMapped: false }
-    if (DBG) return new THREE.MeshBasicMaterial({ ...common, side: (THREE as any).DoubleSide })
-    return props.debug?.useBasicMaterial
+  function makeMaterial () {
+    const common: any = {
+      vertexColors: true,
+      flatShading: true,
+      wireframe: !!props.debug?.wireframe,
+      side: (THREE as any).FrontSide,
+      toneMapped: false, // we handle brightness per-instance
+    }
+    return (DEBUG || props.debug?.useBasicMaterial)
       ? new THREE.MeshBasicMaterial(common)
       : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
   }
@@ -366,8 +371,26 @@ function build () {
     wany.briko = wany.briko || {}
     Object.assign(wany.briko, {
       wire: () => { if (!inst) return; const mat:any = (inst as any).material; mat.wireframe = !mat.wireframe },
-      basic: () => { if (!inst || !renderer) return; material = new THREE.MeshBasicMaterial({ vertexColors: true, side: (THREE as any).DoubleSide, toneMapped: false }); (inst as any).material = material; renderer.toneMapping = (THREE as any).NoToneMapping },
-      std:   () => { if (!inst || !renderer) return; material = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0, roughness: 1, toneMapped: false, side: (THREE as any).FrontSide }); (inst as any).material = material; renderer.toneMapping = (THREE as any).ACESFilmicToneMapping },
+      basic: () => {
+        if (!inst || !renderer) return
+        material?.dispose?.()
+        material = new THREE.MeshBasicMaterial({
+          vertexColors: true, flatShading: true, wireframe: !!props.debug?.wireframe,
+          side: (THREE as any).FrontSide, toneMapped: false,
+        })
+        ;(inst as any).material = material
+        renderer.toneMapping = (THREE as any).NoToneMapping
+      },
+      std: () => {
+        if (!inst || !renderer) return
+        material?.dispose?.()
+        material = new THREE.MeshStandardMaterial({
+          vertexColors: true, flatShading: true, wireframe: !!props.debug?.wireframe,
+          side: (THREE as any).FrontSide, toneMapped: false, metalness: 0.0, roughness: 1.0,
+        })
+        ;(inst as any).material = material
+        renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
+      },
       clipOff: () => { if (!renderer) return; renderer.clippingPlanes = []; renderer.localClippingEnabled = false },
       resetCam: () => frameToGrid(gridW, gridH, gridD),
       smokeOn: () => { if (!scene) return; if (!smokeMesh) { smokeMesh = makeSmokeTest(); scene.add(smokeMesh); frameToGrid(16,16,1) } },
