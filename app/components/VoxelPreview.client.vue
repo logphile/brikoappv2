@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { legoPalette } from '@/lib/palette/lego'
 import type { BuildMode } from '@/types/voxel'
 
-const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode }>()
+const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number }>()
 const host = ref<HTMLDivElement|null>(null)
 
 let renderer: any | null = null
@@ -16,6 +16,8 @@ let inst: any | null = null
 let currentMesh: any | null = null
 let animId = 0
 let glCanvas: HTMLCanvasElement | null = null
+let slicePlane: any | null = null
+let appearStart = 0
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
@@ -25,6 +27,12 @@ let plane: any | null = null
 let colorByLayer: Array<Record<string, number>> = []
 const showLayerSlider = computed(() => props.mode !== 'relief')
 const instanceCount = ref(0)
+const showHints = ref(true)
+const uniqueColorCount = computed(() => {
+  const set = new Set<string>()
+  for (const rec of colorByLayer) for (const k in rec) set.add(k)
+  return set.size
+})
 
 function disposeScene () {
   if (animId) cancelAnimationFrame(animId)
@@ -114,7 +122,7 @@ function build () {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
   renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.1
+  renderer.toneMappingExposure = props.exposure ?? 1.1
   renderer.localClippingEnabled = true
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
@@ -131,7 +139,9 @@ function build () {
   controls.dampingFactor = 0.08
   controls.enablePan = true
   controls.enableZoom = true
-  controls.autoRotate = false
+  controls.autoRotate = true
+  ;(controls as any).autoRotateSpeed = 1.0
+  controls.addEventListener('start', () => { controls && (controls.autoRotate = false) })
 
   // Lights: Hemisphere + key + rim
   const hemi = new THREE.HemisphereLight(0xffffff, 0x111122, 0.6)
@@ -174,6 +184,7 @@ function build () {
   ;(inst as any).frustumCulled = false
   scene.add(inst)
   currentMesh = inst
+  appearStart = (performance as any).now?.() ?? Date.now()
 
   // Ground/grid (optional)
   const grid = new THREE.GridHelper(size, size, 0x444444, 0x222222)
@@ -184,11 +195,20 @@ function build () {
   plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0)
   renderer.clippingPlanes = [plane]
 
+  // Slice plane visual indicator (mint, semi-transparent)
+  const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h))
+  const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false })
+  slicePlane = new (THREE as any).Mesh(pgeom, pmat)
+  ;(slicePlane as any).rotation.x = Math.PI / 2
+  ;(slicePlane as any).position.y = layer.value
+  ;(slicePlane as any).renderOrder = 999
+  if (showLayerSlider.value) scene.add(slicePlane)
+
   // Fit and size
   resize()
   fitCameraToObject(inst, 1.35)
-  // Default to a front-facing view for recognizability
-  setView('front')
+  // Default to an isometric view for depth; auto-rotate until interaction
+  setView('iso')
   // Initialize slider to show all layers by default
   layer.value = Math.max(0, depth - 1)
   if (plane) plane.constant = layer.value
@@ -196,6 +216,14 @@ function build () {
 
   // Render loop
   const tick = () => {
+    // Appear animation on new mesh
+    if (currentMesh && appearStart) {
+      const t = Math.min(1, (( (performance as any).now?.() ?? Date.now()) - appearStart) / 500)
+      const ease = 1 - Math.pow(1 - t, 3)
+      const s = 0.85 + 0.15 * ease
+      currentMesh.scale.set(s, s, s)
+      if (t >= 1) appearStart = 0
+    }
     controls && controls.update()
     renderer && scene && camera && renderer.render(scene, camera)
     animId = requestAnimationFrame(tick)
@@ -205,7 +233,23 @@ function build () {
 
 onMounted(async () => { await nextTick(); resize(); })
 onMounted(build)
+onMounted(() => {
+  // First-time hints auto-hide after 5s or on interaction
+  const hide = () => { showHints.value = false }
+  const t = setTimeout(hide, 5000)
+  const el = host.value
+  const off = () => {
+    clearTimeout(t)
+    hide()
+    el && (el.removeEventListener('pointerdown', off), el.removeEventListener('wheel', off), el.removeEventListener('touchstart', off))
+  }
+  el?.addEventListener('pointerdown', off, { passive: true })
+  el?.addEventListener('wheel', off, { passive: true })
+  el?.addEventListener('touchstart', off, { passive: true })
+})
 watch(() => props.vox, async () => { await nextTick(); build() })
+watch(() => props.mode, async () => { await nextTick(); build() })
+watch(() => props.exposure, (val) => { if (renderer) renderer.toneMappingExposure = val ?? 1.1 })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resize)
   disposeScene()
@@ -222,6 +266,7 @@ watch(layer, (k) => {
     controls.target.copy(center)
     controls.update()
   }
+  if (slicePlane) (slicePlane as any).position.y = k
 })
 
 // Expose quick view methods to parent + internals for PDF export
@@ -245,17 +290,25 @@ defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: (
     <div class="relative">
       <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div>
       <!-- Debug overlay -->
-      <div class="absolute left-2 top-2 text-xs px-2 py-1 rounded bg-black/50 text-white/90 ring-1 ring-white/10">
-        <div><span class="opacity-70">Mode:</span> {{ mode ?? 'layered' }}</div>
-        <div><span class="opacity-70">Instances:</span> {{ instanceCount }}</div>
-        <div v-if="vox && showLayerSlider"><span class="opacity-70">Layers shown:</span> 0–{{ layer }}</div>
-        <div><span class="opacity-70">Palette:</span> {{ legoPalette.length }}</div>
+      <div class="absolute left-2 top-2 text-xs px-2 py-1 rounded bg-black/55 text-white/95 ring-1 ring-white/10">
+        <div><span class="opacity-70">Mode:</span>
+          <span>
+            {{ (props.mode === 'relief') ? 'Relief (height-map)' : (props.mode === 'hollow') ? 'Layered (hollow)' : 'Layered Mosaic' }}
+          </span>
+        </div>
+        <div><span class="opacity-70">Bricks:</span> {{ instanceCount.toLocaleString() }}</div>
+        <div><span class="opacity-70">Layers:</span> {{ vox?.depth }}</div>
+        <div><span class="opacity-70">Colors:</span> {{ uniqueColorCount }}</div>
+      </div>
+      <!-- First-time hints -->
+      <div v-if="showHints" class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] px-2 py-1 rounded bg-black/40 text-white/80 ring-1 ring-white/10">
+        ↻ Drag to rotate &nbsp;&nbsp; ⬍ Scroll to zoom &nbsp;&nbsp; ⇅ Use slider to step layers
       </div>
     </div>
     <div v-if="vox && showLayerSlider" class="mt-2">
-      <label class="block text-sm mb-1">Layer</label>
+      <label class="block text-sm mb-1">Step through layers</label>
       <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full range-mint" />
-      <div class="text-xs text-white/60">Showing layers 0–{{ layer }}</div>
+      <div class="text-xs text-white/60">Showing layers 0–{{ layer }} of {{ vox.depth }}</div>
     </div>
   </div>
   </template>

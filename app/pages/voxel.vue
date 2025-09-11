@@ -12,16 +12,50 @@ import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
+import { computed } from 'vue'
+import { legoPalette } from '@/lib/palette/lego'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
 const progress = ref(0)
 const size = ref(64) // 64³ target
 const mode = ref<'layered'|'relief'|'hollow'>('layered')
+const exposure = ref(1.1)
 const previewRef = ref<any>(null)
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
+
+// Mode help copy
+const modeHelp = computed(() => {
+  return mode.value === 'relief'
+    ? 'Stud heights vary by image brightness.'
+    : mode.value === 'hollow'
+      ? 'Outer shell + roof only (fewer bricks).'
+      : 'Flat layer-by-layer studs in LEGO colors.'
+})
+
+// Palette used for this build (counts across the whole grid)
+const paletteUsed = computed(() => {
+  const v = vox.value
+  if (!v) return [] as Array<{ idx:number; name:string; hex:string; count:number }>
+  const counts = new Uint32Array(legoPalette.length)
+  const arr = v.colors
+  for (let i=0; i<arr.length; i++) {
+    const idx = arr[i]
+    if (idx === 255) continue
+    if (idx < counts.length) counts[idx]++
+  }
+  const out: Array<{ idx:number; name:string; hex:string; count:number }> = []
+  for (let i=0; i<counts.length; i++) {
+    if (counts[i] > 0) {
+      const entry = legoPalette[i]
+      out.push({ idx: i, name: entry?.name ?? `Color ${i}`, hex: entry?.hex ?? '#999999', count: counts[i] })
+    }
+  }
+  out.sort((a,b) => b.count - a.count)
+  return out
+})
 
 // SEO
 useHead({
@@ -161,12 +195,18 @@ onMounted(async () => {
           </select>
         </div>
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+          <label class="block text-sm mb-1">Brightness</label>
+          <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full range-mint" />
+          <div class="text-xs opacity-70 mt-1">{{ exposure.toFixed(1) }}×</div>
+        </div>
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <label class="block text-sm mb-1">3D mode</label>
           <select v-model="mode" class="select-mint w-full">
             <option value="layered">Layered Mosaic (default)</option>
             <option value="relief">Relief (height-map)</option>
             <option value="hollow">Layered (hollow)</option>
           </select>
+          <p class="text-xs opacity-70 mt-1">{{ modeHelp }}</p>
         </div>
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <label class="block text-sm mb-1">View</label>
@@ -187,8 +227,17 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" ref="previewRef"/>
+        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" ref="previewRef"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
+        <!-- Palette swatch bar -->
+        <div v-if="vox && paletteUsed.length" class="px-2 pb-2">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-xs opacity-70">Colors used in this build ({{ paletteUsed.length }}):</span>
+            <div class="flex flex-wrap gap-1">
+              <div v-for="c in paletteUsed" :key="c.idx" class="w-4 h-4 rounded-sm ring-1 ring-white/10" :style="{ backgroundColor: c.hex }" :title="`${c.name} (${c.count.toLocaleString()} bricks)`"></div>
+            </div>
+          </div>
+        </div>
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
           <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
