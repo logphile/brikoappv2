@@ -5,8 +5,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { legoPalette } from '@/lib/palette/lego'
 import type { BuildMode } from '@/types/voxel'
 import { createStudGeometry } from '@/lib/studGeometry'
+import { AxesGizmo } from '@/lib/AxesGizmo'
+import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 
-const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number }>()
+const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean } }>()
+const emit = defineEmits<{ (e:'layer-change', k:number): void }>()
+
 const host = ref<HTMLDivElement|null>(null)
 
 let renderer: any | null = null
@@ -19,6 +23,7 @@ let animId = 0
 let glCanvas: HTMLCanvasElement | null = null
 let slicePlane: any | null = null
 let appearStart = 0
+let gizmo: AxesGizmo | null = null
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
@@ -27,13 +32,70 @@ let plane: any | null = null
 // Per-layer color legend data
 let colorByLayer: Array<Record<string, number>> = []
 const showLayerSlider = computed(() => props.mode !== 'relief')
-const instanceCount = ref(0)
+const instanceTotal = ref(0)
 const showHints = ref(true)
-const uniqueColorCount = computed(() => {
+// Visible bricks and colors reflect what is actually shown (0..layer)
+const bricksVisible = computed(() => {
+  if (!showLayerSlider.value) return instanceTotal.value
+  const max = Math.min(layer.value, colorByLayer.length - 1)
+  let sum = 0
+  for (let i = 0; i <= max; i++) {
+    const rec = colorByLayer[i]
+    for (const k in rec) sum += rec[k]
+  }
+  return sum
+})
+const colorsVisible = computed(() => {
   const set = new Set<string>()
-  for (const rec of colorByLayer) for (const k in rec) set.add(k)
+  if (!colorByLayer.length) return 0
+  if (!showLayerSlider.value) {
+    for (const rec of colorByLayer) for (const k in rec) set.add(k)
+    return set.size
+  }
+  const max = Math.min(layer.value, colorByLayer.length - 1)
+  for (let i = 0; i <= max; i++) {
+    const rec = colorByLayer[i]
+    for (const k in rec) set.add(k)
+  }
   return set.size
 })
+
+const thumb = ref<HTMLCanvasElement | null>(null)
+function drawMosaicThumbnail() {
+  if (!thumb.value || !props.vox) return
+  const { w, h, depth, colors } = props.vox
+  const cvs = thumb.value
+  cvs.width = w; cvs.height = h
+  const ctx = cvs.getContext('2d')!
+  const img = ctx.createImageData(w, h)
+  // Build 2D indices for this layer (or top for relief)
+  const zSel = Math.max(0, Math.min(layer.value, depth - 1))
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let pi = 0
+      if (props.mode === 'relief') {
+        // pick the topmost non-empty color for this (x,y)
+        let found = 255
+        for (let z = depth - 1; z >= 0; z--) {
+          const idx = colors[(z * w * h) + (y * w + x)]
+          if (idx !== 255) { found = idx; break }
+        }
+        pi = found === 255 ? 0 : found
+      } else {
+        const idx = colors[(zSel * w * h) + (y * w + x)]
+        pi = idx === 255 ? 0 : idx
+      }
+      const { r, g, b } = paletteIndexToThreeColor(pi)
+      const off = (y * w + x) * 4
+      img.data[off + 0] = Math.round(r * 255)
+      img.data[off + 1] = Math.round(g * 255)
+      img.data[off + 2] = Math.round(b * 255)
+      img.data[off + 3] = 255
+    }
+  }
+  ctx.putImageData(img, 0, 0)
+  cvs.style.imageRendering = 'pixelated'
+}
 
 function disposeScene () {
   if (animId) cancelAnimationFrame(animId)
@@ -140,8 +202,10 @@ function build () {
   controls.enablePan = true
   controls.enableZoom = true
   controls.autoRotate = true
-  ;(controls as any).autoRotateSpeed = 1.0
-  controls.addEventListener('start', () => { controls && (controls.autoRotate = false) })
+  ;(controls as any).autoRotateSpeed = 0.4
+  const stopAuto = () => { if (controls && (controls as any).autoRotate) (controls as any).autoRotate = false }
+  controls.addEventListener('start', stopAuto)
+  controls.addEventListener('change', stopAuto)
 
   // Lights: Hemisphere + key + rim
   const hemi = new THREE.HemisphereLight(0xffffff, 0x111122, 0.6)
@@ -156,7 +220,13 @@ function build () {
     pitch: 1.0,
     radialSegments: 16,
   })
-  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.0, roughness: 1.0, flatShading: true })
+  function makeMaterial(){
+    const common:any = { vertexColors: true, flatShading: true, color: 0xffffff }
+    return props.debug?.useBasicMaterial
+      ? new THREE.MeshBasicMaterial(common)
+      : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
+  }
+  const mat = makeMaterial()
   inst = new (THREE as any).InstancedMesh(geo, mat, colors.length)
 
   let i = 0
@@ -184,17 +254,30 @@ function build () {
     }
   }
   ;(inst as any).count = i
-  instanceCount.value = i
+  instanceTotal.value = i
   ;(inst as any).instanceMatrix.needsUpdate = true
   ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   ;(inst as any).frustumCulled = false
+  // Debug: paint first 12 studs rainbow for color path verification
+  if (props.debug?.paintRainbow12) {
+    const TEST = [0xff0000,0x00ff00,0x0000ff,0xffff00,0xff00ff,0x00ffff,0xffffff,0x000000,0xff8024,0x923978,0x00a85a,0xf2cd37]
+    for (let j=0;j<Math.min(12, (inst as any).count); j++) {
+      ;(inst as any).setColorAt(j, new THREE.Color(TEST[j]))
+    }
+    ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
+  }
   scene.add(inst)
   currentMesh = inst
   appearStart = (performance as any).now?.() ?? Date.now()
 
-  // Ground/grid (optional)
-  const grid = new THREE.GridHelper(size, size, 0x444444, 0x222222)
-  ;(grid as any).rotation.x = Math.PI / 2
+  // Ground grid (faint)
+  const gridSize = Math.max(size * 2, 200)
+  const grid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
+  ;(grid as any).rotation.x = Math.PI / 2 // lie on XY
+  // fade grid
+  const gm = (grid as any).material
+  if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25 }) }
+  else { gm.transparent = true; gm.opacity = 0.25 }
   scene.add(grid)
 
   // Clipping plane to reveal layers [0..k]; world Z is our depth axis
@@ -209,6 +292,9 @@ function build () {
   ;(slicePlane as any).renderOrder = 999
   if (showLayerSlider.value) scene.add(slicePlane)
 
+  // Axes Gizmo
+  gizmo = new AxesGizmo()
+
   // Fit and size
   resize()
   fitCameraToObject(inst, 1.35)
@@ -217,6 +303,7 @@ function build () {
   // Initialize slider to show all layers by default
   layer.value = Math.max(0, depth - 1)
   if (plane) plane.constant = layer.value
+  emit('layer-change', layer.value)
   window.addEventListener('resize', resize, { passive: true })
 
   // Render loop
@@ -230,10 +317,18 @@ function build () {
       if (t >= 1) appearStart = 0
     }
     controls && controls.update()
-    renderer && scene && camera && renderer.render(scene, camera)
+    if (renderer && scene && camera) {
+      renderer.render(scene, camera)
+      if (gizmo) {
+        gizmo.syncFrom(camera)
+        gizmo.render(renderer)
+      }
+    }
     animId = requestAnimationFrame(tick)
   }
   tick()
+  // Draw 2D mosaic thumbnail once built
+  drawMosaicThumbnail()
 }
 
 onMounted(async () => { await nextTick(); resize(); })
@@ -254,6 +349,7 @@ onMounted(() => {
 })
 watch(() => props.vox, async () => { await nextTick(); build() })
 watch(() => props.mode, async () => { await nextTick(); build() })
+watch(() => props.debug, async () => { await nextTick(); build() }, { deep: true })
 watch(() => props.exposure, (val) => { if (renderer) renderer.toneMappingExposure = val ?? 1.1 })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resize)
@@ -272,6 +368,9 @@ watch(layer, (k) => {
     controls.update()
   }
   if (slicePlane) (slicePlane as any).position.z = k
+  // update thumbnail
+  drawMosaicThumbnail()
+  emit('layer-change', k)
 })
 
 // Expose quick view methods to parent + internals for PDF export
@@ -298,17 +397,22 @@ defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: (
       <div class="absolute left-2 top-2 text-xs px-2 py-1 rounded bg-black/55 text-white/95 ring-1 ring-white/10">
         <div><span class="opacity-70">Mode:</span>
           <span>
-            {{ (props.mode === 'relief') ? 'Relief (height-map)' : (props.mode === 'hollow') ? 'Layered (hollow)' : 'Layered Mosaic' }}
+            {{ (props.mode === 'relief') ? 'Relief (height-map)' : (props.mode === 'hollow') ? 'Layered Mosaic (hollow)' : 'Layered Mosaic' }}
           </span>
         </div>
-        <div><span class="opacity-70">Bricks:</span> {{ instanceCount.toLocaleString() }}</div>
-        <div><span class="opacity-70">Layers:</span> {{ vox?.depth }}</div>
-        <div><span class="opacity-70">Colors:</span> {{ uniqueColorCount }}</div>
+        <div><span class="opacity-70">Bricks visible:</span> {{ bricksVisible.toLocaleString() }}</div>
+        <div v-if="vox && showLayerSlider"><span class="opacity-70">Layers:</span> 0–{{ layer }} of {{ vox.depth }}</div>
+        <div v-else><span class="opacity-70">Layers:</span> {{ vox?.depth }}</div>
+        <div><span class="opacity-70">Colors:</span> {{ colorsVisible }}</div>
       </div>
       <!-- First-time hints -->
       <div v-if="showHints" class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] px-2 py-1 rounded bg-black/40 text-white/80 ring-1 ring-white/10">
         ↻ Drag to rotate &nbsp;&nbsp; ⬍ Scroll to zoom &nbsp;&nbsp; ⇅ Use slider to step layers
       </div>
+    </div>
+    <!-- 2D mosaic thumbnail (crisp) -->
+    <div v-if="vox" class="mt-2">
+      <canvas ref="thumb" class="w-32 h-32 rounded-md ring-1 ring-white/10"></canvas>
     </div>
     <div v-if="vox && showLayerSlider" class="mt-2">
       <label class="block text-sm mb-1">Step through layers</label>

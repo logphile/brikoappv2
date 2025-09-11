@@ -50,11 +50,15 @@ self.onmessage = async (e: MessageEvent<VoxelWorkerIn>) => {
             colors[(z*size*size) + (y*size + x)] = colorIdx
           }
         } else {
-          // hollow: front/back faces only
-          colors[(z0*size*size) + (y*size + x)] = colorIdx
-          if (t > 1) {
-            colors[(z1*size*size) + (y*size + x)] = colorIdx
+          // hollow: extruded perimeter walls across z0..z1, plus a full roof at z1
+          const isPerimeter = (x === 0 || y === 0 || x === size - 1 || y === size - 1)
+          if (isPerimeter) {
+            for (let z=z0; z<=z1; z++) {
+              colors[(z*size*size) + (y*size + x)] = colorIdx
+            }
           }
+          // roof layer at top z1 (full fill for readability)
+          colors[(z1*size*size) + (y*size + x)] = colorIdx
         }
       }
     }

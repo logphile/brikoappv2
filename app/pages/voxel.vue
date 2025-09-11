@@ -21,6 +21,7 @@ const progress = ref(0)
 const size = ref(64) // 64³ target
 const mode = ref<'layered'|'relief'|'hollow'>('layered')
 const exposure = ref(1.1)
+const debug = ref<{ useBasicMaterial: boolean; paintRainbow12: boolean }>({ useBasicMaterial: false, paintRainbow12: false })
 const previewRef = ref<any>(null)
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
@@ -168,10 +169,12 @@ function toTop(){ previewRef.value?.toTop?.() }
 onMounted(async () => {
   if (vox.value || loading.value) return
   try {
-    const res = await fetch('/demo-original.jpg')
+    // Prefer bright parrot sample; fallback to demo image
+    let res = await fetch('/samples/parrot-32.png')
+    if (!res.ok) res = await fetch('/demo-original.jpg')
     if (!res.ok) return
     const blob = await res.blob()
-    await onFile(new File([blob], 'demo-original.jpg', { type: blob.type }))
+    await onFile(new File([blob], 'default.png', { type: blob.type }))
   } catch (err) {
     console.warn('Default demo image load failed', err)
   }
@@ -208,6 +211,21 @@ onMounted(async () => {
           </select>
           <p class="text-xs opacity-70 mt-1">{{ modeHelp }}</p>
         </div>
+        <!-- Debug (dev-only) -->
+        <div v-if="import.meta.dev" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+          <label class="block text-sm mb-1">Debug</label>
+          <div class="flex flex-col gap-1 text-sm">
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="debug.useBasicMaterial" />
+              Use Basic Material
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="debug.paintRainbow12" />
+              Paint First 12 Studs Rainbow
+            </label>
+          </div>
+          <p class="text-xs opacity-60 mt-1">Helps verify instanceColor path and lighting/tone mapping.</p>
+        </div>
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <label class="block text-sm mb-1">View</label>
           <div class="flex gap-2">
@@ -227,7 +245,7 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" ref="previewRef"/>
+        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" :debug="debug" ref="previewRef"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <!-- Palette swatch bar -->
         <div v-if="vox && paletteUsed.length" class="px-2 pb-2">
