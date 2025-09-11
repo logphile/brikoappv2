@@ -134,10 +134,10 @@ function disposeScene () {
 // View helpers
 type ViewName = 'front' | 'iso' | 'top'
 function setView(view: ViewName) {
-  if (!camera || !controls || !currentMesh) return
-  const box = new THREE.Box3().setFromObject(currentMesh)
-  const size = new THREE.Vector3(); box.getSize(size)
-  const center = new THREE.Vector3(); box.getCenter(center)
+  if (!camera || !controls) return
+  // Use grid dimensions for reliable framing (InstancedMesh bbox ignores instances)
+  const size = new THREE.Vector3(gridW || 1, gridH || 1, gridD || 1)
+  const center = new THREE.Vector3((gridW || 1) / 2, (gridH || 1) / 2, (gridD || 1) / 2)
 
   const maxSize = Math.max(size.x, size.y, size.z)
   const fov = THREE.MathUtils.degToRad((camera as any).fov)
@@ -163,13 +163,7 @@ function setView(view: ViewName) {
 function frameToGrid(w: number, h: number, d: number) {
   if (!camera || !controls) return
   const radius = Math.max(w, h, d)
-  const center = new THREE.Vector3()
-  if (currentMesh) {
-    const box = new THREE.Box3().setFromObject(currentMesh)
-    box.getCenter(center)
-  } else {
-    center.set(0, 0, Math.max(0.5, d * 0.5))
-  }
+  const center = new THREE.Vector3(w / 2, h / 2, Math.max(0.5, d * 0.5))
   controls.target.copy(center)
   ;(controls as any).minDistance = Math.max(0.1, radius * 0.5)
   ;(controls as any).maxDistance = Math.max(1, radius * 6)
@@ -182,9 +176,8 @@ function frameToGrid(w: number, h: number, d: number) {
 
 function fitCameraToObject (obj: any, padding = 1.25) {
   if (!camera || !controls) return
-  const box = new THREE.Box3().setFromObject(obj)
-  const size = new THREE.Vector3(); box.getSize(size)
-  const center = new THREE.Vector3(); box.getCenter(center)
+  const size = new THREE.Vector3(gridW || 1, gridH || 1, gridD || 1)
+  const center = new THREE.Vector3((gridW || 1) / 2, (gridH || 1) / 2, (gridD || 1) / 2)
 
   const maxSize = Math.max(size.x, size.y, size.z)
   const fov = THREE.MathUtils.degToRad((camera as any).fov)
@@ -312,6 +305,8 @@ function build () {
   inst = new (THREE as any).InstancedMesh(geo, material, capacity)
   // Ensure instanceColor buffer exists before setColorAt() across all builds
   ;(inst as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(capacity * 3), 3)
+  // Ensure no inherited scaling surprises
+  ;(inst as any).scale.set(1, 1, 1)
 
   let j = 0 // contiguous write index for non-empty voxels
   const m = new THREE.Matrix4()
@@ -330,8 +325,9 @@ function build () {
         if (ci === 255) continue // 255 sentinel = empty voxel
         const hex = legoPalette[ci]?.hex
         if (hex === undefined) continue
-        // Place 1 unit per stud, centered in each grid cell (keep scene centered overall)
-        m.compose(new THREE.Vector3((x + 0.5) - w/2, (y + 0.5) - h/2, z + 0.5), q, s)
+        // Place 1 unit per stud, centered within each grid cell (absolute grid coords)
+        // x∈[0.5..W-0.5], y∈[0.5..H-0.5], z∈[0.5..depth-0.5]
+        m.compose(new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5), q, s)
         ;(inst as any).setMatrixAt(j, m)
         c.setHex(hex).convertSRGBToLinear()
         // store base linear RGB
@@ -430,6 +426,8 @@ function build () {
   const gridSize = Math.max(size * 2, 200)
   const grid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
   ;(grid as any).rotation.x = Math.PI / 2 // lie on XY
+  // Align grid roughly under the mesh center in XY
+  ;(grid as any).position.set(w / 2, h / 2, 0)
   // fade grid
   const gm = (grid as any).material
   if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25 }) }
@@ -443,7 +441,7 @@ function build () {
   const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h)) // XY plane by default
   const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false })
   slicePlane = new (THREE as any).Mesh(pgeom, pmat)
-  ;(slicePlane as any).position.z = layer.value
+  ;(slicePlane as any).position.set(w / 2, h / 2, layer.value)
   ;(slicePlane as any).renderOrder = 999
   if (showLayerSlider.value) scene.add(slicePlane)
 
@@ -452,11 +450,9 @@ function build () {
 
   // Fit and size
   resize()
-  fitCameraToObject(inst, 1.35)
-  // Default to an isometric view for depth; auto-rotate until interaction
-  setView('iso')
-  // Also register a grid-based framing helper
+  // Frame camera using grid dims and default to an isometric view
   frameToGrid(gridW, gridH, gridD)
+  setView('iso')
   // Initialize slider to show all layers by default
   layer.value = Math.max(0, depth - 1)
   if (plane) plane.constant = -layer.value
@@ -465,14 +461,6 @@ function build () {
 
   // Render loop
   const tick = () => {
-    // Appear animation on new mesh
-    if (currentMesh && appearStart) {
-      const t = Math.min(1, (( (performance as any).now?.() ?? Date.now()) - appearStart) / 500)
-      const ease = 1 - Math.pow(1 - t, 3)
-      const s = 0.85 + 0.15 * ease
-      currentMesh.scale.set(s, s, s)
-      if (t >= 1) appearStart = 0
-    }
     controls && controls.update()
     if (renderer && scene && camera) {
       renderer.render(scene, camera)
@@ -592,8 +580,7 @@ watch(layer, (k) => {
   plane.constant = -k
   // keep controls target at content center to prevent drift
   if (currentMesh && controls) {
-    const box = new THREE.Box3().setFromObject(currentMesh)
-    const center = new THREE.Vector3(); box.getCenter(center)
+    const center = new THREE.Vector3((gridW || 1) / 2, (gridH || 1) / 2, Math.max(0.5, (gridD || 1) * 0.5))
     controls.target.copy(center)
     controls.update()
   }
@@ -634,7 +621,14 @@ const dbgBasic   = () => { (window as any).briko?.basic?.() }
 const dbgStd     = () => { (window as any).briko?.std?.() }
 const dbgClipOff = () => { (window as any).briko?.clipOff?.() }
 const dbgResetCam= () => { (window as any).briko?.resetCam?.() }
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds })
+// Debug helper: log first instance transform
+function debugInfo(){
+  if (!inst) { console.log('No instanced mesh yet'); return }
+  const m = new THREE.Matrix4(); const v = new THREE.Vector3(); const q = new THREE.Quaternion(); const s = new THREE.Vector3()
+  try { (inst as any).getMatrixAt(0, m); m.decompose(v, q, s) } catch {}
+  console.log('[VoxelPreview.debugInfo]', { count: (inst as any).count, firstPos: { x: v.x, y: v.y, z: v.z }, scale: { x: s.x, y: s.y, z: s.z } })
+}
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo })
 </script>
 
 <template>
