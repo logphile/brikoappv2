@@ -21,7 +21,7 @@ const progress = ref(0)
 const size = ref(64) // 64³ target
 const mode = ref<'layered'|'relief'|'hollow'>('layered')
 const exposure = ref(1.1)
-const debug = ref<{ useBasicMaterial: boolean; paintRainbow12: boolean; wireframe: boolean }>({ useBasicMaterial: false, paintRainbow12: false, wireframe: false })
+const debug = ref<{ useBasicMaterial: boolean; paintRainbow12: boolean; wireframe: boolean; hideMesh?: boolean; showBounds?: boolean }>({ useBasicMaterial: false, paintRainbow12: false, wireframe: false, hideMesh: false, showBounds: false })
 const previewRef = ref<any>(null)
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
@@ -239,6 +239,17 @@ onMounted(async () => {
               <input type="checkbox" v-model="debug.wireframe" />
               Wireframe
             </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="debug.showBounds" />
+              Show Bounds Helper
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="debug.hideMesh" />
+              Hide Mesh
+            </label>
+            <div>
+              <button class="btn-soft h-8 px-3 rounded-md mt-1" @click="previewRef?.testPaintStuds?.(100)">Draw 100 Test Studs</button>
+            </div>
           </div>
           <p class="text-xs opacity-60 mt-1">Helps verify instanceColor path and lighting/tone mapping.</p>
         </div>
