@@ -8,7 +8,7 @@ import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
 import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 
-const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean } }>()
+const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean }, debug3d?: boolean }>()
 const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void }>()
 
 const host = ref<HTMLDivElement|null>(null)
@@ -29,6 +29,7 @@ let appearStart = 0
 let gizmo: AxesGizmo | null = null
 let baseRGB: Float32Array | null = null
 let boundsHelper: any | null = null
+let smokeMesh: any | null = null
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
@@ -124,6 +125,7 @@ function disposeScene () {
     glCanvas = null
   }
   if (scene && boundsHelper) { scene.remove(boundsHelper); boundsHelper = null }
+  if (scene && smokeMesh) { scene.remove(smokeMesh); try { smokeMesh.dispose?.() } catch {} smokeMesh = null }
   scene = null; camera = null
 }
 
@@ -213,12 +215,13 @@ function build () {
 
   const { w, h, depth, colors } = props.vox
   const size = Math.max(w, h, depth)
+  const DBG = !!props.debug3d || DEBUG
 
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
-  renderer.toneMapping = (DEBUG || props.debug?.useBasicMaterial) ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping
+  renderer.toneMapping = (DBG || props.debug?.useBasicMaterial) ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping
   // Keep exposure neutral; brightness is applied per-instance color
   renderer.toneMappingExposure = 1.0
   // Start with clipping OFF; arm later after first successful render
@@ -261,7 +264,7 @@ function build () {
   })
   function makeMaterial(){
     const common:any = { vertexColors: true, flatShading: true, color: 0xffffff, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide, toneMapped: false }
-    if (DEBUG) return new THREE.MeshBasicMaterial({ ...common, side: (THREE as any).DoubleSide })
+    if (DBG) return new THREE.MeshBasicMaterial({ ...common, side: (THREE as any).DoubleSide })
     return props.debug?.useBasicMaterial
       ? new THREE.MeshBasicMaterial(common)
       : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
@@ -279,7 +282,7 @@ function build () {
       for (let x = 0; x < gw; x++) {
         m.makeTranslation(x + 0.5, y + 0.5, 0.5)
         ;(test as any).setMatrixAt(t, m)
-        const c = new THREE.Color((x % 3 === 0) ? 0xff0000 : (x % 3 === 1) ? 0x00ff00 : 0x0000ff)
+        const c = new THREE.Color((x % 3 === 0) ? 0xff3366 : (x % 3 === 1) ? 0x33ff66 : 0x3366ff).convertSRGBToLinear()
         ;(test as any).setColorAt(t, c)
         t++
       }
@@ -288,11 +291,11 @@ function build () {
     ;(test as any).frustumCulled = false
     return test
   }
-  if (DEBUG) {
-    const smoke = makeSmokeTest()
-    scene.add(smoke)
+  if (DBG) {
+    smokeMesh = makeSmokeTest()
+    scene.add(smokeMesh)
     frameToGrid(16, 16, 1)
-    console.log('[SMOKE] scene ok; instanceCount', (smoke as any).count)
+    console.log('[SMOKE] scene ok; instanceCount', (smokeMesh as any).count)
   }
   inst = new (THREE as any).InstancedMesh(geo, material, colors.length)
   // Ensure instanceColor buffer exists before setColorAt()
@@ -316,7 +319,7 @@ function build () {
         // Place in XY with depth along Z (Z-up)
         m.makeTranslation(x - w/2, y - h/2, z)
         ;(inst as any).setMatrixAt(i, m)
-        c.set(hex)
+        c.setHex(hex).convertSRGBToLinear()
         // store base linear RGB
         base.push(c.r, c.g, c.b)
         // apply brightness per-instance (not via lights)
@@ -352,7 +355,7 @@ function build () {
   }
   scene.add(inst)
   // Debug toggles on window
-  if (DEBUG) {
+  if (DBG) {
     const wany = window as any
     wany.briko = wany.briko || {}
     Object.assign(wany.briko, {
@@ -360,8 +363,11 @@ function build () {
       basic: () => { if (!inst || !renderer) return; material = new THREE.MeshBasicMaterial({ vertexColors: true, side: (THREE as any).DoubleSide, toneMapped: false }); (inst as any).material = material; renderer.toneMapping = (THREE as any).NoToneMapping },
       std:   () => { if (!inst || !renderer) return; material = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0, roughness: 1, toneMapped: false, side: (THREE as any).FrontSide }); (inst as any).material = material; renderer.toneMapping = (THREE as any).ACESFilmicToneMapping },
       clipOff: () => { if (!renderer) return; renderer.clippingPlanes = []; renderer.localClippingEnabled = false },
-      resetCam: () => frameToGrid(gridW, gridH, gridD)
+      resetCam: () => frameToGrid(gridW, gridH, gridD),
+      smokeOn: () => { if (!scene) return; if (!smokeMesh) { smokeMesh = makeSmokeTest(); scene.add(smokeMesh); frameToGrid(16,16,1) } },
+      smokeOff: () => { if (scene && smokeMesh) { scene.remove(smokeMesh); try { smokeMesh.dispose?.() } catch {}; smokeMesh = null } }
     })
+    console.log('[DEBUG] briko hooks ready')
   }
   // Optional bounds helper for debugging
   if (props.debug?.showBounds) {
@@ -469,6 +475,7 @@ onMounted(() => {
 watch(() => props.vox, async () => { await nextTick(); build() })
 watch(() => props.mode, async () => { await nextTick(); build() })
 watch(() => props.debug, async () => { await nextTick(); build() }, { deep: true })
+watch(() => props.debug3d, async () => { await nextTick(); build() })
 function reapplyBrightness() {
   if (!inst || !baseRGB) return
   const count = (inst as any).count || 0
