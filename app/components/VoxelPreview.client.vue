@@ -2,6 +2,7 @@
 import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { legoPalette } from '@/lib/palette/lego'
 
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array } }>()
 const host = ref<HTMLDivElement|null>(null)
@@ -15,8 +16,12 @@ let currentMesh: any | null = null
 let animId = 0
 let glCanvas: HTMLCanvasElement | null = null
 
-// TODO: replace with real LEGO palette mapping later
-const PALETTE = ['#1B1B1B','#6D6E6E','#A3A3A3','#F4F4F4','#C91A09','#F2CD37','#FE8A18','#2DD4BF']
+// Layer clipping
+const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
+let plane: any | null = null
+
+// Per-layer color legend data
+let colorByLayer: Array<Record<string, number>> = []
 
 function disposeScene () {
   if (animId) cancelAnimationFrame(animId)
@@ -108,6 +113,7 @@ function build () {
   renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
   renderer.toneMappingExposure = 1.0
   renderer.setClearColor(0x0b0f16, 1)
+  renderer.localClippingEnabled = true
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
   ;(window as any).__brikoCanvas = glCanvas
@@ -141,17 +147,22 @@ function build () {
   let i = 0
   const m = new THREE.Matrix4()
   const c = new THREE.Color()
+  // Reset color legends for this build
+  colorByLayer = Array.from({ length: depth }, () => ({}))
   for (let z=0; z<depth; z++) {
     for (let y=0; y<h; y++) {
       for (let x=0; x<w; x++) {
         const ci = colors[(z*w*h) + (y*w + x)]
         if (ci === 255) continue // 255 sentinel = empty voxel
-        const hex = PALETTE[ci]
+        const hex = legoPalette[ci]?.hex
         if (hex === undefined) continue
         m.makeTranslation(x - w/2, z, y - h/2)
         ;(inst as any).setMatrixAt(i, m)
         c.set(hex)
         ;(inst as any).setColorAt(i, c)
+        // Tally per-layer color counts (by hex)
+        const rec = colorByLayer[z]
+        rec[hex] = (rec[hex] ?? 0) + 1
         i++
       }
     }
@@ -168,11 +179,18 @@ function build () {
   ;(grid as any).rotation.x = Math.PI / 2
   scene.add(grid)
 
+  // Clipping plane to reveal layers [0..k]; world Y is our depth axis (z-index)
+  plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0)
+  renderer.clippingPlanes = [plane]
+
   // Fit and size
   resize()
   fitCameraToObject(inst, 1.35)
   // Default to a front-facing view for recognizability
   setView('front')
+  // Initialize slider to show all layers by default
+  layer.value = Math.max(0, depth - 1)
+  if (plane) plane.constant = layer.value
   window.addEventListener('resize', resize, { passive: true })
 
   // Render loop
@@ -192,11 +210,42 @@ onBeforeUnmount(() => {
   disposeScene()
 })
 
-// Expose quick view methods to parent
+// Layer control bindings
+watch(layer, (k) => {
+  if (!renderer || !plane) return
+  plane.constant = k
+  // keep controls target at content center to prevent drift
+  if (currentMesh && controls) {
+    const box = new THREE.Box3().setFromObject(currentMesh)
+    const center = new THREE.Vector3(); box.getCenter(center)
+    controls.target.copy(center)
+    controls.update()
+  }
+})
+
+// Expose quick view methods to parent + internals for PDF export
 function toFront(){ setView('front') }
 function toIso(){ setView('iso') }
 function toTop(){ setView('top') }
-defineExpose({ setView, toFront, toIso, toTop })
+function getCountsForLayer(k:number){
+  const acc: Record<string, number> = {}
+  const max = Math.min(k, colorByLayer.length - 1)
+  for (let i = 0; i <= max; i++) {
+    const rec = colorByLayer[i]
+    for (const hex in rec) acc[hex] = (acc[hex] ?? 0) + rec[hex]
+  }
+  return acc
+}
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer })
 </script>
 
-<template><div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div></template>
+<template>
+  <div>
+    <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div>
+    <div v-if="vox" class="mt-2">
+      <label class="block text-sm mb-1">Layer</label>
+      <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full range-mint" />
+      <div class="text-xs text-white/60">Showing layers 0–{{ layer }}</div>
+    </div>
+  </div>
+  </template>

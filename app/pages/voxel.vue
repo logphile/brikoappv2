@@ -5,6 +5,7 @@ import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import { useMosaicStore } from '@/stores/mosaic'
 import { downloadPng } from '@/lib/exporters'
+import { exportLayersPdf } from '@/lib/printPdf'
 import type { VoxelGrid, VoxelWorkerOut } from '@/types/voxel'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
@@ -84,6 +85,19 @@ async function onFile(file: File) {
 function exportPng(){ downloadPng('briko-voxel.png') }
 async function uploadPreview(){ await mosaic.uploadPreview() }
 
+async function onExportPdf(){
+  const vp = previewRef.value
+  if (!vp || !vp.renderer || !vp.scene || !vp.camera) return
+  await exportLayersPdf({
+    renderer: vp.renderer,
+    scene: vp.scene,
+    camera: vp.camera,
+    totalLayers: typeof vp.depth === 'function' ? vp.depth() : vp.depth,
+    setLayer: (k:number) => vp.setLayer?.(k),
+    colorCountsForLayer: (k:number) => vp.getCountsForLayer?.(k) || {}
+  })
+}
+
 // Debounced re-run when resolution changes
 let regenTimer: any = null
 function scheduleRegen(){
@@ -162,9 +176,10 @@ function toTop(){ previewRef.value?.toTop?.() }
         </div>
         <VoxelPreview v-else-if="vox" :vox="vox" ref="previewRef"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
-        <div v-if="vox" class="px-2 pb-2 flex gap-2">
+        <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
           <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
+          <button class="btn-mint h-10 px-4 rounded-xl" @click="onExportPdf">One-click PDF</button>
         </div>
         <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
