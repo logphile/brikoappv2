@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch, nextTick, computed } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, nextTick, computed, shallowRef } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { legoPalette } from '@/lib/palette/lego'
@@ -30,32 +30,34 @@ let baseRGB: Float32Array | null = null
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
 let plane: any | null = null
 
-// Per-layer color legend data
-let colorByLayer: Array<Record<string, number>> = []
+// Per-layer color legend data (reactive)
+const colorByLayer = shallowRef<Array<Record<string, number>>>([])
 const showLayerSlider = computed(() => props.mode !== 'relief')
 const instanceTotal = ref(0)
 const showHints = ref(true)
 // Visible bricks and colors reflect what is actually shown (0..layer)
 const bricksVisible = computed(() => {
   if (!showLayerSlider.value) return instanceTotal.value
-  const max = Math.min(layer.value, colorByLayer.length - 1)
+  const layers = colorByLayer.value
+  const max = Math.min(layer.value, layers.length - 1)
   let sum = 0
   for (let i = 0; i <= max; i++) {
-    const rec = colorByLayer[i]
+    const rec = layers[i]
     for (const k in rec) sum += rec[k]
   }
   return sum
 })
 const colorsVisible = computed(() => {
+  const layers = colorByLayer.value
   const set = new Set<string>()
-  if (!colorByLayer.length) return 0
+  if (!layers.length) return 0
   if (!showLayerSlider.value) {
-    for (const rec of colorByLayer) for (const k in rec) set.add(k)
+    for (const rec of layers) for (const k in rec) set.add(k)
     return set.size
   }
-  const max = Math.min(layer.value, colorByLayer.length - 1)
+  const max = Math.min(layer.value, layers.length - 1)
   for (let i = 0; i <= max; i++) {
-    const rec = colorByLayer[i]
+    const rec = layers[i]
     for (const k in rec) set.add(k)
   }
   return set.size
@@ -110,7 +112,8 @@ function disposeScene () {
   if (renderer) {
     const dom = renderer.domElement
     if (dom && dom.parentElement) dom.parentElement.removeChild(dom)
-    if (((window as any).__brikoCanvas) === dom) (window as any).__brikoCanvas = undefined
+    // Always clear any global canvas handle to avoid persistence across navigations
+    ;(window as any).__brikoCanvas = undefined
     renderer.dispose()
     renderer = null
     glCanvas = null
@@ -228,20 +231,22 @@ function build () {
     radialSegments: 16,
   })
   function makeMaterial(){
-    const common:any = { vertexColors: true, flatShading: true, color: 0xffffff, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide }
+    const common:any = { vertexColors: true, flatShading: true, color: 0xffffff, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide, toneMapped: false }
     return props.debug?.useBasicMaterial
       ? new THREE.MeshBasicMaterial(common)
       : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
   }
   const mat = makeMaterial()
   inst = new (THREE as any).InstancedMesh(geo, mat, colors.length)
+  // Ensure instanceColor buffer exists before setColorAt()
+  ;(inst as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(colors.length * 3), 3)
 
   let i = 0
   const m = new THREE.Matrix4()
   const c = new THREE.Color()
   const base: number[] = []
-  // Reset color legends for this build
-  colorByLayer = Array.from({ length: depth }, () => ({}))
+  // Reset color legends for this build (reactive)
+  const layers: Array<Record<string, number>> = Array.from({ length: depth }, () => ({}))
   for (let z=0; z<depth; z++) {
     for (let y=0; y<h; y++) {
       for (let x=0; x<w; x++) {
@@ -262,7 +267,7 @@ function build () {
         const cb = Math.min(1, c.b * bf)
         ;(inst as any).setColorAt(i, new THREE.Color(cr, cg, cb))
         // Tally per-layer color counts (by hex)
-        const rec = colorByLayer[z]
+        const rec = layers[z]
         rec[hex] = (rec[hex] ?? 0) + 1
         i++
       }
@@ -270,6 +275,9 @@ function build () {
   }
   ;(inst as any).count = i
   baseRGB = new Float32Array(base)
+  // publish legend reactively and apply brightness once
+  colorByLayer.value = layers
+  reapplyBrightness()
   instanceTotal.value = i
   ;(inst as any).instanceMatrix.needsUpdate = true
   ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
@@ -306,8 +314,8 @@ function build () {
   else { gm.transparent = true; gm.opacity = 0.25 }
   scene.add(grid)
 
-  // Clipping plane to reveal layers [0..k]; world Z is our depth axis
-  plane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0)
+  // Clipping plane to reveal layers [0..k]; world Z is our depth axis (positive normal)
+  plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -layer.value)
   renderer.clippingPlanes = [plane]
 
   // Slice plane visual indicator (mint, semi-transparent)
@@ -328,7 +336,7 @@ function build () {
   setView('iso')
   // Initialize slider to show all layers by default
   layer.value = Math.max(0, depth - 1)
-  if (plane) plane.constant = layer.value
+  if (plane) plane.constant = -layer.value
   emit('layer-change', layer.value)
   window.addEventListener('resize', resize, { passive: true })
 
@@ -399,7 +407,7 @@ onBeforeUnmount(() => {
 // Layer control bindings
 watch(layer, (k) => {
   if (!renderer || !plane) return
-  plane.constant = k
+  plane.constant = -k
   // keep controls target at content center to prevent drift
   if (currentMesh && controls) {
     const box = new THREE.Box3().setFromObject(currentMesh)
@@ -419,9 +427,9 @@ function toIso(){ setView('iso') }
 function toTop(){ setView('top') }
 function getCountsForLayer(k:number){
   const acc: Record<string, number> = {}
-  const max = Math.min(k, colorByLayer.length - 1)
+  const max = Math.min(k, colorByLayer.value.length - 1)
   for (let i = 0; i <= max; i++) {
-    const rec = colorByLayer[i]
+    const rec = colorByLayer.value[i]
     for (const hex in rec) acc[hex] = (acc[hex] ?? 0) + rec[hex]
   }
   return acc
