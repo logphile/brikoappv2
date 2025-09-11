@@ -308,12 +308,15 @@ function build () {
     frameToGrid(16, 16, 1)
     console.log('[SMOKE] scene ok; instanceCount', (smokeMesh as any).count)
   }
-  inst = new (THREE as any).InstancedMesh(geo, material, colors.length)
-  // Ensure instanceColor buffer exists before setColorAt()
-  ;(inst as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(colors.length * 3), 3)
+  const capacity = colors.length // upper bound W*H*depth
+  inst = new (THREE as any).InstancedMesh(geo, material, capacity)
+  // Ensure instanceColor buffer exists before setColorAt() across all builds
+  ;(inst as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(capacity * 3), 3)
 
-  let i = 0
+  let j = 0 // contiguous write index for non-empty voxels
   const m = new THREE.Matrix4()
+  const q = new THREE.Quaternion()
+  const s = new THREE.Vector3(1, 1, 1)
   const c = new THREE.Color()
   const base: number[] = []
   // Grid dims for debug helpers
@@ -327,9 +330,9 @@ function build () {
         if (ci === 255) continue // 255 sentinel = empty voxel
         const hex = legoPalette[ci]?.hex
         if (hex === undefined) continue
-        // Place in XY with depth along Z (Z-up)
-        m.makeTranslation(x - w/2, y - h/2, z)
-        ;(inst as any).setMatrixAt(i, m)
+        // Place 1 unit per stud, centered in each grid cell (keep scene centered overall)
+        m.compose(new THREE.Vector3((x + 0.5) - w/2, (y + 0.5) - h/2, z + 0.5), q, s)
+        ;(inst as any).setMatrixAt(j, m)
         c.setHex(hex).convertSRGBToLinear()
         // store base linear RGB
         base.push(c.r, c.g, c.b)
@@ -338,24 +341,30 @@ function build () {
         const cr = Math.min(1, c.r * bf)
         const cg = Math.min(1, c.g * bf)
         const cb = Math.min(1, c.b * bf)
-        ;(inst as any).setColorAt(i, new THREE.Color(cr, cg, cb))
+        ;(inst as any).setColorAt(j, new THREE.Color(cr, cg, cb))
         // Tally per-layer color counts (by hex)
         const rec = layers[z]
         rec[hex] = (rec[hex] ?? 0) + 1
-        i++
+        j++
       }
     }
   }
-  ;(inst as any).count = i
+  ;(inst as any).count = j
   baseRGB = new Float32Array(base)
   // publish legend reactively and apply brightness once
   colorByLayer.value = layers
   reapplyBrightness()
-  instanceTotal.value = i
+  instanceTotal.value = j
   ;(inst as any).instanceMatrix.needsUpdate = true
   ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   ;(inst as any).frustumCulled = false
   ;(inst as any).visible = !props.debug?.hideMesh
+  // Sanity log: capacity vs written instances
+  try {
+    const ic: any = (inst as any).instanceColor
+    const icCount = (ic && typeof ic.count === 'number') ? ic.count : capacity
+    console.log('[VoxelPreview] build stats', { capacity: icCount, written: (inst as any).count, W: w, H: h, depth })
+  } catch {}
   // Debug: paint first 12 studs rainbow for color path verification
   if (props.debug?.paintRainbow12) {
     const TEST = [0xff0000,0x00ff00,0x0000ff,0xffff00,0xff00ff,0x00ffff,0xffffff,0x000000,0xff8024,0x923978,0x00a85a,0xf2cd37]
