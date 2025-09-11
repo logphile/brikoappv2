@@ -8,7 +8,7 @@ import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
 import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 
-const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean } }>()
+const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean } }>()
 const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void }>()
 
 const host = ref<HTMLDivElement|null>(null)
@@ -25,6 +25,7 @@ let slicePlane: any | null = null
 let appearStart = 0
 let gizmo: AxesGizmo | null = null
 let baseRGB: Float32Array | null = null
+let boundsHelper: any | null = null
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
@@ -118,6 +119,7 @@ function disposeScene () {
     renderer = null
     glCanvas = null
   }
+  if (scene && boundsHelper) { scene.remove(boundsHelper); boundsHelper = null }
   scene = null; camera = null
 }
 
@@ -191,10 +193,11 @@ function build () {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
-  renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
+  renderer.toneMapping = (props.debug?.useBasicMaterial ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping)
   // Keep exposure neutral; brightness is applied per-instance color
   renderer.toneMappingExposure = 1.0
   renderer.localClippingEnabled = true
+  renderer.clippingPlanes = [] // start with no clipping to avoid accidental full-clip
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
   ;(window as any).__brikoCanvas = glCanvas
@@ -282,6 +285,7 @@ function build () {
   ;(inst as any).instanceMatrix.needsUpdate = true
   ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   ;(inst as any).frustumCulled = false
+  ;(inst as any).visible = !props.debug?.hideMesh
   // Debug: paint first 12 studs rainbow for color path verification
   if (props.debug?.paintRainbow12) {
     const TEST = [0xff0000,0x00ff00,0x0000ff,0xffff00,0xff00ff,0x00ffff,0xffffff,0x000000,0xff8024,0x923978,0x00a85a,0xf2cd37]
@@ -291,6 +295,12 @@ function build () {
     ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   }
   scene.add(inst)
+  // Optional bounds helper for debugging
+  if (props.debug?.showBounds) {
+    const box = new (THREE as any).Box3().setFromObject(inst)
+    boundsHelper = new (THREE as any).Box3Helper(box, 0x00e5a0)
+    scene.add(boundsHelper)
+  }
   currentMesh = inst
   appearStart = (performance as any).now?.() ?? Date.now()
   // Debug: log unique base colors in the instanced mesh
@@ -314,9 +324,8 @@ function build () {
   else { gm.transparent = true; gm.opacity = 0.25 }
   scene.add(grid)
 
-  // Clipping plane to reveal layers [0..k]; world Z is our depth axis (positive normal)
-  plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -layer.value)
-  renderer.clippingPlanes = [plane]
+  // Clipping plane to reveal layers [0..k] — arm after first successful render
+  plane = null
 
   // Slice plane visual indicator (mint, semi-transparent)
   const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h)) // XY plane by default
@@ -353,6 +362,11 @@ function build () {
     controls && controls.update()
     if (renderer && scene && camera) {
       renderer.render(scene, camera)
+      // Arm clipping after first successful render to avoid accidental full-clip
+      if (!plane && showLayerSlider.value) {
+        plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -layer.value)
+        renderer.clippingPlanes = [plane]
+      }
       if (gizmo) {
         gizmo.syncFrom(camera)
         gizmo.render(renderer)
@@ -434,7 +448,18 @@ function getCountsForLayer(k:number){
   }
   return acc
 }
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer })
+// Debug helper: paint N test studs with a hue ramp
+function testPaintStuds(n:number = 100){
+  if (!inst) return
+  const total = Math.min(n, (inst as any).count || 0)
+  const c = new THREE.Color()
+  for (let j=0; j<total; j++) {
+    c.setHSL((j/total), 0.8, 0.5)
+    ;(inst as any).setColorAt(j, c)
+  }
+  ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
+}
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds })
 </script>
 
 <template>
