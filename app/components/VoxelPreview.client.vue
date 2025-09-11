@@ -13,6 +13,9 @@ const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors
 
 const host = ref<HTMLDivElement|null>(null)
 
+// Debug flag via URL: ?debug3d
+const DEBUG = new URLSearchParams(location.search).has('debug3d')
+
 let renderer: any | null = null
 let scene: any | null = null
 let camera: any | null = null
@@ -30,6 +33,7 @@ let boundsHelper: any | null = null
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
 let plane: any | null = null
+let gridW = 0, gridH = 0, gridD = 0
 
 // Per-layer color legend data (reactive)
 const colorByLayer = shallowRef<Array<Record<string, number>>>([])
@@ -151,6 +155,27 @@ function setView(view: ViewName) {
   controls.update()
 }
 
+// Auto-frame camera to an axis-aligned build volume (debug helper)
+function frameToGrid(w: number, h: number, d: number) {
+  if (!camera || !controls) return
+  const radius = Math.max(w, h, d)
+  const center = new THREE.Vector3()
+  if (currentMesh) {
+    const box = new THREE.Box3().setFromObject(currentMesh)
+    box.getCenter(center)
+  } else {
+    center.set(0, 0, Math.max(0.5, d * 0.5))
+  }
+  controls.target.copy(center)
+  ;(controls as any).minDistance = Math.max(0.1, radius * 0.5)
+  ;(controls as any).maxDistance = Math.max(1, radius * 6)
+  camera.near = Math.max(0.1, radius * 0.001)
+  camera.far  = Math.max(10, radius * 20)
+  camera.position.set(center.x + radius * 1.2, center.y + radius * 1.2, center.z + radius * 2.2)
+  camera.updateProjectionMatrix()
+  controls.update()
+}
+
 function fitCameraToObject (obj: any, padding = 1.25) {
   if (!camera || !controls) return
   const box = new THREE.Box3().setFromObject(obj)
@@ -193,11 +218,12 @@ function build () {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
-  renderer.toneMapping = (props.debug?.useBasicMaterial ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping)
+  renderer.toneMapping = (DEBUG || props.debug?.useBasicMaterial) ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping
   // Keep exposure neutral; brightness is applied per-instance color
   renderer.toneMappingExposure = 1.0
-  renderer.localClippingEnabled = true
-  renderer.clippingPlanes = [] // start with no clipping to avoid accidental full-clip
+  // Start with clipping OFF; arm later after first successful render
+  renderer.localClippingEnabled = false
+  renderer.clippingPlanes = []
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
   ;(window as any).__brikoCanvas = glCanvas
@@ -235,12 +261,40 @@ function build () {
   })
   function makeMaterial(){
     const common:any = { vertexColors: true, flatShading: true, color: 0xffffff, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide, toneMapped: false }
+    if (DEBUG) return new THREE.MeshBasicMaterial({ ...common, side: (THREE as any).DoubleSide })
     return props.debug?.useBasicMaterial
       ? new THREE.MeshBasicMaterial(common)
       : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
   }
-  const mat = makeMaterial()
-  inst = new (THREE as any).InstancedMesh(geo, mat, colors.length)
+  let material: any = makeMaterial()
+
+  // Debug smoke test grid to validate renderer/material/camera path
+  function makeSmokeTest(): any {
+    const gw = 16, gh = 16, gd = 1, size1 = 1
+    const g = new (THREE as any).BoxGeometry(size1, size1, size1)
+    const test = new (THREE as any).InstancedMesh(g, material, gw * gh * gd)
+    const m = new THREE.Matrix4()
+    let t = 0
+    for (let y = 0; y < gh; y++) {
+      for (let x = 0; x < gw; x++) {
+        m.makeTranslation(x + 0.5, y + 0.5, 0.5)
+        ;(test as any).setMatrixAt(t, m)
+        const c = new THREE.Color((x % 3 === 0) ? 0xff0000 : (x % 3 === 1) ? 0x00ff00 : 0x0000ff)
+        ;(test as any).setColorAt(t, c)
+        t++
+      }
+    }
+    ;(test as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(t * 3), 3)
+    ;(test as any).frustumCulled = false
+    return test
+  }
+  if (DEBUG) {
+    const smoke = makeSmokeTest()
+    scene.add(smoke)
+    frameToGrid(16, 16, 1)
+    console.log('[SMOKE] scene ok; instanceCount', (smoke as any).count)
+  }
+  inst = new (THREE as any).InstancedMesh(geo, material, colors.length)
   // Ensure instanceColor buffer exists before setColorAt()
   ;(inst as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(colors.length * 3), 3)
 
@@ -248,6 +302,8 @@ function build () {
   const m = new THREE.Matrix4()
   const c = new THREE.Color()
   const base: number[] = []
+  // Grid dims for debug helpers
+  gridW = w; gridH = h; gridD = depth
   // Reset color legends for this build (reactive)
   const layers: Array<Record<string, number>> = Array.from({ length: depth }, () => ({}))
   for (let z=0; z<depth; z++) {
@@ -295,6 +351,18 @@ function build () {
     ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   }
   scene.add(inst)
+  // Debug toggles on window
+  if (DEBUG) {
+    const wany = window as any
+    wany.briko = wany.briko || {}
+    Object.assign(wany.briko, {
+      wire: () => { if (!inst) return; const mat:any = (inst as any).material; mat.wireframe = !mat.wireframe },
+      basic: () => { if (!inst || !renderer) return; material = new THREE.MeshBasicMaterial({ vertexColors: true, side: (THREE as any).DoubleSide, toneMapped: false }); (inst as any).material = material; renderer.toneMapping = (THREE as any).NoToneMapping },
+      std:   () => { if (!inst || !renderer) return; material = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0, roughness: 1, toneMapped: false, side: (THREE as any).FrontSide }); (inst as any).material = material; renderer.toneMapping = (THREE as any).ACESFilmicToneMapping },
+      clipOff: () => { if (!renderer) return; renderer.clippingPlanes = []; renderer.localClippingEnabled = false },
+      resetCam: () => frameToGrid(gridW, gridH, gridD)
+    })
+  }
   // Optional bounds helper for debugging
   if (props.debug?.showBounds) {
     const box = new (THREE as any).Box3().setFromObject(inst)
@@ -343,6 +411,8 @@ function build () {
   fitCameraToObject(inst, 1.35)
   // Default to an isometric view for depth; auto-rotate until interaction
   setView('iso')
+  // Also register a grid-based framing helper
+  frameToGrid(gridW, gridH, gridD)
   // Initialize slider to show all layers by default
   layer.value = Math.max(0, depth - 1)
   if (plane) plane.constant = -layer.value
@@ -365,6 +435,7 @@ function build () {
       // Arm clipping after first successful render to avoid accidental full-clip
       if (!plane && showLayerSlider.value) {
         plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -layer.value)
+        renderer.localClippingEnabled = true
         renderer.clippingPlanes = [plane]
       }
       if (gizmo) {
