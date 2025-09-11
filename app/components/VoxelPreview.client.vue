@@ -446,7 +446,8 @@ function build () {
       renderer.render(scene, camera)
       // Arm clipping after first successful render to avoid accidental full-clip
       if (!plane && showLayerSlider.value) {
-        plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -layer.value)
+        // Plane faces +Z, constant is negative depth so first frame shows all layers
+        plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -(depth - 1))
         renderer.localClippingEnabled = true
         renderer.clippingPlanes = [plane]
       }
