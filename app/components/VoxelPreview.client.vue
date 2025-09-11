@@ -7,6 +7,7 @@ import type { BuildMode } from '@/types/voxel'
 import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
 import { paletteIndexToThreeColor } from '@/lib/legoPalette'
+import { VoxelViewer } from '@/components/three/VoxelViewer'
 
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean }, debug3d?: boolean }>()
 const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void }>()
@@ -30,6 +31,7 @@ let gizmo: AxesGizmo | null = null
 let baseRGB: Float32Array | null = null
 let boundsHelper: any | null = null
 let smokeMesh: any | null = null
+let viewer: VoxelViewer | null = null
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
@@ -211,6 +213,10 @@ function resize () {
 
 function build () {
   if (!host.value) return
+  // If in debug3d mode, we rely on the lightweight VoxelViewer and skip internal build
+  if (props.debug3d) {
+    return
+  }
   disposeScene()
 
   const { w, h, depth, colors } = props.vox
@@ -457,7 +463,26 @@ function build () {
 }
 
 onMounted(async () => { await nextTick(); resize(); })
-onMounted(build)
+onMounted(() => {
+  if (!host.value) return
+  if (props.debug3d) {
+    // Initialize lightweight viewer and bind hooks
+    viewer = new VoxelViewer(host.value)
+    const wany = window as any
+    wany.briko = {
+      smokeOn: () => viewer?.smokeOn(),
+      wire:    () => viewer?.wire(),
+      basic:   () => viewer?.basic(),
+      std:     () => viewer?.pbr(),
+      clipOff: () => viewer?.clipOff(),
+      resetCam:() => viewer?.resetCam(),
+      info:    () => viewer?.info(),
+    }
+    console.log('[DEBUG] briko hooks ready')
+  } else {
+    build()
+  }
+})
 onMounted(() => {
   // First-time hints auto-hide after 5s or on interaction
   const hide = () => { showHints.value = false }
@@ -472,10 +497,37 @@ onMounted(() => {
   el?.addEventListener('wheel', off, { passive: true })
   el?.addEventListener('touchstart', off, { passive: true })
 })
-watch(() => props.vox, async () => { await nextTick(); build() })
-watch(() => props.mode, async () => { await nextTick(); build() })
-watch(() => props.debug, async () => { await nextTick(); build() }, { deep: true })
-watch(() => props.debug3d, async () => { await nextTick(); build() })
+watch(() => props.vox, async () => { await nextTick(); if (!props.debug3d) build() })
+watch(() => props.mode, async () => { await nextTick(); if (!props.debug3d) build() })
+watch(() => props.debug, async () => { await nextTick(); if (!props.debug3d) build() }, { deep: true })
+watch(() => props.debug3d, async () => {
+  await nextTick()
+  // Toggle between debug viewer and full internal build
+  if (props.debug3d) {
+    disposeScene()
+    if (host.value) {
+      viewer?.destroy(); viewer = null
+      viewer = new VoxelViewer(host.value)
+      const wany = window as any
+      wany.briko = {
+        smokeOn: () => viewer?.smokeOn(),
+        wire:    () => viewer?.wire(),
+        basic:   () => viewer?.basic(),
+        std:     () => viewer?.pbr(),
+        clipOff: () => viewer?.clipOff(),
+        resetCam:() => viewer?.resetCam(),
+        info:    () => viewer?.info(),
+      }
+      console.log('[DEBUG] briko hooks ready')
+    }
+  } else {
+    // Clear hooks and build full path
+    const wany = window as any
+    if (wany.briko) wany.briko = undefined
+    viewer?.destroy(); viewer = null
+    build()
+  }
+})
 function reapplyBrightness() {
   if (!inst || !baseRGB) return
   const count = (inst as any).count || 0
@@ -493,6 +545,11 @@ function reapplyBrightness() {
 watch(() => props.exposure, () => { reapplyBrightness() })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resize)
+  // clear debug hooks
+  const wany = window as any
+  if (wany.briko) wany.briko = undefined
+  // destroy debug viewer if active
+  viewer?.destroy(); viewer = null
   disposeScene()
 })
 
