@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import { useHead } from 'nuxt/app'
+import { useRoute } from 'vue-router'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import { useMosaicStore } from '@/stores/mosaic'
@@ -28,6 +29,10 @@ const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
 // Build-time dev flag for template conditions (avoid using import.meta in template expressions)
 const isDev = process.dev
+
+// Debug flag from URL (?debug3d)
+const route = useRoute()
+const debug3d = computed(() => 'debug3d' in route.query)
 
 // Mode help copy
 const modeHelp = computed(() => {
@@ -272,7 +277,7 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" :debug="debug" ref="previewRef" @unique-colors="(n:number)=> instUniqueColors = n"/>
+        <VoxelPreview v-else-if="vox" :vox="vox" :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef" @unique-colors="(n:number)=> instUniqueColors = n"/>
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <!-- Palette swatch bar -->
         <div v-if="vox && paletteUsed.length" class="px-2 pb-2">
