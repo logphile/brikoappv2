@@ -177,6 +177,7 @@ watch([paletteUsed, instUniqueColors], ([p, m]) => {
 })
 
 // Auto-load a colorful default image so the palette mapping is obvious
+onMounted(() => { vox.value = null; srcBitmap.value = null })
 onMounted(async () => {
   if (vox.value || loading.value) return
   try {
