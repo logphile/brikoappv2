@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { legoPalette } from '@/lib/palette/lego'
 import type { BuildMode } from '@/types/voxel'
+import { createStudGeometry } from '@/lib/studGeometry'
 
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number }>()
 const host = ref<HTMLDivElement|null>(null)
@@ -66,11 +67,10 @@ function setView(view: ViewName) {
   const fov = THREE.MathUtils.degToRad((camera as any).fov)
   const dist = ((maxSize / 2) / Math.tan(fov / 2)) * 1.2
 
-  // Our voxel build extrudes along world Y, so the mosaic face is in XZ plane.
-  // 'front' should position camera along +Y toward center. 'top' looks along +Z.
-  let dir = new THREE.Vector3(0, 1, 0.001).normalize() // front (looking at +Y face)
-  if (view === 'iso') dir = new THREE.Vector3(1, 0.75, 1).normalize()
-  if (view === 'top') dir = new THREE.Vector3(0, 0, 1).normalize()
+  // Z-up scheme: mosaic face is XY plane; front looks along +Z, top looks along +Y
+  let dir = new THREE.Vector3(0, 0, 1).normalize() // front
+  if (view === 'iso') dir = new THREE.Vector3(1, 1, 1).normalize()
+  if (view === 'top') dir = new THREE.Vector3(0, 1, 0.001).normalize()
 
   camera.position.copy(center).add(dir.multiplyScalar(dist))
   camera.near = Math.max(0.1, dist / 100)
@@ -149,8 +149,13 @@ function build () {
   const rim = new THREE.DirectionalLight(0xffffff, 0.4); rim.position.set(-3,2,-2)
   scene.add(hemi, key, rim)
 
-  // Instanced mesh
-  const geo = new THREE.BoxGeometry(1,1,1)
+  // Instanced mesh geometry: LEGO-like stud/brick, Z-up
+  const geo = createStudGeometry({
+    kind: (props.mode === 'relief') ? 'brick' : 'plate',
+    stud: true,
+    pitch: 1.0,
+    radialSegments: 16,
+  })
   const mat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.0, roughness: 1.0, flatShading: true })
   inst = new (THREE as any).InstancedMesh(geo, mat, colors.length)
 
@@ -166,7 +171,8 @@ function build () {
         if (ci === 255) continue // 255 sentinel = empty voxel
         const hex = legoPalette[ci]?.hex
         if (hex === undefined) continue
-        m.makeTranslation(x - w/2, z, y - h/2)
+        // Place in XY with depth along Z (Z-up)
+        m.makeTranslation(x - w/2, y - h/2, z)
         ;(inst as any).setMatrixAt(i, m)
         c.set(hex)
         ;(inst as any).setColorAt(i, c)
@@ -191,16 +197,15 @@ function build () {
   ;(grid as any).rotation.x = Math.PI / 2
   scene.add(grid)
 
-  // Clipping plane to reveal layers [0..k]; world Y is our depth axis (z-index)
-  plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0)
+  // Clipping plane to reveal layers [0..k]; world Z is our depth axis
+  plane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0)
   renderer.clippingPlanes = [plane]
 
   // Slice plane visual indicator (mint, semi-transparent)
-  const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h))
+  const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h)) // XY plane by default
   const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false })
   slicePlane = new (THREE as any).Mesh(pgeom, pmat)
-  ;(slicePlane as any).rotation.x = Math.PI / 2
-  ;(slicePlane as any).position.y = layer.value
+  ;(slicePlane as any).position.z = layer.value
   ;(slicePlane as any).renderOrder = 999
   if (showLayerSlider.value) scene.add(slicePlane)
 
@@ -266,7 +271,7 @@ watch(layer, (k) => {
     controls.target.copy(center)
     controls.update()
   }
-  if (slicePlane) (slicePlane as any).position.y = k
+  if (slicePlane) (slicePlane as any).position.z = k
 })
 
 // Expose quick view methods to parent + internals for PDF export
