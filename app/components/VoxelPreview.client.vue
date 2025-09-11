@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, nextTick, computed } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { legoPalette } from '@/lib/palette/lego'
+import type { BuildMode } from '@/types/voxel'
 
-const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array } }>()
+const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode }>()
 const host = ref<HTMLDivElement|null>(null)
 
 let renderer: any | null = null
@@ -22,6 +23,8 @@ let plane: any | null = null
 
 // Per-layer color legend data
 let colorByLayer: Array<Record<string, number>> = []
+const showLayerSlider = computed(() => props.mode !== 'relief')
+const instanceCount = ref(0)
 
 function disposeScene () {
   if (animId) cancelAnimationFrame(animId)
@@ -111,8 +114,7 @@ function build () {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
   renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.0
-  renderer.setClearColor(0x0b0f16, 1)
+  renderer.toneMappingExposure = 1.1
   renderer.localClippingEnabled = true
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
@@ -120,6 +122,7 @@ function build () {
 
   // Scene + Camera
   scene = new THREE.Scene()
+  scene.background = new THREE.Color(0x0f1220)
   camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000)
 
   // Controls
@@ -130,18 +133,15 @@ function build () {
   controls.enableZoom = true
   controls.autoRotate = false
 
-  // Lights
-  scene.add(new THREE.AmbientLight(0xffffff, 0.7))
-  const dir1 = new THREE.DirectionalLight(0xffffff, 1.0); dir1.position.set(3,5,4); scene.add(dir1)
-  const dir2 = new THREE.DirectionalLight(0xffffff, 0.4); dir2.position.set(-4,2,-3); scene.add(dir2)
-  // Key light attached to camera so the front face is readable
-  scene.add(camera)
-  const key = new THREE.DirectionalLight(0xffffff, 0.9)
-  camera.add(key)
+  // Lights: Hemisphere + key + rim
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x111122, 0.6)
+  const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(2,4,3)
+  const rim = new THREE.DirectionalLight(0xffffff, 0.4); rim.position.set(-3,2,-2)
+  scene.add(hemi, key, rim)
 
   // Instanced mesh
   const geo = new THREE.BoxGeometry(1,1,1)
-  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0, roughness: 0.95 })
+  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.0, roughness: 1.0, flatShading: true })
   inst = new (THREE as any).InstancedMesh(geo, mat, colors.length)
 
   let i = 0
@@ -168,8 +168,9 @@ function build () {
     }
   }
   ;(inst as any).count = i
+  instanceCount.value = i
   ;(inst as any).instanceMatrix.needsUpdate = true
-  ;(inst as any).instanceColor && ((inst as any).instanceColor.needsUpdate = true)
+  ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   ;(inst as any).frustumCulled = false
   scene.add(inst)
   currentMesh = inst
@@ -241,8 +242,17 @@ defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: (
 
 <template>
   <div>
-    <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div>
-    <div v-if="vox" class="mt-2">
+    <div class="relative">
+      <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div>
+      <!-- Debug overlay -->
+      <div class="absolute left-2 top-2 text-xs px-2 py-1 rounded bg-black/50 text-white/90 ring-1 ring-white/10">
+        <div><span class="opacity-70">Mode:</span> {{ mode ?? 'layered' }}</div>
+        <div><span class="opacity-70">Instances:</span> {{ instanceCount }}</div>
+        <div v-if="vox && showLayerSlider"><span class="opacity-70">Layers shown:</span> 0–{{ layer }}</div>
+        <div><span class="opacity-70">Palette:</span> {{ legoPalette.length }}</div>
+      </div>
+    </div>
+    <div v-if="vox && showLayerSlider" class="mt-2">
       <label class="block text-sm mb-1">Layer</label>
       <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full range-mint" />
       <div class="text-xs text-white/60">Showing layers 0–{{ layer }}</div>
