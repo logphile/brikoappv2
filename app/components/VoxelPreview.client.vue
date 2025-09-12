@@ -2,7 +2,7 @@
 import { onMounted, onBeforeUnmount, ref, watch, nextTick, computed, shallowRef } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { legoPalette } from '@/lib/palette/lego'
+import { LEGO_PALETTE } from '@/lib/legoPalette'
 import type { BuildMode } from '@/types/voxel'
 import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
@@ -321,7 +321,7 @@ function build () {
       for (let x=0; x<w; x++) {
         const ci = colors[(z*w*h) + (y*w + x)]
         if (ci === 255) continue // 255 sentinel = empty voxel
-        const hex = legoPalette[ci]?.hex
+        const hex = LEGO_PALETTE[ci]?.hex
         if (hex === undefined) continue
         // Place 1 unit per stud, centered in each cell + center whole grid around origin
         // x∈[0.5-w/2..W-0.5-w/2], y∈[0.5-h/2..H-0.5-h/2], z∈[0.5..depth-0.5]
@@ -381,7 +381,9 @@ function build () {
           const box = new THREE.Box3().setFromObject(inst)
           const size = new THREE.Vector3(); box.getSize(size)
           const center = new THREE.Vector3(); box.getCenter(center)
-          console.log({ inst_count: (inst as any).count, color_attr: !!(inst as any).instanceColor, bbox_size: size, bbox_center: center })
+          const out = { inst_count: (inst as any).count, color_attr: !!(inst as any).instanceColor, bbox_size: size, bbox_center: center }
+          console.log(out)
+          return out
         } catch (e) { console.warn(e) }
       },
       peek() {
@@ -389,7 +391,9 @@ function build () {
           const M = new THREE.Matrix4()
           ;(inst as any).getMatrixAt(0, M)
           const arr = Array.from(((inst as any).instanceColor?.array ?? new Float32Array()).slice(0, 9))
-          console.log('M0=', M.toArray(), 'C0..2=', arr)
+          const out = { M0: M.toArray(), C0_2: arr }
+          console.log(out)
+          return out
         } catch (e) { console.warn(e) }
       },
       smoke() {
@@ -414,6 +418,18 @@ function build () {
         ;(sm as any).frustumCulled = false
         scene.add(sm)
         wany.__briko.smokeMesh = sm
+        // Frame to smoke grid for visibility
+        try { (camera && controls) && frameToGrid(gw, gh, 1) } catch {}
+        return sm
+      },
+      paint(n = 100) {
+        try {
+          const cnt = Math.min(n, (inst as any).count || 0)
+          const col = new THREE.Color(0xffffff)
+          for (let i = 0; i < cnt; i++) (inst as any).setColorAt(i, col)
+          ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
+          return cnt
+        } catch (e) { console.warn(e) }
       },
       armClip() {
         try {
@@ -424,7 +440,8 @@ function build () {
       },
       unclip() {
         try { renderer.clippingPlanes = []; renderer.localClippingEnabled = false } catch (e) { console.warn(e) }
-      }
+      },
+      debugInfo() { try { return debugInfo() } catch {} }
     }
     console.log('[DEBUG] __briko ready')
   } catch {}
