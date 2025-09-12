@@ -234,6 +234,8 @@ function build () {
   scene = new THREE.Scene()
   scene.background = new THREE.Color(0x0f1220)
   camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000)
+  // Z-up world: ensure camera up vector matches to avoid odd rotations
+  ;(camera as any).up.set(0, 0, 1)
 
   // Controls
   controls = new OrbitControls(camera, renderer.domElement)
@@ -441,6 +443,7 @@ function build () {
       unclip() {
         try { renderer.clippingPlanes = []; renderer.localClippingEnabled = false } catch (e) { console.warn(e) }
       },
+      reframe() { try { frameToGrid(gridW, gridH, gridD) } catch (e) { console.warn(e) } },
       debugInfo() { try { return debugInfo() } catch {} }
     }
     console.log('[DEBUG] __briko ready')
@@ -504,8 +507,8 @@ function build () {
   ;(grid as any).position.set(0, 0, 0)
   // fade grid
   const gm = (grid as any).material
-  if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25 }) }
-  else { gm.transparent = true; gm.opacity = 0.25 }
+  if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25; m.depthWrite = false; m.depthTest = false }) }
+  else { gm.transparent = true; gm.opacity = 0.25; (gm as any).depthWrite = false; (gm as any).depthTest = false }
   scene.add(grid)
 
   // Clipping plane to reveal layers [0..k] — arm after first successful render
@@ -513,11 +516,11 @@ function build () {
 
   // Slice plane visual indicator (mint, semi-transparent)
   const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h)) // XY plane by default
-  const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false })
+  const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false, depthTest: false })
   slicePlane = new (THREE as any).Mesh(pgeom, pmat)
   ;(slicePlane as any).position.set(0, 0, layer.value)
   ;(slicePlane as any).renderOrder = 999
-  if (showLayerSlider.value) scene.add(slicePlane)
+  if (showLayerSlider.value) { scene.add(slicePlane); (slicePlane as any).visible = false }
 
   // Axes Gizmo
   gizmo = new AxesGizmo()
