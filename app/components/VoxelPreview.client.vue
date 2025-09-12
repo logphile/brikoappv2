@@ -505,10 +505,11 @@ function build () {
   const grid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
   ;(grid as any).rotation.x = Math.PI / 2 // lie on XY
   ;(grid as any).position.set(0, 0, 0)
-  // fade grid
+  // fade grid (draw behind and let studs occlude it)
   const gm = (grid as any).material
-  if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25; m.depthWrite = false; m.depthTest = false }) }
-  else { gm.transparent = true; gm.opacity = 0.25; (gm as any).depthWrite = false; (gm as any).depthTest = false }
+  if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25; m.depthWrite = false; m.depthTest = true }) }
+  else { gm.transparent = true; gm.opacity = 0.25; (gm as any).depthWrite = false; (gm as any).depthTest = true }
+  ;(grid as any).renderOrder = -1
   scene.add(grid)
 
   // Clipping plane to reveal layers [0..k] — arm after first successful render
