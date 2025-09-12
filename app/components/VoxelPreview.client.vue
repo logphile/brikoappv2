@@ -139,9 +139,12 @@ function setView(view: ViewName) {
   const size = new THREE.Vector3(gridW || 1, gridH || 1, gridD || 1)
   const center = new THREE.Vector3(0, 0, Math.max(0.5, (gridD || 1) / 2))
 
-  const maxSize = Math.max(size.x, size.y, size.z)
+  // Fit size depends on view: Front fits XY, Top fits XZ, Iso fits all
+  let fitSize = Math.max(size.x, size.y, size.z)
+  if (view === 'front') fitSize = Math.max(size.x, size.y)
+  if (view === 'top')   fitSize = Math.max(size.x, size.z)
   const fov = THREE.MathUtils.degToRad((camera as any).fov)
-  const dist = ((maxSize / 2) / Math.tan(fov / 2)) * 1.2
+  const dist = ((fitSize / 2) / Math.tan(fov / 2)) * 1.2
 
   // Z-up scheme: mosaic face is XY plane; front looks along +Z, top looks along +Y
   let dir = new THREE.Vector3(0, 0, 1).normalize() // front
@@ -154,8 +157,8 @@ function setView(view: ViewName) {
   camera.updateProjectionMatrix()
 
   controls.target.copy(center)
-  ;(controls as any).minDistance = Math.max(0.1, maxSize * 0.5)
-  ;(controls as any).maxDistance = Math.max(1.0, maxSize * 6)
+  ;(controls as any).minDistance = Math.max(0.1, fitSize * 0.5)
+  ;(controls as any).maxDistance = Math.max(1.0, fitSize * 6)
   controls.update()
 }
 
@@ -501,7 +504,7 @@ function build () {
   } catch {}
 
   // Ground grid (faint) — centered at origin under the mesh
-  const gridSize = Math.max(size * 2, 200)
+  const gridSize = Math.max(Math.max(w, h) * 2, 128)
   const grid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
   ;(grid as any).rotation.x = Math.PI / 2 // lie on XY
   ;(grid as any).position.set(0, 0, 0)
@@ -528,9 +531,9 @@ function build () {
 
   // Fit and size
   resize()
-  // Frame camera using origin-centered grid dims and default to an isometric view
+  // Frame camera using origin-centered grid dims and default to FRONT view for layered mosaics
   frameToGrid(gridW, gridH, gridD)
-  setView('iso')
+  setView('front')
   // Initialize slider to show all layers by default
   layer.value = Math.max(0, depth - 1)
   if (plane) plane.constant = -layer.value
