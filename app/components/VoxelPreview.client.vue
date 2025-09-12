@@ -137,7 +137,7 @@ function setView(view: ViewName) {
   if (!camera || !controls) return
   // Use grid dimensions for reliable framing (InstancedMesh bbox ignores instances)
   const size = new THREE.Vector3(gridW || 1, gridH || 1, gridD || 1)
-  const center = new THREE.Vector3((gridW || 1) / 2, (gridH || 1) / 2, (gridD || 1) / 2)
+  const center = new THREE.Vector3(0, 0, Math.max(0.5, (gridD || 1) / 2))
 
   const maxSize = Math.max(size.x, size.y, size.z)
   const fov = THREE.MathUtils.degToRad((camera as any).fov)
@@ -163,7 +163,7 @@ function setView(view: ViewName) {
 function frameToGrid(w: number, h: number, d: number) {
   if (!camera || !controls) return
   const radius = Math.max(w, h, d)
-  const center = new THREE.Vector3(w / 2, h / 2, Math.max(0.5, d * 0.5))
+  const center = new THREE.Vector3(0, 0, Math.max(0.5, d * 0.5))
   controls.target.copy(center)
   ;(controls as any).minDistance = Math.max(0.1, radius * 0.5)
   ;(controls as any).maxDistance = Math.max(1, radius * 6)
@@ -220,10 +220,10 @@ function build () {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
-  renderer.toneMapping = (DEBUG || props.debug?.useBasicMaterial) ? (THREE as any).NoToneMapping : (THREE as any).ACESFilmicToneMapping
-  // Keep exposure neutral; brightness is applied per-instance color
+  // Force a known-good render path: Basic + NoToneMapping
+  renderer.toneMapping = (THREE as any).NoToneMapping
   renderer.toneMappingExposure = 1.0
-  // Start with clipping OFF; arm later after first successful render
+  // Keep clipping OFF initially; arm later when stable
   renderer.localClippingEnabled = false
   renderer.clippingPlanes = []
   host.value.appendChild(renderer.domElement)
@@ -262,16 +262,14 @@ function build () {
     radialSegments: 16,
   })
   function makeMaterial () {
-    const common: any = {
+    // Force MeshBasic for visibility (ignore lighting while debugging)
+    return new THREE.MeshBasicMaterial({
       vertexColors: true,
       flatShading: true,
-      wireframe: !!props.debug?.wireframe,
       side: (THREE as any).FrontSide,
-      toneMapped: false, // we handle brightness per-instance
-    }
-    return (DEBUG || props.debug?.useBasicMaterial)
-      ? new THREE.MeshBasicMaterial(common)
-      : new THREE.MeshStandardMaterial({ ...common, metalness: 0.0, roughness: 1.0 })
+      toneMapped: false,
+      wireframe: !!props.debug?.wireframe,
+    })
   }
   let material: any = makeMaterial()
 
@@ -325,9 +323,9 @@ function build () {
         if (ci === 255) continue // 255 sentinel = empty voxel
         const hex = legoPalette[ci]?.hex
         if (hex === undefined) continue
-        // Place 1 unit per stud, centered within each grid cell (absolute grid coords)
-        // x∈[0.5..W-0.5], y∈[0.5..H-0.5], z∈[0.5..depth-0.5]
-        m.compose(new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5), q, s)
+        // Place 1 unit per stud, centered in each cell + center whole grid around origin
+        // x∈[0.5-w/2..W-0.5-w/2], y∈[0.5-h/2..H-0.5-h/2], z∈[0.5..depth-0.5]
+        m.compose(new THREE.Vector3(x + 0.5 - w/2, y + 0.5 - h/2, z + 0.5), q, s)
         ;(inst as any).setMatrixAt(j, m)
         c.setHex(hex).convertSRGBToLinear()
         // store base linear RGB
@@ -370,6 +368,66 @@ function build () {
     ;(inst as any).instanceColor && (((inst as any).instanceColor.needsUpdate = true))
   }
   scene.add(inst)
+  // Expose robust diagnostics to DevTools for normal path
+  try {
+    const wany = window as any
+    wany.__briko = {
+      scene,
+      renderer,
+      inst,
+      THREE,
+      info() {
+        try {
+          const box = new THREE.Box3().setFromObject(inst)
+          const size = new THREE.Vector3(); box.getSize(size)
+          const center = new THREE.Vector3(); box.getCenter(center)
+          console.log({ inst_count: (inst as any).count, color_attr: !!(inst as any).instanceColor, bbox_size: size, bbox_center: center })
+        } catch (e) { console.warn(e) }
+      },
+      peek() {
+        try {
+          const M = new THREE.Matrix4()
+          ;(inst as any).getMatrixAt(0, M)
+          const arr = Array.from(((inst as any).instanceColor?.array ?? new Float32Array()).slice(0, 9))
+          console.log('M0=', M.toArray(), 'C0..2=', arr)
+        } catch (e) { console.warn(e) }
+      },
+      smoke() {
+        // draw a 16x16 flat grid to prove camera/material path
+        const gw = 16, gh = 16
+        const box = new (THREE as any).BoxGeometry(1, 1, 1)
+        const smMat = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })
+        const sm = new (THREE as any).InstancedMesh(box, smMat, gw * gh)
+        ;(sm as any).instanceColor = new (THREE as any).InstancedBufferAttribute(new Float32Array(gw * gh * 3), 3)
+        const m = new THREE.Matrix4(), c = new THREE.Color()
+        let t = 0
+        for (let y = 0; y < gh; y++) {
+          for (let x = 0; x < gw; x++) {
+            m.makeTranslation(x - gw/2 + 0.5, y - gh/2 + 0.5, 0)
+            ;(sm as any).setMatrixAt(t, m)
+            c.set((x % 3 === 0) ? 0xff3366 : (x % 3 === 1) ? 0x33ff66 : 0x3366ff).convertSRGBToLinear()
+            ;(sm as any).setColorAt(t, c)
+            t++
+          }
+        }
+        ;(sm as any).count = t
+        ;(sm as any).frustumCulled = false
+        scene.add(sm)
+        wany.__briko.smokeMesh = sm
+      },
+      armClip() {
+        try {
+          plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -(depth - 1))
+          renderer.localClippingEnabled = true
+          renderer.clippingPlanes = [plane]
+        } catch (e) { console.warn(e) }
+      },
+      unclip() {
+        try { renderer.clippingPlanes = []; renderer.localClippingEnabled = false } catch (e) { console.warn(e) }
+      }
+    }
+    console.log('[DEBUG] __briko ready')
+  } catch {}
   // Debug toggles on window
   if (DBG) {
     const wany = window as any
@@ -422,12 +480,11 @@ function build () {
     emit('unique-colors', uniq.size)
   } catch {}
 
-  // Ground grid (faint)
+  // Ground grid (faint) — centered at origin under the mesh
   const gridSize = Math.max(size * 2, 200)
   const grid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
   ;(grid as any).rotation.x = Math.PI / 2 // lie on XY
-  // Align grid roughly under the mesh center in XY
-  ;(grid as any).position.set(w / 2, h / 2, 0)
+  ;(grid as any).position.set(0, 0, 0)
   // fade grid
   const gm = (grid as any).material
   if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25 }) }
@@ -441,7 +498,7 @@ function build () {
   const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h)) // XY plane by default
   const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false })
   slicePlane = new (THREE as any).Mesh(pgeom, pmat)
-  ;(slicePlane as any).position.set(w / 2, h / 2, layer.value)
+  ;(slicePlane as any).position.set(0, 0, layer.value)
   ;(slicePlane as any).renderOrder = 999
   if (showLayerSlider.value) scene.add(slicePlane)
 
@@ -450,7 +507,7 @@ function build () {
 
   // Fit and size
   resize()
-  // Frame camera using grid dims and default to an isometric view
+  // Frame camera using origin-centered grid dims and default to an isometric view
   frameToGrid(gridW, gridH, gridD)
   setView('iso')
   // Initialize slider to show all layers by default
@@ -464,13 +521,6 @@ function build () {
     controls && controls.update()
     if (renderer && scene && camera) {
       renderer.render(scene, camera)
-      // Arm clipping after first successful render to avoid accidental full-clip
-      if (!plane && showLayerSlider.value) {
-        // Plane faces +Z, constant is negative depth so first frame shows all layers
-        plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -(depth - 1))
-        renderer.localClippingEnabled = true
-        renderer.clippingPlanes = [plane]
-      }
       if (gizmo) {
         gizmo.syncFrom(camera)
         gizmo.render(renderer)
