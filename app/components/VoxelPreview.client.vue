@@ -266,7 +266,7 @@ function build () {
     return new THREE.MeshBasicMaterial({
       vertexColors: true,
       flatShading: true,
-      side: (THREE as any).FrontSide,
+      side: (THREE as any).DoubleSide,
       toneMapped: false,
       wireframe: !!props.debug?.wireframe,
     })
