@@ -8,6 +8,7 @@ import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
 import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 import { VoxelViewer } from '@/components/three/VoxelViewer'
+import { exportBuildPdf } from '@/utils/exportBuildPdf'
 
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean }, debug3d?: boolean }>()
 const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void }>()
@@ -59,6 +60,8 @@ const colorByLayer = shallowRef<Array<Record<string, number>>>([])
 const showLayerSlider = computed(() => props.mode !== 'relief')
 const instanceTotal = ref(0)
 const showHints = ref(true)
+// Local exporting state (used internally when exportPdf() is invoked)
+const exportingPdf = ref(false)
 // Visible bricks and colors reflect what is actually shown (0..layer)
 const bricksVisible = computed(() => {
   if (!showLayerSlider.value) return instanceTotal.value
@@ -761,6 +764,47 @@ function ensureClipping() {
   return true
 }
 defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null) })
+// Compute a simple BOM directly from the voxel buffer using LEGO_PALETTE
+function computeBomFromVox(v: { colors: Uint8Array }) {
+  const counts = new Map<number, number>()
+  const arr = v?.colors
+  if (!arr) return [] as Array<{ name: string; hex: string; count: number }>
+  for (let i = 0; i < arr.length; i++) {
+    const ci = arr[i]
+    if (ci === 255) continue
+    counts.set(ci, (counts.get(ci) || 0) + 1)
+  }
+  const out = [...counts.entries()].map(([idx, count]) => {
+    const entry = LEGO_PALETTE[idx]
+    const hexStr = '#' + (((entry?.hex ?? 0x999999) & 0xFFFFFF).toString(16).padStart(6, '0'))
+    return { name: entry?.name ?? `Color #${idx}` , hex: hexStr, count }
+  }).sort((a,b) => b.count - a.count)
+  return out
+}
+
+// Public method: build a quick PDF snapshot (called from page button or internal button)
+async function exportPdf() {
+  console.log('[PDF] click -> starting export')
+  if (!renderer || !(renderer as any).domElement) { console.error('[PDF] canvas missing'); return }
+  if (!props.vox) { console.error('[PDF] vox missing'); return }
+  try {
+    exportingPdf.value = true
+    const canvas = (renderer as any).domElement as HTMLCanvasElement
+    const bom = computeBomFromVox(props.vox)
+    const meta = {
+      mode: String(props.mode ?? 'Layered Mosaic'),
+      size: `${props.vox.w}×${props.vox.h}×${props.vox.depth}`,
+    }
+    await exportBuildPdf({ canvas, bom, meta, filename: 'briko-build.pdf' })
+    console.log('[PDF] save() called')
+  } catch (e) {
+    console.error('[PDF] export failed:', e)
+  } finally {
+    exportingPdf.value = false
+  }
+}
+// Also expose this programmatically
+defineExpose({ exportPdf })
 </script>
 
 <template>

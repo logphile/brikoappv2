@@ -13,9 +13,8 @@ import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
-import { computed, unref } from 'vue'
+import { computed } from 'vue'
 import { LEGO_PALETTE } from '@/lib/legoPalette'
-import { exportBuildPdf } from '@/utils/exportBuildPdf'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
