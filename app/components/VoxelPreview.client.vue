@@ -247,6 +247,7 @@ function build () {
   renderer.clippingPlanes = []
   host.value.appendChild(renderer.domElement)
   glCanvas = renderer.domElement
+  try { (glCanvas as any).id = 'briko-3d-canvas' } catch {}
   ;(window as any).__brikoCanvas = glCanvas
 
   // Scene + Camera
@@ -759,7 +760,7 @@ function ensureClipping() {
   renderer.clippingPlanes = [plane]
   return true
 }
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping })
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null) })
 </script>
 
 <template>
