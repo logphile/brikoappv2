@@ -33,6 +33,11 @@ let boundsHelper: any | null = null
 let smokeMesh: any | null = null
 let viewer: VoxelViewer | null = null
 
+// Persistent debug option: force a constant white material (ignores instance colors)
+const FLAT_WHITE_KEY = 'briko_flat_white'
+let forceFlatWhite = false
+try { forceFlatWhite = (localStorage.getItem(FLAT_WHITE_KEY) === '1') } catch {}
+
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
 let plane: any | null = null
@@ -268,6 +273,13 @@ function build () {
   })
   function makeMaterial () {
     // Force MeshBasic for visibility (ignore lighting while debugging)
+    if (forceFlatWhite) {
+      return new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        side: (THREE as any).DoubleSide,
+        toneMapped: false,
+      })
+    }
     return new THREE.MeshBasicMaterial({
       vertexColors: true,
       flatShading: true,
@@ -277,6 +289,13 @@ function build () {
     })
   }
   let material: any = makeMaterial()
+  function applyMaterial(newMat?: any) {
+    if (!inst) return
+    try { material?.dispose?.() } catch {}
+    material = newMat || makeMaterial()
+    ;(inst as any).material = material
+    ;(inst as any).material.needsUpdate = true
+  }
 
   // Debug smoke test grid to validate renderer/material/camera path
   function makeSmokeTest(): any {
@@ -381,6 +400,19 @@ function build () {
       renderer,
       inst,
       THREE,
+      // Material overrides
+      flatWhite(on?: boolean) {
+        try {
+          if (typeof on === 'boolean') forceFlatWhite = on
+          else forceFlatWhite = !forceFlatWhite
+          try { localStorage.setItem(FLAT_WHITE_KEY, forceFlatWhite ? '1' : '0') } catch {}
+          applyMaterial()
+          return forceFlatWhite
+        } catch (e) { console.warn(e) }
+      },
+      flatWhiteOn()  { try { return (this as any).flatWhite(true) } catch {} },
+      flatWhiteOff() { try { return (this as any).flatWhite(false) } catch {} },
+      flatWhiteToggle() { try { return (this as any).flatWhite() } catch {} },
       info() {
         try {
           const box = new THREE.Box3().setFromObject(inst)
@@ -401,6 +433,10 @@ function build () {
           return out
         } catch (e) { console.warn(e) }
       },
+      // View helpers
+      front() { try { setView('front') } catch {} },
+      iso()   { try { setView('iso') } catch {} },
+      top()   { try { setView('top') } catch {} },
       smoke() {
         // draw a 16x16 flat grid to prove camera/material path
         const gw = 16, gh = 16
