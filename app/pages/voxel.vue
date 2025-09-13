@@ -288,7 +288,7 @@ onMounted(async () => {
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
           <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
-          <button type="button" class="btn-mint px-4 rounded-xl" :disabled="exportingPdf || !vox" @click.stop.prevent="onClickPdf">One-click PDF</button>
+          <button id="one-click-pdf" type="button" class="btn-mint px-4 rounded-xl" :disabled="!vox" @click.stop.prevent="previewRef?.exportPdf?.()">One-click PDF</button>
         </div>
         <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
