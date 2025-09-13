@@ -763,7 +763,7 @@ function ensureClipping() {
   renderer.clippingPlanes = [plane]
   return true
 }
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null) })
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null), exportPdf })
 // Compute a simple BOM directly from the voxel buffer using LEGO_PALETTE
 function computeBomFromVox(v: { colors: Uint8Array }) {
   const counts = new Map<number, number>()
@@ -803,8 +803,7 @@ async function exportPdf() {
     exportingPdf.value = false
   }
 }
-// Also expose this programmatically
-defineExpose({ exportPdf })
+// (exportPdf is exposed above in the primary defineExpose)
 </script>
 
 <template>
