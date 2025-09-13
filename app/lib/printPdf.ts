@@ -12,11 +12,12 @@ export async function exportLayersPdf(opts: {
   filename?: string
 }) {
   const { renderer, scene, camera, totalLayers, setLayer, colorCountsForLayer, filename = 'briko-3d-layers.pdf' } = opts
-  // Lazy import jsPDF on client
-  const { default: jsPDF } = await import('jspdf')
+  // Lazy import jsPDF on client (support both ESM and CJS shapes)
+  const mod: any = await import('jspdf')
+  const JsPdfCtor: any = (mod?.jsPDF ?? mod?.default ?? mod)
 
   // Landscape Letter (pts): 792 x 612
-  const pdf = new jsPDF({ unit: 'pt', format: 'letter', orientation: 'landscape' })
+  const pdf = new JsPdfCtor({ unit: 'pt', format: 'letter', orientation: 'landscape' })
 
   // Target image box size (fits inside page with a right-side legend)
   const margin = 24
@@ -32,6 +33,8 @@ export async function exportLayersPdf(opts: {
       setLayer(k)
       // Render now and capture as PNG
       renderer.render(scene, camera)
+      // Wait a tick to ensure the backbuffer is presented
+      await new Promise(requestAnimationFrame)
       const dataURL = renderer.domElement.toDataURL('image/png')
 
       // Header
@@ -40,7 +43,11 @@ export async function exportLayersPdf(opts: {
       pdf.text(`Layer ${k + 1} / ${totalLayers}`, margin, margin + 10)
 
       // Image
-      pdf.addImage(dataURL, 'PNG', margin, margin + 16, w, h)
+      try { pdf.addImage(dataURL, 'PNG', margin, margin + 16, w, h) } catch (e) {
+        // Fallback: skip image (still output legend/page)
+        // eslint-disable-next-line no-console
+        console.warn('addImage failed; continuing PDF generation', e)
+      }
 
       // Legend on the right
       const counts = colorCountsForLayer(k)

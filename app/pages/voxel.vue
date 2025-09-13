@@ -14,7 +14,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
 import { computed } from 'vue'
-import { legoPalette } from '@/lib/palette/lego'
+import { LEGO_PALETTE } from '@/lib/legoPalette'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
@@ -52,7 +52,7 @@ const modeHelp = computed(() => {
 const paletteUsed = computed(() => {
   const v = vox.value
   if (!v) return [] as Array<{ idx:number; name:string; hex:string; count:number }>
-  const counts = new Uint32Array(legoPalette.length)
+  const counts = new Uint32Array(LEGO_PALETTE.length)
   const arr = v.colors
   for (let i=0; i<arr.length; i++) {
     const idx = arr[i]
@@ -62,8 +62,9 @@ const paletteUsed = computed(() => {
   const out: Array<{ idx:number; name:string; hex:string; count:number }> = []
   for (let i=0; i<counts.length; i++) {
     if (counts[i] > 0) {
-      const entry = legoPalette[i]
-      out.push({ idx: i, name: entry?.name ?? `Color ${i}`, hex: entry?.hex ?? '#999999', count: counts[i] })
+      const entry = LEGO_PALETTE[i]
+      const hex = '#' + ((entry?.hex ?? 0x999999) & 0xFFFFFF).toString(16).padStart(6, '0')
+      out.push({ idx: i, name: entry?.name ?? `Color ${i}`, hex, count: counts[i] })
     }
   }
   out.sort((a,b) => b.count - a.count)
@@ -135,6 +136,8 @@ async function uploadPreview(){ await mosaic.uploadPreview() }
 async function onExportPdf(){
   const vp = previewRef.value
   if (!vp || !vp.renderer || !vp.scene || !vp.camera) return
+  // Make sure the clipping plane is armed so Layer k renders 0..k
+  try { vp.ensureClipping?.() } catch {}
   await exportLayersPdf({
     renderer: vp.renderer,
     scene: vp.scene,
@@ -298,7 +301,7 @@ onMounted(async () => {
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
           <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
-          <button class="btn-mint h-10 px-4 rounded-xl" @click="onExportPdf">One-click PDF</button>
+          <button class="btn-mint px-4 rounded-xl" @click="onExportPdf">One-click PDF</button>
         </div>
         <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>

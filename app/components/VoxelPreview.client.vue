@@ -697,8 +697,9 @@ onBeforeUnmount(() => {
 
 // Layer control bindings
 watch(layer, (k) => {
-  if (!renderer || !plane) return
-  plane.constant = -k
+  if (renderer && plane) {
+    plane.constant = -k
+  }
   // keep controls target at content center to prevent drift
   if (currentMesh && controls) {
     const center = new THREE.Vector3((gridW || 1) / 2, (gridH || 1) / 2, Math.max(0.5, (gridD || 1) * 0.5))
@@ -706,7 +707,7 @@ watch(layer, (k) => {
     controls.update()
   }
   if (slicePlane) (slicePlane as any).position.z = k
-  // update thumbnail
+  // update thumbnail regardless of clipping
   drawMosaicThumbnail()
   emit('layer-change', k)
 })
@@ -749,7 +750,16 @@ function debugInfo(){
   try { (inst as any).getMatrixAt(0, m); m.decompose(v, q, s) } catch {}
   console.log('[VoxelPreview.debugInfo]', { count: (inst as any).count, firstPos: { x: v.x, y: v.y, z: v.z }, scale: { x: s.x, y: s.y, z: s.z } })
 }
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo })
+function ensureClipping() {
+  if (!renderer) return false
+  if (!plane) {
+    plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -(gridD - 1))
+  }
+  renderer.localClippingEnabled = true
+  renderer.clippingPlanes = [plane]
+  return true
+}
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping })
 </script>
 
 <template>
