@@ -34,9 +34,10 @@ let smokeMesh: any | null = null
 let viewer: VoxelViewer | null = null
 
 // Persistent debug option: force a constant white material (ignores instance colors)
+// Default: ON for everyone, always. Persist '1' each load to ensure it stays enabled.
 const FLAT_WHITE_KEY = 'briko_flat_white'
-let forceFlatWhite = false
-try { forceFlatWhite = (localStorage.getItem(FLAT_WHITE_KEY) === '1') } catch {}
+let forceFlatWhite = true
+try { localStorage.setItem(FLAT_WHITE_KEY, '1') } catch {}
 
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
