@@ -39,6 +39,16 @@ const FLAT_WHITE_KEY = 'briko_flat_white'
 let forceFlatWhite = true
 try { localStorage.setItem(FLAT_WHITE_KEY, '1') } catch {}
 
+// Map UI exposure (around 1.0) to a stronger brightness factor for per-instance colors.
+// This makes changes visible without needing to zoom in.
+function exposureToFactor(exp?: number): number {
+  const e = (typeof exp === 'number') ? exp : 1.0
+  const BOOST = 2.5 // amplify slider delta; 1.0 -> 1.0, 0.8 -> ~0.5, 1.6 -> ~2.5
+  const bf = 1 + (e - 1) * BOOST
+  // keep within a practical range
+  return Math.min(3.0, Math.max(0.3, bf))
+}
+
 // Layer clipping
 const layer = ref(0) // 0..(depth-1); will be set to depth-1 after build
 let plane: any | null = null
@@ -355,8 +365,8 @@ function build () {
         c.setHex(hex).convertSRGBToLinear()
         // store base linear RGB
         base.push(c.r, c.g, c.b)
-        // apply brightness per-instance (not via lights)
-        const bf = Math.max(0, props.exposure ?? 1.0)
+        // apply amplified brightness per-instance (not via lights)
+        const bf = exposureToFactor(props.exposure)
         const cr = Math.min(1, c.r * bf)
         const cg = Math.min(1, c.g * bf)
         const cb = Math.min(1, c.b * bf)
@@ -663,7 +673,7 @@ watch(() => props.debug3d, async () => {
 function reapplyBrightness() {
   if (!inst || !baseRGB) return
   const count = (inst as any).count || 0
-  const bf = Math.max(0, (typeof props.exposure === 'number' ? props.exposure : 1.0))
+  const bf = exposureToFactor(props.exposure)
   const c = new THREE.Color()
   for (let j=0; j<count; j++) {
     const r0 = baseRGB[j*3 + 0]
