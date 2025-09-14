@@ -10,7 +10,7 @@
         <StepChips :steps="copy.avatar.steps" />
       </div>
       <div class="flex items-center gap-3">
-        <button class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15"
+        <button class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20"
                 :disabled="!outReady"
                 @click="doExportPng">Export PNG</button>
         <button class="btn-mint"

@@ -17,7 +17,7 @@ function onDrop(e:DragEvent){
            : 'p-4 rounded-2xl bg-white/5 ring-1 ring-white/10 text-sm'
        ]">
     <div class="text-sm">Drag & drop an image or</div>
-    <label class="mt-2 inline-block cursor-pointer px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15">
+    <label class="mt-2 inline-block cursor-pointer px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20">
       Browse… <input type="file" accept="image/*" class="hidden" @change="onPick">
     </label>
   </div>

@@ -33,12 +33,12 @@
         <div class="flex items-center gap-2">
           <NuxtLink v-if="!loading && user" to="/login"
             class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
-                   text-white/90 hover:bg-white/15 transition-colors">
+                   text-white/90 hover:bg-white/20 transition-colors">
             {{ user.email }}
           </NuxtLink>
           <NuxtLink v-else to="/login"
             class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
-                   text-white/90 hover:bg-white/15 transition-colors">
+                   text-white/90 hover:bg-white/20 transition-colors">
             Login
           </NuxtLink>
           <!-- mobile menu button placeholder -->
