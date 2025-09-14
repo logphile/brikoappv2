@@ -10,15 +10,16 @@
         <StepChips :steps="copy.avatar.steps" />
       </div>
       <div class="flex items-center gap-3">
-        <button class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20"
+        <button class="btn btn-primary h-10"
                 :disabled="!outReady"
                 @click="doExportPng">Export PNG</button>
-        <button class="btn-mint"
+        <button class="btn-outline-mint h-10"
                 :disabled="saving || !$supabase || !outReady"
                 @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</button>
-        <label class="inline-flex items-center gap-2 text-sm">
-          <input type="checkbox" v-model="isPublic" :disabled="!projectId || !canShare" @change="onTogglePublic" />
-          <span>Make Public</span>
+        <label class="btn-outline-mint h-10 inline-flex items-center gap-2 text-sm px-3 rounded-2xl cursor-pointer select-none"
+               :class="(!projectId || !canShare) ? 'opacity-50 pointer-events-none' : ''">
+          <input type="checkbox" class="sr-only" v-model="isPublic" :disabled="!projectId || !canShare" @change="onTogglePublic" />
+          <span>{{ isPublic ? 'Public' : 'Make Public' }}</span>
         </label>
         <NuxtLink v-if="shareToken" :to="sharePath" class="text-sm underline">Share link</NuxtLink>
       </div>
@@ -82,14 +83,26 @@
       <div class="grid md:grid-cols-2 gap-6 mt-4">
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5">
           <div class="text-sm opacity-80 mb-2">Source (scaled)</div>
-          <div class="aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
+          <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="srcCanvas" class="max-w-full"></canvas>
+            <div v-if="!imgReady" class="absolute inset-0 grid place-items-center text-white/70">
+              <div class="text-center">
+                <div class="mx-auto mb-2 h-16 w-16 rounded-full bg-white/10 ring-1 ring-white/20"></div>
+                <div class="text-sm">Upload an image to begin.</div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5">
           <div class="text-sm opacity-80 mb-2">LEGO-mapped Output</div>
-          <div class="aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
+          <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="outCanvas" class="max-w-full"></canvas>
+            <div v-if="!outReady" class="absolute inset-0 grid place-items-center text-white/70">
+              <div class="text-center">
+                <div class="mx-auto mb-2 h-16 w-16 rounded-full bg-white/10 ring-1 ring-white/20"></div>
+                <div class="text-sm">Upload an image to begin.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

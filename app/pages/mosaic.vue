@@ -17,13 +17,13 @@ import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { useToasts } from '@/composables/useToasts'
+import EmptyMosaicPlaceholder from '@/components/ui/EmptyMosaicPlaceholder.vue'
 import { imageBitmapToBuffer } from '@/utils/image-to-buffer'
 import { copy } from '@/lib/copy'
 import StepBadge from '@/components/StepBadge.vue'
 import InfoTip from '@/components/InfoTip.vue'
 import InlineStats from '@/components/InlineStats.vue'
 import { downloadPartsListCsvSimple } from '@/lib/exporters'
-import { useStepTracker } from '@/composables/useStepTracker'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 
 const mosaic = useMosaicStore()
@@ -36,8 +36,16 @@ const stepsGuide = [
   { id: 'step-3', title: 'Build guide' },
   { id: 'step-4', title: 'Buy parts' },
 ]
-const currentStep = ref<string>(stepsGuide[0].id)
-useStepTracker(stepsGuide.map(s => s.id), (id) => { currentStep.value = id })
+// Gate highlighting: only advance after prerequisites are met
+const guideGenerated = ref(false)
+const activeStepIndex = computed(() => {
+  // 0: Upload photo; 1: Tune mosaic; 2: Build guide; 3: Buy parts
+  if (!grid.value) return 0
+  // after image processed, allow Step 2
+  if (!guideGenerated.value) return 1
+  // once a guide has been generated in this session, allow Step 3 and Step 4
+  return 3
+})
 // Track hydration completion to suppress initial toasts
 const didMount = ref(false)
 
@@ -306,11 +314,11 @@ async function onDownloadPdf(){
       a.remove()
       URL.revokeObjectURL(url)
     }
-    showToast('Build guide ready.', 'success', 2500)
+    showToast('Your PDF is ready!', 'success', 2500)
+    guideGenerated.value = true
   } catch (err: any) {
     console.error('[BuildGuide] generation failed:', err)
-    const msg = (err?.message ?? err?.toString?.() ?? 'Unknown error').toString().slice(0, 180)
-    showToast(`Failed to generate PDF: ${msg}`, 'error', 6000)
+    showToast('Something went wrong. Please try again.', 'error', 3000)
   } finally {
     dismissToast(toastId)
   }
@@ -319,13 +327,23 @@ function onDownloadCsv(){
   if (!mosaic.tilingResult) return
   type SimpleBomRow = { part: string; colorId: number; qty: number }
   const rows = mosaic.tilingResult.bom.map((r: SimpleBomRow) => ({ part: r.part, colorId: r.colorId, qty: r.qty }))
-  downloadPartsListCsvSimple(rows, mosaic.settings.topSurface || 'plates')
+  const id = showToast('Generating CSV…', 'info', 0)
+  try {
+    downloadPartsListCsvSimple(rows, mosaic.settings.topSurface || 'plates')
+    showToast('Your CSV is ready!', 'success', 2000)
+  } catch (e) {
+    console.error('[CSV] export failed', e)
+    showToast('Something went wrong. Please try again.', 'error', 3000)
+  } finally {
+    dismissToast(id)
+  }
 }
 
 function openBLDialog(){ showBL.value = true }
 function closeBLDialog(){ showBL.value = false }
 function onDownloadBrickLink(){
   if (!mosaic.tilingResult) return
+  const id = showToast('Generating BrickLink XML…', 'info', 0)
   try {
     // Map BOM to BrickLink generator input
     const rows = mosaic.tilingResult.bom.map((r: any) => {
@@ -337,12 +355,13 @@ function onDownloadBrickLink(){
     const remarks = blAddRemarks.value ? `Briko • Mosaic ${mosaic.width}×${mosaic.height}` : undefined
     const xml = generateBrickLinkWantedXML(rows, { condition: blCondition.value, remarks })
     downloadWantedXml(xml, `briko-wanted-list-${mosaic.settings.topSurface || 'plates'}-${Date.now()}.xml`)
-    try { showToast('BrickLink file ready. Upload it at Wanted → Upload.', 'success', 2000) } catch {}
+    try { showToast('Your BrickLink XML is ready!', 'success', 2000) } catch {}
   } catch (e: any) {
-    const msg = e?.message ? String(e.message) : 'Failed to generate BrickLink XML'
-    try { showToast(msg, 'error', 4000) } catch {}
+    console.error('[BrickLink] export failed', e)
+    try { showToast('Something went wrong. Please try again.', 'error', 3000) } catch {}
   } finally {
     closeBLDialog()
+    dismissToast(id)
   }
 }
 
@@ -490,7 +509,7 @@ watchDebounced(
     <p class="opacity-80">{{ copy.mosaic.subtitle }}</p>
     <nav aria-label="Quick guide" class="mt-2 flex items-center gap-4 flex-wrap">
       <a v-for="(s, i) in stepsGuide" :key="s.id" :href="'#' + s.id" class="flex items-center gap-2 group">
-        <StepBadge :n="i+1" :active="currentStep===s.id" />
+        <StepBadge :n="i+1" :active="i <= activeStepIndex" />
         <span class="text-sm text-white/60 group-hover:text-white transition">{{ s.title }}</span>
       </a>
     </nav>
@@ -509,7 +528,7 @@ watchDebounced(
           <!-- Step 1: Upload -->
           <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
             <div class="flex items-center gap-3 mb-1">
-              <StepBadge :n="1" size="lg" :active="currentStep===stepsGuide[0].id" />
+              <StepBadge :n="1" size="lg" :active="activeStepIndex >= 0" />
               <h2 class="text-base font-semibold">Upload your photo</h2>
             </div>
           </section>
@@ -522,7 +541,7 @@ watchDebounced(
           <!-- Step 2: Tune mosaic -->
           <section :id="stepsGuide[1].id" class="scroll-mt-28 pt-6">
             <div class="flex items-center gap-3 mb-1">
-              <StepBadge :n="2" size="lg" :active="currentStep===stepsGuide[1].id" />
+              <StepBadge :n="2" size="lg" :active="activeStepIndex >= 1" />
               <h2 class="text-base font-semibold">Tune mosaic</h2>
             </div>
           </section>
@@ -664,7 +683,7 @@ watchDebounced(
           <!-- Step 4: Buy parts (BOM & exports) -->
           <section :id="stepsGuide[3].id" class="scroll-mt-28 pt-8">
             <div class="flex items-center gap-3 mb-3">
-              <StepBadge :n="4" size="lg" :active="currentStep===stepsGuide[3].id" />
+              <StepBadge :n="4" size="lg" :active="activeStepIndex >= 3" />
               <h2 class="text-base font-semibold">Buy parts</h2>
             </div>
           </section>
@@ -683,7 +702,7 @@ watchDebounced(
                   class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
-                  @click="mosaic.exportPNG"
+                  @click="onDownloadPng"
                 >
                   <svg viewBox="0 0 24 24" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M4 5h16v14H4z"/>
@@ -785,7 +804,7 @@ watchDebounced(
         <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 shadow-soft-card overflow-hidden">
           <!-- Unified header -->
           <div class="flex flex-wrap items-center gap-3 border-b border-white/10 px-5 py-3">
-            <StepBadge :n="3" :active="currentStep===stepsGuide[2].id" />
+            <StepBadge :n="3" :active="activeStepIndex >= 2" />
             <h3 class="text-white/90 font-semibold">Build guide</h3>
             <div class="ml-2 flex items-center gap-2 text-sm">
               <button :class="['px-3 py-1 rounded-md transition', tab==='2D' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5']" @click="tab='2D'">2D Mosaic</button>
@@ -967,7 +986,7 @@ watchDebounced(
           <img v-else-if="sourceImgUrl" :src="sourceImgUrl" alt="Uploaded" class="max-w-full max-h-full object-contain pointer-events-none select-none" />
 
           <!-- Fallback 2: empty state before any upload -->
-          <div v-else class="h-[480px] grid place-items-center text-sm text-white/70 opacity-80">Upload a photo to begin.</div>
+          <EmptyMosaicPlaceholder v-else />
           </div>
         </div>
         </div>
