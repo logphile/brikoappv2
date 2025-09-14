@@ -57,8 +57,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <!-- Secondary: See How It Works -->
         <NuxtLink
           to="/how-it-works"
-          class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-base font-semibold
-                 transition border border-[#00E5A0] text-[#00E5A0] hover:bg-[#00E5A0]/10"
+          class="inline-flex items-center justify-center btn-outline-mint"
           aria-label="See how Briko works"
         >
           See How It Works
