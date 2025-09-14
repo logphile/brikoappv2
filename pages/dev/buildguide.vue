@@ -139,7 +139,7 @@ async function debugBuildGuideSelfTest() {
       {{ busy ? 'Generating…' : 'Generate Sample Build Guide' }}
     </button>
     <button
-      class="ml-3 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-sm"
+      class="ml-3 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm"
       :disabled="busy"
       @click="debugBuildGuideSelfTest"
     >

@@ -80,7 +80,7 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
     <div class="mt-2">
       <button
         type="button"
-        class="px-3 py-2 rounded-md bg-white/10 hover:bg-white/15 text-sm font-medium
+        class="px-3 py-2 rounded-md bg-white/10 hover:bg-white/20 text-sm font-medium
                transition disabled:opacity-50 disabled:pointer-events-none"
         :disabled="disabled"
         @click="onBrowse"
