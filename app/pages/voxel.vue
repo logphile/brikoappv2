@@ -4,6 +4,7 @@ import { useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import UploadBox from '@/components/ui/UploadBox.vue'
+import Empty3DPlaceholder from '@/components/ui/Empty3DPlaceholder.vue'
 import { useMosaicStore } from '@/stores/mosaic'
 // PNG export now uses the child component's exportPng() method via ref
 // import { exportLayersPdf } from '@/lib/printPdf' // not used by One-click PDF anymore
@@ -277,7 +278,7 @@ onMounted(async () => {
         <VoxelPreview v-if="vox || debug3d" :vox="vox ?? emptyVox"
           :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef"
           @unique-colors="(n:number)=> instUniqueColors = n" @exporting="onExporting" />
-        <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
+        <Empty3DPlaceholder v-else />
         <!-- Palette swatch bar -->
         <div v-if="vox && paletteUsed.length" class="px-2 pb-2">
           <div class="flex items-center gap-3 flex-wrap">

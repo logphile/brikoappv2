@@ -786,43 +786,50 @@ function downloadBlob(blob: Blob, filename: string) {
 // Export the live WebGL canvas as a PNG.
 // scale: 1=screen res, 2=retina-ish; bg overrides the clear color if provided.
 async function exportPng(filename = 'briko-voxel.png', scale = 1, bg?: string) {
-  if (!renderer || !scene || !camera) {
-    console.error('[PNG] renderer/scene/camera missing'); return
-  }
+  const id = toast.loading('Generating PNG…')
+  try {
+    if (!renderer || !scene || !camera) {
+      throw new Error('renderer/scene/camera missing')
+    }
 
-  // 1) temporarily bump pixel ratio for sharper export (optional)
-  const oldPR = renderer.getPixelRatio()
-  if (scale !== 1) renderer.setPixelRatio(oldPR * scale)
+    // 1) temporarily bump pixel ratio for sharper export (optional)
+    const oldPR = renderer.getPixelRatio()
+    if (scale !== 1) renderer.setPixelRatio(oldPR * scale)
 
-  // 2) optional background override (avoid transparent PNGs)
-  let oldColor: any, oldAlpha!: number
-  if (bg) {
-    oldColor = renderer.getClearColor(new THREE.Color())
-    oldAlpha = renderer.getClearAlpha()
-    renderer.setClearColor(new THREE.Color(bg), 1)
-    renderer.setClearAlpha(1)
-  }
+    // 2) optional background override (avoid transparent PNGs)
+    let oldColor: any, oldAlpha!: number
+    if (bg) {
+      oldColor = renderer.getClearColor(new THREE.Color())
+      oldAlpha = renderer.getClearAlpha()
+      renderer.setClearColor(new THREE.Color(bg), 1)
+      renderer.setClearAlpha(1)
+    }
 
-  // 3) render one fresh frame then flush
-  renderer.render(scene, camera)
-  renderer.getContext().finish?.()
-  await new Promise(requestAnimationFrame)
+    // 3) render one fresh frame then flush
+    renderer.render(scene, camera)
+    renderer.getContext().finish?.()
+    await new Promise(requestAnimationFrame)
 
-  // 4) read pixels as PNG
-  const canvas = renderer.domElement
-  await new Promise<void>((resolve, reject) => {
-    canvas.toBlob((blob: Blob | null) => {
-      if (!blob) return reject(new Error('toBlob returned null'))
-      downloadBlob(blob, filename)
-      resolve()
-    }, 'image/png')
-  })
+    // 4) read pixels as PNG
+    const canvas = renderer.domElement
+    await new Promise<void>((resolve, reject) => {
+      canvas.toBlob((blob: Blob | null) => {
+        if (!blob) return reject(new Error('toBlob returned null'))
+        downloadBlob(blob, filename)
+        resolve()
+      }, 'image/png')
+    })
 
-  // 5) restore state
-  if (scale !== 1) renderer.setPixelRatio(oldPR)
-  if (bg) {
-    renderer.setClearColor(oldColor, oldAlpha)
-    renderer.setClearAlpha(oldAlpha)
+    // 5) restore state
+    if (scale !== 1) renderer.setPixelRatio(oldPR)
+    if (bg) {
+      renderer.setClearColor(oldColor, oldAlpha)
+      renderer.setClearAlpha(oldAlpha)
+    }
+    toast.success('Your PNG is ready!', { id })
+  } catch (e) {
+    console.error('[PNG] export failed:', e)
+    toast.error('Something went wrong. Please try again.', { id })
   }
 }
 
@@ -860,10 +867,10 @@ async function exportPdf() {
     const bom = computeBomFromVox(props.vox)
     const meta = { mode: String(props.mode ?? 'Layered Mosaic'), size: `${props.vox.w}×${props.vox.h}×${props.vox.depth}` }
     await exportBuildPdf({ canvas: canvasEl, bom, meta, filename: 'briko-build.pdf' })
-    toast.success('PDF ready — check your downloads', { id })
+    toast.success('Your PDF is ready!', { id })
   } catch (e) {
     console.error('[PDF] export failed:', e)
-    toast.error('PDF failed — please try again', { id })
+    toast.error('Something went wrong. Please try again.', { id })
   } finally {
     exportingPdf.value = false
     emit('exporting', false)
