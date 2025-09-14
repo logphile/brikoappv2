@@ -1,5 +1,5 @@
 <template>
-  <div ref="host" class="w-full h-[480px] rounded-2xl bg-black/30 ring-1 ring-white/10 overflow-hidden"></div>
+  <div ref="host" class="w-full h-[480px] rounded-2xl bg-black/30 ring-1 ring-white/10 overflow-hidden animate-fade-in-up"></div>
 </template>
 
 <script setup lang="ts">

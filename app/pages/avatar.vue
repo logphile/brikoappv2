@@ -119,6 +119,7 @@ import { downloadPng } from '@/lib/exporters'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
 import UploadBox from '@/components/ui/UploadBox.vue'
+import PaletteSwatches from '@/components/ui/PaletteSwatches.vue'
 
 const { show } = useToasts()
 
