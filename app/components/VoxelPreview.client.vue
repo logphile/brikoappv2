@@ -9,9 +9,10 @@ import { AxesGizmo } from '@/lib/AxesGizmo'
 import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 import { VoxelViewer } from '@/components/three/VoxelViewer'
 import { exportBuildPdf } from '@/utils/exportBuildPdf'
+import { toast } from 'vue-sonner'
 
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean }, debug3d?: boolean }>()
-const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void }>()
+const emit = defineEmits<{ (e:'layer-change', k:number): void; (e:'unique-colors', n:number): void; (e:'exporting', b:boolean): void }>()
 
 const host = ref<HTMLDivElement|null>(null)
 
@@ -784,23 +785,26 @@ function computeBomFromVox(v: { colors: Uint8Array }) {
 
 // Public method: build a quick PDF snapshot (called from page button or internal button)
 async function exportPdf() {
-  console.log('[PDF] click -> starting export')
-  if (!renderer || !(renderer as any).domElement) { console.error('[PDF] canvas missing'); return }
-  if (!props.vox) { console.error('[PDF] vox missing'); return }
+  const canvasEl = (renderer as any)?.domElement as HTMLCanvasElement | undefined
+  if (!canvasEl || !props.vox) {
+    toast.error('PDF failed — preview not ready')
+    console.error('[PDF] missing canvas or vox')
+    return
+  }
+  const id = toast.loading('Generating PDF…')
   try {
     exportingPdf.value = true
-    const canvas = (renderer as any).domElement as HTMLCanvasElement
+    emit('exporting', true)
     const bom = computeBomFromVox(props.vox)
-    const meta = {
-      mode: String(props.mode ?? 'Layered Mosaic'),
-      size: `${props.vox.w}×${props.vox.h}×${props.vox.depth}`,
-    }
-    await exportBuildPdf({ canvas, bom, meta, filename: 'briko-build.pdf' })
-    console.log('[PDF] save() called')
+    const meta = { mode: String(props.mode ?? 'Layered Mosaic'), size: `${props.vox.w}×${props.vox.h}×${props.vox.depth}` }
+    await exportBuildPdf({ canvas: canvasEl, bom, meta, filename: 'briko-build.pdf' })
+    toast.success('PDF ready — check your downloads', { id })
   } catch (e) {
     console.error('[PDF] export failed:', e)
+    toast.error('PDF failed — please try again', { id })
   } finally {
     exportingPdf.value = false
+    emit('exporting', false)
   }
 }
 // (exportPdf is exposed above in the primary defineExpose)

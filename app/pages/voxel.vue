@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount, onMounted } from 'vue'
+import { ref, watch, onBeforeUnmount, onMounted, computed } from 'vue'
 import { useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
@@ -13,7 +13,7 @@ import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
-import { computed } from 'vue'
+// (computed imported above)
 import { LEGO_PALETTE } from '@/lib/legoPalette'
 
 const vox = ref<VoxelGrid | null>(null)
@@ -24,6 +24,8 @@ const mode = ref<'layered'|'relief'|'hollow'>('layered')
 const exposure = ref(1.1)
 const debug = ref<{ useBasicMaterial: boolean; paintRainbow12: boolean; wireframe: boolean; hideMesh?: boolean; showBounds?: boolean }>({ useBasicMaterial: false, paintRainbow12: false, wireframe: false, hideMesh: false, showBounds: false })
 const previewRef = ref<any>(null)
+const pdfWorking = ref(false)
+function onExporting(b:boolean){ pdfWorking.value = b }
 const mosaic = useMosaicStore()
 const srcBitmap = ref<ImageBitmap | null>(null)
 const voxelTask = createWorkerTask<VoxelWorkerOut>(() => import('@/workers/voxel.worker?worker').then((m:any) => new m.default()))
@@ -274,7 +276,7 @@ onMounted(async () => {
         </div>
         <VoxelPreview v-if="vox || debug3d" :vox="vox ?? emptyVox"
           :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef"
-          @unique-colors="(n:number)=> instUniqueColors = n" />
+          @unique-colors="(n:number)=> instUniqueColors = n" @exporting="onExporting" />
         <div v-else class="h-[480px] grid place-items-center opacity-60">Upload an image to begin</div>
         <!-- Palette swatch bar -->
         <div v-if="vox && paletteUsed.length" class="px-2 pb-2">
@@ -288,7 +290,10 @@ onMounted(async () => {
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
           <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
-          <button id="one-click-pdf" type="button" class="btn-mint px-4 rounded-xl" :disabled="!vox" @click.stop.prevent="previewRef?.exportPdf?.()">One-click PDF</button>
+          <button id="one-click-pdf" type="button" class="btn-mint px-4 rounded-xl" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
+            <span v-if="!pdfWorking">One-click PDF</span>
+            <span v-else>Generating…</span>
+          </button>
         </div>
         <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
