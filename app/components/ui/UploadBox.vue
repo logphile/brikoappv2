@@ -70,7 +70,7 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
 
 <template>
   <div
-    class="rounded-xl border border-white/10 bg-white/3 backdrop-blur p-4 sm:p-5
+    class="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4 sm:p-5
            transition ring-0 focus-within:ring-2 ring-emerald-400/60"
     :class="over ? 'border-emerald-400/60 bg-emerald-400/5' : ''"
     @dragover="onOver" @dragleave="onLeave" @drop="onDrop"

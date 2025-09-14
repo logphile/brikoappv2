@@ -6,8 +6,8 @@
         <p class="opacity-80 text-sm">Explore public builds and remixes from the Briko community.</p>
       </div>
       <div class="flex gap-2">
-        <NuxtLink to="/login" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20">Log in to create your own Studio</NuxtLink>
-        <NuxtLink to="/projects" class="px-4 py-2 rounded-xl border border-white/20 hover:border-white/40">Your Projects</NuxtLink>
+        <NuxtLink to="/login" class="btn btn-ghost">Log in to create your own Studio</NuxtLink>
+        <NuxtLink to="/projects" class="btn btn-ghost">Your Projects</NuxtLink>
       </div>
     </header>
 
@@ -15,7 +15,7 @@
       <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5">
         <h2 class="font-semibold">Jump into the gallery</h2>
         <p class="opacity-80 text-sm mt-1">See trending and new creations, like and remix your favorites.</p>
-        <NuxtLink to="/gallery" class="inline-block mt-4 px-4 py-2 rounded-xl bg-cta-grad">Open Community Gallery</NuxtLink>
+        <NuxtLink to="/gallery" class="btn btn-primary mt-4">Open Community Gallery</NuxtLink>
       </div>
     </section>
   </main>
