@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import { useMosaicStore } from '@/stores/mosaic'
-import { downloadPng } from '@/lib/exporters'
+// PNG export now uses the child component's exportPng() method via ref
 // import { exportLayersPdf } from '@/lib/printPdf' // not used by One-click PDF anymore
 import type { VoxelGrid, VoxelWorkerOut } from '@/types/voxel'
 import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
@@ -132,7 +132,7 @@ async function onFile(file: File) {
   }
 }
 
-function exportPng(){ downloadPng('briko-voxel.png') }
+function exportPng(){ previewRef.value?.exportPng?.('briko-voxel.png', 2, '#0f1422') }
 async function uploadPreview(){ await mosaic.uploadPreview() }
 
 // Previous multi-layer PDF export function removed in favor of client-only single-page exporter

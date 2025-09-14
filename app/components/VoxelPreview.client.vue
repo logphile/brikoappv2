@@ -240,9 +240,16 @@ function build () {
   const DBG = !!props.debug3d || DEBUG
 
   // Renderer
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true,
+    preserveDrawingBuffer: true,
+  })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.outputColorSpace = (THREE as any).SRGBColorSpace
+  // Ensure a non-transparent clear so PNG exports aren't invisible
+  renderer.setClearColor(new THREE.Color('#0f1422'), 1)
+  renderer.setClearAlpha(1)
   // Force a known-good render path: Basic + NoToneMapping
   renderer.toneMapping = (THREE as any).NoToneMapping
   renderer.toneMappingExposure = 1.0
@@ -256,7 +263,8 @@ function build () {
 
   // Scene + Camera
   scene = new THREE.Scene()
-  scene.background = new THREE.Color(0x0f1220)
+  // Use renderer clear color for background to allow temporary overrides during export
+  scene.background = null
   camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000)
   // Z-up world: ensure camera up vector matches to avoid odd rotations
   ;(camera as any).up.set(0, 0, 1)
@@ -764,7 +772,61 @@ function ensureClipping() {
   renderer.clippingPlanes = [plane]
   return true
 }
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null), exportPdf })
+// Download helper
+function downloadBlob(blob: Blob, filename: string) {
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+  a.remove()
+}
+
+// Export the live WebGL canvas as a PNG.
+// scale: 1=screen res, 2=retina-ish; bg overrides the clear color if provided.
+async function exportPng(filename = 'briko-voxel.png', scale = 1, bg?: string) {
+  if (!renderer || !scene || !camera) {
+    console.error('[PNG] renderer/scene/camera missing'); return
+  }
+
+  // 1) temporarily bump pixel ratio for sharper export (optional)
+  const oldPR = renderer.getPixelRatio()
+  if (scale !== 1) renderer.setPixelRatio(oldPR * scale)
+
+  // 2) optional background override (avoid transparent PNGs)
+  let oldColor: any, oldAlpha!: number
+  if (bg) {
+    oldColor = renderer.getClearColor(new THREE.Color())
+    oldAlpha = renderer.getClearAlpha()
+    renderer.setClearColor(new THREE.Color(bg), 1)
+    renderer.setClearAlpha(1)
+  }
+
+  // 3) render one fresh frame then flush
+  renderer.render(scene, camera)
+  renderer.getContext().finish?.()
+  await new Promise(requestAnimationFrame)
+
+  // 4) read pixels as PNG
+  const canvas = renderer.domElement
+  await new Promise<void>((resolve, reject) => {
+    canvas.toBlob((blob: Blob | null) => {
+      if (!blob) return reject(new Error('toBlob returned null'))
+      downloadBlob(blob, filename)
+      resolve()
+    }, 'image/png')
+  })
+
+  // 5) restore state
+  if (scale !== 1) renderer.setPixelRatio(oldPR)
+  if (bg) {
+    renderer.setClearColor(oldColor, oldAlpha)
+    renderer.setClearAlpha(oldAlpha)
+  }
+}
+
+defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null), exportPdf, exportPng })
 // Compute a simple BOM directly from the voxel buffer using LEGO_PALETTE
 function computeBomFromVox(v: { colors: Uint8Array }) {
   const counts = new Map<number, number>()
