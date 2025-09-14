@@ -26,10 +26,13 @@
 
     <section class="mt-6 space-y-4">
       <div class="flex flex-wrap items-end gap-4 text-sm">
-        <label class="block">
-          <span class="block">Select image</span>
-          <input ref="fileEl" type="file" accept="image/*" class="mt-1 block w-64 text-white" @change="onFileChange" />
-        </label>
+        <!-- New unified uploader -->
+        <UploadBox
+          :maxSizeMB="25"
+          accept="image/*"
+          @file="handleSelfieFile"
+          @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }"
+        />
 
         <label class="block">
           <span class="block">Target size (studs)</span>
@@ -105,6 +108,7 @@ import { mapBitmapToPalette } from '@/lib/color-distance'
 import { downloadPng } from '@/lib/exporters'
 import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
+import UploadBox from '@/components/ui/UploadBox.vue'
 
 const { show } = useToasts()
 
@@ -154,7 +158,6 @@ const canShare = computed(() => !!$supabase)
 const sharePath = computed(() => shareToken.value ? `/s/${shareToken.value}` : '')
 
 // DOM refs
-const fileEl = ref<HTMLInputElement | null>(null)
 const srcCanvas = ref<HTMLCanvasElement | null>(null)
 const outCanvas = ref<HTMLCanvasElement | null>(null)
 
@@ -197,16 +200,17 @@ function drawToCanvas(bitmap: ImageBitmap, cvs: HTMLCanvasElement, target: numbe
   ctx.drawImage(bitmap, 0, 0, w, h)
 }
 
-function onFileChange(ev: Event) {
-  const input = ev.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-  createImageBitmap(file).then((bmp) => {
+async function handleSelfieFile(file: File) {
+  try {
+    const bmp = await createImageBitmap(file)
     srcBitmap = bmp
     imgReady.value = true
     if (srcCanvas.value) drawToCanvas(bmp, srcCanvas.value, size.value)
     outReady.value = false
-  }).catch((e) => { console.error(e); try { show('Failed to read image', 'error') } catch {} })
+  } catch (e) {
+    console.error(e)
+    try { show('Failed to read image', 'error') } catch {}
+  }
 }
 
 // Render helpers
