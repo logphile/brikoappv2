@@ -13,9 +13,13 @@
         ]"
       >
         <div class="mt-0.5">
-          <span v-if="t.type==='success'">✅</span>
-          <span v-else-if="t.type==='error'">⚠️</span>
-          <span v-else>ℹ️</span>
+          <span v-if="t.type==='success'" class="toast-icon success" aria-hidden="true">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </span>
+          <span v-else-if="t.type==='error'" aria-hidden="true">⚠️</span>
+          <span v-else aria-hidden="true">ℹ️</span>
         </div>
         <div class="grow">{{ t.message }}</div>
         <button class="opacity-70 hover:opacity-100" @click="dismiss(t.id)">✕</button>
@@ -33,6 +37,16 @@ const { toasts, dismiss } = useToasts()
 .toast-enter-active, .toast-leave-active { transition: all .2s ease; }
 .toast-enter-from { opacity: 0; transform: translateY(-8px); }
 .toast-leave-to { opacity: 0; transform: translateY(-8px); }
+
+/* Success icon micro-animation */
+.toast-icon.success { display: inline-flex; animation: toast-pop .22s ease-out both; }
+.toast-icon.success svg path {
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  animation: toast-draw .38s ease-out .06s forwards;
+}
+@keyframes toast-pop { from { transform: scale(.85); opacity: .7 } to { transform: scale(1); opacity: 1 } }
+@keyframes toast-draw { to { stroke-dashoffset: 0 } }
 
 @media (max-width: 640px) {
   .toast-viewport {

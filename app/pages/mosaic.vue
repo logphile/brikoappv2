@@ -863,7 +863,7 @@ watchDebounced(
                         enter-active-class="transition ease-out duration-300"
                         enter-from-class="opacity-0 translate-y-1"
                         enter-to-class="opacity-100 translate-y-0">
-              <div :key="tab">
+              <div :key="tab" class="animate-fade-in-up">
                 <template v-if="tab==='2D'">
                   <MosaicCanvas
                     :data="grid"
@@ -879,7 +879,9 @@ watchDebounced(
                 </template>
                 <template v-else>
                   <ClientOnly>
-                    <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1" :surface="(mosaic.settings.topSurface || 'plates') as any"/>
+                    <div class="animate-fade-in-up">
+                      <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1" :surface="(mosaic.settings.topSurface || 'plates') as any"/>
+                    </div>
                   </ClientOnly>
                   <div class="mt-3">
                     <LayerSlider :maxLayers="mosaic.height || 1" :visibleLayers="mosaic.visibleLayers" @update:visibleLayers="mosaic.setVisibleLayers" :title="copy.builder3d.controls.layerSliderHelp"/>
