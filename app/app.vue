@@ -9,6 +9,8 @@
     <AppFooter />
     <ToastHost />
     <ConsentBanner />
+    <!-- vue-sonner toaster host -->
+    <Toaster position="bottom-right" expand rich-colors theme="dark" :duration="2500" />
   </div>
 </template>
 
@@ -19,6 +21,7 @@ import AppFooter from '@/components/AppFooter.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
 import ConsentBanner from '@/components/ConsentBanner.vue'
 import { useSiteMeta } from '@/composables/useSiteMeta'
+import { Toaster } from 'vue-sonner'
 
 const { siteName, siteUrl } = useSiteMeta()
 // Inject the Cloudflare Web Analytics beacon during SSR/SSG so it appears in View-Source
