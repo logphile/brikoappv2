@@ -51,13 +51,10 @@
           <span>Stud style</span>
         </label>
 
-        <label class="block">
+        <div class="block">
           <span class="block">Palette</span>
-          <select v-model="paletteName" class="select-mint mt-2">
-            <option value="lego32">LEGO 32 (default)</option>
-            <option value="lego16">LEGO 16 (portrait)</option>
-          </select>
-        </label>
+          <PaletteSwatches v-model="paletteName" class="mt-2" />
+        </div>
 
         <label class="block">
           <span class="block">Background</span>
@@ -81,7 +78,7 @@
       </div>
 
       <div class="grid md:grid-cols-2 gap-6 mt-4">
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5">
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5 animate-fade-in-up">
           <div class="text-sm opacity-80 mb-2">Source (scaled)</div>
           <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="srcCanvas" class="max-w-full"></canvas>
@@ -93,7 +90,7 @@
             </div>
           </div>
         </div>
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5">
+        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5 animate-fade-in-up">
           <div class="text-sm opacity-80 mb-2">LEGO-mapped Output</div>
           <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="outCanvas" class="max-w-full"></canvas>

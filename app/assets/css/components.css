@@ -2,7 +2,7 @@
 .btn {
   @apply inline-flex items-center justify-center gap-2
          px-4 py-2 rounded-lg font-medium
-         transition duration-200 ease-out select-none
+         transition duration-200 ease-out select-none transform-gpu active:scale-95
          focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/70
          disabled:opacity-50 disabled:pointer-events-none;
 }
@@ -11,7 +11,7 @@
   /* Briko primary (emerald → cyan) */
   /* Phase 2: switch to brand mint gradient */
   @apply text-slate-900 bg-gradient-to-r from-mint to-mintLight
-         hover:from-mintLight hover:to-mint
+         hover:from-mintLight hover:to-mint hover:shadow-mint-glow
          active:from-mint active:to-mintLight
          shadow-mint-glow;
 }
@@ -29,7 +29,7 @@
   @apply inline-flex items-center justify-center gap-2
          px-4 py-2 rounded-lg font-medium
          border border-mint/50 text-mint bg-transparent
-         hover:bg-mint/10 hover:text-white hover:shadow-mint-glow
+         hover:bg-mint/10 hover:text-white hover:shadow-mint-glow active:scale-95 transform-gpu
          transition duration-200 ease-out
          focus:outline-none focus-visible:ring-2 focus-visible:ring-mint/50
          disabled:opacity-50 disabled:pointer-events-none;
@@ -38,7 +38,7 @@
 .btn-soft {
   @apply inline-flex items-center justify-center gap-2
          px-4 py-2 rounded-lg font-medium
-         bg-white/10 text-white hover:bg-white/20
+         bg-white/10 text-white hover:bg-white/20 active:scale-95 transform-gpu
          transition duration-200 ease-out
          focus:outline-none focus-visible:ring-2 focus-visible:ring-white/20
          disabled:opacity-50 disabled:pointer-events-none;
@@ -76,3 +76,10 @@ input[type="range"].range-mint::-moz-range-thumb {
 }
 input[type="range"].range-mint::-webkit-slider-runnable-track { height: 2px; }
 input[type="range"].range-mint::-moz-range-track { height: 2px; background: transparent; }
+
+/* Simple appear animation (fade + slight up) */
+.animate-fade-in-up { animation: briko-fade-in-up .35s ease-out both; }
+@keyframes briko-fade-in-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

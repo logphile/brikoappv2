@@ -882,7 +882,7 @@ async function exportPdf() {
 <template>
   <div>
     <div class="relative">
-      <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20"></div>
+      <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20 animate-fade-in-up"></div>
       <!-- Debug overlay -->
       <div class="absolute left-2 top-2 text-xs px-2 py-1 rounded bg-black/55 text-white/95 ring-1 ring-white/10">
         <div><span class="opacity-70">Mode:</span>
