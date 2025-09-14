@@ -339,6 +339,20 @@ function onDownloadCsv(){
   }
 }
 
+function onDownloadPng(){
+  if (!mosaic.canExport) return
+  const id = showToast('Generating PNG…', 'info', 0)
+  try {
+    ;(mosaic as any).exportPNG?.()
+    showToast('Your PNG is ready!', 'success', 2000)
+  } catch (e) {
+    console.error('[PNG] export failed', e)
+    showToast('Something went wrong. Please try again.', 'error', 3000)
+  } finally {
+    dismissToast(id)
+  }
+}
+
 function openBLDialog(){ showBL.value = true }
 function closeBLDialog(){ showBL.value = false }
 function onDownloadBrickLink(){
@@ -524,7 +538,7 @@ watchDebounced(
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
-        <div class="z-0 rounded-2xl bg-white/5 backdrop-blur border border-white/10 p-5 shadow-soft-card transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
+        <div class="z-0 card-glass p-5 transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
           <!-- Step 1: Upload -->
           <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
             <div class="flex items-center gap-3 mb-1">
@@ -671,8 +685,8 @@ watchDebounced(
           <div class="h-px bg-white/5 my-3"></div>
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
-            <button class="rounded-2xl border border-white/10 px-4 py-2 text-white/80 hover:border-mint/40 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
+            <button class="btn-outline-mint w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
+            <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
           </div>
         </div>
             </Transition>
@@ -687,7 +701,7 @@ watchDebounced(
               <h2 class="text-base font-semibold">Buy parts</h2>
             </div>
           </section>
-          <div v-if="mosaic.tilingResult" class="relative z-10 rounded-2xl bg-white/5 border border-white/10 p-5 shadow-soft-card">
+          <div v-if="mosaic.tilingResult" class="relative z-10 card-glass p-5">
             <!-- Header -->
             <header class="px-4 pt-4 space-y-3">
               <!-- Row 1: title + cost -->
@@ -699,7 +713,7 @@ watchDebounced(
               <!-- Row 2: export buttons -->
               <div class="flex flex-wrap gap-2">
                 <button
-                  class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                  class="btn-mint h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
                   @click="onDownloadPng"
@@ -712,7 +726,7 @@ watchDebounced(
                 </button>
 
                 <button
-                  class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                  class="btn-mint h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
                   @click="onDownloadPdf"
@@ -801,7 +815,7 @@ watchDebounced(
       <!-- Step 3: Build guide (preview + export) -->
       <section :id="stepsGuide[2].id" class="scroll-mt-28">
         <ClientOnly>
-        <div class="rounded-2xl bg-white/5 backdrop-blur border border-white/10 shadow-soft-card overflow-hidden">
+        <div class="card-glass overflow-hidden">
           <!-- Unified header -->
           <div class="flex flex-wrap items-center gap-3 border-b border-white/10 px-5 py-3">
             <StepBadge :n="3" :active="activeStepIndex >= 2" />

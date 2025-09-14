@@ -205,19 +205,19 @@ onMounted(async () => {
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
       <section class="space-y-4">
         <UploadBox :maxSizeMB="25" accept="image/*" @file="onFile" @error="(msg) => console.warn(msg)" />
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <div class="card-glass p-4">
           <label class="block text-sm">Resolution</label>
           <select v-model.number="size" class="select-mint">
             <option :value="32">32³</option>
             <option :value="64">64³</option>
           </select>
         </div>
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <div class="card-glass p-4">
           <label class="block text-sm mb-1">Brightness</label>
           <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full range-mint" />
-          <div class="text-xs opacity-70 mt-1">{{ exposure.toFixed(1) }}×</div>
+          <div class="text-xs text-white/60 mt-1">{{ exposure.toFixed(1) }}×</div>
         </div>
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <div class="card-glass p-4">
           <label class="block text-sm mb-1">3D mode</label>
           <select v-model="mode" class="select-mint w-full">
             <option value="layered">Layered Mosaic (default)</option>
@@ -227,7 +227,7 @@ onMounted(async () => {
           <p class="text-xs opacity-70 mt-1">{{ modeHelp }}</p>
         </div>
         <!-- Debug (dev or via ?debug3d) -->
-        <div v-if="showDebug" class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <div v-if="showDebug" class="card-glass p-4">
           <label class="block text-sm mb-1">Debug</label>
           <div class="flex flex-col gap-1 text-sm">
             <label class="inline-flex items-center gap-2">
@@ -256,7 +256,7 @@ onMounted(async () => {
           </div>
           <p class="text-xs opacity-60 mt-1">Helps verify instanceColor path and lighting/tone mapping.</p>
         </div>
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
+        <div class="card-glass p-4">
           <label class="block text-sm mb-1">View</label>
           <div class="flex gap-2">
             <button class="btn-soft h-9 px-3 rounded-md" @click="toFront">Front</button>
@@ -266,7 +266,7 @@ onMounted(async () => {
         </div>
         <p v-if="vox" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
-      <section class="lg:col-span-2 rounded-2xl bg-white/5 ring-1 ring-white/10 p-2">
+      <section class="lg:col-span-2 card-glass p-2">
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
           <div class="w-2/3 max-w-md text-center space-y-3">
             <div>Processing… <span v-if="progress">{{ progress }}%</span></div>
@@ -289,8 +289,8 @@ onMounted(async () => {
           </div>
         </div>
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
-          <button class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" @click="exportPng">Export PNG</button>
-          <button class="px-4 py-2 rounded-xl bg-white/10 disabled:opacity-40 hover:bg-white/20 disabled:hover:bg-white/10" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
+          <button class="btn btn-primary px-4 rounded-xl" @click="exportPng">Export PNG</button>
+          <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
           <button id="one-click-pdf" type="button" class="btn-mint px-4 rounded-xl" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
             <span v-if="!pdfWorking">One-click PDF</span>
             <span v-else>Generating…</span>
