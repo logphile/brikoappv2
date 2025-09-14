@@ -3,7 +3,7 @@ import { ref, watch, onBeforeUnmount, onMounted, computed } from 'vue'
 import { useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
-import MosaicUploader from '@/components/MosaicUploader.client.vue'
+import UploadBox from '@/components/ui/UploadBox.vue'
 import { useMosaicStore } from '@/stores/mosaic'
 // PNG export now uses the child component's exportPng() method via ref
 // import { exportLayersPdf } from '@/lib/printPdf' // not used by One-click PDF anymore
@@ -203,7 +203,7 @@ onMounted(async () => {
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
       <section class="space-y-4">
-        <MosaicUploader @file="onFile" />
+        <UploadBox :maxSizeMB="25" accept="image/*" @file="onFile" @error="(msg) => console.warn(msg)" />
         <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
           <label class="block text-sm">Resolution</label>
           <select v-model.number="size" class="select-mint">
