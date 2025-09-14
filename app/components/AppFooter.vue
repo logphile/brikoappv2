@@ -3,12 +3,18 @@
     <!-- Mint gradient hairline -->
     <div class="h-px w-full bg-gradient-to-r from-transparent via-mint/40 to-transparent"></div>
 
-    <div class="bg-ink/90">
-      <div class="mx-auto max-w-7xl px-4 lg:px-6 py-8">
+    <div class="relative bg-ink/90">
+      <!-- subtle studs motif background -->
+      <div class="pointer-events-none absolute inset-0 opacity-[0.08]" style="background-image:url('/patterns/studs.svg'); background-size: 320px; background-repeat: repeat;"></div>
+
+      <div class="relative z-10 mx-auto max-w-7xl px-4 lg:px-6 py-8">
         <!-- Top row -->
         <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <!-- Utility links -->
           <nav class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-white/70">
+            <NuxtLink to="/how-it-works" class="footer-link">Docs</NuxtLink>
+            <a href="#" class="footer-link" title="Blog (coming soon)">Blog</a>
+            <a href="mailto:hello@briko.app" class="footer-link">Contact</a>
             <NuxtLink to="/privacy" class="footer-link">Privacy</NuxtLink>
             <NuxtLink to="/legal#terms" class="footer-link">Terms</NuxtLink>
             <a href="/sitemap.xml" class="footer-link">Sitemap</a>

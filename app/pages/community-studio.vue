@@ -1,18 +1,37 @@
 <template>
   <main class="mx-auto max-w-6xl px-6 py-10 text-white">
-    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div>
+    <!-- Hero with blurred preview thumbnails behind login gate -->
+    <section class="relative overflow-hidden rounded-2xl">
+      <div class="absolute inset-0">
+        <!-- Mosaic of sample images -->
+        <div class="grid grid-cols-3 gap-2 p-2 opacity-35 blur-2xl">
+          <img src="/slider-original.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img src="/slider-mosaic.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img src="/demo-original.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img src="/demo-mosaic.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img src="/lg-slider-original.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img src="/large-slider-mosaic.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+        </div>
+        <!-- Dark overlay -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70"></div>
+      </div>
+
+      <div class="relative z-10 px-6 py-10">
         <h1 class="text-2xl font-semibold">Community Studio</h1>
         <p class="opacity-80 text-sm">Explore public builds and remixes from the Briko community.</p>
-      </div>
-      <div class="flex gap-2">
-        <NuxtLink to="/login" class="btn btn-ghost">Log in to create your own Studio</NuxtLink>
-        <NuxtLink to="/projects" class="btn btn-ghost">Your Projects</NuxtLink>
-      </div>
-    </header>
+        <p class="mt-2 text-white/80 text-sm">See trending builds, remixes, and fan favorites.</p>
 
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <NuxtLink to="/gallery" class="btn-mint">Open Community Gallery</NuxtLink>
+          <NuxtLink to="/login" class="btn-outline-mint">Log in to create your Studio</NuxtLink>
+          <NuxtLink to="/projects" class="btn-ghost">Your Projects</NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card: quick gallery entry -->
     <section class="mt-8">
-      <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-5">
+      <div class="card-glass p-5">
         <h2 class="font-semibold">Jump into the gallery</h2>
         <p class="opacity-80 text-sm mt-1">See trending and new creations, like and remix your favorites.</p>
         <NuxtLink to="/gallery" class="btn btn-primary mt-4">Open Community Gallery</NuxtLink>

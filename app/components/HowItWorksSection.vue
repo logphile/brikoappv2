@@ -32,10 +32,13 @@ useIntersectionObserver(sentinel, ([entry]) => {
       </div>
 
       <!-- Stepper -->
-      <ol
-        class="mt-10 grid gap-4 sm:gap-5 md:grid-cols-4"
-        aria-label="Four steps to create your brick build"
-      >
+      <div class="relative mt-10">
+        <!-- Faint flow line left→right (desktop) -->
+        <div class="hidden md:block absolute top-1/2 left-0 right-0 h-px bg-white/10"></div>
+        <ol
+          class="relative grid gap-4 sm:gap-5 md:grid-cols-4 z-10"
+          aria-label="Four steps to create your brick build"
+        >
         <!-- Step (repeatable pattern) -->
         <Transition
           appear
@@ -45,7 +48,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         >
           <li class="group">
             <div
-              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-[#00E5A0]/[0.05]
+              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-[#00E5A0]/[0.07]
                      p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg hover:-translate-y-0.5"
             >
               <!-- Number badge -->
@@ -71,8 +74,6 @@ useIntersectionObserver(sentinel, ([entry]) => {
                 Drop in a favorite photo — pets, people, or art.
               </p>
 
-              <!-- Progress connector (desktop) -->
-              <div class="hidden md:block absolute top-1/2 right-[-10px] h-[2px] w-5 bg-[#00E5A0]/40"></div>
             </div>
           </li>
         </Transition>
@@ -85,7 +86,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         >
           <li class="group">
             <div
-              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-[#00E5A0]/[0.05]
+              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-[#00E5A0]/[0.07]
                      p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg"
             >
               <div class="absolute -top-3 left-5">
@@ -156,7 +157,8 @@ useIntersectionObserver(sentinel, ([entry]) => {
             </div>
           </li>
         </Transition>
-      </ol>
+        </ol>
+      </div>
 
       <!-- CTA row -->
       <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -174,8 +176,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <!-- Optional secondary nudge -->
         <NuxtLink
           to="/mosaic"
-          class="inline-flex items-center gap-2 rounded-xl border border-[#00E5A0] px-5 py-3 font-semibold text-[#00E5A0]
-                 transition hover:bg-[#00E5A0]/10"
+          class="inline-flex items-center gap-2 btn-outline-mint"
         >
           Try Photo to Bricks
         </NuxtLink>
