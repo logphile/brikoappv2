@@ -3,8 +3,9 @@ import { ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 // No props needed yet
 // Bind image sources via runtime strings to prevent Vite from transforming into static imports during build
-const originalImg = '/demo-original.jpg'
-const mosaicImg = '/demo-mosaic.jpg'
+// Append a version query to bust CDN/browser caches when assets are replaced
+const originalImg = '/demo-original.jpg?v=3'
+const mosaicImg = '/demo-mosaic.jpg?v=3'
 
 // Animate hero only when it comes into view
 const inView = ref(false)
