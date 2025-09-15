@@ -25,8 +25,8 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery
-    { rel: 'preload', as: 'image', href: '/slider-mosaic.jpg?v=2' },
-    { rel: 'preload', as: 'image', href: '/slider-original.jpg?v=2' }
+    { rel: 'preload', as: 'image', href: '/demo-mosaic.jpg' },
+    { rel: 'preload', as: 'image', href: '/demo-original.jpg' }
   ]
 })
 
@@ -61,7 +61,7 @@ useHead({
       <!-- Quick Demo: interactive before/after slider -->
       <section class="mt-4 grid md:grid-cols-2 gap-8">
         <div class="rounded-2xl overflow-hidden h-[340px] md:h-[420px]">
-          <HeroDemo :original-src="'/slider-original.jpg?v=2'" :mosaic-src="'/slider-mosaic.jpg?v=2'" :fixed-height="true" />
+          <HeroDemo :original-src="'/demo-original.jpg'" :mosaic-src="'/demo-mosaic.jpg'" :fixed-height="true" />
         </div>
         <div class="my-auto">
           <FeatureBites />
