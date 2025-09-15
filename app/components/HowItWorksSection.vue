@@ -19,7 +19,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="bg-[#0B1220] text-white">
-      <div class="mx-auto max-w-6xl px-6 py-14 sm:py-16">
+      <div class="mx-auto max-w-6xl px-6 pt-14 sm:pt-16 pb-0">
       <!-- Header -->
       <div class="text-center">
         <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
