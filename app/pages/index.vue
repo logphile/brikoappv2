@@ -57,7 +57,7 @@ useHead({
     <HeroSection />
     <FeatureList />
 
-    <main class="px-6 py-16 max-w-6xl mx-auto">
+    <main class="px-6 pt-16 pb-0 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
       <section class="mt-12 sm:mt-16 grid md:grid-cols-2 gap-8">
         <div class="rounded-2xl overflow-hidden h-[340px] md:h-[420px]">
