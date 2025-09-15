@@ -16,25 +16,16 @@
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70"></div>
       </div>
 
-      <div class="relative z-10 px-6 py-10">
+      <div class="relative z-10 card-glass p-6 md:p-8">
         <h1 class="text-2xl font-semibold">Community Studio</h1>
         <p class="opacity-80 text-sm">Explore public builds and remixes from the Briko community.</p>
         <p class="mt-2 text-white/80 text-sm">See trending builds, remixes, and fan favorites.</p>
 
-        <div class="mt-4 flex flex-wrap items-center gap-3">
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <NuxtLink to="/gallery" class="btn-mint">Open Community Gallery</NuxtLink>
           <NuxtLink to="/login" class="btn-outline-mint">Log in to create your Studio</NuxtLink>
-          <NuxtLink to="/projects" class="btn-ghost">Your Projects</NuxtLink>
+          <NuxtLink to="/projects" class="btn-outline-mint">Your Projects</NuxtLink>
         </div>
-      </div>
-    </section>
-
-    <!-- Card: quick gallery entry -->
-    <section class="mt-8">
-      <div class="card-glass p-5">
-        <h2 class="font-semibold">Jump into the gallery</h2>
-        <p class="opacity-80 text-sm mt-1">See trending and new creations, like and remix your favorites.</p>
-        <NuxtLink to="/gallery" class="btn btn-primary mt-4">Open Community Gallery</NuxtLink>
       </div>
     </section>
   </main>
