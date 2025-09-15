@@ -74,7 +74,7 @@ useHead({
       </section>
     </main>
 
-    <section class="mt-12 sm:mt-16">
+    <section class="mt-8 sm:mt-10">
       <BottomBeforeAfter />
     </section>
   </div>
