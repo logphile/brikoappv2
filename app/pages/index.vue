@@ -59,7 +59,7 @@ useHead({
 
     <main class="px-6 py-16 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
-      <section class="mt-4 grid md:grid-cols-2 gap-8">
+      <section class="mt-12 sm:mt-16 grid md:grid-cols-2 gap-8">
         <div class="rounded-2xl overflow-hidden h-[340px] md:h-[420px]">
           <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
         </div>
@@ -69,10 +69,14 @@ useHead({
       </section>
 
       <!-- How It Works -->
-      <HowItWorksSection />
+      <section class="mt-12 sm:mt-16">
+        <HowItWorksSection />
+      </section>
     </main>
 
-    <BottomBeforeAfter />
+    <section class="mt-12 sm:mt-16">
+      <BottomBeforeAfter />
+    </section>
   </div>
 </template>
 
