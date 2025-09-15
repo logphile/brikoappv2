@@ -18,7 +18,7 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="bg-[#0B1220] text-white">
-      <div class="mx-auto max-w-6xl px-6 pt-0 sm:pt-0 pb-14 sm:pb-16">
+      <div class="mx-auto max-w-6xl px-6 pt-8 sm:pt-12 pb-14 sm:pb-16">
       <h2 class="text-center text-2xl sm:text-3xl font-bold mb-6">See the Magic in Action</h2>
 
       <ClientOnly>
