@@ -23,7 +23,7 @@ import { copy } from '@/lib/copy'
 import StepBadge from '@/components/StepBadge.vue'
 import InfoTip from '@/components/InfoTip.vue'
 import InlineStats from '@/components/InlineStats.vue'
-import { downloadPartsListCsvSimple } from '@/lib/exporters'
+import { downloadPartsListCsvSimple, downloadPng } from '@/lib/exporters'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 
 const mosaic = useMosaicStore()
@@ -339,12 +339,12 @@ function onDownloadCsv(){
   }
 }
 
-function onDownloadPng(){
+async function onDownloadPng(){
   if (!mosaic.canExport) return
   const id = showToast('Generating PNG…', 'info', 0)
   try {
-    ;(mosaic as any).exportPNG?.()
-    showToast('Your PNG is ready!', 'success', 2000)
+    await downloadPng('briko-mosaic.png')
+    showToast('PNG ready!', 'success', 2000)
   } catch (e) {
     console.error('[PNG] export failed', e)
     showToast('Something went wrong. Please try again.', 'error', 3000)
@@ -901,6 +901,16 @@ watchDebounced(
                     <path d="M4 19h16" stroke-linecap="round"/>
                   </svg>
                   <span>Download Build Guide (PDF)</span>
+                </button>
+
+                <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPng">
+                  <!-- Image icon -->
+                  <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="14" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="9.5" r="1.5"/>
+                    <path d="M21 15l-6-6L5 19"/>
+                  </svg>
+                  <span>Export PNG</span>
                 </button>
 
                 <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadCsv">
