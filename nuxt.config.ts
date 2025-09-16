@@ -39,7 +39,7 @@ export default defineNuxtConfig({
     ],
     prerender: {
       crawlLinks: true,
-      routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login', '/studio', '/community-studio', '/studio/community']
+      routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login', '/studio', '/community-studio', '/studio/community', '/gallery']
     }
   },
   vite: {
