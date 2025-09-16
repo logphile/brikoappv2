@@ -25,6 +25,7 @@
 
       <div v-if="loading" class="opacity-70">Loading…</div>
       <div v-else>
+        <p v-if="isEmptyLive" class="mb-3 text-sm text-white/80">Showing sample projects — log in to share your own build!</p>
         <GalleryGrid :items="visibleItems" :liked-by-me-map="likedByMeMap" @like="likeItem" @unlike="unlikeItem" @remix="remixItem" @share="shareItem" />
         <div v-if="visibleItems.length === 0" class="opacity-70 mt-6">No results.</div>
       </div>
@@ -38,6 +39,7 @@ import { useNuxtApp, useHead } from 'nuxt/app'
 import { useToasts } from '@/composables/useToasts'
 import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
+import seedsRaw from '@/data/gallery_seeds.json'
 
 // SEO
 useHead({
@@ -82,9 +84,36 @@ const projectTagsMap = ref<Record<string, TagItem[]>>({}) // project_id -> tags
 function setSort(s: typeof sorts[number]){ sort.value = s }
 function setKind(k: typeof kinds[number]){ kind.value = k }
 
-const withTrending = computed(() => items.value.map(it => {
-  const hoursOld = (Date.now() - new Date(it.created_at).getTime()) / 36e5
-  const trending = it.likes * 3 + Math.max(0, 48 - hoursOld)
+// Seed fallback (shown only when there are no live projects)
+type Seed = typeof seedsRaw[number]
+const seedsEnhanced = computed(() => {
+  return (seedsRaw as Seed[]).map((s, i) => ({
+    id: `seed-${i + 1}`,
+    public_id: undefined,
+    name: s.title,
+    kind: s.kind,
+    thumb_url: s.preview,
+    likes: s.likes,
+    created_at: s.date,
+    updated_at: s.date,
+    username: s.username,
+    bricks: s.bricks,
+    cost: s.cost,
+    saves: s.saves,
+    date: s.date,
+    tags: s.tags || [],
+    isSeed: true
+  }))
+})
+
+const isEmptyLive = computed(() => items.value.length === 0)
+
+const baseList = computed(() => (isEmptyLive.value ? (seedsEnhanced.value as any[]) : (items.value as any[])))
+
+const withTrending = computed(() => baseList.value.map((it: any) => {
+  const d = it.created_at || it.date || new Date().toISOString()
+  const hoursOld = (Date.now() - new Date(d).getTime()) / 36e5
+  const trending = (it.likes || 0) * 3 + Math.max(0, 48 - hoursOld)
   return { ...it, trending }
 }))
 
@@ -93,9 +122,11 @@ const filteredByKind = computed(() => kind.value === 'all' ? withTrending.value 
 const filteredByTags = computed(() => {
   if (selectedTags.value.length === 0) return filteredByKind.value
   const req = new Set(selectedTags.value.map(t => (t.slug || t.name).toLowerCase()))
-  return filteredByKind.value.filter(i => {
-    const tags = projectTagsMap.value[i.id] || []
-    const have = new Set(tags.map(t => (t.slug || t.name).toLowerCase()))
+  return filteredByKind.value.filter((i: any) => {
+    const realTags = projectTagsMap.value[i.id] || []
+    const seedTags = (i.tags || []).map((n: string) => ({ name: n }))
+    const mix = (isEmptyLive.value ? seedTags : realTags)
+    const have = new Set(mix.map((t: any) => (t.slug || t.name).toLowerCase()))
     for (const s of req) if (!have.has(s)) return false
     return true
   })
@@ -156,12 +187,14 @@ async function fetchProjectTags(){
   projectTagsMap.value = map
 }
 
-function shareItem(it: GalleryRow){
+function shareItem(it: any){
+  if(!it?.public_id){ try{ useToasts().show('Samples cannot be shared', 'info') }catch{}; return }
   const url = `${location.origin}/share/${it.public_id}`
   navigator.clipboard.writeText(url).then(()=>{ try{ useToasts().show('Link copied', 'success') }catch{} })
 }
 
-async function likeItem(it: GalleryRow){
+async function likeItem(it: any){
+  if(it?.isSeed){ return }
   if(!$supabase){ return }
   const u = (await $supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
@@ -173,7 +206,8 @@ async function likeItem(it: GalleryRow){
   }catch(e:any){ console.warn(e) }
 }
 
-async function unlikeItem(it: GalleryRow){
+async function unlikeItem(it: any){
+  if(it?.isSeed){ return }
   if(!$supabase){ return }
   const u = (await $supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
@@ -185,7 +219,8 @@ async function unlikeItem(it: GalleryRow){
   }catch(e:any){ console.warn(e) }
 }
 
-async function remixItem(it: GalleryRow){
+async function remixItem(it: any){
+  if(it?.isSeed){ location.href = '/mosaic'; return }
   if(!$supabase){ return }
   const u = (await $supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
