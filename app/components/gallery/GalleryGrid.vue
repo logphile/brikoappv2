@@ -16,8 +16,11 @@
       :tags="(item as any).tags"
       :is-seed="(item as any).isSeed === true"
       :liked-by-me="!!likedByMeMap[item.id]"
+      :saved-by-me="!!savedByMeMap[item.id]"
       @like="$emit('like', item)"
       @unlike="$emit('unlike', item)"
+      @save="$emit('save', item)"
+      @unsave="$emit('unsave', item)"
       @remix="$emit('remix', item)"
       @share="$emit('share', item)"
     />
@@ -52,11 +55,14 @@ export type GalleryItem = {
 defineProps<{
   items: GalleryItem[]
   likedByMeMap: Record<string, boolean>
+  savedByMeMap: Record<string, boolean>
 }>()
 
 defineEmits<{
   (e: 'like', item: GalleryItem): void
   (e: 'unlike', item: GalleryItem): void
+  (e: 'save', item: GalleryItem): void
+  (e: 'unsave', item: GalleryItem): void
   (e: 'remix', item: GalleryItem): void
   (e: 'share', item: GalleryItem): void
 }>()
