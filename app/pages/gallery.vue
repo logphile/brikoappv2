@@ -26,7 +26,7 @@
       <div v-if="loading" class="opacity-70">Loading…</div>
       <div v-else>
         <p v-if="isEmptyLive" class="mb-3 text-sm text-white/80">Showing sample projects — log in to share your own build!</p>
-        <GalleryGrid :items="visibleItems" :liked-by-me-map="likedByMeMap" @like="likeItem" @unlike="unlikeItem" @remix="remixItem" @share="shareItem" />
+        <GalleryGrid :items="visibleItems" :liked-by-me-map="likedByMeMap" :saved-by-me-map="savedByMeMap" @like="likeItem" @unlike="unlikeItem" @save="saveItem" @unsave="unsaveItem" @remix="remixItem" @share="shareItem" />
         <div v-if="visibleItems.length === 0" class="opacity-70 mt-6">No results.</div>
       </div>
     </section>
@@ -40,6 +40,7 @@ import { useToasts } from '@/composables/useToasts'
 import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 import seedsRaw from '@/data/gallery_seeds.json'
+import { useProjects } from '@/composables/useProjects'
 
 // SEO
 useHead({
@@ -70,11 +71,12 @@ const kinds = ['all', 'mosaic', 'voxel', 'avatar'] as const
 
 const sort = ref<typeof sorts[number]>('Trending')
 const kind = ref<typeof kinds[number]>('all')
-const items = ref<GalleryRow[]>([])
+const items = ref<any[]>([])
 const loading = ref(false)
 
 // Likes map for current user
 const likedByMeMap = ref<Record<string, boolean>>({})
+const savedByMeMap = ref<Record<string, boolean>>({})
 
 // Tags
 const selectedTags = ref<TagItem[]>([])
@@ -134,9 +136,9 @@ const filteredByTags = computed(() => {
 
 const visibleItems = computed(() => {
   const list = [...filteredByTags.value]
-  if (sort.value === 'New') list.sort((a,b)=> new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-  else if (sort.value === 'Top') list.sort((a,b)=> (b.likes||0) - (a.likes||0))
-  else list.sort((a,b)=> (b as any).trending - (a as any).trending)
+  if (sort.value === 'New') list.sort((a:any,b:any)=> new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  else if (sort.value === 'Top') list.sort((a:any,b:any)=> ((b.likes||0) + (b.saves||0)*0.5) - ((a.likes||0) + (a.saves||0)*0.5))
+  else list.sort((a:any,b:any)=> (b as any).trending - (a as any).trending)
   return list
 })
 
@@ -145,29 +147,48 @@ onMounted(async () => {
 })
 
 async function fetchGallery(){
-  if(!$supabase) return
+  const { queryPublicProjects, buildPreviewUrl } = useProjects()
   loading.value = true
-  const { data, error } = await $supabase.from('gallery').select('*').order('updated_at', { ascending: false })
-  loading.value = false
-  if(error){ console.error(error); try{ useToasts().show('Failed to load gallery', 'error') }catch{}; return }
-  items.value = (data || []) as GalleryRow[]
-  await Promise.all([
-    fetchLikedByMe(),
-    fetchProjectTags()
-  ])
+  try {
+    const rows = await queryPublicProjects(sort.value)
+    // Normalize rows to the grid item shape with thumb_url and social fields
+    items.value = (rows || []).map((r: any) => ({
+      id: r.id,
+      public_id: r.id,
+      name: r.title,
+      kind: r.kind,
+      thumb_url: buildPreviewUrl(r.preview_path),
+      likes: r.likes ?? 0,
+      saves: r.saves ?? 0,
+      username: r.username || r.display_name || '@user',
+      bricks: r.bricks ?? 0,
+      cost: r.cost_est ?? 0,
+      tags: Array.isArray(r.tags) ? r.tags : [],
+      created_at: r.created_at,
+      updated_at: r.updated_at,
+    }))
+    await Promise.all([
+      fetchReactionsByMe(),
+      fetchProjectTags(),
+    ])
+  } catch (error) {
+    console.error(error)
+    try { useToasts().show('Failed to load gallery', 'error') } catch {}
+  } finally {
+    loading.value = false
+  }
 }
 
-async function fetchLikedByMe(){
+async function fetchReactionsByMe(){
   if(!$supabase) return
   const u = (await $supabase.auth.getUser()).data.user
-  if(!u){ likedByMeMap.value = {}; return }
+  if(!u){ likedByMeMap.value = {}; savedByMeMap.value = {}; return }
   const ids = items.value.map(i => i.id)
   if(ids.length === 0) return
-  const { data, error } = await $supabase.from('likes').select('project_id').in('project_id', ids).eq('user_id', u.id)
-  if(error){ console.warn(error); return }
-  const map: Record<string, boolean> = {}
-  for(const r of (data||[])) map[(r as any).project_id] = true
-  likedByMeMap.value = map
+  const { getReactionsByMe } = useProjects()
+  const { likes, saves } = await getReactionsByMe(ids, u.id)
+  likedByMeMap.value = likes
+  savedByMeMap.value = saves
 }
 
 async function fetchProjectTags(){
@@ -189,7 +210,7 @@ async function fetchProjectTags(){
 
 function shareItem(it: any){
   if(!it?.public_id){ try{ useToasts().show('Samples cannot be shared', 'info') }catch{}; return }
-  const url = `${location.origin}/share/${it.public_id}`
+  const url = `${location.origin}/community/${it.public_id}`
   navigator.clipboard.writeText(url).then(()=>{ try{ useToasts().show('Link copied', 'success') }catch{} })
 }
 
@@ -200,10 +221,7 @@ async function likeItem(it: any){
   if(!u){ location.href = '/login'; return }
   likedByMeMap.value = { ...likedByMeMap.value, [it.id]: true }
   it.likes++
-  try{
-    const { error } = await $supabase.from('likes').insert({ project_id: it.id, user_id: u.id })
-    if(error) throw error
-  }catch(e:any){ console.warn(e) }
+  try{ const { upsertReaction } = useProjects(); await upsertReaction(it.id, u.id, 'like') }catch(e:any){ console.warn(e) }
 }
 
 async function unlikeItem(it: any){
@@ -213,31 +231,32 @@ async function unlikeItem(it: any){
   if(!u){ location.href = '/login'; return }
   likedByMeMap.value = { ...likedByMeMap.value, [it.id]: false }
   it.likes = Math.max(0, (it.likes||0) - 1)
-  try{
-    const { error } = await $supabase.from('likes').delete().eq('project_id', it.id).eq('user_id', u.id)
-    if(error) throw error
-  }catch(e:any){ console.warn(e) }
+  try{ const { deleteReaction } = useProjects(); await deleteReaction(it.id, u.id, 'like') }catch(e:any){ console.warn(e) }
 }
 
-async function remixItem(it: any){
-  if(it?.isSeed){ location.href = '/mosaic'; return }
+async function saveItem(it: any){
+  if(it?.isSeed){ return }
   if(!$supabase){ return }
   const u = (await $supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
-  try{
-    const { data: parent, error: pErr } = await $supabase.from('projects').select('*').eq('public_id', it.public_id).single()
-    if(pErr) throw pErr
-    const child = {
-      user_id: u.id,
-      name: `Remix of ${parent?.name ?? 'Project'}`,
-      is_public: false,
-      data: { ...(parent?.data || {}), parent_id: parent?.id, parent_public_id: parent?.public_id }
-    }
-    const { data: inserted, error: iErr } = await $supabase.from('projects').insert(child).select().single()
-    if(iErr) throw iErr
-    try{ useToasts().show('Remixed! Opening Projects…', 'success') }catch{}
-    window.setTimeout(()=>{ location.href = '/projects' }, 300)
-  }catch(e:any){ console.error(e); try{ useToasts().show('Remix failed', 'error') }catch{} }
+  savedByMeMap.value = { ...savedByMeMap.value, [it.id]: true }
+  it.saves = (it.saves || 0) + 1
+  try{ const { upsertReaction } = useProjects(); await upsertReaction(it.id, u.id, 'save') }catch(e:any){ console.warn(e) }
+}
+
+async function unsaveItem(it: any){
+  if(it?.isSeed){ return }
+  if(!$supabase){ return }
+  const u = (await $supabase.auth.getUser()).data.user
+  if(!u){ location.href = '/login'; return }
+  savedByMeMap.value = { ...savedByMeMap.value, [it.id]: false }
+  it.saves = Math.max(0, (it.saves||0) - 1)
+  try{ const { deleteReaction } = useProjects(); await deleteReaction(it.id, u.id, 'save') }catch(e:any){ console.warn(e) }
+}
+
+async function remixItem(_it: any){
+  // For now, just open the mosaic builder ready to upload an image
+  location.href = '/mosaic'
 }
 
 function slugify(name: string){ return name.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,32) }

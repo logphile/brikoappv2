@@ -41,10 +41,10 @@
             <span>❤️</span>
             <span>{{ likesLocal }}</span>
           </button>
-          <div class="px-2 py-1 rounded-lg border border-white/15 text-white/80 inline-flex items-center gap-1">
+          <button :aria-pressed="savedByMe" :title="savedByMe ? 'Unsave' : 'Save'" @click.stop="onSaveClick" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30 inline-flex items-center gap-1 text-white/80">
             <span>📌</span>
-            <span>{{ saves ?? 0 }}</span>
-          </div>
+            <span>{{ savesLocal }}</span>
+          </button>
         </div>
         <button title="Share" @click.stop="$emit('share')" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30">↗</button>
       </div>
@@ -72,22 +72,32 @@ const props = defineProps<{
   date?: string
   tags?: string[]
   likedByMe: boolean
+  savedByMe?: boolean
   isSeed?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'like'): void
   (e: 'unlike'): void
+  (e: 'save'): void
+  (e: 'unsave'): void
   (e: 'remix'): void
   (e: 'share'): void
 }>()
 
 const likesLocal = ref(props.likes)
+const savesLocal = ref(props.saves ?? 0)
 watch(() => props.likes, v => { likesLocal.value = v })
+watch(() => props.saves, v => { savesLocal.value = v ?? 0 })
 
 function onLikeClick(){
   if(props.likedByMe){ emit('unlike'); likesLocal.value = Math.max(0, likesLocal.value - 1) }
   else { emit('like'); likesLocal.value = likesLocal.value + 1 }
+}
+
+function onSaveClick(){
+  if(props.savedByMe){ emit('unsave'); savesLocal.value = Math.max(0, savesLocal.value - 1) }
+  else { emit('save'); savesLocal.value = savesLocal.value + 1 }
 }
 
 const avatarInitial = computed(() => (props.username?.replace('@','')[0] || 'B').toUpperCase())
@@ -106,5 +116,5 @@ function relativeTime(input?: string){
 }
 
 const relative = computed(() => relativeTime(props.date))
-const viewHref = computed(() => props.publicId ? `/project/${props.publicId}` : '/mosaic')
+const viewHref = computed(() => props.publicId ? `/community/${props.publicId}` : '/mosaic')
 </script>

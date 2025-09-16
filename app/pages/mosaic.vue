@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
-import { useHead } from 'nuxt/app'
+import { useHead, useNuxtApp } from 'nuxt/app'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
@@ -25,6 +25,7 @@ import InfoTip from '@/components/InfoTip.vue'
 import InlineStats from '@/components/InlineStats.vue'
 import { downloadPartsListCsvSimple, downloadPng } from '@/lib/exporters'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
+import { useProjects } from '@/composables/useProjects'
 
 const mosaic = useMosaicStore()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
@@ -140,6 +141,43 @@ const inchesW = computed(()=> fmt1(target.value.w * 0.315))
 const inchesH = computed(()=> fmt1(target.value.h * 0.315))
 const cmW = computed(()=> fmt1(target.value.w * 0.8))
 const cmH = computed(()=> fmt1(target.value.h * 0.8))
+
+// Community Gallery publishing state
+const galleryProjectId = ref<string | null>(null)
+const publishing = ref(false)
+async function publishToGallery(){
+  if (!mosaic.tilingResult || !mosaic.canExport) return
+  const { $supabase } = useNuxtApp() as any
+  const { uploadPreviewPNG, insertUserProject } = useProjects()
+  const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
+  if (!$supabase || !cvs) return
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  publishing.value = true
+  try {
+    const projectId = (crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
+    const path = await uploadPreviewPNG(user.id, projectId, cvs as any)
+    const title = `Mosaic ${mosaic.width}×${mosaic.height}`
+    const bricks = mosaic.tilingResult.bricks?.length || (mosaic.width * mosaic.height)
+    const cost_est = Number(mosaic.tilingResult.estTotalCost || 0)
+    const rec = await insertUserProject({ id: projectId, user_id: user.id, title, kind: 'mosaic', preview_path: path, bricks, cost_est, tags: [] })
+    galleryProjectId.value = rec.id
+    try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
+  } catch (e) {
+    console.error(e); try { showToast('Publish failed', 'error', 2800) } catch {}
+  } finally { publishing.value = false }
+}
+
+async function makePublic(){
+  if (!galleryProjectId.value) { try { showToast('Save to Gallery first', 'info', 1600) } catch {}; return }
+  const { $supabase } = useNuxtApp() as any
+  const { makePublic } = useProjects()
+  if (!$supabase) return
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  try { await makePublic(galleryProjectId.value, user.id); try { showToast('Your project is public!', 'success', 2200) } catch {} }
+  catch(e){ console.warn(e); try { showToast('Failed to publish', 'error', 2200) } catch {} }
+}
 
 // React to top surface for preview defaults
 watch(() => mosaic.settings.topSurface, (mode) => {
@@ -687,6 +725,8 @@ watchDebounced(
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
             <button class="btn-outline-mint w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
             <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
+            <button class="btn-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.tilingResult || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
+            <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
           </div>
         </div>
             </Transition>

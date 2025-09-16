@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount, onMounted, computed } from 'vue'
-import { useHead } from 'nuxt/app'
+import { useHead, useNuxtApp } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import VoxelPreview from '@/components/VoxelPreview.client.vue'
 import UploadBox from '@/components/ui/UploadBox.vue'
@@ -16,6 +16,7 @@ import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
 // (computed imported above)
 import { LEGO_PALETTE } from '@/lib/legoPalette'
+import { useProjects } from '@/composables/useProjects'
 
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
@@ -194,13 +195,54 @@ onMounted(async () => {
     console.warn('Default demo image load failed', err)
   }
 })
+
+// Community Gallery publishing (voxel)
+const galleryProjectId = ref<string | null>(null)
+const publishing = ref(false)
+async function publishToGallery(){
+  const { $supabase } = useNuxtApp() as any
+  const { uploadPreviewPNG, insertUserProject } = useProjects()
+  const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
+  if (!$supabase || !vox.value || !cvs) return
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  publishing.value = true
+  try {
+    const projectId = (crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
+    const path = await uploadPreviewPNG(user.id, projectId, cvs as any)
+    // Brick count = number of non-empty voxels
+    const arr = vox.value.colors
+    let bricks = 0; for (let i=0;i<arr.length;i++){ if (arr[i] !== 255) bricks++ }
+    const cost_est = 0
+    const title = `3D Build ${vox.value.w}×${vox.value.h}×${vox.value.depth}`
+    const rec = await insertUserProject({ id: projectId, user_id: user.id, title, kind: 'voxel', preview_path: path, bricks, cost_est, tags: [] })
+    galleryProjectId.value = rec.id
+  } catch (e) {
+    console.warn(e)
+  } finally { publishing.value = false }
+}
+
+async function makePublic(){
+  if (!galleryProjectId.value) return
+  const { $supabase } = useNuxtApp() as any
+  const { makePublic } = useProjects()
+  if (!$supabase) return
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  try { await makePublic(galleryProjectId.value, user.id) } catch (e) { console.warn(e) }
+}
+
+
 </script>
 
 <template>
   <main class="mx-auto max-w-6xl px-6 py-10 text-white">
     <h1 class="text-3xl font-bold">{{ copy.builder3d.title }}</h1>
     <p class="opacity-80">{{ copy.builder3d.subtitle }}</p>
-    <StepChips :steps="copy.builder3d.steps" />
+    <!-- ... (rest of the template remains the same) -->
+    <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
+    <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+    <!-- ... (rest of the template remains the same) -->
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
       <section class="space-y-4">
@@ -291,6 +333,8 @@ onMounted(async () => {
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
           <button class="btn btn-primary px-4 rounded-xl" @click="exportPng">Export PNG</button>
           <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
+          <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
+          <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
           <button id="one-click-pdf" type="button" class="btn-mint px-4 rounded-xl" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
             <span v-if="!pdfWorking">One-click PDF</span>
             <span v-else>Generating…</span>
