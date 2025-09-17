@@ -84,4 +84,41 @@ npm run dev
   - return BOM + est price (from `public/data/avg_prices.json`)
 - Build `/studio` three-panel UI; hook up worker; show live stats.
 - Add `exportCsv` + `exportPng`.
-# trigger
+
+## Seeding the Community Gallery
+
+To populate `/gallery` with sample public projects for demos/dev:
+
+1) Put a few small images in `public/samples/gallery/` (supports `.png`, `.jpg`, `.jpeg`).
+
+2) Create a root `.env.local` (do not commit) with:
+
+```bash
+SUPABASE_URL=your-project-url
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+Important:
+- The service role key must be the “service_role” from Supabase → Settings → API. It is a JWT-looking string containing two dots (`header.payload.signature`).
+- Never commit the service role key and never place it under `public/`.
+- If a service key is ever exposed, rotate it immediately in the Supabase Dashboard and update your local `.env.local`.
+
+3) Run the seeder:
+
+```bash
+npm install
+npm run seed:gallery
+```
+
+This script will:
+- Ensure the `projects` storage bucket exists and is public.
+- Create or reuse 8 fake users via the Admin API.
+- Insert public rows in `user_projects` and upload previews to `projects/{userId}/{projectId}/preview.png`.
+
+Cleanup (optional, run as project owner):
+
+```sql
+delete from public.user_projects
+where user_id in (
+  select id from auth.users where raw_user_meta_data->>'seed' = 'true'
+);

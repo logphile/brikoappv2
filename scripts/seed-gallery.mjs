@@ -1,24 +1,50 @@
 #!/usr/bin/env node
-import 'dotenv/config'
+import dotenv from 'dotenv'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { randomUUID } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import sharp from 'sharp'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 
-const SUPABASE_URL = process.env.SUPABASE_URL
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+// Load env from root .env then .env.local (local overrides)
+try { dotenv.config({ path: path.join(ROOT, '.env') }) } catch {}
+try { dotenv.config({ path: path.join(ROOT, '.env.local') }) } catch {}
 
-if (!SUPABASE_URL || !SERVICE_KEY) {
-  console.error('[seed-gallery] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in environment')
-  console.error('  Set them in your shell for this process, e.g.:')
-  console.error('    $env:SUPABASE_URL = "https://xxxx.supabase.co"')
-  console.error('    $env:SUPABASE_SERVICE_ROLE_KEY = "<service-role-key>"')
+const SUPABASE_URL = process.env.SUPABASE_URL
+let SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+// Fallback: read service role key from a local file if not present or invalid
+async function resolveServiceKey() {
+  let key = SERVICE_KEY
+  const dotCount = (key || '').split('.').length - 1
+  if (!key || dotCount < 2) {
+    const fallbackPath = process.env.SUPABASE_SERVICE_ROLE_KEY_FILE || path.join(ROOT, 'seeder-service-role.key')
+    try {
+      const buf = await fs.readFile(fallbackPath)
+      key = String(buf).trim()
+      const dots = (key.split('.').length - 1)
+      if (dots < 2) throw new Error('Key read from file does not look like a JWT')
+      console.log('[seed-gallery] Using service role key from file:', path.basename(fallbackPath))
+    } catch (e) {
+      console.error('[seed-gallery] Missing SUPABASE_SERVICE_ROLE_KEY and fallback file not found or invalid')
+      console.error('  Provide the key via env, or create a file with the key:')
+      console.error('   ', fallbackPath)
+      throw e
+    }
+  }
+  return key
+}
+
+if (!SUPABASE_URL) {
+  console.error('[seed-gallery] Missing SUPABASE_URL in environment')
   process.exit(1)
 }
+
+SERVICE_KEY = await resolveServiceKey()
 
 const supa = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false }
@@ -130,21 +156,27 @@ function sampleTitle(kind) {
 }
 
 async function insertProject(userId, kind) {
-  // Prefer new schema with status='public'
+  // Generate a project id so we can include preview_path up front (NOT NULL safe)
+  const id = randomUUID()
+  const preview_path = `projects/${userId}/${id}/preview.png`
+  // Prefer new schema with status='public' and preview_path column
   const payload = {
+    id,
     user_id: userId,
     title: sampleTitle(kind),
     kind,
     status: 'public',
     bricks: Math.floor(400 + Math.random() * 2000),
     cost_est: Math.round((10 + Math.random() * 80) * 100) / 100,
-    tags: []
+    tags: [],
+    preview_path
   }
   let res = await supa.from('user_projects').insert(payload).select('*').single()
   if (!res.error && res.data) return res.data
 
-  // Fallback: older schema using is_public/published_at
+  // Fallback: older schema using is_public/published_at and no preview_path constraint
   const fallback = {
+    id,
     user_id: userId,
     title: sampleTitle(kind),
     kind,

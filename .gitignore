@@ -17,6 +17,7 @@ pnpm-debug.log*
 .env
 .env.*.local
 .env.local
+seeder-service-role.key
 
 # editor
 .DS_Store
