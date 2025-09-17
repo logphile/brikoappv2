@@ -10,6 +10,7 @@
     "build:static": "nuxt build && nuxt generate",
     "serve:static": "npx http-server .output/public -p 4178 -s",
     "icons:generate": "node scripts/generate-icons.mjs",
+    "seed:gallery": "node scripts/seed-gallery.mjs",
     "e2e": "playwright test --reporter=line",
     "test": "vitest run"
   },
@@ -21,6 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^8.42.0",
     "@typescript-eslint/parser": "^8.42.0",
     "@vueuse/nuxt": "^10.10.0",
+    "dotenv": "^16.4.5",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
