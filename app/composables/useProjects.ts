@@ -14,6 +14,20 @@ export const useProjects = () => {
     return `${base}/storage/v1/object/public/${previewPath.replace(/^\/+/, '')}`
   }
 
+  async function canvasToWebpBlob(canvas: HTMLCanvasElement | OffscreenCanvas, quality = 0.92): Promise<Blob> {
+    // Prefer convertToBlob with webp
+    if ('convertToBlob' in canvas && typeof (canvas as any).convertToBlob === 'function') {
+      return await (canvas as any).convertToBlob({ type: 'image/webp', quality })
+    }
+    return await new Promise<Blob>((resolve, reject) => {
+      try {
+        (canvas as HTMLCanvasElement).toBlob((b) => {
+          if (b) resolve(b); else reject(new Error('toBlob returned null'))
+        }, 'image/webp', quality)
+      } catch (e) { reject(e as any) }
+    })
+  }
+
   async function canvasToBlob(canvas: HTMLCanvasElement | OffscreenCanvas): Promise<Blob> {
     if ('convertToBlob' in canvas && typeof (canvas as any).convertToBlob === 'function') {
       return await (canvas as any).convertToBlob({ type: 'image/png' })
@@ -107,11 +121,87 @@ export const useProjects = () => {
     if (error) throw error
   }
 
+  // Create a project with a fingerprinted WebP preview path and upload the preview blob first.
+  async function createProject(input: {
+    title: string
+    kind: ProjectKind
+    width: number
+    height: number
+    palette_id: string
+    previewBlob?: Blob
+    mode?: 'auto'|'line-art'|'photo'
+    bricks_est?: number
+    cost_est_usd?: number
+    makePublic?: boolean
+  }) {
+    if (!$supabase) throw new Error('Supabase unavailable')
+    const { data: { user } } = await $supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const id: string = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
+    const mode = input.mode || 'auto'
+    const fname = `preview-w${input.width}-h${input.height}-pal${input.palette_id}-mode${mode}-v1.webp`
+    const storagePath = `projects/${user.id}/${id}/${fname}`
+
+    // Build preview blob (fallback to canvas if not provided)
+    let blob = input.previewBlob || null
+    if (!blob) {
+      const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
+      if (!cvs) throw new Error('No preview available to upload')
+      blob = await canvasToWebpBlob(cvs)
+    }
+
+    // Upload preview first to satisfy NOT NULL preview_path schemas
+    {
+      const { error } = await $supabase.storage.from('projects').upload(storagePath, blob!, { upsert: true, contentType: 'image/webp', cacheControl: '31536000, immutable' })
+      if (error) throw error
+    }
+
+    // Insert row (new schema)
+    const payload1: any = {
+      id,
+      user_id: user.id,
+      title: input.title,
+      kind: input.kind,
+      status: 'private',
+      preview_path: storagePath,
+      bricks: input.bricks_est,
+      cost_est: input.cost_est_usd,
+      tags: []
+    }
+    let rec: any
+    let { data, error } = await $supabase.from('user_projects').insert(payload1).select().single()
+    if (error) {
+      // Fallback: older schema with is_public/published_at
+      const payload2: any = {
+        id,
+        user_id: user.id,
+        title: input.title,
+        kind: input.kind,
+        is_public: false,
+        published_at: new Date().toISOString(),
+        preview_path: storagePath
+      }
+      const res2 = await $supabase.from('user_projects').insert(payload2).select().single()
+      if (res2.error) throw res2.error
+      rec = res2.data
+    } else {
+      rec = data
+    }
+
+    if (input.makePublic) {
+      await makePublic(rec.id, user.id)
+    }
+    return rec
+  }
+
   return {
     buildPreviewUrl,
     canvasToBlob,
+    canvasToWebpBlob,
     uploadPreviewPNG,
     insertUserProject,
+    createProject,
     makePublic,
     queryPublicProjects,
     getReactionsByMe,

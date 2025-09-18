@@ -1,7 +1,7 @@
 <template>
   <article class="rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden group relative transition hover:shadow-mint-glow/20">
     <!-- Preview -->
-    <div class="aspect-square bg-black/20 overflow-hidden relative">
+    <div class="h-[220px] bg-white/5 overflow-hidden relative">
       <img v-if="thumbUrl" :src="thumbUrl" :alt="name" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
       <div v-else class="absolute inset-0 grid place-items-center text-white/70 text-sm">No preview</div>
       <!-- Hover overlay actions -->
