@@ -28,6 +28,7 @@ import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/w
 import { useProjects } from '@/composables/useProjects'
 import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
+import MosaicActions from '@/components/MosaicActions.vue'
 
 const mosaic = useMosaicStore()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
@@ -90,6 +91,12 @@ useHead({
     { type: 'application/ld+json', innerHTML: JSON.stringify(mosaicBreadcrumbs) }
   ]
 })
+
+// UI button enable/disable states (for MosaicActions)
+const previewReady = computed(() => !!grid.value && mosaic.status !== 'tiling')
+const mosaicReady = computed(() => !!mosaic.tilingResult)
+const projectSaved = computed(() => !!galleryProjectId.value)
+const isWorking = computed(() => !!loading.value || mosaic.status === 'working' || mosaic.status === 'tiling' || !!publishing.value)
 
 const target = ref<{w:number,h:number}>({ w: 20, h: 20 })
 // If hydrating from a saved project, respect saved dimensions
@@ -797,13 +804,19 @@ watchDebounced(
             </select>
           </div>
           <div class="h-px bg-white/5 my-3"></div>
-          <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
-            <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
-            <button class="btn-outline-mint w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
-            <button class="btn-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!previewBlob" @click="saveAndPublish">Save & Publish</button>
-            <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
-            <button class="btn-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.tilingResult || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
-            <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+          <div class="mt-4">
+            <MosaicActions
+              :can-generate="previewReady"
+              :can-save="mosaicReady"
+              :can-publish="projectSaved"
+              :busy="isWorking"
+              @generate="onGenerate"
+              @savePrivate="publishToGallery"
+              @saveAndPublish="saveAndPublish"
+              @publish="makePublic"
+              @uploadPreview="uploadPrev"
+              @saveProjectLegacy="saveNow"
+            />
           </div>
         </div>
             </Transition>
