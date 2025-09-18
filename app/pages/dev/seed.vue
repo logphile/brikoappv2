@@ -5,13 +5,12 @@ import { useProjects } from '@/composables/useProjects'
 import { useToasts } from '@/composables/useToasts'
 
 // Basic guard: require dev build or ?dev=1
-definePageMeta({ layout: 'default' })
 const isAllowed = import.meta.dev || (typeof window !== 'undefined' && new URL(window.location.href).searchParams.get('dev') === '1')
 
 const files = ref<File[]>([])
 const running = ref(false)
 const pct = ref(0)
-const { mosaicify } = useMosaicify()
+const { mosaicifyFromFile } = useMosaicify()
 const { createProject } = useProjects()
 const { show: toast } = useToasts()
 
@@ -23,8 +22,7 @@ async function run(){
   try {
     for (let i = 0; i < files.value.length; i++) {
       const f = files.value[i]
-      const bmp = await createImageBitmap(f)
-      const { blob } = await mosaicify(bmp, { w: 48, h: 48, paletteId: 'briko-v1', mode: 'auto' })
+      const { blob } = await mosaicifyFromFile(f, { w: 48, h: 48, paletteId: 'briko-v1', mode: 'auto' })
       await createProject({
         title: f.name.replace(/\.[^.]+$/, ''),
         kind: 'mosaic',
@@ -39,7 +37,7 @@ async function run(){
     toast('Seeding complete')
   } catch (e) {
     console.error(e)
-    toast('Seed failed: ' + (e as any)?.message || e)
+    toast('Seed failed: ' + String((e as any)?.message || e))
   } finally {
     running.value = false
   }

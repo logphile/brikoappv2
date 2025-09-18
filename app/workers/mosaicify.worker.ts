@@ -166,10 +166,22 @@ function pickPreset(img: ImageData){
 }
 
 self.onmessage = async (e: MessageEvent) => {
-  const { bitmap, options } = e.data as { bitmap: ImageBitmap, options: { w:number, h:number, paletteId: string, mode?: 'auto'|'line-art'|'photo' } }
-  const off = new OffscreenCanvas(bitmap.width, bitmap.height)
+  const { buf, bitmap, options } = e.data as { buf?: ArrayBuffer, bitmap?: ImageBitmap, options: { w:number, h:number, paletteId: string, mode?: 'auto'|'line-art'|'photo' } }
+
+  let bmp: ImageBitmap
+  if (buf && buf.byteLength) {
+    const blob = new Blob([buf])
+    bmp = await createImageBitmap(blob)
+  } else if (bitmap) {
+    bmp = bitmap
+  } else {
+    ;(self as any).postMessage({ error: 'No image provided' })
+    return
+  }
+
+  const off = new OffscreenCanvas(bmp.width, bmp.height)
   const ctx = off.getContext('2d', { willReadFrequently: true })!
-  ctx.drawImage(bitmap, 0, 0)
+  ctx.drawImage(bmp, 0, 0)
   const img = ctx.getImageData(0,0, off.width, off.height)
   const mode = (options.mode && options.mode !== 'auto') ? options.mode : pickPreset(img)
   const out = mode === 'line-art' ? lineArtPipeline(img, options) : photoPopPipeline(img, options)

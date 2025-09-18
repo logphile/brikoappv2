@@ -26,5 +26,18 @@ export function useMosaicify(){
     })
   }
 
-  return { mosaicify }
+  async function mosaicifyFromFile(file: File | Blob, opts: { w:number, h:number, paletteId: string, mode?: 'auto'|'line-art'|'photo' }): Promise<{ blob: Blob, mode: string, brickCount: number, costEst: number }>{
+    const worker = await ensureWorker()
+    const buf = await file.arrayBuffer()
+    return new Promise((resolve, reject) => {
+      const onMsg = (e: MessageEvent) => { cleanup(); resolve(e.data) }
+      const onErr = (e: any) => { cleanup(); reject(e) }
+      const cleanup = () => { worker.removeEventListener('message', onMsg as any); worker.removeEventListener('error', onErr as any) }
+      worker.addEventListener('message', onMsg as any)
+      worker.addEventListener('error', onErr as any)
+      worker.postMessage({ buf, options: opts }, [buf as any])
+    })
+  }
+
+  return { mosaicify, mosaicifyFromFile }
 }
