@@ -26,6 +26,7 @@ import InlineStats from '@/components/InlineStats.vue'
 import { downloadPartsListCsvSimple, downloadPng } from '@/lib/exporters'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 import { useProjects } from '@/composables/useProjects'
+import { useMosaicify } from '@/composables/useMosaicify'
 
 const mosaic = useMosaicStore()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
@@ -125,6 +126,11 @@ const tab = ref<'2D'|'3D'>('2D')
 const dropActive = ref(false)
 // Blob URL for uploaded image to show as a fallback before mosaic is ready
 const sourceImgUrl = ref<string | null>(null)
+// Preset mode for quick preview (auto chooses line-art vs. photo)
+const mode = ref<'auto'|'line-art'|'photo'>('auto')
+// Briko’d preview blob for upload (WebP)
+const previewBlob = ref<Blob | null>(null)
+const { mosaicify } = useMosaicify()
 // UI toggles
 const showPlates = ref(false)
 // BrickLink export dialog state
@@ -264,6 +270,15 @@ async function onFile(file: File) {
       fr.onload = () => { (window as any).__brikoOriginalDataUrl = fr.result as string }
       fr.readAsDataURL(file)
     } catch {}
+    // Kick off fast Briko’d preview (WebP) using lightweight pipeline
+    try {
+      const { blob, mode: resolvedMode } = await mosaicify(srcBitmap.value!, { w: target.value.w, h: target.value.h, paletteId: 'briko-v1', mode: mode.value })
+      mode.value = (resolvedMode as any) || mode.value
+      previewBlob.value = blob
+      try { if (sourceImgUrl.value) URL.revokeObjectURL(sourceImgUrl.value) } catch {}
+      sourceImgUrl.value = URL.createObjectURL(blob)
+    } catch (e) { console.warn('[mosaicify] preview failed', e) }
+
     // Cancel any in-flight tiling when a new image is loaded
     mosaic.cancelTiling()
 
@@ -308,6 +323,30 @@ async function onGenerate(){
 function choosePreset(w: number, h: number){
   target.value = { w, h }
   mosaic.setTargetSize(w, h)
+}
+
+// Save & Publish using new createProject helper (uploads WebP preview first)
+async function saveAndPublish(){
+  try {
+    const { createProject } = useProjects()
+    const rec = await createProject({
+      title: `Mosaic ${target.value.w}×${target.value.h}`,
+      kind: 'mosaic',
+      width: target.value.w,
+      height: target.value.h,
+      palette_id: 'briko-v1',
+      previewBlob: previewBlob.value || undefined,
+      mode: mode.value,
+      bricks_est: mosaic.tilingResult?.bricks?.length || (target.value.w * target.value.h),
+      cost_est_usd: mosaic.tilingResult?.estTotalCost || 0,
+      makePublic: true,
+    })
+    galleryProjectId.value = rec.id
+    try { showToast('Project published to Gallery', 'success', 2200) } catch {}
+  } catch (e:any) {
+    console.error(e)
+    try { showToast('Save failed', 'error', 2200) } catch {}
+  }
 }
 
 // Snap sliders to nearest allowed value on commit and surface a subtle toast
@@ -583,6 +622,16 @@ watchDebounced(
               <StepBadge :n="1" size="lg" :active="activeStepIndex >= 0" />
               <h2 class="text-base font-semibold">Upload your photo</h2>
             </div>
+
+          <!-- Presets row: Auto / Line Art / Photo Pop -->
+          <div class="mt-3">
+            <label class="block text-sm font-medium text-white/80 mb-1">Preset</label>
+            <div class="flex gap-2 flex-wrap">
+              <button :class="['px-3 py-1 rounded-full text-sm', mode==='auto' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='auto'">Auto</button>
+              <button :class="['px-3 py-1 rounded-full text-sm', mode==='line-art' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='line-art'">Line Art</button>
+              <button :class="['px-3 py-1 rounded-full text-sm', mode==='photo' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='photo'">Photo Pop</button>
+            </div>
+          </div>
           </section>
           <!-- Upload embedded -->
           <div>
@@ -724,6 +773,7 @@ watchDebounced(
           <div class="mt-4 flex flex-wrap gap-2 sm:gap-3">
             <button class="btn-mint w-full" :disabled="!grid || mosaic.status==='tiling'" :title="!grid ? 'Upload an image to enable' : ''" @click="onGenerate">Generate Mosaic</button>
             <button class="btn-outline-mint w-full sm:w-auto" :disabled="!mosaic.currentProjectId" :title="!mosaic.currentProjectId ? 'Create or open a project to enable' : ''" @click="saveNow">Save Project</button>
+            <button class="btn-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!previewBlob" @click="saveAndPublish">Save & Publish</button>
             <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId || !mosaic.tilingResult" :title="(!mosaic.currentProjectId || !mosaic.tilingResult) ? 'Generate and save a project first' : ''" @click="uploadPrev">Upload Preview</button>
             <button class="btn-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.tilingResult || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
             <button class="btn-outline-mint w-full sm:w-auto disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
