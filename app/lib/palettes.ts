@@ -3,11 +3,9 @@
 
 export const PALETTE_LINE_ART: number[][] = [
   [0, 0, 0],        // Black
-  [105, 105, 105],  // Dark Bluish Gray (approx)
-  [169, 169, 169],  // Light Bluish Gray
+  [105, 105, 105],  // Dark Gray
+  [169, 169, 169],  // Light Gray
   [255, 255, 255],  // White
-  // Optional warm paper tone (low frequency)
-  [210, 195, 170],  // Tan-ish
 ]
 
 export const PALETTE_PHOTO_POP: number[][] = [

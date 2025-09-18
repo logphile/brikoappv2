@@ -64,6 +64,41 @@ function satBoost(img: ImageData, amount=0.2): ImageData {
   return out
 }
 
+// Cheap adaptive threshold (mean filter window, offset)
+function adaptiveThreshold(img: ImageData, window=15, offset=2): ImageData {
+  const { width: W, height: H } = img
+  const out = new ImageData(W, H)
+  const s = img.data, d = out.data
+  const rad = Math.max(1, Math.floor(window/2))
+  // integral image for luminance
+  const integ = new Uint32Array((W+1)*(H+1))
+  function lumAt(i:number){ return s[i] } // grayscale assumed
+  for (let y=1; y<=H; y++){
+    let rowSum=0
+    for (let x=1; x<=W; x++){
+      const i = ((y-1)*W + (x-1)) * 4
+      rowSum += lumAt(i)
+      integ[y*(W+1)+x] = integ[(y-1)*(W+1)+x] + rowSum
+    }
+  }
+  const area = (x0:number,y0:number,x1:number,y1:number)=>{
+    return integ[y1*(W+1)+x1] - integ[y0*(W+1)+x1] - integ[y1*(W+1)+x0] + integ[y0*(W+1)+x0]
+  }
+  for (let y=0; y<H; y++){
+    for (let x=0; x<W; x++){
+      const i = (y*W+x)*4
+      const x0 = Math.max(0, x-rad), y0 = Math.max(0, y-rad)
+      const x1 = Math.min(W-1, x+rad), y1 = Math.min(H-1, y+rad)
+      const cnt = (x1-x0+1)*(y1-y0+1)
+      const sum = area(x0,y0,x1+1,y1+1)
+      const mean = sum / cnt
+      const val = lumAt(i) < (mean - offset) ? 0 : 255
+      d[i]=d[i+1]=d[i+2]=val; d[i+3]=255
+    }
+  }
+  return out
+}
+
 // Quantize to a small palette using Euclidean RGB distance
 function quantizeTo(img: ImageData, palette: number[][]): ImageData {
   const out = new ImageData(img.width, img.height)
@@ -156,7 +191,7 @@ function lineArtPipeline(img: ImageData, o:{w:number,h:number}){
 function photoPopPipeline(img: ImageData, o:{w:number,h:number}){
   const sat = satBoost(img)
   const q   = quantizeTo(sat, PALETTE_PHOTO_POP)
-  const d   = floydSteinberg(q, PALETTE_PHOTO_POP, 0.7)
+  const d   = floydSteinberg(q, PALETTE_PHOTO_POP, 0.8)
   return scaleTo(d, o.w, o.h)
 }
 
@@ -166,7 +201,7 @@ function pickPreset(img: ImageData){
 }
 
 self.onmessage = async (e: MessageEvent) => {
-  const { buf, bitmap, options } = e.data as { buf?: ArrayBuffer, bitmap?: ImageBitmap, options: { w:number, h:number, paletteId: string, mode?: 'auto'|'line-art'|'photo' } }
+  const { cmd, buf, bitmap, options } = e.data as { cmd?: 'analyze', buf?: ArrayBuffer, bitmap?: ImageBitmap, options: { w:number, h:number, paletteId: string, mode?: 'auto'|'line-art'|'photo' } }
 
   let bmp: ImageBitmap
   if (buf && buf.byteLength) {
@@ -183,13 +218,44 @@ self.onmessage = async (e: MessageEvent) => {
   const ctx = off.getContext('2d', { willReadFrequently: true })!
   ctx.drawImage(bmp, 0, 0)
   const img = ctx.getImageData(0,0, off.width, off.height)
-  const mode = (options.mode && options.mode !== 'auto') ? options.mode : pickPreset(img)
-  const out = mode === 'line-art' ? lineArtPipeline(img, options) : photoPopPipeline(img, options)
 
-  const c = new OffscreenCanvas(out.width, out.height)
+  if (cmd === 'analyze') {
+    const { meanSat, edgeDensity } = analyze(img)
+    const modeA = (meanSat < 0.12 && edgeDensity > 0.04) ? 'line-art' : 'photo'
+    ;(self as any).postMessage({ meanSat, edgeDensity, width: off.width, height: off.height, mode: modeA })
+    return
+  }
+
+  const mode = (options.mode && options.mode !== 'auto') ? options.mode : pickPreset(img)
+  // Line art: grayscale → contrast → adaptive threshold → quantize → light dithering → scale
+  const out = mode === 'line-art'
+    ? ((): ImageData => {
+        const g  = toGrayscale(img)
+        const eq = contrastBoost(g)
+        const thr = adaptiveThreshold(eq, 15, 2)
+        const q   = quantizeTo(thr, PALETTE_LINE_ART)
+        const d   = floydSteinberg(q, PALETTE_LINE_ART, 0.25)
+        return scaleTo(d, options.w, options.h)
+      })()
+    : photoPopPipeline(img, options)
+
+  // Scale preview down to <= 800px long edge (no upscaling), with crisp pixels
+  const longEdge = Math.max(out.width, out.height)
+  const maxEdge = 800
+  const scale = longEdge > maxEdge ? (maxEdge / longEdge) : 1
+  const prevW = Math.max(1, Math.round(out.width * scale))
+  const prevH = Math.max(1, Math.round(out.height * scale))
+
+  // Draw source (out) into a temp canvas, then scale to preview canvas
+  const srcC = new OffscreenCanvas(out.width, out.height)
+  const sctx = srcC.getContext('2d')!
+  sctx.putImageData(out, 0, 0)
+
+  const c = new OffscreenCanvas(prevW, prevH)
   const cctx = c.getContext('2d')!
   cctx.fillStyle = '#0b1020'; cctx.fillRect(0,0,c.width,c.height)
-  cctx.putImageData(out, 0, 0)
+  cctx.imageSmoothingEnabled = false
+  cctx.drawImage(srcC, 0, 0, out.width, out.height, 0, 0, prevW, prevH)
   const blob = await c.convertToBlob({ type: 'image/webp', quality: 0.92 })
   ;(self as any).postMessage({ blob, mode, brickCount: options.w*options.h, costEst: 0 })
 }
