@@ -116,16 +116,16 @@ function floydSteinberg(img: ImageData, palette: number[][], strength=1.0): Imag
 }
 
 function scaleTo(img: ImageData, W:number, H:number): ImageData {
-  const canvas = new OffscreenCanvas(W,H)
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!
-  const tmp = new ImageData(img.data, img.width, img.height)
-  ctx.putImageData(tmp,0,0)
-  const c2 = new OffscreenCanvas(W,H)
-  const ctx2 = c2.getContext('2d')!
-  ctx2.imageSmoothingEnabled=false
-  ctx2.drawImage(canvas, 0,0, W,H)
-  const out = ctx2.getImageData(0,0,W,H)
-  return out
+  // Draw source at its native size, then resample to W×H without smoothing
+  const src = new OffscreenCanvas(img.width, img.height)
+  const sctx = src.getContext('2d', { willReadFrequently: true })!
+  sctx.putImageData(new ImageData(img.data, img.width, img.height), 0, 0)
+
+  const dst = new OffscreenCanvas(W, H)
+  const dctx = dst.getContext('2d')!
+  dctx.imageSmoothingEnabled = false
+  dctx.drawImage(src, 0, 0, img.width, img.height, 0, 0, W, H)
+  return dctx.getImageData(0, 0, W, H)
 }
 
 function analyze(img: ImageData){

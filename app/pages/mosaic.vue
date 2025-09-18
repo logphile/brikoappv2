@@ -152,21 +152,29 @@ const cmH = computed(()=> fmt1(target.value.h * 0.8))
 const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
 async function publishToGallery(){
-  if (!mosaic.tilingResult || !mosaic.canExport) return
+  if (!mosaic.tilingResult) return
   const { $supabase } = useNuxtApp() as any
-  const { uploadPreviewPNG, insertUserProject } = useProjects()
-  const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
-  if (!$supabase || !cvs) return
+  const { createProject } = useProjects()
+  if (!$supabase) return
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
-    const projectId = (crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const path = await uploadPreviewPNG(user.id, projectId, cvs as any)
     const title = `Mosaic ${mosaic.width}×${mosaic.height}`
     const bricks = mosaic.tilingResult.bricks?.length || (mosaic.width * mosaic.height)
     const cost_est = Number(mosaic.tilingResult.estTotalCost || 0)
-    const rec = await insertUserProject({ id: projectId, user_id: user.id, title, kind: 'mosaic', preview_path: path, bricks, cost_est, tags: [] })
+    const rec = await createProject({
+      title,
+      kind: 'mosaic',
+      width: mosaic.width || 0,
+      height: mosaic.height || 0,
+      palette_id: 'briko-v1',
+      previewBlob: previewBlob.value || undefined,
+      mode: mode.value,
+      bricks_est: bricks,
+      cost_est_usd: cost_est,
+      makePublic: false,
+    })
     galleryProjectId.value = rec.id
     try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
   } catch (e) {
