@@ -27,6 +27,7 @@ import { downloadPartsListCsvSimple, downloadPng } from '@/lib/exporters'
 import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/wantedXml'
 import { useProjects } from '@/composables/useProjects'
 import { useMosaicify } from '@/composables/useMosaicify'
+import { suggestStuds } from '@/composables/useAutoSize'
 
 const mosaic = useMosaicStore()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
@@ -128,9 +129,10 @@ const dropActive = ref(false)
 const sourceImgUrl = ref<string | null>(null)
 // Preset mode for quick preview (auto chooses line-art vs. photo)
 const mode = ref<'auto'|'line-art'|'photo'>('auto')
+const resolvedMode = ref<'auto'|'line-art'|'photo'>('auto')
 // Briko’d preview blob for upload (WebP)
 const previewBlob = ref<Blob | null>(null)
-const { mosaicifyFromFile } = useMosaicify()
+const { mosaicifyFromFile, analyzeFile } = useMosaicify()
 // UI toggles
 const showPlates = ref(false)
 // BrickLink export dialog state
@@ -170,7 +172,7 @@ async function publishToGallery(){
       height: mosaic.height || 0,
       palette_id: 'briko-v1',
       previewBlob: previewBlob.value || undefined,
-      mode: mode.value,
+      mode: (resolvedMode.value as any) || mode.value,
       bricks_est: bricks,
       cost_est_usd: cost_est,
       makePublic: false,
@@ -271,6 +273,15 @@ async function onFile(file: File) {
     // Update fallback image URL for the preview window
     try { if (sourceImgUrl.value) URL.revokeObjectURL(sourceImgUrl.value) } catch {}
     sourceImgUrl.value = URL.createObjectURL(file)
+    // Analyze quickly in worker to suggest size/aspect and preset
+    try {
+      const a = await analyzeFile(file)
+      mode.value = a.mode as any
+      const s = suggestStuds(a.width, a.height, { meanSat: a.meanSat, edgeDensity: a.edgeDensity })
+      target.value = { w: s.w, h: s.h }
+      mosaic.setTargetSize(s.w, s.h)
+    } catch (e) { console.warn('[analyze] failed', e) }
+    // Decode to ImageBitmap for the quantization/tiling pipeline
     srcBitmap.value = await createImageBitmap(file)
     // Save a small original preview data URL for PDF cover (optional)
     try {
@@ -280,12 +291,14 @@ async function onFile(file: File) {
     } catch {}
     // Kick off fast Briko’d preview (WebP) using lightweight pipeline (bytes → worker)
     try {
-      const { blob, mode: resolvedMode } = await mosaicifyFromFile(file, { w: target.value.w, h: target.value.h, paletteId: 'briko-v1', mode: mode.value })
-      mode.value = (resolvedMode as any) || mode.value
+      const { blob, mode: resolved } = await mosaicifyFromFile(file, { w: target.value.w, h: target.value.h, paletteId: 'briko-v1', mode: mode.value })
+      mode.value = (resolved as any) || mode.value
+      resolvedMode.value = (resolved as any) || mode.value
       previewBlob.value = blob
       // Replace fallback URL with processed preview URL after worker finishes
       try { if (sourceImgUrl.value) URL.revokeObjectURL(sourceImgUrl.value) } catch {}
       sourceImgUrl.value = URL.createObjectURL(blob)
+      try { showToast(`Auto: ${resolvedMode.value} • ${target.value.w}×${target.value.h} studs`, 'success', 1600) } catch {}
     } catch (e) { console.warn('[mosaicify] preview failed', e) }
 
     // Cancel any in-flight tiling when a new image is loaded
@@ -345,7 +358,7 @@ async function saveAndPublish(){
       height: target.value.h,
       palette_id: 'briko-v1',
       previewBlob: previewBlob.value || undefined,
-      mode: mode.value,
+      mode: (resolvedMode.value as any) || mode.value,
       bricks_est: mosaic.tilingResult?.bricks?.length || (target.value.w * target.value.h),
       cost_est_usd: mosaic.tilingResult?.estTotalCost || 0,
       makePublic: true,
@@ -941,6 +954,11 @@ watchDebounced(
             @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
           >
           <RegeneratingChip />
+          <!-- Applied preset & size chips -->
+          <div class="mb-2 text-xs opacity-80 flex gap-2 items-center" v-if="resolvedMode || (target.w && target.h)">
+            <span class="px-2 py-0.5 rounded-full bg-white/5">Preset: {{ resolvedMode }}</span>
+            <span class="px-2 py-0.5 rounded-full bg-white/5">{{ target.w }}×{{ target.h }} studs</span>
+          </div>
           <div v-if="dropActive"
                class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
 
