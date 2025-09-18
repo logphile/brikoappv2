@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, computed } from 'vue'
 import type { WorkerOut, Placement, BOMRow } from '@/types/mosaic'
+import PlateTooltip from '@/components/ui/PlateTooltip.vue'
 // Local shape for streaming overlay bricks
 interface TiledBrick { x:number; y:number; w:number; h:number; colorId:number }
 const props = defineProps<{ data: WorkerOut, showGrid?: boolean, showTiles?: boolean, overlayBricks?: TiledBrick[], tileMap?: Uint32Array | null, bricks?: TiledBrick[] | null, bomRows?: BOMRow[] | null, surface?: 'plates'|'tiles' }>()
@@ -65,10 +66,11 @@ function drawHoverRect(rect: {x:number;y:number;w:number;h:number}){
   const scale = cvs.value.width / width
   const ctx = ov.value.getContext('2d')!
   ctx.save()
-  ctx.lineWidth = Math.max(2, Math.floor(scale/4))
-  ctx.strokeStyle = 'rgba(0,229,160,0.95)'
-  ctx.shadowColor = 'rgba(0,229,160,0.45)'
-  ctx.shadowBlur = Math.max(4, Math.floor(scale))
+  const dpr = (globalThis.devicePixelRatio || 1)
+  ctx.lineWidth = dpr
+  ctx.strokeStyle = '#00E5A0'
+  ctx.shadowColor = 'rgba(0,0,0,0.35)'
+  ctx.shadowBlur = 4 * dpr
   ctx.strokeRect(rect.x*scale+.5, rect.y*scale+.5, rect.w*scale-1, rect.h*scale-1)
   ctx.restore()
 }
@@ -101,6 +103,31 @@ function handleMove(ev: PointerEvent){
 
 function handleLeave(){ hover.value = null; tooltip.value = null; clearOverlay() }
 
+function handleTooltipClose(){ hover.value = null; tooltip.value = null; clearOverlay() }
+
+let touchTimer: number | undefined
+function handleTouchStart(ev: TouchEvent){
+  if (!props.tileMap || !props.bricks || !cvs.value) return
+  const t = ev.touches && ev.touches[0]
+  if (!t) return
+  const rect = cvs.value.getBoundingClientRect()
+  const { width, height } = props.data
+  const px = rect.width / width
+  const py = rect.height / height
+  const tx = Math.floor((t.clientX - rect.left) / px)
+  const ty = Math.floor((t.clientY - rect.top) / py)
+  if (tx < 0 || ty < 0 || tx >= width || ty >= height) { handleLeave(); return }
+  const id = props.tileMap[ty * width + tx]
+  if (!id) { handleLeave(); return }
+  const b = props.bricks[id - 1]
+  if (!b) { handleLeave(); return }
+  hover.value = { id, x: b.x, y: b.y, w: b.w, h: b.h }
+  tooltip.value = { x: t.clientX, y: t.clientY }
+  drawHoverRect(b)
+  if (touchTimer) clearTimeout(touchTimer)
+  touchTimer = window.setTimeout(() => { handleLeave() }, 1500)
+}
+
 const spec = computed(() => {
   if (!hover.value || !props.bricks) return null
   const b = props.bricks[hover.value.id - 1]
@@ -127,26 +154,21 @@ watch(() => props.tileMap, () => { clearOverlay(); hover.value = null; tooltip.v
     <!-- hover overlay canvas -->
     <canvas ref="ov" class="pointer-events-none absolute inset-0 w-full h-full rounded-xl"></canvas>
     <!-- tooltip -->
-    <div v-if="hover && spec && tooltip"
-         class="absolute z-10 pointer-events-auto select-none"
-         :style="{ left: Math.max(8, tooltip.x - (wrapper?.getBoundingClientRect().left || 0) + 12) + 'px', top: Math.max(8, tooltip.y - (wrapper?.getBoundingClientRect().top || 0) + 12) + 'px' }"
-         @pointermove.stop
-         @pointerleave.prevent.stop="handleLeave">
-      <div class="rounded-xl bg-white/10 border border-white/10 backdrop-blur px-3 py-2 text-xs shadow-soft-card">
-        <div class="flex items-center gap-2">
-          <span class="inline-block w-3.5 h-3.5 rounded-sm ring-1 ring-white/20" :style="{ backgroundColor: spec.colorHex }"></span>
-          <span class="font-medium text-white/90">{{ (props.surface==='tiles' ? 'Tile' : 'Plate') }} {{ spec.part.replace('x','×') }}</span>
-          <span class="opacity-70">({{ spec.pn }})</span>
-        </div>
-        <div class="mt-1 text-white/80">{{ spec.colorName }}</div>
-        <div class="mt-1 text-white/70">
-          In parts list: x{{ spec.qty }} ·
-          <button class="underline underline-offset-2 hover:text-white" @click.stop="viewInParts">View in parts list</button>
-        </div>
-      </div>
-    </div>
+    <PlateTooltip
+      v-if="hover && spec && tooltip"
+      :show="true"
+      :x="tooltip.x"
+      :y="tooltip.y"
+      :part="{
+        brick: `${(props.surface==='tiles' ? 'Tile' : 'Plate')} ${spec.part.replace('x','×')} (${spec.pn})`,
+        color: spec.colorName,
+        count: spec.qty,
+        link: '#parts-list'
+      }"
+      @close="handleTooltipClose"
+    />
     <!-- event capture on wrapper -->
-    <div class="absolute inset-0" @pointermove.passive="handleMove" @pointerleave.passive="handleLeave"></div>
+    <div class="absolute inset-0" @pointermove.passive="handleMove" @pointerleave.passive="handleLeave" @touchstart.passive="handleTouchStart"></div>
   </div>
 </template>
 
