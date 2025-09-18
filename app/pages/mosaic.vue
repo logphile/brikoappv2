@@ -130,7 +130,7 @@ const sourceImgUrl = ref<string | null>(null)
 const mode = ref<'auto'|'line-art'|'photo'>('auto')
 // Briko’d preview blob for upload (WebP)
 const previewBlob = ref<Blob | null>(null)
-const { mosaicify } = useMosaicify()
+const { mosaicifyFromFile } = useMosaicify()
 // UI toggles
 const showPlates = ref(false)
 // BrickLink export dialog state
@@ -278,11 +278,12 @@ async function onFile(file: File) {
       fr.onload = () => { (window as any).__brikoOriginalDataUrl = fr.result as string }
       fr.readAsDataURL(file)
     } catch {}
-    // Kick off fast Briko’d preview (WebP) using lightweight pipeline
+    // Kick off fast Briko’d preview (WebP) using lightweight pipeline (bytes → worker)
     try {
-      const { blob, mode: resolvedMode } = await mosaicify(srcBitmap.value!, { w: target.value.w, h: target.value.h, paletteId: 'briko-v1', mode: mode.value })
+      const { blob, mode: resolvedMode } = await mosaicifyFromFile(file, { w: target.value.w, h: target.value.h, paletteId: 'briko-v1', mode: mode.value })
       mode.value = (resolvedMode as any) || mode.value
       previewBlob.value = blob
+      // Replace fallback URL with processed preview URL after worker finishes
       try { if (sourceImgUrl.value) URL.revokeObjectURL(sourceImgUrl.value) } catch {}
       sourceImgUrl.value = URL.createObjectURL(blob)
     } catch (e) { console.warn('[mosaicify] preview failed', e) }
