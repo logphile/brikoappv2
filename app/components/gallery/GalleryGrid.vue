@@ -7,6 +7,7 @@
       :name="item.name"
       :kind="item.kind"
       :thumb-url="item.thumb_url"
+      :original-url="(item as any).orig_url || undefined"
       :username="(item as any).username"
       :bricks="(item as any).bricks"
       :cost="(item as any).cost"

@@ -132,6 +132,8 @@ const mode = ref<'auto'|'line-art'|'photo'>('auto')
 const resolvedMode = ref<'auto'|'line-art'|'photo'>('auto')
 // Briko’d preview blob for upload (WebP)
 const previewBlob = ref<Blob | null>(null)
+// Keep original src File for deriving a public, downscaled original preview on publish
+const srcFile = ref<File | null>(null)
 const { mosaicifyFromFile, analyzeFile } = useMosaicify()
 // UI toggles
 const showPlates = ref(false)
@@ -172,6 +174,7 @@ async function publishToGallery(){
       height: mosaic.height || 0,
       palette_id: 'briko-v1',
       previewBlob: previewBlob.value || undefined,
+      sourceFile: srcFile.value || undefined,
       mode: (resolvedMode.value as any) || mode.value,
       bricks_est: bricks,
       cost_est_usd: cost_est,
@@ -283,6 +286,7 @@ async function onFile(file: File) {
     } catch (e) { console.warn('[analyze] failed', e) }
     // Decode to ImageBitmap for the quantization/tiling pipeline
     srcBitmap.value = await createImageBitmap(file)
+    srcFile.value = file
     // Save a small original preview data URL for PDF cover (optional)
     try {
       const fr = new FileReader()
@@ -358,6 +362,7 @@ async function saveAndPublish(){
       height: target.value.h,
       palette_id: 'briko-v1',
       previewBlob: previewBlob.value || undefined,
+      sourceFile: srcFile.value || undefined,
       mode: (resolvedMode.value as any) || mode.value,
       bricks_est: mosaic.tilingResult?.bricks?.length || (target.value.w * target.value.h),
       cost_est_usd: mosaic.tilingResult?.estTotalCost || 0,

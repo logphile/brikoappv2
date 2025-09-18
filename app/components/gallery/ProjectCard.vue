@@ -1,9 +1,28 @@
 <template>
   <article class="rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden group relative transition hover:shadow-mint-glow/20">
-    <!-- Preview -->
-    <div class="h-[220px] bg-white/5 overflow-hidden relative">
-      <img v-if="thumbUrl" :src="thumbUrl" :alt="name" loading="lazy" decoding="async" class="w-full h-full object-cover bg-white/5 transition-transform duration-300 group-hover:scale-105" />
+    <!-- Preview: mosaic by default, original on hover/tap -->
+    <div class="h-[220px] bg-white/5 overflow-hidden relative"
+         @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
+      <!-- Mosaic (default) -->
+      <img v-if="thumbUrl" :src="thumbUrl" alt=""
+           loading="lazy" decoding="async"
+           class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300"
+           :class="{ 'opacity-0': showOriginal }"
+      />
       <div v-else class="absolute inset-0 grid place-items-center text-white/70 text-sm">No preview</div>
+
+      <!-- Original (hover/tap reveal) -->
+      <img v-if="originalUrl" :src="originalUrl" alt=""
+           loading="lazy" decoding="async"
+           class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100"
+           :class="{ 'opacity-100': showOriginal }"
+      />
+
+      <!-- Tiny chip (desktop hint) -->
+      <div v-if="originalUrl" class="absolute left-2 top-2 text-[11px] px-1.5 py-0.5 rounded bg-black/45 backdrop-blur hidden sm:block">
+        Hover: original
+      </div>
+
       <!-- Hover overlay actions -->
       <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/35 transition"></div>
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition grid place-items-center">
@@ -64,6 +83,7 @@ const props = defineProps<{
   name: string
   kind: string
   thumbUrl?: string | null
+  originalUrl?: string | null
   username?: string
   bricks?: number
   cost?: number
@@ -100,6 +120,10 @@ function onSaveClick(){
   else { emit('save'); savesLocal.value = savesLocal.value + 1 }
 }
 
+const showOriginal = ref(false)
+function preloadOriginal(){ if(props.originalUrl){ const img = new Image(); img.src = props.originalUrl } }
+function onTapSwap(){ if (props.originalUrl) { showOriginal.value = !showOriginal.value } }
+
 const avatarInitial = computed(() => (props.username?.replace('@','')[0] || 'B').toUpperCase())
 
 function relativeTime(input?: string){
@@ -116,5 +140,5 @@ function relativeTime(input?: string){
 }
 
 const relative = computed(() => relativeTime(props.date))
-const viewHref = computed(() => props.publicId ? `/community/${props.publicId}` : '/mosaic')
+const viewHref = computed(() => props.publicId ? `/project/${props.publicId}` : '/mosaic')
 </script>

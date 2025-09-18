@@ -30,6 +30,7 @@ async function run(){
         height: 48,
         palette_id: 'briko-v1',
         previewBlob: blob,
+        sourceFile: f,
         makePublic: true,
       })
       pct.value = Math.round(((i + 1) / files.value.length) * 100)
@@ -57,7 +58,7 @@ async function run(){
       <input type="file" accept="image/*" multiple @change="(e:any)=> files = Array.from(e.target.files || [])" />
       <button class="btn-mint" :disabled="running || !files.length || !isAllowed" @click="run">Seed {{ files.length }} images</button>
       <div v-if="running" class="text-sm">Seeding… {{ pct }}%</div>
-      <p class="text-xs opacity-70">Uses your account. Avoid copyrighted works for the public gallery.</p>
+      <p class="text-xs opacity-80">Uses your account. Please only upload content you own or CC0/Public Domain for the public gallery.</p>
     </div>
   </main>
 </template>
