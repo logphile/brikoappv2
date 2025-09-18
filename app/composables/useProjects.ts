@@ -14,6 +14,38 @@ export const useProjects = () => {
     return `${base}/storage/v1/object/public/${previewPath.replace(/^\/+/, '')}`
   }
 
+  // Downscale a raw File/Blob to a <= maxEdge WebP blob
+  async function fileToScaledWebP(file: File | Blob, maxEdge = 800, quality = 0.92): Promise<Blob> {
+    const bmp = await createImageBitmap(file as any)
+    const w = bmp.width, h = bmp.height
+    const long = Math.max(w, h)
+    const scale = long > maxEdge ? (maxEdge / long) : 1
+    const outW = Math.max(1, Math.round(w * scale))
+    const outH = Math.max(1, Math.round(h * scale))
+
+    if (typeof OffscreenCanvas !== 'undefined') {
+      const src = new OffscreenCanvas(w, h)
+      const sctx = src.getContext('2d')!
+      sctx.drawImage(bmp, 0, 0)
+      const dst = new OffscreenCanvas(outW, outH)
+      const dctx = dst.getContext('2d')!
+      dctx.imageSmoothingEnabled = true
+      dctx.drawImage(src, 0, 0, w, h, 0, 0, outW, outH)
+      return await (dst as any).convertToBlob({ type: 'image/webp', quality })
+    } else {
+      const src = document.createElement('canvas')
+      src.width = w; src.height = h
+      const sctx = src.getContext('2d')!
+      sctx.drawImage((bmp as any), 0, 0)
+      const dst = document.createElement('canvas')
+      dst.width = outW; dst.height = outH
+      const dctx = dst.getContext('2d')!
+      dctx.imageSmoothingEnabled = true
+      dctx.drawImage(src, 0, 0, w, h, 0, 0, outW, outH)
+      return await new Promise<Blob>((resolve, reject) => (dst as HTMLCanvasElement).toBlob(b => b ? resolve(b) : reject(new Error('toBlob null')),'image/webp', quality))
+    }
+  }
+
   async function canvasToWebpBlob(canvas: HTMLCanvasElement | OffscreenCanvas, quality = 0.92): Promise<Blob> {
     // Prefer convertToBlob with webp
     if ('convertToBlob' in canvas && typeof (canvas as any).convertToBlob === 'function') {
@@ -129,6 +161,7 @@ export const useProjects = () => {
     height: number
     palette_id: string
     previewBlob?: Blob
+    sourceFile?: File | Blob
     mode?: 'auto'|'line-art'|'photo'
     bricks_est?: number
     cost_est_usd?: number
@@ -157,6 +190,20 @@ export const useProjects = () => {
       if (error) throw error
     }
 
+    // Build and upload a small original preview if source file provided
+    let origPath: string | null = null
+    if (input.sourceFile) {
+      try {
+        const origBlob = await fileToScaledWebP(input.sourceFile, 800)
+        const origName = `original-preview-800w-v1.webp`
+        origPath = `projects/${user.id}/${id}/${origName}`
+        const { error: origErr } = await $supabase.storage.from('projects').upload(origPath, origBlob, { upsert: true, contentType: 'image/webp', cacheControl: '31536000, immutable' })
+        if (origErr) { console.warn('[createProject] original preview upload failed', origErr) }
+      } catch (e) {
+        console.warn('[createProject] original preview generation failed', e)
+      }
+    }
+
     // Insert row (new schema)
     const payload1: any = {
       id,
@@ -165,6 +212,7 @@ export const useProjects = () => {
       kind: input.kind,
       status: 'private',
       preview_path: storagePath,
+      original_preview_path: origPath || null,
       bricks: input.bricks_est,
       cost_est: input.cost_est_usd,
       tags: []
@@ -185,6 +233,10 @@ export const useProjects = () => {
       const res2 = await $supabase.from('user_projects').insert(payload2).select().single()
       if (res2.error) throw res2.error
       rec = res2.data
+      // Best-effort: set original_preview_path if the column exists
+      if (origPath) {
+        try { await $supabase.from('user_projects').update({ original_preview_path: origPath }).eq('id', id).eq('user_id', user.id) } catch {}
+      }
     } else {
       rec = data
     }
@@ -197,6 +249,7 @@ export const useProjects = () => {
 
   return {
     buildPreviewUrl,
+    fileToScaledWebP,
     canvasToBlob,
     canvasToWebpBlob,
     uploadPreviewPNG,

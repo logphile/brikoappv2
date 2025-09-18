@@ -158,6 +158,7 @@ async function fetchGallery(){
       name: r.title,
       kind: r.kind,
       thumb_url: buildPreviewUrl(r.preview_path),
+      orig_url: r.original_preview_path ? buildPreviewUrl(r.original_preview_path) : null,
       likes: r.likes ?? 0,
       saves: r.saves ?? 0,
       username: r.username || r.display_name || '@user',
