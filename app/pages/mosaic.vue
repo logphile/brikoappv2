@@ -97,6 +97,7 @@ useHead({
 // UI button enable/disable states (for MosaicActions)
 const previewReady = computed(() => !!grid.value && mosaic.status !== 'tiling')
 const mosaicReady = computed(() => !!mosaic.tilingResult)
+const projectSaved = computed(() => !!galleryProjectId.value)
 const isWorking = computed(() => !!loading.value || mosaic.status === 'working' || mosaic.status === 'tiling' || !!publishing.value)
 
 const target = ref<{w:number,h:number}>({ w: 20, h: 20 })
@@ -344,6 +345,30 @@ async function onFile(file: File) {
     mosaic.clearUiWorking()
   }
 }
+
+// Remix preload: if ?src is provided, fetch and pass through the normal upload path
+async function loadFromSrc(url: string) {
+  try {
+    const res = await fetch(url, { cache: 'no-store' })
+    if (!res.ok) throw new Error(`fetch ${res.status}`)
+    const blob = await res.blob()
+    const file = new File([blob], 'remix.png', { type: blob.type || 'image/png' })
+    await onFile(file)
+    try { showToast('Loaded from community project', 'success', 1600) } catch {}
+  } catch (e) {
+    console.error('remix loadFromSrc failed', e)
+    try { showToast('Could not load source image', 'error', 2000) } catch {}
+  }
+}
+
+// Kick off remix load from URL query at mount and on changes
+onMounted(() => {
+  const src = route.query.src as string | undefined
+  if (src) loadFromSrc(src)
+})
+watch(() => route.query.src, (src) => {
+  if (typeof src === 'string' && src) loadFromSrc(src)
+})
 
 async function onGenerate(){
   mosaic.setUiWorking('manual')

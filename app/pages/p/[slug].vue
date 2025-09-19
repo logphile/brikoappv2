@@ -6,7 +6,10 @@ import { createError } from 'h3'
 import { useProjects } from '@/composables/useProjects'
 
 const route = useRoute()
-const id = (route.params.slug as string).split('-')[0]
+// Extract the leading UUID from ":slug" safely (supports ":id" or ":id-slug")
+const slugParam = (route.params.slug as string).toString()
+const idMatch = slugParam.match(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/)
+const id = (idMatch && idMatch[0]) || slugParam
 
 const loading = ref(true)
 const project = ref<any | null>(null)
