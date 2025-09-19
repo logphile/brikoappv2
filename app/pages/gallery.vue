@@ -4,6 +4,7 @@
       <div>
         <h1 class="text-2xl font-semibold">Community Gallery</h1>
         <p class="opacity-80 text-sm">Public remixes and builds shared by the community.</p>
+        <InlineLoginBanner />
       </div>
       <div class="flex flex-wrap items-center gap-2 text-sm">
         <button v-for="s in sorts" :key="s" @click="setSort(s)" class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40" :class="{ 'bg-white/10': sort===s }">{{ s }}</button>
@@ -41,6 +42,7 @@ import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 import seedsRaw from '@/data/gallery_seeds.json'
 import { useProjects } from '@/composables/useProjects'
+import InlineLoginBanner from '@/components/studio/InlineLoginBanner.vue'
 
 // SEO
 useHead({
