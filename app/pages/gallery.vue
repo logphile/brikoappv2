@@ -152,22 +152,42 @@ async function fetchGallery(){
   try {
     const rows = await queryPublicProjects(sort.value)
     // Normalize rows to the grid item shape with thumb_url and social fields
-    items.value = (rows || []).map((r: any) => ({
-      id: r.id,
-      public_id: r.id,
-      name: r.title,
-      kind: r.kind,
-      thumb_url: buildPreviewUrl(r.preview_path),
-      orig_url: r.original_preview_path ? buildPreviewUrl(r.original_preview_path) : null,
-      likes: r.likes ?? 0,
-      saves: r.saves ?? 0,
-      username: r.username || r.display_name || '@user',
-      bricks: r.bricks ?? 0,
-      cost: r.cost_est ?? 0,
-      tags: Array.isArray(r.tags) ? r.tags : [],
-      created_at: r.created_at,
-      updated_at: r.updated_at,
-    }))
+    items.value = (rows || []).map((r: any) => {
+      // version param to bust CDN/browser cache on new uploads/updates
+      const v = (() => {
+        const d = r.updated_at || r.created_at
+        try { return new Date(d).getTime() } catch { return Date.now() }
+      })()
+
+      // helper so both URLs are consistently cache-busted
+      const pub = (p?: string | null) => p ? (buildPreviewUrl(p) + `?v=${v}`) : ''
+
+      // Try fields in this order:
+      // 1) original_preview_path (if your view provides a pre-sized original)
+      // 2) original_path (raw original)
+      // 3) derive from preview_path by swapping '/preview.png' → '/original.png'
+      const derivedOriginalPath =
+        (typeof r.preview_path === 'string')
+          ? r.preview_path.replace(/\/preview\.png$/i, '/original.png')
+          : null
+
+      return {
+        id: r.id,
+        public_id: r.id,
+        name: r.title,
+        kind: r.kind,
+        thumb_url: pub(r.preview_path),
+        orig_url: pub(r.original_preview_path || r.original_path || derivedOriginalPath) || null,
+        likes: r.likes ?? 0,
+        saves: r.saves ?? 0,
+        username: r.username || r.display_name || '@user',
+        bricks: r.bricks ?? 0,
+        cost: r.cost_est ?? 0,
+        tags: Array.isArray(r.tags) ? r.tags : [],
+        created_at: r.created_at,
+        updated_at: r.updated_at,
+      }
+    })
     await Promise.all([
       fetchReactionsByMe(),
       fetchProjectTags(),
