@@ -9,6 +9,10 @@ export default defineNuxtConfig({
   srcDir: 'app',
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   typescript: { strict: true },
+  routeRules: {
+    '/community-studio': { redirect: '/gallery' },
+    '/community-studio/**': { redirect: '/gallery' },
+  },
   css: [
     '@/assets/styles/globals.css',
     '@/assets/css/controls.css',
