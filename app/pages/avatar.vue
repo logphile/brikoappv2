@@ -112,6 +112,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
+import { useRoute } from 'vue-router'
 import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
@@ -459,6 +460,23 @@ watch([size, dither, studStyle, paletteName, bgMode, bgSolid], () => {
   if (imgReady.value && !loading.value) {
     // Debounce via microtask to batch rapid changes
     Promise.resolve().then(() => process())
+  }
+})
+
+// Remix preload: if a src URL is provided, auto-load it on mount
+const route = useRoute()
+onMounted(async () => {
+  const src = route.query.src as string | undefined
+  if (!src) return
+  try {
+    const res = await fetch(src)
+    if (!res.ok) throw new Error(`Failed to fetch source (${res.status})`)
+    const blob = await res.blob()
+    await handleSelfieFile(new File([blob], 'remix.png', { type: blob.type || 'image/png' }))
+    try { show('Loaded from community project', 'success') } catch {}
+  } catch (e) {
+    console.warn('[Avatar Remix preload] failed', e)
+    try { show('Could not load source image', 'error') } catch {}
   }
 })
 

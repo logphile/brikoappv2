@@ -180,6 +180,20 @@ watch([paletteUsed, instUniqueColors], ([p, m]) => {
   }
 })
 
+// Remix preload: if a src URL is provided in the query, auto-load it
+onMounted(async () => {
+  const src = route.query.src as string | undefined
+  if (!src) return
+  try {
+    const res = await fetch(src)
+    if (!res.ok) throw new Error(`Failed to fetch source (${res.status})`)
+    const blob = await res.blob()
+    await onFile(new File([blob], 'remix.png', { type: blob.type || 'image/png' }))
+  } catch (e) {
+    console.warn('[Voxel Remix preload] failed', e)
+  }
+})
+
 // Auto-load a colorful default image so the palette mapping is obvious
 onMounted(() => { vox.value = null; srcBitmap.value = null })
 onMounted(async () => {
