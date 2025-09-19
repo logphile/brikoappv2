@@ -36,7 +36,7 @@
                    text-white/90 hover:bg-white/20 transition-colors">
             {{ user.email }}
           </NuxtLink>
-          <NuxtLink v-else to="/login"
+          <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
             class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
                    text-white/90 hover:bg-white/20 transition-colors">
             Login

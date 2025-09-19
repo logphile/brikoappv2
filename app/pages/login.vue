@@ -16,18 +16,30 @@
       </button>
     </form>
 
+    <div class="my-4 flex items-center gap-3 text-white/60">
+      <div class="h-px flex-1 bg-white/10"></div>
+      <span class="text-xs">or</span>
+      <div class="h-px flex-1 bg-white/10"></div>
+    </div>
+
+    <button class="btn-mint w-full" @click="loginWithGoogle">
+      Continue with Google
+    </button>
+
     <p v-if="error" class="mt-4 text-sm text-red-300">{{ error }}</p>
   </main>
   </Transition>
   </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
+import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 
 const router = useRouter()
+const route = useRoute()
 const { loginWithMagicLink } = useAuth()
 const { $supabase } = useNuxtApp() as any
 
@@ -76,16 +88,34 @@ const loading = ref(false)
 const sent = ref(false)
 const error = ref<string | null>(null)
 
+const nextPath = computed(() => (route.query.next as string) || '/studio')
+const redirectTo = computed(() => {
+  const origin = process.client ? window.location.origin : ''
+  return `${origin}/auth/callback?next=${encodeURIComponent(nextPath.value)}`
+})
+
 async function submit(){
   error.value = null
   try {
     loading.value = true
-    await loginWithMagicLink(email.value.trim())
+    await loginWithMagicLink(email.value.trim(), redirectTo.value)
     sent.value = true
   } catch (e: any) {
     error.value = e?.message || 'Failed to send link'
   } finally {
     loading.value = false
+  }
+}
+
+async function loginWithGoogle(){
+  try {
+    const rt = redirectTo.value
+    await $supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: rt, queryParams: { prompt: 'consent' } }
+    })
+  } catch (e: any) {
+    error.value = e?.message || 'Google login failed'
   }
 }
 
@@ -95,6 +125,6 @@ onMounted(async () => {
   try { await $supabase.auth.exchangeCodeForSession(window.location.href) } catch {}
   // If already logged in, redirect to projects
   const { data } = await $supabase.auth.getUser()
-  if(data.user) router.push('/projects')
+  if(data.user) router.push(nextPath.value)
 })
 </script>
