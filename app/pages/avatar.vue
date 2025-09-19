@@ -2,7 +2,7 @@
   <Transition appear enter-active-class="transition ease-out duration-600"
               enter-from-class="opacity-0 translate-y-2"
               enter-to-class="opacity-100 translate-y-0">
-  <main class="mx-auto max-w-5xl px-6 py-10 text-white">
+  <main class="mx-auto max-w-6xl px-6 py-10 text-white">
     <div class="flex items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-semibold">{{ copy.avatar.title }}</h1>
@@ -25,75 +25,74 @@
       </div>
     </div>
 
-    <section class="mt-6 space-y-4">
-      <div class="flex flex-wrap items-end gap-4 text-sm">
-        <!-- New unified uploader -->
-        <UploadBox
-          :maxSizeMB="25"
-          accept="image/*"
-          @file="handleSelfieFile"
-          @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }"
-        />
+    <section class="mt-6">
+      <div class="grid gap-6 lg:grid-cols-[460px,1fr]">
+        <!-- Controls column -->
+        <aside class="card-glass p-4 space-y-4">
+          <PresetChips v-model:preset="preset" />
 
-        <label class="block">
-          <span class="block">Target size (studs)</span>
-          <input type="range" min="32" max="256" step="16" v-model.number="size" class="range-mint mt-2 w-64"/>
-          <div class="opacity-70 mt-1">{{ size }} × {{ size }}</div>
-        </label>
+          <UploadBox
+            :maxSizeMB="25"
+            accept="image/*"
+            @file="handleSelfieFile"
+            @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }"
+          />
 
-        <label class="inline-flex items-center gap-2 mt-6">
-          <input type="checkbox" v-model="dither" />
-          <span>Dither (FS)</span>
-        </label>
+          <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
+          <PreviewQualitySelect v-model:quality="quality" />
 
-        <label class="inline-flex items-center gap-2 mt-6">
-          <input type="checkbox" v-model="studStyle" />
-          <span>Stud style</span>
-        </label>
-
-        <div class="block">
-          <span class="block">Palette</span>
-          <PaletteSwatches v-model="paletteName" class="mt-2" />
-        </div>
-
-        <label class="block">
-          <span class="block">Background</span>
-          <select v-model="bgMode" class="select-mint mt-2">
-            <option value="keep">Keep quantized image</option>
-            <option value="solid">Solid color</option>
-            <option value="transparent">Transparent</option>
-          </select>
-        </label>
-
-        <label v-if="bgMode==='solid'" class="block">
-          <span class="block">Solid color</span>
-          <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/10 rounded" />
-        </label>
-
-        <button class="btn-mint mt-6"
-                :disabled="loading || !imgReady"
-                @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
-
-        <span class="ml-auto text-xs opacity-70 mt-6">OpenCV: <span :class="cvReady ? 'text-emerald-300' : 'text-yellow-300'">{{ cvReady ? 'ready' : 'loading…' }}</span></span>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-6 mt-4">
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5 animate-fade-in-up">
-          <div class="text-sm opacity-80 mb-2">Source (scaled)</div>
-          <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
-            <canvas ref="srcCanvas" class="max-w-full"></canvas>
-            <div v-if="!imgReady" class="absolute inset-0 grid place-items-center text-white/70">
-              <div class="text-center">
-                <div class="mx-auto mb-2 h-16 w-16 rounded-full bg-white/10 ring-1 ring-white/20"></div>
-                <div class="text-sm">Upload an image to begin.</div>
-              </div>
-            </div>
+          <div class="flex flex-wrap gap-4 items-center">
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="ditherFS" />
+              <span>Dither (FS)</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="studStyle" />
+              <span>Stud style</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" v-model="showPlateOutlines" />
+              <span>Show plate outlines</span>
+            </label>
           </div>
-        </div>
-        <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-3 shadow-soft-card transition hover:-translate-y-0.5 animate-fade-in-up">
+
+          <div class="block">
+            <span class="block">Palette</span>
+            <PaletteSwatches v-model="paletteName" class="mt-2" />
+          </div>
+
+          <div class="block">
+            <span class="block">Background</span>
+            <select v-model="bgMode" class="select-mint mt-2">
+              <option value="keep">Keep quantized image</option>
+              <option value="solid">Solid color</option>
+              <option value="transparent">Transparent</option>
+            </select>
+          </div>
+          <label v-if="bgMode==='solid'" class="block">
+            <span class="block">Solid color</span>
+            <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/10 rounded" />
+          </label>
+
+          <div class="flex items-center gap-3 pt-2">
+            <button class="btn-mint" :disabled="loading || !imgReady" @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
+            <span class="ml-auto text-xs opacity-70">OpenCV: <span :class="cvReady ? 'text-emerald-300' : 'text-yellow-300'">{{ cvReady ? 'ready' : 'loading…' }}</span></span>
+          </div>
+
+          <div class="flex gap-2 pt-1">
+            <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
+            <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+          </div>
+        </aside>
+
+        <!-- Preview column -->
+        <main class="card-glass p-3">
           <div class="text-sm opacity-80 mb-2">LEGO-mapped Output</div>
           <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
             <canvas ref="outCanvas" class="max-w-full"></canvas>
+            <!-- Grid overlay -->
+            <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none"
+                 :style="gridOverlayStyle"></div>
             <div v-if="!outReady" class="absolute inset-0 grid place-items-center text-white/70">
               <div class="text-center">
                 <div class="mx-auto mb-2 h-16 w-16 rounded-full bg-white/10 ring-1 ring-white/20"></div>
@@ -101,8 +100,10 @@
               </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
+      <!-- Hidden source canvas for processing -->
+      <canvas ref="srcCanvas" class="hidden"></canvas>
     </section>
   </main>
   </Transition>
@@ -121,6 +122,11 @@ import { copy } from '@/lib/copy'
 import StepChips from '@/components/StepChips.vue'
 import UploadBox from '@/components/ui/UploadBox.vue'
 import PaletteSwatches from '@/components/ui/PaletteSwatches.vue'
+import OutputSizeControl from '@/components/controls/OutputSizeControl.vue'
+import PreviewQualitySelect from '@/components/controls/PreviewQualitySelect.vue'
+import PresetChips from '@/components/controls/PresetChips.vue'
+import { useRemixLoader } from '@/composables/useRemixLoader'
+import { useProjects } from '@/composables/useProjects'
 
 const { show } = useToasts()
 
@@ -145,9 +151,13 @@ useHead({
 })
 
 // UI state
-const size = ref(128)
-const dither = ref(false)
+const preset = ref<'auto'|'lineart'|'pop'>('auto')
+const widthStuds = ref(48)
+const heightStuds = ref(64)
+const quality = ref<'speed'|'balanced'|'detail'|'max'>('balanced')
+const ditherFS = ref(false)
 const studStyle = ref(true)
+const showPlateOutlines = ref(false)
 const loading = ref(false)
 const cvReady = ref(false)
 const imgReady = ref(false)
@@ -158,6 +168,7 @@ type BgMode = 'transparent' | 'keep' | 'solid'
 const paletteName = ref<'lego16' | 'lego32'>('lego32')
 const activePalette = computed(() => (paletteName.value === 'lego16' ? lego16 : lego32))
 const bgMode = ref<BgMode>('keep')
+const route = useRoute()
 const bgSolid = ref('#111827')
 
 // Supabase and persistence
@@ -168,10 +179,14 @@ const isPublic = ref(false)
 const shareToken = ref('')
 const canShare = computed(() => !!$supabase)
 const sharePath = computed(() => shareToken.value ? `/s/${shareToken.value}` : '')
+const { loadingFromSrc, loadInto } = useRemixLoader()
+const { createProject, makePublic: makePublicProject } = useProjects()
 
 // DOM refs
 const srcCanvas = ref<HTMLCanvasElement | null>(null)
 const outCanvas = ref<HTMLCanvasElement | null>(null)
+const lastTileSizePx = ref(8)
+const srcFileRef = ref<File | null>(null)
 
 let srcBitmap: ImageBitmap | null = null
 let cv: any = null
@@ -202,9 +217,10 @@ function loadOpenCV() {
   })
 }
 
-function drawToCanvas(bitmap: ImageBitmap, cvs: HTMLCanvasElement, target: number) {
+function drawToCanvas(bitmap: ImageBitmap, cvs: HTMLCanvasElement, wTarget: number, hTarget: number) {
   const ctx = cvs.getContext('2d', { willReadFrequently: true })!
-  const w = target, h = target
+  const w = Math.max(1, Math.floor(wTarget))
+  const h = Math.max(1, Math.floor(hTarget))
   cvs.width = w; cvs.height = h
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
@@ -216,8 +232,12 @@ async function handleSelfieFile(file: File) {
   try {
     const bmp = await createImageBitmap(file)
     srcBitmap = bmp
+    srcFileRef.value = file
     imgReady.value = true
-    if (srcCanvas.value) drawToCanvas(bmp, srcCanvas.value, size.value)
+    if (srcCanvas.value) {
+      const { pw, ph } = qualityToPreviewSize(quality.value, widthStuds.value, heightStuds.value)
+      drawToCanvas(bmp, srcCanvas.value, pw, ph)
+    }
     outReady.value = false
   } catch (e) {
     console.error(e)
@@ -288,6 +308,7 @@ function renderStuds(
 ) {
   // Aim for ~512px output width
   const px = Math.max(6, Math.floor(512 / w))
+  lastTileSizePx.value = px
   out.width = w * px
   out.height = h * px
   const ctx = out.getContext('2d')!
@@ -322,12 +343,20 @@ function renderStuds(
   }
 }
 
+function qualityToPreviewSize(q: 'speed'|'balanced'|'detail'|'max', w: number, h: number) {
+  const base = { speed: 32, balanced: 64, detail: 96, max: 128 }[q] ?? 64
+  const scale = Math.max(w, h)
+  const factor = base / Math.max(32, Math.min(128, scale))
+  return { pw: Math.max(16, Math.round(w * factor)), ph: Math.max(16, Math.round(h * factor)) }
+}
+
 async function process() {
   if (!srcBitmap || !srcCanvas.value || !outCanvas.value) return
   loading.value = true
   try {
-    // Draw source to target size
-    drawToCanvas(srcBitmap, srcCanvas.value, size.value)
+    // Draw source to preview size derived from quality + target studs
+    const { pw, ph } = qualityToPreviewSize(quality.value, widthStuds.value, heightStuds.value)
+    drawToCanvas(srcBitmap, srcCanvas.value, pw, ph)
 
     // Optional OpenCV preprocessing (grayscale + slight blur for noise)
     if (cvReady.value) {
@@ -335,8 +364,16 @@ async function process() {
         const src = cv.imread(srcCanvas.value)
         const dst = new cv.Mat()
         cv.cvtColor(src, dst, cv.COLOR_RGBA2RGB, 0)
-        // Gentle bilateral filter to keep edges while smoothing colors
-        cv.bilateralFilter(dst, dst, 5, 50, 50)
+        // Tweaks by preset
+        if (preset.value === 'lineart') {
+          // Stronger smoothing, edge-friendly
+          cv.bilateralFilter(dst, dst, 7, 65, 65)
+        } else if (preset.value === 'pop') {
+          // Slight contrast/brightness lift
+          cv.convertScaleAbs(dst, dst, 1.12, 8)
+        } else {
+          cv.bilateralFilter(dst, dst, 5, 50, 50)
+        }
         cv.imshow(srcCanvas.value, dst)
         src.delete(); dst.delete()
       } catch (e) {
@@ -347,7 +384,7 @@ async function process() {
     // Read pixels and map to selected LEGO palette (supports optional FS dithering)
     const ctx = srcCanvas.value.getContext('2d', { willReadFrequently: true })!
     const img = ctx.getImageData(0, 0, srcCanvas.value.width, srcCanvas.value.height)
-    const indices = mapBitmapToPalette(img, activePalette.value, { dither: dither.value ? 'floyd-steinberg' : 'none' })
+    const indices = mapBitmapToPalette(img, activePalette.value, { dither: ditherFS.value ? 'floyd-steinberg' : 'none' })
     const q = imageDataFromIndices(indices, img.width, img.height, activePalette.value)
 
     // Paint output: pixels or stud-style
@@ -379,7 +416,27 @@ async function process() {
 }
 
 function doExportPng() {
-  downloadPng('briko-avatar.png')
+  try {
+    // Re-render at full output resolution for export
+    if (!srcBitmap || !outCanvas.value) return downloadPng('briko-avatar.png')
+    const tmp = document.createElement('canvas')
+    const { pw, ph } = { pw: widthStuds.value, ph: heightStuds.value }
+    drawToCanvas(srcBitmap, tmp, pw, ph)
+    const ctx = tmp.getContext('2d')!
+    const img = ctx.getImageData(0, 0, tmp.width, tmp.height)
+    const indices = mapBitmapToPalette(img, activePalette.value, { dither: ditherFS.value ? 'floyd-steinberg' : 'none' })
+    // Paint to export canvas
+    const exp = document.createElement('canvas')
+    renderStuds(indices, tmp.width, tmp.height, exp, { bgMode: bgMode.value, bgColor: bgSolid.value }, activePalette.value)
+    // Swap into preview and global handle, then download
+    const octx = outCanvas.value.getContext('2d')!
+    outCanvas.value.width = exp.width; outCanvas.value.height = exp.height
+    octx.drawImage(exp, 0, 0)
+    ;(window as any).__brikoCanvas = outCanvas.value
+    downloadPng('briko-avatar.png')
+  } catch {
+    downloadPng('briko-avatar.png')
+  }
 }
 
 // Utilities
@@ -404,7 +461,7 @@ async function saveAvatar() {
     // Create project if needed
     if (!projectId.value) {
       const slug = `avatar-${rand(8)}`
-      const insert = { owner: uid, title: 'Avatar', slug, width: size.value, height: size.value }
+      const insert = { owner: uid, title: 'Avatar', slug, width: widthStuds.value, height: heightStuds.value }
       const { data, error } = await $supabase.from('projects').insert(insert).select('*').single()
       if (error) throw error
       projectId.value = data.id
@@ -456,28 +513,64 @@ onMounted(async () => {
 })
 
 // Instant preview updates on control changes
-watch([size, dither, studStyle, paletteName, bgMode, bgSolid], () => {
+watch([widthStuds, heightStuds, quality, preset, ditherFS, studStyle, paletteName, bgMode, bgSolid], () => {
   if (imgReady.value && !loading.value) {
     // Debounce via microtask to batch rapid changes
     Promise.resolve().then(() => process())
   }
 })
 
-// Remix preload: if a src URL is provided, auto-load it on mount
-const route = useRoute()
-onMounted(async () => {
+// Remix preload via shared loader
+onMounted(() => {
   const src = route.query.src as string | undefined
-  if (!src) return
-  try {
-    const res = await fetch(src)
-    if (!res.ok) throw new Error(`Failed to fetch source (${res.status})`)
-    const blob = await res.blob()
-    await handleSelfieFile(new File([blob], 'remix.png', { type: blob.type || 'image/png' }))
-    try { show('Loaded from community project', 'success') } catch {}
-  } catch (e) {
-    console.warn('[Avatar Remix preload] failed', e)
-    try { show('Could not load source image', 'error') } catch {}
-  }
+  if (src) loadInto(handleSelfieFile, decodeURIComponent(src))
+})
+watch(() => route.query.src, (src) => {
+  if (typeof src === 'string' && src) loadInto(handleSelfieFile, decodeURIComponent(src))
 })
 
+// Gallery publishing (avatar)
+const galleryProjectId = ref<string | null>(null)
+const publishing = ref(false)
+async function publishToGallery(){
+  if (!outReady.value) return
+  if (!$supabase) return
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  publishing.value = true
+  try {
+    const rec = await createProject({
+      title: 'Avatar',
+      kind: 'avatar',
+      width: widthStuds.value,
+      height: heightStuds.value,
+      palette_id: paletteName.value,
+      sourceFile: srcFileRef.value || undefined,
+      mode: preset.value === 'lineart' ? 'line-art' : (preset.value === 'pop' ? 'photo' : 'auto'),
+      makePublic: false,
+    })
+    galleryProjectId.value = rec.id
+    try { show('Saved to your Gallery (private)', 'success') } catch {}
+  } catch (e) {
+    console.warn(e); try { show('Save failed', 'error') } catch {}
+  } finally { publishing.value = false }
+}
+
+async function makePublic(){
+  if (!galleryProjectId.value) return
+  if (!$supabase) return
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  try { await makePublicProject(galleryProjectId.value, user.id); try { show('Your avatar is public!', 'success') } catch {} }
+  catch(e){ console.warn(e); try { show('Failed to publish', 'error') } catch {} }
+}
+
+const gridOverlayStyle = computed(() => {
+  const s = Math.max(4, lastTileSizePx.value)
+  const color = 'rgba(255,255,255,0.08)'
+  return {
+    backgroundImage: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
+    backgroundSize: `${s}px ${s}px`,
+  } as any
+})
 </script>
