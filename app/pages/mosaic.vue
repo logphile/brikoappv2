@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { useHead, useNuxtApp } from 'nuxt/app'
+import { useRemixLoader } from '@/composables/useRemixLoader'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
@@ -34,6 +35,7 @@ import MosaicActions from '@/components/MosaicActions.vue'
 const mosaic = useMosaicStore()
 const route = useRoute()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
+const { loadingFromSrc, loadInto } = useRemixLoader()
 
 // Quick guide steps + auto-highlighting while scrolling
 const stepsGuide = [
@@ -346,28 +348,13 @@ async function onFile(file: File) {
   }
 }
 
-// Remix preload: if ?src is provided, fetch and pass through the normal upload path
-async function loadFromSrc(url: string) {
-  try {
-    const res = await fetch(url, { cache: 'no-store' })
-    if (!res.ok) throw new Error(`fetch ${res.status}`)
-    const blob = await res.blob()
-    const file = new File([blob], 'remix.png', { type: blob.type || 'image/png' })
-    await onFile(file)
-    try { showToast('Loaded from community project', 'success', 1600) } catch {}
-  } catch (e) {
-    console.error('remix loadFromSrc failed', e)
-    try { showToast('Could not load source image', 'error', 2000) } catch {}
-  }
-}
-
-// Kick off remix load from URL query at mount and on changes
+// Kick off remix load from URL query at mount and on changes (shared loader)
 onMounted(() => {
   const src = route.query.src as string | undefined
-  if (src) loadFromSrc(src)
+  if (src) loadInto(onFile, decodeURIComponent(src))
 })
 watch(() => route.query.src, (src) => {
-  if (typeof src === 'string' && src) loadFromSrc(src)
+  if (typeof src === 'string' && src) loadInto(onFile, decodeURIComponent(src))
 })
 
 async function onGenerate(){
