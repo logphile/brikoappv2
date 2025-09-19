@@ -162,7 +162,7 @@ async function fetchGallery(){
     }
     const bust = (url?: string, vv?: number) => url ? `${url}?v=${vv ?? Date.now()}` : ''
 
-    items.value = (rows || []).map((r: any) => {
+    const mapped = (rows || []).map((r: any) => {
       // build public URLs from storage paths
       const prev = buildPreviewUrl(r.preview_path)
       // fall back to original_path or derive alongside preview.png
@@ -189,6 +189,7 @@ async function fetchGallery(){
         updated_at: r.updated_at,
       }
     })
+    items.value = mapped.filter((it: any) => !!it.thumb_url)
     await Promise.all([
       fetchReactionsByMe(),
       fetchProjectTags(),
