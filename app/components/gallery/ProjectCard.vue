@@ -24,8 +24,8 @@
       <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/35 transition"></div>
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition grid place-items-center">
         <div class="flex gap-2">
-          <NuxtLink :to="viewHref" class="pointer-events-auto btn-outline-mint text-sm px-3 py-1.5">👁 View</NuxtLink>
-          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5" @click.stop="$emit('remix')">🔄 Remix</button>
+          <button class="pointer-events-auto btn-outline-mint text-sm px-3 py-1.5" @click.stop="toProject(publicId)">👁 View</button>
+          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5" @click.stop="remixProject">🔄 Remix</button>
         </div>
       </div>
     </div>
@@ -74,6 +74,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import { navigateTo } from 'nuxt/app'
 
 const props = defineProps<{
   publicId?: string
@@ -125,6 +126,26 @@ function onTapSwap(){ if (props.originalUrl) { showOriginal.value = !showOrigina
 
 const avatarInitial = computed(() => (props.username?.replace('@','')[0] || 'B').toUpperCase())
 
+function slugify(input: string){
+  return (input || '').toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,64)
+}
+
+function toProject(id?: string){
+  if(!id) return
+  const slug = slugify(props.name)
+  return navigateTo(`/p/${id}${slug ? '-' + slug : ''}`)
+}
+
+function remixProject(){
+  const id = props.publicId || ''
+  const kind = (props.kind || '').toLowerCase()
+  const src = props.originalUrl || props.thumbUrl || ''
+  if(!src) return
+  const query: Record<string, string> = { src, from: id }
+  const path = kind === 'voxel' ? '/voxel' : (kind === 'avatar' ? '/avatar' : '/mosaic')
+  return navigateTo({ path, query })
+}
+
 function relativeTime(input?: string){
   if(!input) return ''
   const d = new Date(input)
@@ -139,5 +160,5 @@ function relativeTime(input?: string){
 }
 
 const relative = computed(() => relativeTime(props.date))
-const viewHref = computed(() => props.publicId ? `/project/${props.publicId}` : '/mosaic')
+const viewHref = computed(() => props.publicId ? `/p/${props.publicId}-${slugify(props.name)}` : '/mosaic')
 </script>

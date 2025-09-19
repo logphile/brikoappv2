@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { useHead, useNuxtApp } from 'nuxt/app'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
@@ -31,6 +32,7 @@ import { suggestStuds } from '@/composables/useAutoSize'
 import MosaicActions from '@/components/MosaicActions.vue'
 
 const mosaic = useMosaicStore()
+const route = useRoute()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
 
 // Quick guide steps + auto-highlighting while scrolling
@@ -95,7 +97,6 @@ useHead({
 // UI button enable/disable states (for MosaicActions)
 const previewReady = computed(() => !!grid.value && mosaic.status !== 'tiling')
 const mosaicReady = computed(() => !!mosaic.tilingResult)
-const projectSaved = computed(() => !!galleryProjectId.value)
 const isWorking = computed(() => !!loading.value || mosaic.status === 'working' || mosaic.status === 'tiling' || !!publishing.value)
 
 const target = ref<{w:number,h:number}>({ w: 20, h: 20 })
