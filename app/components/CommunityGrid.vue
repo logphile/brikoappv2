@@ -58,12 +58,14 @@ async function fetchPage() {
   if (!error) {
     const list = (data || []) as any[]
     for (const p of list) {
+      const rawUser = (p as any).username as string | undefined
+      const uname = rawUser ? (rawUser.startsWith('@') ? rawUser : `@${rawUser}`) : null
       items.value.push({
         id: p.id,
         title: p.title,
         created_at: p.created_at,
         cover_url: p.preview_path ? buildPreviewUrl(p.preview_path) : null,
-        owner: { username: (p as any).username || null },
+        owner: { username: uname },
       })
     }
     if (list.length < pageSize) hasMore.value = false
