@@ -5,7 +5,7 @@
         <h2 class="text-xl font-semibold text-white">{{ copy.studio.communitySectionTitle }}</h2>
         <p class="mt-1 text-white/70">{{ copy.studio.communitySubhead }}</p>
       </div>
-      <NuxtLink to="/studio/community" class="text-sm text-mint hover:underline underline-offset-4 decoration-2">
+      <NuxtLink to="/gallery" class="text-sm text-mint hover:underline underline-offset-4 decoration-2">
         {{ copy.studio.seeAll }} →
       </NuxtLink>
     </header>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="mt-6 flex items-center justify-center gap-3">
-      <NuxtLink to="/studio/community" class="btn-outline-mint">{{ copy.studio.seeAll }}</NuxtLink>
+      <NuxtLink to="/gallery" class="btn-outline-mint">{{ copy.studio.seeAll }}</NuxtLink>
       <button v-if="hasMore" @click="loadMore" class="btn-mint">{{ copy.studio.loadMore }}</button>
     </div>
   </section>
@@ -30,8 +30,10 @@ import { ref, onMounted } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
 import ProjectCard from '@/components/ProjectCard.vue'
 import { copy } from '@/lib/copy'
+import { useProjects } from '@/composables/useProjects'
 
 const { $supabase } = useNuxtApp() as any
+const { buildPreviewUrl } = useProjects()
 
 const pageSize = 15 // 3 rows of 5 on xl
 const items = ref<any[]>([])
@@ -39,31 +41,6 @@ const loading = ref(false)
 const hasMore = ref(true)
 let page = 0
 
-async function fetchCoversFor(projectIds: string[]) {
-  try {
-    if (!$supabase || projectIds.length === 0) return {}
-    const { data, error } = await $supabase
-      .from('assets')
-      .select('project_id, kind, storage_path, created_at')
-      .in('project_id', projectIds)
-      .in('kind', ['preview_png', 'avatar_png'])
-      .order('created_at', { ascending: false })
-
-    if (error) { console.warn('[community-grid] assets error', error); return {} }
-
-    // Pick most recent per project and build public URL
-    const byProj: Record<string, string> = {}
-    for (const a of data as any[]) {
-      if (!byProj[a.project_id]) {
-        const pub = $supabase.storage.from('public').getPublicUrl(a.storage_path)
-        byProj[a.project_id] = pub?.data?.publicUrl || ''
-      }
-    }
-    return byProj
-  } catch (e) {
-    console.warn(e); return {}
-  }
-}
 
 async function fetchPage() {
   if (!$supabase) { hasMore.value = false; return }
@@ -71,19 +48,23 @@ async function fetchPage() {
   const from = page * pageSize
   const to = from + pageSize - 1
 
+  // Pull straight from the public view the gallery uses
   const { data, error } = await $supabase
-    .from('projects')
-    .select('id,title,created_at')
-    .eq('is_public', true)
+    .from('user_projects_public')
+    .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, username')
     .order('created_at', { ascending: false })
     .range(from, to)
 
   if (!error) {
     const list = (data || []) as any[]
-    const coverMap = await fetchCoversFor(list.map(p => p.id))
     for (const p of list) {
-      const cover = (coverMap as any)[p.id]
-      items.value.push({ ...p, cover_url: cover || null })
+      items.value.push({
+        id: p.id,
+        title: p.title,
+        created_at: p.created_at,
+        cover_url: p.preview_path ? buildPreviewUrl(p.preview_path) : null,
+        owner: { username: (p as any).username || null },
+      })
     }
     if (list.length < pageSize) hasMore.value = false
   } else {

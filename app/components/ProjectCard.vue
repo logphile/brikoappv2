@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/projects/${project.id}`"
+  <NuxtLink :to="`/p/${project.id}`"
     class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10
            hover:border-mint/40 transition shadow-soft-card hover:shadow-mint-glow/30">
     <div class="aspect-[4/3] bg-black/30 overflow-hidden">
