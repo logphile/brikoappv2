@@ -62,7 +62,7 @@ const items = [
   { name: 'Photo to Bricks', href: '/mosaic' },
   { name: '3D Builder',      href: '/voxel' },
   { name: 'Brick Yourself',  href: '/avatar' },
-  { name: 'Briko Studio',    href: '/studio' },
+  { name: 'Briko Studio',    href: '/gallery' },
 ]
 const isActive = (href: string) => route.path.startsWith(href)
 
