@@ -20,11 +20,6 @@
            @error="broken = true"
       />
 
-      <!-- Tiny chip (desktop hint) -->
-      <div v-if="originalUrl" class="absolute left-2 top-2 text-[11px] px-1.5 py-0.5 rounded bg-black/45 backdrop-blur hidden sm:block">
-        Hover: original
-      </div>
-
       <!-- Hover overlay actions -->
       <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/35 transition"></div>
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition grid place-items-center">
