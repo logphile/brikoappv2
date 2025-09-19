@@ -34,7 +34,7 @@
           <NuxtLink v-if="!loading && user" to="/login"
             class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
                    text-white/90 hover:bg-white/20 transition-colors">
-            {{ user.email }}
+            {{ identityLabel }}
           </NuxtLink>
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
             class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
@@ -53,9 +53,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useProfile, type ProfileRow } from '@/composables/useProfile'
 
 const route = useRoute()
 const items = [
@@ -67,7 +68,26 @@ const items = [
 const isActive = (href: string) => route.path.startsWith(href)
 
 const { user, loading, refreshUser } = useAuth()
-onMounted(() => { try { refreshUser() } catch {} })
+const { getMyProfile } = useProfile()
+const profile = ref<ProfileRow | null>(null)
+
+async function fetchProfile(){
+  try { profile.value = await getMyProfile() } catch {}
+}
+
+const identityLabel = computed(() => {
+  const p = profile.value
+  if (p?.handle && p.handle.trim()) return `@${p.handle.trim()}`
+  if (p?.display_name && p.display_name.trim()) return p.display_name.trim()
+  return user.value?.email || 'Account'
+})
+
+onMounted(() => {
+  try { refreshUser() } catch {}
+  fetchProfile()
+})
+
+watch(user, (u) => { if (u) fetchProfile(); else profile.value = null })
 
 // Expose header height globally so overlays (toast host) can position below it.
 const headerRef = ref<HTMLElement|null>(null)
