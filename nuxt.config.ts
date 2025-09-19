@@ -29,7 +29,8 @@ export default defineNuxtConfig({
       cloudflareAnalyticsToken: process.env.NUXT_PUBLIC_CF_ANALYTICS_TOKEN || '',
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
       siteName: process.env.NUXT_PUBLIC_SITE_NAME || 'Briko',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://briko.app'
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://briko.app',
+      showSeeds: process.env.NUXT_PUBLIC_SHOW_SEEDS || ''
     }
   },
   nitro: {
