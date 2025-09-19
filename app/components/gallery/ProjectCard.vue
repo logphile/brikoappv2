@@ -1,5 +1,5 @@
 <template>
-  <article class="rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden group relative transition hover:shadow-mint-glow/20">
+  <article v-if="!broken" class="rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden group relative transition hover:shadow-mint-glow/20">
     <!-- Preview: mosaic by default, original on hover/tap -->
     <div class="h-[220px] bg-white/5 overflow-hidden relative"
          @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
@@ -8,6 +8,7 @@
            loading="lazy" decoding="async"
            class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300"
            :class="{ 'opacity-0': showOriginal }"
+           @error="broken = true"
       />
       <div v-else class="absolute inset-0 grid place-items-center text-white/70 text-sm">No preview</div>
 
@@ -16,6 +17,7 @@
            loading="lazy" decoding="async"
            class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100"
            :class="{ 'opacity-100': showOriginal }"
+           @error="broken = true"
       />
 
       <!-- Tiny chip (desktop hint) -->
@@ -104,6 +106,8 @@ const emit = defineEmits<{
   (e: 'remix'): void
   (e: 'share'): void
 }>()
+
+const broken = ref(false)
 
 const likesLocal = ref(props.likes)
 const savesLocal = ref(props.saves ?? 0)
