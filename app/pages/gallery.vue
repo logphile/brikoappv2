@@ -25,7 +25,7 @@
 
       <div v-if="loading" class="opacity-70">Loading…</div>
       <div v-else>
-        <p v-if="isEmptyLive" class="mb-3 text-sm text-white/80">Showing sample projects — log in to share your own build!</p>
+        <p v-if="isEmptyLive && showSeeds" class="mb-3 text-sm text-white/80">Showing sample projects — log in to share your own build!</p>
         <GalleryGrid :items="visibleItems" :liked-by-me-map="likedByMeMap" :saved-by-me-map="savedByMeMap" @like="likeItem" @unlike="unlikeItem" @save="saveItem" @unsave="unsaveItem" @remix="remixItem" @share="shareItem" />
         <div v-if="visibleItems.length === 0" class="opacity-70 mt-6">No results.</div>
       </div>
@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useNuxtApp, useHead } from 'nuxt/app'
+import { useNuxtApp, useHead, useRuntimeConfig } from 'nuxt/app'
 import { useToasts } from '@/composables/useToasts'
 import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
@@ -74,6 +74,10 @@ const kind = ref<typeof kinds[number]>('all')
 const items = ref<any[]>([])
 const loading = ref(false)
 
+// Gate seeds in production unless explicitly enabled
+const rc = useRuntimeConfig()
+const showSeeds = process.dev || (((rc as any)?.public?.showSeeds || '') === 'true')
+
 // Likes map for current user
 const likedByMeMap = ref<Record<string, boolean>>({})
 const savedByMeMap = ref<Record<string, boolean>>({})
@@ -110,7 +114,7 @@ const seedsEnhanced = computed(() => {
 
 const isEmptyLive = computed(() => items.value.length === 0)
 
-const baseList = computed(() => (isEmptyLive.value ? (seedsEnhanced.value as any[]) : (items.value as any[])))
+const baseList = computed(() => (isEmptyLive.value && showSeeds ? (seedsEnhanced.value as any[]) : (items.value as any[])))
 
 const withTrending = computed(() => baseList.value.map((it: any) => {
   const d = it.created_at || it.date || new Date().toISOString()
@@ -152,35 +156,32 @@ async function fetchGallery(){
   try {
     const rows = await queryPublicProjects(sort.value)
     // Normalize rows to the grid item shape with thumb_url and social fields
+    const v = (r:any) => {
+      const d = r.updated_at || r.created_at
+      try { return new Date(d).getTime() } catch { return Date.now() }
+    }
+    const bust = (url?: string, vv?: number) => url ? `${url}?v=${vv ?? Date.now()}` : ''
+
     items.value = (rows || []).map((r: any) => {
-      // version param to bust CDN/browser cache on new uploads/updates
-      const v = (() => {
-        const d = r.updated_at || r.created_at
-        try { return new Date(d).getTime() } catch { return Date.now() }
-      })()
-
-      // helper so both URLs are consistently cache-busted
-      const pub = (p?: string | null) => p ? (buildPreviewUrl(p) + `?v=${v}`) : ''
-
-      // Try fields in this order:
-      // 1) original_preview_path (if your view provides a pre-sized original)
-      // 2) original_path (raw original)
-      // 3) derive from preview_path by swapping '/preview.png' → '/original.png'
-      const derivedOriginalPath =
-        (typeof r.preview_path === 'string')
+      // build public URLs from storage paths
+      const prev = buildPreviewUrl(r.preview_path)
+      // fall back to original_path or derive alongside preview.png
+      const derivedOriginal =
+        typeof r.preview_path === 'string'
           ? r.preview_path.replace(/\/preview\.png$/i, '/original.png')
           : null
+      const orig = r.original_path || r.original_preview_path || derivedOriginal
 
       return {
         id: r.id,
         public_id: r.id,
         name: r.title,
         kind: r.kind,
-        thumb_url: pub(r.preview_path),
-        orig_url: pub(r.original_preview_path || r.original_path || derivedOriginalPath) || null,
+        thumb_url: bust(prev, v(r)),
+        orig_url: orig ? bust(buildPreviewUrl(orig), v(r)) : null,
         likes: r.likes ?? 0,
         saves: r.saves ?? 0,
-        username: r.username || r.display_name || '@user',
+        username: r.username || '@user',
         bricks: r.bricks ?? 0,
         cost: r.cost_est ?? 0,
         tags: Array.isArray(r.tags) ? r.tags : [],
