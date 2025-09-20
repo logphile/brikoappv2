@@ -6,62 +6,76 @@
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
       <div class="rounded-2xl bg-[#0B0E13] border border-white/20 shadow-2xl p-1" role="menu" aria-label="User menu">
         <nav class="py-1 text-sm text-white">
-          <NuxtLink
-            to="/projects"
-            role="menuitem"
-            class="menu-item"
-            :class="route.path.startsWith('/projects') ? 'bg-white/20 text-white' : ''"
-          >
-            <img src="/icons/menu/yourprojects-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
-            <span>Your Projects</span>
-          </NuxtLink>
+          <ul class="space-y-1">
+            <li>
+              <NuxtLink
+                to="/projects"
+                role="menuitem"
+                class="menu-item"
+                :class="route.path.startsWith('/projects') ? 'bg-white/20 text-white' : ''"
+              >
+                <img src="/icons/menu/yourprojects-mint.svg" alt="" aria-hidden="true" class="icon" />
+                <span>Your Projects</span>
+              </NuxtLink>
+            </li>
 
-          <NuxtLink
-            to="/gallery"
-            role="menuitem"
-            class="menu-item"
-            :class="route.path.startsWith('/gallery') ? 'bg-white/20 text-white' : ''"
-          >
-            <img src="/icons/menu/communitygallery-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
-            <span>Community Gallery</span>
-          </NuxtLink>
+            <li>
+              <NuxtLink
+                to="/gallery"
+                role="menuitem"
+                class="menu-item"
+                :class="route.path.startsWith('/gallery') ? 'bg-white/20 text-white' : ''"
+              >
+                <img src="/icons/menu/communitygallery-mint.svg" alt="" aria-hidden="true" class="icon" />
+                <span>Community Gallery</span>
+              </NuxtLink>
+            </li>
 
-          <NuxtLink
-            to="/projects/new"
-            role="menuitem"
-            class="menu-item"
-            :class="route.path === '/projects/new' ? 'bg-white/20 text-white' : ''"
-          >
-            <img src="/icons/menu/newproject-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
-            <span>New Project</span>
-          </NuxtLink>
+            <li>
+              <NuxtLink
+                to="/projects/new"
+                role="menuitem"
+                class="menu-item"
+                :class="route.path === '/projects/new' ? 'bg-white/20 text-white' : ''"
+              >
+                <img src="/icons/menu/newproject-mint.svg" alt="" aria-hidden="true" class="icon" />
+                <span>New Project</span>
+              </NuxtLink>
+            </li>
 
-          <div class="my-1 h-px bg-white/10" />
+            <li><div class="my-1 h-px bg-white/10" /></li>
 
-          <NuxtLink
-            to="/settings/profile"
-            role="menuitem"
-            class="menu-item"
-            :class="route.path.startsWith('/settings') ? 'bg-white/20 text-white' : ''"
-          >
-            <img src="/icons/menu/settings-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
-            <span>Settings</span>
-          </NuxtLink>
+            <li>
+              <NuxtLink
+                to="/settings/profile"
+                role="menuitem"
+                class="menu-item"
+                :class="route.path.startsWith('/settings') ? 'bg-white/20 text-white' : ''"
+              >
+                <img src="/icons/menu/settings-mint.svg" alt="" aria-hidden="true" class="icon" />
+                <span>Settings</span>
+              </NuxtLink>
+            </li>
 
-          <NuxtLink
-            to="/how-it-works"
-            role="menuitem"
-            class="menu-item"
-            :class="route.path.startsWith('/how-it-works') ? 'bg-white/20 text-white' : ''"
-          >
-            <img src="/icons/menu/help-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
-            <span>Help</span>
-          </NuxtLink>
+            <li>
+              <NuxtLink
+                to="/how-it-works"
+                role="menuitem"
+                class="menu-item"
+                :class="route.path.startsWith('/how-it-works') ? 'bg-white/20 text-white' : ''"
+              >
+                <img src="/icons/menu/help-mint.svg" alt="" aria-hidden="true" class="icon" />
+                <span>Help</span>
+              </NuxtLink>
+            </li>
 
-          <button @click="signOut" class="menu-item" role="menuitem">
-            <img src="/icons/menu/signout-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
-            <span>Sign out</span>
-          </button>
+            <li>
+              <button type="button" @click="signOut" class="menu-item text-left" role="menuitem">
+                <img src="/icons/menu/signout-mint.svg" alt="" aria-hidden="true" class="icon" />
+                <span>Sign out</span>
+              </button>
+            </li>
+          </ul>
         </nav>
       </div>
     </div>
@@ -105,9 +119,9 @@ watch(() => route.fullPath, () => { open.value = false })
 
 <style scoped>
 .menu-item {
-  @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white hover:bg-white/10 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70;
+  @apply flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm text-white hover:bg-white/10 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70;
 }
-.menu-icon {
+.menu-icon, .icon {
   @apply w-4 h-4 shrink-0;
 }
 </style>
