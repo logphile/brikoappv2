@@ -16,8 +16,9 @@ export default <Partial<Config>>{
           a2: 'var(--brand-a2)'
         },
         // Unified Briko palette
-        ink: '#0f1420',
-        mint: '#20e3b2',
+        // Windsurf tokens
+        ink: '#111827',
+        mint: '#00E5A0',
         mintLight: '#4ff0c8',
         mintRing: '#1ad5a6',
         brick: {
@@ -34,9 +35,16 @@ export default <Partial<Config>>{
         'cta-grad':'linear-gradient(90deg,#FF5A1F,#FF2A6D)',
         'accent-grad':'linear-gradient(90deg,#2563EB,#06B6D4)'
       },
-      borderRadius: { '2xl': '1rem' },
+      borderRadius: {
+        '2xl': '1rem',
+        // Windsurf tokens: outer:inner = 2:1
+        'brk-outer': '16px',
+        'brk-inner': '8px'
+      },
       boxShadow: {
         'soft-card': '0 10px 30px -12px rgba(0,0,0,.35)',
+        // Windsurf soft
+        'soft': '0 6px 24px rgba(0,0,0,.25)',
         // Mint glow surrounds with a subtle ring + drop shadow
         'mint-glow': '0 0 0 3px rgba(32,227,178,0.25), 0 8px 24px rgba(32,227,178,0.15)'
       }
