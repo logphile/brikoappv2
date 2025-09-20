@@ -5,7 +5,8 @@
     <div class="aspect-[4/3] bg-black/30 overflow-hidden">
       <img v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
-           class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+           class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+           @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-white/40 text-sm">No preview</div>
     </div>
     <div class="p-3">
@@ -21,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits<{ (e: 'img-error', id: string | number): void }>()
 interface OwnerInfo { handle?: string | null; display_name?: string | null }
 interface CommunityProject {
   id: string | number

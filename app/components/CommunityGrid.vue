@@ -15,7 +15,7 @@
     </div>
 
     <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-      <ProjectCard v-for="p in items" :key="p.id" :project="p" />
+      <ProjectCard v-for="p in displayItems" :key="p.id" :project="p" @img-error="onCardImgError" />
     </div>
 
     <div class="mt-6 flex items-center justify-center gap-3">
@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
 import ProjectCard from '@/components/ProjectCard.vue'
 import { copy } from '@/lib/copy'
@@ -40,6 +40,11 @@ const items = ref<any[]>([])
 const loading = ref(false)
 const hasMore = ref(true)
 let page = 0
+
+// Drop tiles that fail to load their preview image
+const broken = ref<Set<string>>(new Set())
+function onCardImgError(id?: string | number){ if (id != null) broken.value.add(String(id)) }
+const displayItems = computed(() => items.value.filter(i => !broken.value.has(String(i.id))))
 
 
 async function fetchPage() {
