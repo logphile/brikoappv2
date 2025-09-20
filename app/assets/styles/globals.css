@@ -14,6 +14,20 @@
 }
 html, body { background: var(--brand-bg); color: var(--brand-text); }
 
+/* Base font defaults */
+@layer base {
+  /* Body defaults = Poppins Medium */
+  html, body { @apply font-sans; }
+  body { font-weight: 500; }
+
+  /* Headings & logo = Bespoke Slab Bold */
+  h1, h2, h3, h4, h5, h6,
+  .logo-text { @apply font-brand font-bold; }
+
+  /* Slight tighter tracking for slab headings */
+  h1, h2 { letter-spacing: -0.01em; }
+}
+
 /* Mint Unification: shared component utilities */
 @layer components {
   /* Primary mint button (solid) */

@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     '/community-studio/**': { redirect: '/gallery' },
   },
   css: [
+    '@/assets/css/fonts.css',
     '@/assets/styles/globals.css',
     '@/assets/css/controls.css',
     '@/assets/css/buttons.css',
@@ -64,7 +65,10 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/brand/favicon-16.png?v=2' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/brand/apple-touch-icon.png?v=2' },
         { rel: 'mask-icon', href: '/brand/safari-pinned-tab.svg?v=2', color: '#00E5A0' },
-        { rel: 'manifest', href: '/manifest.webmanifest' }
+        { rel: 'manifest', href: '/manifest.webmanifest' },
+        // Preload brand fonts to minimize FOUT
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Medium.woff2', crossorigin: 'anonymous' },
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Bold.woff2', crossorigin: 'anonymous' }
       ]
     }
   }

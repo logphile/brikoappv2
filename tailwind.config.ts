@@ -7,6 +7,11 @@ export default <Partial<Config>>{
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // custom keys → classnames become: font-brand, font-sans
+        brand: ['"Bespoke Slab"', 'Georgia', 'serif'],
+        sans: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+      },
       colors: {
         brand: {
           bg: 'var(--brand-bg)',
