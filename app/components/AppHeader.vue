@@ -14,16 +14,8 @@
             <NuxtLink
               :to="item.href"
               :aria-current="isActive(item.href) ? 'page' : undefined"
-              class="group relative inline-flex items-center px-3 py-2 rounded-md
-                     text-[15px] lg:text-base font-medium
-                     text-white/75 hover:text-white transition-colors
-                     focus-visible:outline-none focus-visible:ring-2
-                     focus-visible:ring-[#00E5A0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0E13]
-                     after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-0.5
-                     after:h-0.5 after:rounded-full after:bg-[#00E5A0]
-                     after:origin-center after:scale-x-0 group-hover:after:scale-x-100
-                     after:transition-transform after:duration-200"
-              :class="isActive(item.href) ? 'text-white after:scale-x-100' : ''">
+              class="u-linkbtn text-[15px] lg:text-base"
+              :class="isActive(item.href) ? 'bg-white/15 text-white' : ''">
               {{ item.name }}
             </NuxtLink>
           </li>

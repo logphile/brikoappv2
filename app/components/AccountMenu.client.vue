@@ -4,7 +4,7 @@
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <div class="rounded-2xl bg-[#0B0E13] border border-white/20 shadow-2xl p-1" role="menu" aria-label="User menu">
+      <div class="soft-card p-1 w-64" role="menu" aria-label="User menu">
         <nav class="py-1 text-sm text-white">
           <ul class="space-y-1">
             <li>
@@ -118,10 +118,4 @@ watch(() => route.fullPath, () => { open.value = false })
 </script>
 
 <style scoped>
-.menu-item {
-  @apply flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm text-white hover:bg-white/10 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70;
-}
-.menu-icon, .icon {
-  @apply w-4 h-4 shrink-0;
-}
 </style>

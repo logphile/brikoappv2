@@ -25,44 +25,24 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="relative overflow-hidden bg-[#0B1220] text-white">
-      <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-center">
+      <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-left">
       <!-- Brand compact header (optional if already in layout) -->
       <!-- Headline -->
-      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.4] tracking-tight">
         Turn any picture into a brick build<span class="text-[#00E5A0]">!</span>
       </h1>
 
       <!-- Subtext -->
-      <p
-        class="mt-4 text-lg sm:text-xl text-gray-300 mx-auto text-center
-               lg:whitespace-nowrap lg:max-w-none"
-      >
-        Upload your favorite photo
-        <span class="mx-1 text-[#00E5A0]">→</span>
-        see it transformed into a LEGO-style mosaic or 3D model
-        <span class="mx-1 text-[#00E5A0]">→</span>
-        download parts &amp; cost in seconds.
+      <p class="mt-2 text-white/80 leading-[1.4] max-w-prose">
+        Upload your favorite photo → see it transformed into a LEGO-style mosaic or 3D model → download parts &amp; cost in seconds.
       </p>
 
       <!-- CTAs -->
-      <div class="mt-6 flex flex-wrap items-center gap-4 justify-center">
+      <div class="mt-4 flex gap-3">
         <!-- Primary: Photo to Bricks -->
-        <NuxtLink
-          to="/mosaic"
-          class="inline-flex items-center justify-center btn-mint"
-          aria-label="Try Photo to Bricks"
-        >
-          Photo to Bricks
-        </NuxtLink>
-
-        <!-- Secondary: See How It Works -->
-        <NuxtLink
-          to="/how-it-works"
-          class="inline-flex items-center justify-center btn-outline-mint"
-          aria-label="See how Briko works"
-        >
-          See How It Works
-        </NuxtLink>
+        <NuxtLink to="/mosaic" class="u-cta" aria-label="Try Photo to Bricks">Try Photo to Bricks</NuxtLink>
+        <!-- Secondary: See Community -->
+        <NuxtLink to="/studio" class="u-linkbtn group" aria-label="See Community">See Community <span class="arrow">→</span></NuxtLink>
       </div>
 
       <!-- Visual divider -->

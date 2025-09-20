@@ -49,4 +49,46 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
            px-2 py-1 text-xs text-mint bg-white/0
            hover:bg-mint/10 transition-colors;
   }
+
+  /* Windsurf: Global utilities */
+  /* Glass cards (consistent padding & radius) */
+  .soft-card {
+    @apply rounded-brk-outer bg-white/5 border border-white/10 shadow-soft p-4 sm:p-5;
+  }
+
+  /* Inner rows in cards/menus */
+  .soft-row {
+    @apply rounded-brk-inner px-4 py-2.5 text-sm text-white/90;
+  }
+
+  /* Link-button */
+  .u-linkbtn {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5
+           bg-white/10 text-white/90 hover:bg-white/15 hover:text-white
+           transition-colors;
+  }
+  .u-linkbtn > .arrow { @apply translate-x-0 transition-transform group-hover:translate-x-0.5; }
+
+  /* Primary CTA */
+  .u-cta {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2
+           bg-gradient-to-b from-mint to-[#3CF6BE] text-ink font-medium
+           shadow-[0_0_24px_rgba(0,229,160,.25)] hover:brightness-110;
+  }
+
+  /* Equal-width chips */
+  .u-chip { @apply flex-1 text-center rounded-full px-3 py-1.5; }
+
+  /* Menu utilities */
+  .menu-item { @apply soft-row flex items-center gap-3 w-full hover:bg-white/10; }
+  .menu-icon { @apply w-4 h-4 shrink-0; }
+}
+
+@layer utilities {
+  /* Drag-over micro-interactions */
+  [data-dragover="true"] { transform: scale(1.02); }
+  [data-dragover="true"] img { filter: drop-shadow(0 0 12px rgba(0,229,160,.35)); }
+
+  /* Global focus ring */
+  :focus-visible { outline: 2px solid rgba(0,229,160,.6); outline-offset: 2px; }
 }
