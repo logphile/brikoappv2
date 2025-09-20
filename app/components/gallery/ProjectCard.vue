@@ -20,12 +20,12 @@
            @error="broken = true"
       />
 
-      <!-- Hover overlay actions -->
-      <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/35 transition"></div>
-      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition grid place-items-center">
+      <!-- Hover overlay actions (mint unified) -->
+      <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-opacity"></div>
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity grid place-items-center">
         <div class="flex gap-2">
-          <button class="pointer-events-auto btn-outline-mint text-sm px-3 py-1.5" @click.stop="toProject(publicId)">👁 View</button>
-          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5" @click.stop="remixProject">🔄 Remix</button>
+          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5" @click.stop="toProject(publicId)">👁 View</button>
+          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5 ml-1" @click.stop="remixProject">🔄 Remix</button>
         </div>
       </div>
     </div>
@@ -53,20 +53,22 @@
 
       <div class="mt-2 flex items-center justify-between text-xs">
         <div class="flex items-center gap-3">
+          <!-- Like (mint unified) -->
           <button :aria-pressed="likedByMe" :title="likedByMe ? 'Unlike' : 'Like'" @click.stop="onLikeClick" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30 inline-flex items-center gap-1">
-            <span>❤️</span>
-            <span>{{ likesLocal }}</span>
+            <span :class="likedByMe ? 'icon-mint' : 'icon-mint-dim'">♥</span>
+            <span :class="likedByMe ? 'react-mint' : 'react-mint-dim'">{{ likesLocal }}</span>
           </button>
-          <button :aria-pressed="savedByMe" :title="savedByMe ? 'Unsave' : 'Save'" @click.stop="onSaveClick" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30 inline-flex items-center gap-1 text-white/80">
-            <span>📌</span>
-            <span>{{ savesLocal }}</span>
+          <!-- Save / Pin (mint unified) -->
+          <button :aria-pressed="savedByMe" :title="savedByMe ? 'Unsave' : 'Save'" @click.stop="onSaveClick" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30 inline-flex items-center gap-1">
+            <span :class="savedByMe ? 'icon-mint' : 'icon-mint-dim'">📌</span>
+            <span :class="savedByMe ? 'react-mint' : 'react-mint-dim'">{{ savesLocal }}</span>
           </button>
         </div>
         <button title="Share" @click.stop="$emit('share')" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30">↗</button>
       </div>
 
-      <div v-if="tags?.length" class="mt-2 flex flex-wrap gap-1">
-        <span v-for="t in tags" :key="t" class="text-[11px] px-2 py-0.5 rounded-full bg-white/7 ring-1 ring-white/10 text-white/80">#{{ t }}</span>
+      <div v-if="tags?.length" class="mt-2 flex flex-wrap gap-2">
+        <span v-for="t in tags" :key="t" class="chip-mint">#{{ t }}</span>
       </div>
     </div>
   </article>
