@@ -31,11 +31,7 @@
 
         <!-- Account / CTA -->
         <div class="flex items-center gap-2">
-          <NuxtLink v-if="!loading && user" to="/login"
-            class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
-                   text-white/90 hover:bg-white/20 transition-colors">
-            {{ identityLabel }}
-          </NuxtLink>
+          <AccountMenu v-if="!loading && user" :label="identityLabel" />
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
             class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
                    text-white/90 hover:bg-white/20 transition-colors">
@@ -57,6 +53,7 @@ import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useProfile, type ProfileRow } from '@/composables/useProfile'
+import AccountMenu from '@/components/AccountMenu.client.vue'
 
 const route = useRoute()
 const items = [

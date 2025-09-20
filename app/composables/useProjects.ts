@@ -115,12 +115,15 @@ export const useProjects = () => {
     // If columns missing, Supabase will error; we will fall back to client sort on caller side
     const { data, error } = await $supabase
       .from('user_projects_public')
-      .select('*')
+      .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity')
       .order(orderKey as any, { ascending: false })
       .limit(limit)
     if (error) {
       // fallback to un-ordered fetch
-      const { data: d2 } = await $supabase.from('user_projects_public').select('*').limit(limit)
+      const { data: d2 } = await $supabase
+        .from('user_projects_public')
+        .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity')
+        .limit(limit)
       return d2 || []
     }
     return data || []

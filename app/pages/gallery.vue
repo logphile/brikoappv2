@@ -183,7 +183,7 @@ async function fetchGallery(){
         orig_url: orig ? bust(buildPreviewUrl(orig), v(r)) : null,
         likes: r.likes ?? 0,
         saves: r.saves ?? 0,
-        username: r.username || '@user',
+        username: (r.handle ? ('@' + r.handle) : (r.display_name || '@user')),
         bricks: r.bricks ?? 0,
         cost: r.cost_est ?? 0,
         tags: Array.isArray(r.tags) ? r.tags : [],
