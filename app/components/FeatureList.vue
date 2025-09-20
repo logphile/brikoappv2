@@ -3,7 +3,7 @@
 <template>
   <section class="bg-[#0B1220] text-white">
     <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
-      <h2 class="text-center text-2xl sm:text-3xl font-bold mb-8">
+      <h2 class="h-section-52 text-center mb-8">
         Briko’s Geeky Superpowers
       </h2>
       <div class="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
