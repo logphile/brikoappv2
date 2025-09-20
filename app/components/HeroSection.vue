@@ -25,25 +25,32 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="relative overflow-hidden bg-[#0B1220] text-white">
-      <div class="mx-auto max-w-3xl px-6 pt-10 sm:pt-14 text-center">
-      <!-- Centered headline with mint exclamation -->
-      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+      <div class="mx-auto max-w-5xl px-6 pt-10 sm:pt-14">
+      <!-- H1: single line, centered, no wrap, clamped size -->
+      <h1
+        class="mx-auto block text-center font-brand font-bold leading-[1.05]
+               whitespace-nowrap
+               text-[clamp(34px,6vw,52px)]"
+      >
         Turn any picture into a brick build<span class="text-mint">!</span>
       </h1>
 
-      <!-- Three bigger lines, aligned with headline -->
-      <ul class="mt-4 sm:mt-5 space-y-2 sm:space-y-2.5 hero-steps text-lg sm:text-xl md:text-[22px] leading-snug">
-        <li class="step">
+      <!-- Three lines: left-aligned, clamped size, mint arrows -->
+      <ul
+        class="mt-4 sm:mt-5 space-y-2 text-left
+               text-[clamp(22px,4.2vw,30px)] leading-snug"
+      >
+        <li>
           <span>Upload your favorite photo</span>
-          <span class="arrow text-mint"> →</span>
+          <span class="text-mint"> →</span>
         </li>
-        <li class="step">
+        <li>
           <span>See it transformed into a LEGO-style mosaic or 3D model</span>
-          <span class="arrow text-mint"> →</span>
+          <span class="text-mint"> →</span>
         </li>
-        <li class="step">
+        <li>
           <span>Download parts, build guide &amp; cost in seconds!</span>
-          <span class="arrow text-mint"> →</span>
+          <span class="text-mint"> →</span>
         </li>
       </ul>
       
@@ -83,35 +90,26 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
 <style scoped>
 /* If you don't have icon fonts, remove i-lucide-* spans above and keep the labels only. */
-</style>
 
-<style scoped>
 /* Snap-in rise with a tiny squish */
 @keyframes briko-step-in {
   0%   { transform: translateY(10px) scaleY(.98); opacity: 0; }
   60%  { transform: translateY(0)    scaleY(1.01); opacity: 1; }
   100% { transform: translateY(0)    scaleY(1); }
 }
-
 /* Arrow nudge, like a stud sliding in */
 @keyframes briko-arrow-nudge {
   0%,100% { transform: translateX(0); }
   50%     { transform: translateX(4px); }
 }
-
 /* apply */
-.hero-steps .step { animation: briko-step-in .36s ease-out both; }
-.hero-steps .step:nth-child(1) { animation-delay: .00s; }
-.hero-steps .step:nth-child(2) { animation-delay: .06s; }
-.hero-steps .step:nth-child(3) { animation-delay: .12s; }
-
-.hero-steps .arrow {
-  display: inline-block;
-  animation: briko-arrow-nudge .9s ease-out 1 .18s; /* 1 time, slight delay */
-}
+ul > li { animation: briko-step-in .36s ease-out both; }
+ul > li:nth-child(2) { animation-delay: .06s; }
+ul > li:nth-child(3) { animation-delay: .12s; }
+ul > li > .text-mint { display:inline-block; animation: briko-arrow-nudge .9s ease-out 1 .18s; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .hero-steps .step, .hero-steps .arrow { animation: none !important; }
+  ul > li, ul > li > .text-mint { animation: none !important; }
 }
 </style>
