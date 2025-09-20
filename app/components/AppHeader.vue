@@ -9,16 +9,11 @@
         </NuxtLink>
 
         <!-- Main nav -->
-        <ul class="hidden md:flex items-center gap-4 lg:gap-6">
-          <li v-for="item in items" :key="item.href">
-            <NuxtLink
-              :to="item.href"
-              :aria-current="isActive(item.href) ? 'page' : undefined"
-              class="u-linkbtn text-[15px] lg:text-base"
-              :class="isActive(item.href) ? 'bg-white/15 text-white' : ''">
-              {{ item.name }}
-            </NuxtLink>
-          </li>
+        <ul class="flex items-center gap-3 overflow-x-auto">
+          <li><NavBrick to="/mosaic" label="Photo to Bricks" /></li>
+          <li><NavBrick to="/voxel" label="3D Builder" /></li>
+          <li><NavBrick to="/avatar" label="Brick Yourself" /></li>
+          <li><NavBrick to="/studio" label="Briko Studio" /></li>
         </ul>
 
         <!-- Account / CTA -->
@@ -46,6 +41,7 @@ import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useProfile, type ProfileRow } from '@/composables/useProfile'
 import AccountMenu from '@/components/AccountMenu.client.vue'
+import NavBrick from '@/components/NavBrick.vue'
 
 const route = useRoute()
 const items = [
