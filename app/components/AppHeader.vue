@@ -9,7 +9,10 @@
         </NuxtLink>
 
         <!-- Main nav -->
-        <ul class="flex items-center gap-3 overflow-x-auto">
+        <ul class="flex items-center
+                   gap-4 sm:gap-5 md:gap-6
+                   px-1 pr-3 sm:pr-4
+                   overflow-x-auto md:overflow-visible no-scrollbar">
           <li><NavBrick to="/mosaic" label="Photo to Bricks" /></li>
           <li><NavBrick to="/voxel" label="3D Builder" /></li>
           <li><NavBrick to="/avatar" label="Brick Yourself" /></li>
