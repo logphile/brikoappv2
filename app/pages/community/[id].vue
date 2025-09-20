@@ -100,7 +100,7 @@ onMounted(fetchDetail)
       <header class="flex items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl font-semibold">{{ project.title }}</h1>
-          <p class="text-sm text-white/70">by {{ project.username || '@user' }} · {{ rel(project.created_at) }}</p>
+          <p class="text-sm text-white/70">by {{ project.handle ? ('@' + project.handle) : (project.display_name || '@user') }} · {{ rel(project.created_at) }}</p>
         </div>
         <div class="flex items-center gap-2 text-sm">
           <button class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40" @click="share">Share</button>

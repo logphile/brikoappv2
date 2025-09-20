@@ -89,7 +89,7 @@ function remixProject(){
       <header class="mb-4 flex items-center justify-between gap-3">
         <div>
           <h1 class="text-2xl font-semibold truncate">{{ project.title }}</h1>
-          <p class="text-sm text-white/75">by {{ project.username || '@user' }}</p>
+          <p class="text-sm text-white/75">by {{ project.handle ? ('@' + project.handle) : (project.display_name || '@user') }}</p>
         </div>
         <div class="flex items-center gap-2">
           <button class="btn-mint px-4 rounded-xl" @click="remixProject">🔄 Remix</button>

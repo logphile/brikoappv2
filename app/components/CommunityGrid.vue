@@ -51,21 +51,21 @@ async function fetchPage() {
   // Pull straight from the public view the gallery uses
   const { data, error } = await $supabase
     .from('user_projects_public')
-    .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, username')
+    .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, handle, display_name')
     .order('created_at', { ascending: false })
     .range(from, to)
 
   if (!error) {
     const list = (data || []) as any[]
     for (const p of list) {
-      const rawUser = (p as any).username as string | undefined
-      const uname = rawUser ? (rawUser.startsWith('@') ? rawUser : `@${rawUser}`) : null
+      const handle = (p as any).handle as string | undefined
+      const display = (p as any).display_name as string | undefined
       items.value.push({
         id: p.id,
         title: p.title,
         created_at: p.created_at,
         cover_url: p.preview_path ? buildPreviewUrl(p.preview_path) : null,
-        owner: { username: uname },
+        owner: { handle: handle || null, display_name: display || null },
       })
     }
     if (list.length < pageSize) hasMore.value = false

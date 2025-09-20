@@ -33,5 +33,10 @@ export const useProfile = () => {
     if (error) throw error
   }
 
-  return { getMyProfile, updateMyProfile }
+  // Alias to match existing call sites / docs
+  async function updateProfile(payload: { handle?: string; display_name?: string }): Promise<void> {
+    return updateMyProfile(payload)
+  }
+
+  return { getMyProfile, updateMyProfile, updateProfile }
 }

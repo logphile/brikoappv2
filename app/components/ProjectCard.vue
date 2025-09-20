@@ -13,15 +13,15 @@
         <h3 class="text-sm font-semibold text-white/90 truncate">{{ project.title || 'Untitled' }}</h3>
         <span class="text-xs text-white/50">{{ new Date(project.created_at).toLocaleDateString() }}</span>
       </div>
-      <p v-if="project.owner && (project.owner.username || project.owner.display_name)" class="mt-1 text-xs text-white/60 truncate">
-        by {{ project.owner.username || project.owner.display_name }}
+      <p v-if="project.owner && (project.owner.handle || project.owner.display_name)" class="mt-1 text-xs text-white/60 truncate">
+        by {{ project.owner.handle ? ('@' + project.owner.handle) : (project.owner.display_name || '@user') }}
       </p>
     </div>
   </NuxtLink>
 </template>
 
 <script setup lang="ts">
-interface OwnerInfo { username?: string | null; display_name?: string | null }
+interface OwnerInfo { handle?: string | null; display_name?: string | null }
 interface CommunityProject {
   id: string | number
   title?: string | null
