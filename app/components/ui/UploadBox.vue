@@ -7,6 +7,7 @@
  * - Emits `file` (File) or `error` (message)
  */
 import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { useEmptyIcon } from '@/composables/useEmptyIcon'
 
 const props = withDefaults(defineProps<{
   accept?: string
@@ -31,6 +32,7 @@ const emit = defineEmits<{
 
 const over = ref(false)
 const inputEl = ref<HTMLInputElement | null>(null)
+const emptySrc = useEmptyIcon()
 
 function isOk(file: File) {
   if (!file) return 'No file selected'
@@ -70,12 +72,14 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
 
 <template>
   <div
-    class="rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4 sm:p-5
+    class="uploadbox rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4 sm:p-5
            transition ring-0 focus-within:ring-2 ring-emerald-400/60"
     :class="over ? 'border-emerald-400/60 bg-emerald-400/5' : ''"
+    :data-dragover="over ? 'true' : null"
     @dragover="onOver" @dragleave="onLeave" @drop="onDrop"
     role="button" tabindex="0" aria-label="Upload image"
   >
+    <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
     <p class="text-sm text-white/80">{{ label }}</p>
     <div class="mt-2">
       <button
@@ -100,3 +104,8 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
     />
   </div>
 </template>
+
+<style scoped>
+.uploadbox img{ transition: transform .15s ease; }
+.uploadbox[data-dragover="true"] img{ transform: scale(1.05); }
+</style>
