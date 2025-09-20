@@ -2,11 +2,15 @@
   <transition name="fade">
     <div
       v-if="show"
-      class="fixed inset-x-0 bottom-0 z-50 p-3 sm:p-4"
+      class="fixed z-50 p-3 sm:p-6
+             bottom-3 right-3
+             sm:bottom-6 sm:right-6
+             w-[calc(100%-1.5rem)]
+             sm:w-[460px]"
       role="region"
       aria-label="Privacy notice"
     >
-      <div class="mx-auto max-w-4xl rounded-2xl bg-white/8 backdrop-blur border border-white/10 shadow-lg">
+      <div class="rounded-2xl border border-white/10 shadow-lg banner-surface">
         <div class="px-5 py-4 sm:px-6 sm:py-5">
           <p class="text-sm text-white/90 leading-[1.4]">
             We use GA4 analytics (no ads, no selling data) to see what features click and which ones crumble.
@@ -81,4 +85,21 @@ function decline() {
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity .2s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Opaque, clean surface — no see-through artifacts */
+.banner-surface {
+  background: rgba(17, 24, 39, 0.95); /* ink/95 */
+  /* stop any ancestor blending/filters from affecting children */
+  isolation: isolate;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Optional: softer glass look without milky banding */
+@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .banner-surface.glassy {
+    background: rgba(17, 24, 39, 0.80); /* ink/80 */
+    backdrop-filter: saturate(120%) blur(6px);
+  }
+}
 </style>
