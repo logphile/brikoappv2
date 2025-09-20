@@ -32,15 +32,16 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <h1
           class="block text-center font-brand font-bold leading-[1.05]
                  whitespace-nowrap
-                 text-[clamp(30px,6vw,52px)]"
+                 text-[clamp(28px,5.2vw,46px)]"
         >
           Turn any picture into a brick build<span class="text-mint">!</span>
         </h1>
 
         <!-- Three lines: left-aligned, 24px on desktop, mint arrows before text -->
         <ul
-          class="mt-6 md:mt-7 space-y-3 sm:space-y-3.5 md:space-y-4
-                 text-left text-[clamp(18px,3.6vw,24px)] leading-snug"
+          class="mt-6 md:mt-7
+                 space-y-3 sm:space-y-3.5 md:space-y-4
+                 text-left text-[clamp(16px,3vw,20px)] leading-snug"
         >
           <li class="flex items-baseline gap-2">
             <span class="arrow text-mint" aria-hidden="true">→</span>
@@ -63,7 +64,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
       <!-- Demo row: make cards ~40% larger, keep tidy alignment -->
       <section class="mt-8">
         <div class="mx-auto max-w-7xl">
-          <div class="grid justify-center md:justify-between grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Original -->
             <figure class="demo-card">
               <div class="media">
@@ -100,12 +101,11 @@ useIntersectionObserver(sentinel, ([entry]) => {
 <style scoped>
 /* If you don't have icon fonts, remove i-lucide-* spans above and keep the labels only. */
 
-/* ~40% bigger demo cards */
-.demo-card { @apply rounded-2xl bg-white/5 border border-white/10 shadow-soft overflow-hidden; width: clamp(320px, 38vw, 520px); }
+/* Demo cards sized by grid; make each fill its column */
+.demo-card { @apply w-full rounded-2xl bg-white/5 border border-white/10 shadow-soft overflow-hidden; }
 .demo-card .media { aspect-ratio: 4 / 3; @apply overflow-hidden; }
 .demo-card .media img { @apply w-full h-full object-cover block; }
 .demo-card .caption { @apply px-4 py-3 text-center text-white/90 bg-white/5; }
-@media (max-width: 767px) { .demo-card { width: 100%; } }
 
 /* Snap-in rise with a tiny squish */
 @keyframes briko-step-in {

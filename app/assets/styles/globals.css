@@ -101,6 +101,8 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 @layer utilities {
   /* Section heading 52px (responsive clamp) */
   .h-section-52 { @apply font-brand font-bold leading-tight text-[clamp(32px,5.8vw,52px)]; }
+  /* Section heading 46px (responsive clamp) */
+  .h-section-46 { @apply font-brand font-bold leading-tight text-[clamp(30px,5.2vw,46px)]; }
   /* Drag-over micro-interactions */
   [data-dragover="true"] { transform: scale(1.02); }
   [data-dragover="true"] img { filter: drop-shadow(0 0 12px rgba(0,229,160,.35)); }
