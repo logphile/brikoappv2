@@ -22,7 +22,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
       <div class="mx-auto max-w-6xl px-6 pt-14 sm:pt-16 pb-0">
       <!-- Header -->
       <div class="text-center">
-        <h2 class="h-section-52">
+        <h2 class="h-section-46">
           How it works
         </h2>
         <p class="mt-2 text-gray-300">

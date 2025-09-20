@@ -19,7 +19,7 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
   >
     <section class="bg-[#0B1220] text-white">
       <div class="mx-auto max-w-6xl px-6 pt-8 sm:pt-12 pb-14 sm:pb-16">
-      <h2 class="h-section-52 text-center mb-6">See the Magic in Action</h2>
+      <h2 class="h-section-46 text-center mb-6">See the Magic in Action</h2>
 
       <ClientOnly>
         <div class="relative mx-auto w-full rounded-2xl border border-white/10 bg-white/5 p-3 shadow-soft-card transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
