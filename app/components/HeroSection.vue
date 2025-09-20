@@ -37,22 +37,22 @@ useIntersectionObserver(sentinel, ([entry]) => {
           Turn any picture into a brick build<span class="text-mint">!</span>
         </h1>
 
-        <!-- Three lines: left-aligned, 24px on desktop, mint arrows with single-space gap -->
+        <!-- Three lines: left-aligned, 24px on desktop, mint arrows before text -->
         <ul
           class="mt-6 md:mt-7 space-y-3 sm:space-y-3.5 md:space-y-4
                  text-left text-[clamp(18px,3.6vw,24px)] leading-snug"
         >
-          <li>
-            <span>Upload your favorite photo</span>
-            <span class="text-mint ml-1" aria-hidden="true">→</span>
+          <li class="flex items-baseline gap-2">
+            <span class="arrow text-mint" aria-hidden="true">→</span>
+            <span>Upload a photo</span>
           </li>
-          <li>
-            <span>See it transformed into a LEGO-style mosaic or 3D model</span>
-            <span class="text-mint ml-1" aria-hidden="true">→</span>
+          <li class="flex items-baseline gap-2">
+            <span class="arrow text-mint" aria-hidden="true">→</span>
+            <span>See it transform into a LEGO-style build</span>
           </li>
-          <li>
+          <li class="flex items-baseline gap-2">
+            <span class="arrow text-mint" aria-hidden="true">→</span>
             <span>Download parts, build guide &amp; cost in seconds!</span>
-            <span class="text-mint ml-1" aria-hidden="true">→</span>
           </li>
         </ul>
       </div>
@@ -113,19 +113,15 @@ useIntersectionObserver(sentinel, ([entry]) => {
   60%  { transform: translateY(0)    scaleY(1.01); opacity: 1; }
   100% { transform: translateY(0)    scaleY(1); }
 }
-/* Arrow nudge, like a stud sliding in */
-@keyframes briko-arrow-nudge {
-  0%,100% { transform: translateX(0); }
-  50%     { transform: translateX(4px); }
-}
+/* Arrow token: +20% size, tidy baseline */
+.arrow { display:inline-block; font-size: 1.2em; line-height: 1; transform: translateY(0.03em); }
 /* apply */
 ul > li { animation: briko-step-in .36s ease-out both; }
 ul > li:nth-child(2) { animation-delay: .06s; }
 ul > li:nth-child(3) { animation-delay: .12s; }
-ul > li > .text-mint { display:inline-block; animation: briko-arrow-nudge .9s ease-out 1 .18s; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  ul > li, ul > li > .text-mint { animation: none !important; }
+  ul > li, .arrow { animation: none !important; }
 }
 </style>
