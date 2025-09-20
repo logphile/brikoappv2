@@ -12,6 +12,9 @@ export default defineNuxtConfig({
   routeRules: {
     '/community-studio': { redirect: '/gallery' },
     '/community-studio/**': { redirect: '/gallery' },
+    // Robustness: if any link points to /sitemap, redirect to the static sitemap.xml
+    '/sitemap': { redirect: '/sitemap.xml' },
+    '/sitemap/': { redirect: '/sitemap.xml' }
   },
   css: [
     '@/assets/css/fonts.css',
