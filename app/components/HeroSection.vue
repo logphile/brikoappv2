@@ -26,33 +26,36 @@ useIntersectionObserver(sentinel, ([entry]) => {
   >
     <section class="relative overflow-hidden bg-[#0B1220] text-white">
       <div class="mx-auto max-w-5xl px-6 pt-10 sm:pt-14">
-      <!-- H1: single line, centered, no wrap, clamped size -->
-      <h1
-        class="mx-auto block text-center font-brand font-bold leading-[1.05]
-               whitespace-nowrap
-               text-[clamp(34px,6vw,52px)]"
-      >
-        Turn any picture into a brick build<span class="text-mint">!</span>
-      </h1>
+      <!-- Inline-width wrapper aligns lines to H1 left edge while centering the block -->
+      <div class="mx-auto w-fit">
+        <!-- H1: single line, centered, no wrap, clamped size -->
+        <h1
+          class="block text-center font-brand font-bold leading-[1.05]
+                 whitespace-nowrap
+                 text-[clamp(30px,6vw,52px)]"
+        >
+          Turn any picture into a brick build<span class="text-mint">!</span>
+        </h1>
 
-      <!-- Three lines: left-aligned, clamped size, mint arrows -->
-      <ul
-        class="mt-4 sm:mt-5 space-y-2 text-left
-               text-[clamp(22px,4.2vw,30px)] leading-snug"
-      >
-        <li>
-          <span>Upload your favorite photo</span>
-          <span class="text-mint"> →</span>
-        </li>
-        <li>
-          <span>See it transformed into a LEGO-style mosaic or 3D model</span>
-          <span class="text-mint"> →</span>
-        </li>
-        <li>
-          <span>Download parts, build guide &amp; cost in seconds!</span>
-          <span class="text-mint"> →</span>
-        </li>
-      </ul>
+        <!-- Three lines: left-aligned, 24px on desktop, mint arrows with single-space gap -->
+        <ul
+          class="mt-6 md:mt-7 space-y-3 sm:space-y-3.5 md:space-y-4
+                 text-left text-[clamp(18px,3.6vw,24px)] leading-snug"
+        >
+          <li>
+            <span>Upload your favorite photo</span>
+            <span class="text-mint ml-1" aria-hidden="true">→</span>
+          </li>
+          <li>
+            <span>See it transformed into a LEGO-style mosaic or 3D model</span>
+            <span class="text-mint ml-1" aria-hidden="true">→</span>
+          </li>
+          <li>
+            <span>Download parts, build guide &amp; cost in seconds!</span>
+            <span class="text-mint ml-1" aria-hidden="true">→</span>
+          </li>
+        </ul>
+      </div>
       
       <!-- Visual divider -->
       <div class="h-px w-24 bg-[#00E5A0] mx-auto my-10"></div>
