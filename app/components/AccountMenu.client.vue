@@ -4,13 +4,13 @@
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <div class="rounded-2xl bg-white/5 border border-white/10 shadow-xl p-1" role="menu" aria-label="User menu">
-        <nav class="py-1 text-sm text-white/90">
+      <div class="rounded-2xl bg-[#0B0E13] border border-white/20 shadow-2xl p-1" role="menu" aria-label="User menu">
+        <nav class="py-1 text-sm text-white">
           <NuxtLink
             to="/projects"
             role="menuitem"
             class="menu-item"
-            :class="route.path.startsWith('/projects') ? 'bg-white/10 text-white' : ''"
+            :class="route.path.startsWith('/projects') ? 'bg-white/20 text-white' : ''"
           >
             <img src="/icons/menu/yourprojects-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
             <span>Your Projects</span>
@@ -20,7 +20,7 @@
             to="/gallery"
             role="menuitem"
             class="menu-item"
-            :class="route.path.startsWith('/gallery') ? 'bg-white/10 text-white' : ''"
+            :class="route.path.startsWith('/gallery') ? 'bg-white/20 text-white' : ''"
           >
             <img src="/icons/menu/communitygallery-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
             <span>Community Gallery</span>
@@ -30,7 +30,7 @@
             to="/projects/new"
             role="menuitem"
             class="menu-item"
-            :class="route.path === '/projects/new' ? 'bg-white/10 text-white' : ''"
+            :class="route.path === '/projects/new' ? 'bg-white/20 text-white' : ''"
           >
             <img src="/icons/menu/newproject-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
             <span>New Project</span>
@@ -42,7 +42,7 @@
             to="/settings/profile"
             role="menuitem"
             class="menu-item"
-            :class="route.path.startsWith('/settings') ? 'bg-white/10 text-white' : ''"
+            :class="route.path.startsWith('/settings') ? 'bg-white/20 text-white' : ''"
           >
             <img src="/icons/menu/settings-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
             <span>Settings</span>
@@ -52,7 +52,7 @@
             to="/how-it-works"
             role="menuitem"
             class="menu-item"
-            :class="route.path.startsWith('/how-it-works') ? 'bg-white/10 text-white' : ''"
+            :class="route.path.startsWith('/how-it-works') ? 'bg-white/20 text-white' : ''"
           >
             <img src="/icons/menu/help-mint.svg" alt="" aria-hidden="true" class="menu-icon" />
             <span>Help</span>
@@ -105,7 +105,7 @@ watch(() => route.fullPath, () => { open.value = false })
 
 <style scoped>
 .menu-item {
-  @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white/90 hover:bg-white/10 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70;
+  @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white hover:bg-white/10 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70;
 }
 .menu-icon {
   @apply w-4 h-4 shrink-0;
