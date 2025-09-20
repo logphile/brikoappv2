@@ -57,32 +57,38 @@ useIntersectionObserver(sentinel, ([entry]) => {
       <!-- Visual divider -->
       <div class="h-px w-24 bg-[#00E5A0] mx-auto my-10"></div>
 
-      <!-- Demo: replace purple gradient with a simple before/after -->
-      <div class="mt-12 grid gap-6 md:grid-cols-2 mx-auto max-w-4xl md:max-w-5xl justify-center">
-        <!-- Original -->
-        <figure class="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-          <img
-            :src="originalImg"
-            @error="(e) => ((e.target as HTMLImageElement).src = '/og-default.png')"
-            alt="Original photo uploaded to Briko"
-            class="w-full h-64 md:h-72 object-cover"
-          />
-          <figcaption class="px-4 py-3 text-sm text-gray-300">Original photo</figcaption>
-        </figure>
+      <!-- Demo row: make cards ~40% larger, keep tidy alignment -->
+      <section class="mt-8">
+        <div class="mx-auto max-w-7xl">
+          <div class="grid justify-center md:justify-between grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            <!-- Original -->
+            <figure class="demo-card">
+              <div class="media">
+                <img
+                  :src="originalImg"
+                  @error="(e) => ((e.target as HTMLImageElement).src = '/og-default.png')"
+                  alt="Original photo uploaded to Briko"
+                />
+              </div>
+              <figcaption class="caption">Original photo</figcaption>
+            </figure>
 
-        <!-- Mosaic Result -->
-        <figure class="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-          <img
-            :src="mosaicImg"
-            @error="(e) => ((e.target as HTMLImageElement).src = '/demo-mosaic.png')"
-            alt="Photo transformed into a LEGO-style mosaic"
-            class="w-full h-64 md:h-72 object-cover"
-          />
-          <figcaption class="px-4 py-3 text-sm text-gray-300">
-            LEGO-style mosaic preview — <span class="text-[#00E5A0]">made in seconds</span>
-          </figcaption>
-        </figure>
-      </div>
+            <!-- Mosaic Result -->
+            <figure class="demo-card">
+              <div class="media">
+                <img
+                  :src="mosaicImg"
+                  @error="(e) => ((e.target as HTMLImageElement).src = '/demo-mosaic.png')"
+                  alt="Photo transformed into a LEGO-style mosaic"
+                />
+              </div>
+              <figcaption class="caption">
+                LEGO-style mosaic preview — <NuxtLink to="/mosaic" class="underline text-mint">made in seconds</NuxtLink>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
       </div>
     </section>
   </Transition>
@@ -90,6 +96,13 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
 <style scoped>
 /* If you don't have icon fonts, remove i-lucide-* spans above and keep the labels only. */
+
+/* ~40% bigger demo cards */
+.demo-card { @apply rounded-2xl bg-white/5 border border-white/10 shadow-soft overflow-hidden; width: clamp(320px, 38vw, 520px); }
+.demo-card .media { aspect-ratio: 4 / 3; @apply overflow-hidden; }
+.demo-card .media img { @apply w-full h-full object-cover block; }
+.demo-card .caption { @apply px-4 py-3 text-center text-white/90 bg-white/5; }
+@media (max-width: 767px) { .demo-card { width: 100%; } }
 
 /* Snap-in rise with a tiny squish */
 @keyframes briko-step-in {
