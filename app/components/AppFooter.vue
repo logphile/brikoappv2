@@ -1,47 +1,76 @@
 <template>
-  <footer class="mt-24" aria-label="Site footer">
-    <!-- Mint gradient hairline -->
-    <div class="h-px w-full bg-gradient-to-r from-transparent via-mint/40 to-transparent"></div>
+  <footer class="border-t border-white/10 bg-black/20">
+    <!-- Top rail (optional CTA) -->
+    <!--
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div class="soft-card flex flex-col sm:flex-row items-center justify-between gap-4">
+        <h2 class="font-brand font-bold text-[clamp(24px,3.6vw,32px)] leading-tight">
+          Ready to build something awesome?
+        </h2>
+        <NuxtLink to="/mosaic" class="u-cta">Try Photo to Bricks</NuxtLink>
+      </div>
+    </div>
+    -->
 
-    <div class="relative bg-ink/90">
-      <!-- subtle studs motif background -->
-      <div class="pointer-events-none absolute inset-0 opacity-[0.08]" style="background-image:url('/patterns/studs.svg'); background-size: 320px; background-repeat: repeat;"></div>
+    <!-- Stacked link columns -->
+    <nav aria-label="Footer" class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Column: Build -->
+        <section>
+          <h3 class="mb-3 font-brand font-bold text-base text-white">Build</h3>
+          <ul class="space-y-1.5">
+            <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
+            <li><FooterBrick to="/voxel" label="3D Builder" /></li>
+            <li><FooterBrick to="/avatar"  label="Brick Yourself" /></li>
+            <li><FooterBrick to="/studio"  label="Briko Studio" /></li>
+          </ul>
+        </section>
 
-      <div class="relative z-10 mx-auto max-w-7xl px-4 lg:px-6 py-8">
-        <!-- Top row -->
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <!-- Utility links -->
-          <nav class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-white/70">
-            <NuxtLink to="/how-it-works" class="footer-link">Docs</NuxtLink>
-            <a href="#" class="footer-link" title="Blog (coming soon)">Blog</a>
-            <a href="mailto:hello@briko.app" class="footer-link">Contact</a>
-            <NuxtLink to="/privacy" class="footer-link">Privacy</NuxtLink>
-            <NuxtLink to="/legal#terms" class="footer-link">Terms</NuxtLink>
-            <a href="/sitemap.xml" class="footer-link">Sitemap</a>
-          </nav>
+        <!-- Column: Learn -->
+        <section>
+          <h3 class="mb-3 font-brand font-bold text-base text-white">Learn</h3>
+          <ul class="space-y-1.5">
+            <li><FooterBrick to="/docs"   label="Docs" /></li>
+            <li><FooterBrick to="/blog"   label="Blog" /></li>
+            <li><FooterBrick to="/help"   label="Help Center" /></li>
+            <li><FooterBrick to="/pricing" label="Pricing" /></li>
+          </ul>
+        </section>
 
-          <!-- Copyright -->
-          <p class="text-sm text-white/60">© {{ year }} Briko</p>
-        </div>
+        <!-- Column: Company -->
+        <section>
+          <h3 class="mb-3 font-brand font-bold text-base text-white">Company</h3>
+          <ul class="space-y-1.5">
+            <li><FooterBrick to="/contact" label="Contact" /></li>
+            <li><FooterBrick to="/gallery" label="Community Gallery" /></li>
+            <li><FooterBrick to="/changelog" label="Changelog" /></li>
+            <li><FooterBrick to="/status" label="Status" /></li>
+          </ul>
+        </section>
 
-        <!-- Disclaimer -->
-        <p class="mt-6 text-center text-xs leading-relaxed text-white/55 max-w-5xl mx-auto">
+        <!-- Column: Legal -->
+        <section>
+          <h3 class="mb-3 font-brand font-bold text-base text-white">Legal</h3>
+          <ul class="space-y-1.5">
+            <li><FooterBrick to="/privacy" label="Privacy" /></li>
+            <li><FooterBrick to="/terms"   label="Terms" /></li>
+            <li><FooterBrick to="/sitemap" label="Sitemap" /></li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Bottom fine print -->
+      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-white/60">
+        <p>© {{ new Date().getFullYear() }} Briko</p>
+        <p class="text-center sm:text-left">
           Briko is an independent tool — not affiliated with, endorsed by, or associated with the LEGO® Group.
           LEGO® is a trademark of the LEGO Group of companies.
         </p>
       </div>
-    </div>
+    </nav>
   </footer>
 </template>
 
 <script setup lang="ts">
-const year = new Date().getFullYear()
+import FooterBrick from '@/components/FooterBrick.vue'
 </script>
-
-<style scoped lang="postcss">
-.footer-link{
-  /* modern link affordance + accessibility */
-  @apply hover:text-white hover:underline underline-offset-4 decoration-2 decoration-mint/70
-         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/50 rounded;
-}
-</style>
