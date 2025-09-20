@@ -14,6 +14,12 @@ const ROOT = path.join(__dirname, '..')
 try { dotenv.config({ path: path.join(ROOT, '.env') }) } catch {}
 try { dotenv.config({ path: path.join(ROOT, '.env.local') }) } catch {}
 
+// Hard-disable seeding unless explicitly allowed locally. Never runs in CI/prod.
+if (process.env.CI === 'true' || process.env.NODE_ENV === 'production' || process.env.ALLOW_SEED !== 'true') {
+  console.error('[seed-gallery] Seeding is DISABLED. Set ALLOW_SEED=true to run locally.');
+  process.exit(1)
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL
 let SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -143,7 +149,7 @@ async function uploadPreview(userId, projectId, pngBuffer) {
   const { error } = await supa.storage.from(PROJECTS_BUCKET).upload(key, pngBuffer, {
     upsert: true,
     contentType: 'image/png',
-    cacheControl: '31536000, immutable'
+    cacheControl: 'public, max-age=86400'
   })
   if (error) throw error
   return `projects/${key}`

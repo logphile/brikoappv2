@@ -121,8 +121,8 @@ function remixProject(){
           <span class="opacity-50">·</span>
           <span>${{ (project.cost_est || 0).toLocaleString() }} est.</span>
         </div>
-        <div v-if="Array.isArray(project.tags) && project.tags.length" class="flex flex-wrap gap-1">
-          <span v-for="t in project.tags" :key="t" class="text-[11px] px-2 py-0.5 rounded-full bg-white/7 ring-1 ring-white/10 text-white/80">#{{ t }}</span>
+        <div v-if="Array.isArray(project.tags) && project.tags.length" class="flex flex-wrap gap-2">
+          <span v-for="t in project.tags" :key="t" class="chip-mint">#{{ t }}</span>
         </div>
       </section>
     </div>

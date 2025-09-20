@@ -115,14 +115,14 @@ export const useProjects = () => {
     // If columns missing, Supabase will error; we will fall back to client sort on caller side
     const { data, error } = await $supabase
       .from('user_projects_public')
-      .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity')
+      .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity, status, is_public')
       .order(orderKey as any, { ascending: false })
       .limit(limit)
     if (error) {
       // fallback to un-ordered fetch
       const { data: d2 } = await $supabase
         .from('user_projects_public')
-        .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity')
+        .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity, status, is_public')
         .limit(limit)
       return d2 || []
     }
@@ -189,7 +189,7 @@ export const useProjects = () => {
 
     // Upload preview first to satisfy NOT NULL preview_path schemas
     {
-      const { error } = await $supabase.storage.from('projects').upload(storagePath, blob!, { upsert: true, contentType: 'image/webp', cacheControl: '31536000, immutable' })
+      const { error } = await $supabase.storage.from('projects').upload(storagePath, blob!, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
       if (error) throw error
     }
 
@@ -200,7 +200,7 @@ export const useProjects = () => {
         const origBlob = await fileToScaledWebP(input.sourceFile, 800)
         const origName = `original-preview-800w-v1.webp`
         origPath = `projects/${user.id}/${id}/${origName}`
-        const { error: origErr } = await $supabase.storage.from('projects').upload(origPath, origBlob, { upsert: true, contentType: 'image/webp', cacheControl: '31536000, immutable' })
+        const { error: origErr } = await $supabase.storage.from('projects').upload(origPath, origBlob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
         if (origErr) { console.warn('[createProject] original preview upload failed', origErr) }
       } catch (e) {
         console.warn('[createProject] original preview generation failed', e)

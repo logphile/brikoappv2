@@ -164,7 +164,11 @@ async function fetchGallery(){
     }
     const bust = (url?: string, vv?: number) => url ? `${url}?v=${vv ?? Date.now()}` : ''
 
-    const mapped = (rows || []).map((r: any) => {
+    const enforcePublic = (r: any) => ((typeof r.status !== 'undefined' || typeof r.is_public !== 'undefined')
+      ? (r.status === 'public' || r.is_public === true)
+      : true)
+
+    const mapped = (rows || []).filter(enforcePublic).map((r: any) => {
       // build public URLs from storage paths
       const prev = buildPreviewUrl(r.preview_path)
       // fall back to original_path or derive alongside preview.png
