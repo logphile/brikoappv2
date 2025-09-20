@@ -13,3 +13,40 @@
   color-scheme: dark;
 }
 html, body { background: var(--brand-bg); color: var(--brand-text); }
+
+/* Mint Unification: shared component utilities */
+@layer components {
+  /* Primary mint button (solid) */
+  .btn-mint { /* existing class defined in buttons.css; keep here for consistency if used alone */
+    @apply inline-flex items-center gap-2 rounded-xl px-3 py-1.5
+           bg-gradient-to-r from-mint to-mintLight text-ink font-medium
+           shadow-mint-glow transition-transform duration-150
+           hover:translate-y-[-1px] active:translate-y-0 focus:outline-none
+           focus:ring-2 focus:ring-mintRing/70;
+  }
+
+  /* Subtle mint outline button (ghost) */
+  .btn-mint-ghost {
+    @apply inline-flex items-center gap-2 rounded-xl px-3 py-1.5
+           border border-mint/50 text-mint
+           bg-white/0 hover:bg-mint/10
+           transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-mintRing/70;
+  }
+
+  /* Icon tints */
+  .icon-mint       { @apply text-mint; }
+  .icon-mint-dim   { @apply text-mint/55; }
+  .icon-mint-solid { @apply text-mint; }
+
+  /* Reaction chip (active/inactive) */
+  .react-mint      { @apply text-mint; }
+  .react-mint-dim  { @apply text-mint/55; }
+
+  /* Tag chip style */
+  .chip-mint {
+    @apply inline-flex items-center gap-1 rounded-lg border border-mint/35
+           px-2 py-1 text-xs text-mint bg-white/0
+           hover:bg-mint/10 transition-colors;
+  }
+}

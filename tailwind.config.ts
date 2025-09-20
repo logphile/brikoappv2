@@ -15,7 +15,11 @@ export default <Partial<Config>>{
           a1: 'var(--brand-a1)',
           a2: 'var(--brand-a2)'
         },
-        ink: '#111827',
+        // Unified Briko palette
+        ink: '#0f1420',
+        mint: '#20e3b2',
+        mintLight: '#4ff0c8',
+        mintRing: '#1ad5a6',
         brick: {
           50:'#FFF1E9',100:'#FFE4D6',200:'#FFC2AA',300:'#FF9A79',
           400:'#FF7A4E',500:'#FF5A1F',600:'#E04D18',700:'#C2410C',
@@ -23,9 +27,6 @@ export default <Partial<Config>>{
         },
         midnight:'#0B0F19',
         pacific:'#2563EB',
-        // Brand mint updated to #00E5A0 and added a lighter variant
-        mint:'#00E5A0',
-        mintLight:'#34F5C7',
         sandstone:'#F7EFE6',
         firepink:'#FF2A6D'
       },
@@ -36,7 +37,8 @@ export default <Partial<Config>>{
       borderRadius: { '2xl': '1rem' },
       boxShadow: {
         'soft-card': '0 10px 30px -12px rgba(0,0,0,.35)',
-        'mint-glow': '0 8px 24px -8px rgba(0,229,160,.35)'
+        // Mint glow surrounds with a subtle ring + drop shadow
+        'mint-glow': '0 0 0 3px rgba(32,227,178,0.25), 0 8px 24px rgba(32,227,178,0.15)'
       }
     }
   }

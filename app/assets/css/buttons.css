@@ -5,7 +5,7 @@
          bg-gradient-to-r from-mint to-mintLight
          shadow-mint-glow transition
          hover:brightness-[1.03] active:scale-[.99]
-         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/60
+         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70
          disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
