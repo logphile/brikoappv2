@@ -30,9 +30,9 @@
         <section>
           <h3 class="mb-3 font-brand font-bold text-base text-white">Learn</h3>
           <ul class="space-y-1.5">
-            <li><FooterBrick to="/docs"   label="Docs" /></li>
-            <li><FooterBrick to="/blog"   label="Blog" /></li>
-            <li><FooterBrick to="/help"   label="Help Center" /></li>
+            <li><FooterBrick to="/how-it-works"   label="Docs" /></li>
+            <li><FooterBrick to="#"   label="Blog" /></li>
+            <li><FooterBrick to="#"   label="Help Center" /></li>
             <li><FooterBrick to="/pricing" label="Pricing" /></li>
           </ul>
         </section>
@@ -41,10 +41,10 @@
         <section>
           <h3 class="mb-3 font-brand font-bold text-base text-white">Company</h3>
           <ul class="space-y-1.5">
-            <li><FooterBrick to="/contact" label="Contact" /></li>
+            <li><FooterBrick to="mailto:hello@briko.app" label="Contact" /></li>
             <li><FooterBrick to="/gallery" label="Community Gallery" /></li>
-            <li><FooterBrick to="/changelog" label="Changelog" /></li>
-            <li><FooterBrick to="/status" label="Status" /></li>
+            <li><FooterBrick to="#" label="Changelog" /></li>
+            <li><FooterBrick to="#" label="Status" /></li>
           </ul>
         </section>
 
@@ -54,7 +54,7 @@
           <ul class="space-y-1.5">
             <li><FooterBrick to="/privacy" label="Privacy" /></li>
             <li><FooterBrick to="/terms"   label="Terms" /></li>
-            <li><FooterBrick to="/sitemap" label="Sitemap" /></li>
+            <li><FooterBrick to="/sitemap.xml" label="Sitemap" /></li>
           </ul>
         </section>
       </div>
