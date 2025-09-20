@@ -95,7 +95,7 @@
                  :style="gridOverlayStyle"></div>
             <div v-if="!outReady" class="absolute inset-0 grid place-items-center text-white/70">
               <div class="text-center">
-                <div class="mx-auto mb-2 h-16 w-16 rounded-full bg-white/10 ring-1 ring-white/20"></div>
+                <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto mb-2 w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
                 <div class="text-sm">Upload an image to begin.</div>
               </div>
             </div>
@@ -114,6 +114,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
+import { useEmptyIcon } from '@/composables/useEmptyIcon'
 import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
@@ -170,6 +171,8 @@ const activePalette = computed(() => (paletteName.value === 'lego16' ? lego16 : 
 const bgMode = ref<BgMode>('keep')
 const route = useRoute()
 const bgSolid = ref('#111827')
+// Branded empty/upload icon for preview overlay
+const emptySrc = useEmptyIcon()
 
 // Supabase and persistence
 const { $supabase } = useNuxtApp() as any
