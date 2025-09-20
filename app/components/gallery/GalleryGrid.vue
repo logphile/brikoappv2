@@ -1,8 +1,9 @@
 <template>
   <div class="grid gap-4" :class="gridCols">
     <ProjectCard
-      v-for="item in items"
+      v-for="item in displayItems"
       :key="item.public_id || item.id || item.name"
+      :id="item.id"
       :public-id="item.public_id || ''"
       :name="item.name"
       :kind="item.kind"
@@ -24,12 +25,13 @@
       @unsave="$emit('unsave', item)"
       @remix="$emit('remix', item)"
       @share="$emit('share', item)"
+      @img-error="onCardImgError"
     />
   </div>
-</template>
+  </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import ProjectCard from '@/components/gallery/ProjectCard.vue'
 
 // Accept the full row shape from the gallery view
@@ -53,7 +55,7 @@ export type GalleryItem = {
   isSeed?: boolean
 }
 
-defineProps<{
+const props = defineProps<{
   items: GalleryItem[]
   likedByMeMap: Record<string, boolean>
   savedByMeMap: Record<string, boolean>
@@ -67,6 +69,12 @@ defineEmits<{
   (e: 'remix', item: GalleryItem): void
   (e: 'share', item: GalleryItem): void
 }>()
+
+// Track broken images and drop those tiles from the grid entirely
+const broken = ref<Set<string>>(new Set())
+function onCardImgError(id?: string | number){ if (id != null) broken.value.add(String(id)) }
+
+const displayItems = computed(() => props.items.filter(i => !broken.value.has(String(i.id))))
 
 const gridCols = computed(() => 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5')
 </script>

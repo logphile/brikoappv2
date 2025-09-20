@@ -8,7 +8,7 @@
            loading="lazy" decoding="async"
            class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300"
            :class="{ 'opacity-0': showOriginal }"
-           @error="broken = true"
+           @error="onImgError"
       />
       <div v-else class="absolute inset-0 grid place-items-center text-white/70 text-sm">No preview</div>
 
@@ -17,7 +17,7 @@
            loading="lazy" decoding="async"
            class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100"
            :class="{ 'opacity-100': showOriginal }"
-           @error="broken = true"
+           @error="onImgError"
       />
 
       <!-- Hover overlay actions (mint unified) -->
@@ -79,6 +79,7 @@ import { ref, watch, computed } from 'vue'
 import { navigateTo } from 'nuxt/app'
 
 const props = defineProps<{
+  id?: string | number
   publicId?: string
   name: string
   kind: string
@@ -103,6 +104,7 @@ const emit = defineEmits<{
   (e: 'unsave'): void
   (e: 'remix'): void
   (e: 'share'): void
+  (e: 'img-error', id: string | number | undefined): void
 }>()
 
 const broken = ref(false)
@@ -120,6 +122,11 @@ function onLikeClick(){
 function onSaveClick(){
   if(props.savedByMe){ emit('unsave'); savesLocal.value = Math.max(0, savesLocal.value - 1) }
   else { emit('save'); savesLocal.value = savesLocal.value + 1 }
+}
+
+function onImgError(){
+  broken.value = true
+  emit('img-error', props.id ?? props.publicId)
 }
 
 const showOriginal = ref(false)
