@@ -60,11 +60,12 @@ async function fetchPage() {
     for (const p of list) {
       const handle = (p as any).handle as string | undefined
       const display = (p as any).display_name as string | undefined
+      const v = (() => { try { return new Date(p.updated_at || p.created_at).getTime() } catch { return Date.now() } })()
       items.value.push({
         id: p.id,
         title: p.title,
         created_at: p.created_at,
-        cover_url: p.preview_path ? buildPreviewUrl(p.preview_path) : null,
+        cover_url: p.preview_path ? `${buildPreviewUrl(p.preview_path)}?v=${v}` : null,
         owner: { handle: handle || null, display_name: display || null },
       })
     }

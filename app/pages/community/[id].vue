@@ -12,7 +12,14 @@ const project = ref<any | null>(null)
 const loading = ref(false)
 const error = ref('')
 
-const previewUrl = computed(() => project.value?.preview_path ? buildPreviewUrl(project.value.preview_path) : '')
+const previewUrl = computed(() => {
+  if (!project.value?.preview_path) return ''
+  const ver = (() => {
+    const d = project.value?.updated_at || project.value?.created_at
+    try { return new Date(d).getTime() } catch { return Date.now() }
+  })()
+  return `${buildPreviewUrl(project.value.preview_path)}?v=${ver}`
+})
 const likes = ref(0)
 const saves = ref(0)
 const likedByMe = ref(false)
@@ -137,8 +144,8 @@ onMounted(fetchDetail)
         </div>
       </section>
 
-      <section v-if="Array.isArray(project.tags) && project.tags.length" class="flex flex-wrap gap-1">
-        <span v-for="t in project.tags" :key="t" class="text-[11px] px-2 py-0.5 rounded-full bg-white/7 ring-1 ring-white/10 text-white/80">#{{ t }}</span>
+      <section v-if="Array.isArray(project.tags) && project.tags.length" class="flex flex-wrap gap-2">
+        <span v-for="t in project.tags" :key="t" class="chip-mint">#{{ t }}</span>
       </section>
     </div>
   </main>
