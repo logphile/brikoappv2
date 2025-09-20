@@ -4,14 +4,14 @@
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-56 rounded-xl bg-[#0B0E13] ring-1 ring-white/10 shadow-lg overflow-hidden z-50">
-      <nav class="py-2 text-sm text-white/90">
-        <NuxtLink to="/projects" class="flex items-center px-3 py-2 hover:bg-white/10">Your Projects</NuxtLink>
-        <NuxtLink to="/gallery" class="flex items-center px-3 py-2 hover:bg-white/10">Community Gallery</NuxtLink>
-        <NuxtLink to="/projects/new" class="flex items-center px-3 py-2 hover:bg-white/10">New Project</NuxtLink>
+      <nav class="py-2 text-sm text-white/90 text-right">
+        <NuxtLink to="/projects" class="flex w-full items-center justify-end px-3 py-2 hover:bg-white/10 text-right">Your Projects</NuxtLink>
+        <NuxtLink to="/gallery" class="flex w-full items-center justify-end px-3 py-2 hover:bg-white/10 text-right">Community Gallery</NuxtLink>
+        <NuxtLink to="/projects/new" class="flex w-full items-center justify-end px-3 py-2 hover:bg-white/10 text-right">New Project</NuxtLink>
         <hr class="my-2 border-white/10" />
-        <NuxtLink to="/settings/profile" class="flex items-center px-3 py-2 hover:bg-white/10">Settings</NuxtLink>
-        <NuxtLink to="/how-it-works" class="flex items-center px-3 py-2 hover:bg-white/10">Help</NuxtLink>
-        <button @click="signOut" class="w-full text-left flex items-center px-3 py-2 hover:bg-white/10">Sign out</button>
+        <NuxtLink to="/settings/profile" class="flex w-full items-center justify-end px-3 py-2 hover:bg-white/10 text-right">Settings</NuxtLink>
+        <NuxtLink to="/how-it-works" class="flex w-full items-center justify-end px-3 py-2 hover:bg-white/10 text-right">Help</NuxtLink>
+        <button @click="signOut" class="w-full flex items-center justify-end px-3 py-2 hover:bg-white/10 text-right">Sign out</button>
       </nav>
     </div>
   </div>
