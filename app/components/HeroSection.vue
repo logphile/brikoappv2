@@ -25,26 +25,28 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="relative overflow-hidden bg-[#0B1220] text-white">
-      <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 text-left">
-      <!-- Brand compact header (optional if already in layout) -->
-      <!-- Headline -->
-      <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.4] tracking-tight">
-        Turn any picture into a brick build<span class="text-[#00E5A0]">!</span>
+      <div class="mx-auto max-w-3xl px-6 pt-10 sm:pt-14 text-center">
+      <!-- Centered headline with mint exclamation -->
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+        Turn any picture into a brick build<span class="text-mint">!</span>
       </h1>
 
-      <!-- Subtext -->
-      <p class="mt-2 text-white/80 leading-[1.4] max-w-prose">
-        Upload your favorite photo → see it transformed into a LEGO-style mosaic or 3D model → download parts &amp; cost in seconds.
-      </p>
-
-      <!-- CTAs -->
-      <div class="mt-4 flex gap-3">
-        <!-- Primary: Photo to Bricks -->
-        <NuxtLink to="/mosaic" class="u-cta" aria-label="Try Photo to Bricks">Try Photo to Bricks</NuxtLink>
-        <!-- Secondary: See Community -->
-        <NuxtLink to="/studio" class="u-linkbtn group" aria-label="See Community">See Community <span class="arrow">→</span></NuxtLink>
-      </div>
-
+      <!-- Three bigger lines, aligned with headline -->
+      <ul class="mt-4 sm:mt-5 space-y-2 sm:space-y-2.5 hero-steps text-lg sm:text-xl md:text-[22px] leading-snug">
+        <li class="step">
+          <span>Upload your favorite photo</span>
+          <span class="arrow text-mint"> →</span>
+        </li>
+        <li class="step">
+          <span>See it transformed into a LEGO-style mosaic or 3D model</span>
+          <span class="arrow text-mint"> →</span>
+        </li>
+        <li class="step">
+          <span>Download parts, build guide &amp; cost in seconds!</span>
+          <span class="arrow text-mint"> →</span>
+        </li>
+      </ul>
+      
       <!-- Visual divider -->
       <div class="h-px w-24 bg-[#00E5A0] mx-auto my-10"></div>
 
@@ -81,4 +83,35 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
 <style scoped>
 /* If you don't have icon fonts, remove i-lucide-* spans above and keep the labels only. */
+</style>
+
+<style scoped>
+/* Snap-in rise with a tiny squish */
+@keyframes briko-step-in {
+  0%   { transform: translateY(10px) scaleY(.98); opacity: 0; }
+  60%  { transform: translateY(0)    scaleY(1.01); opacity: 1; }
+  100% { transform: translateY(0)    scaleY(1); }
+}
+
+/* Arrow nudge, like a stud sliding in */
+@keyframes briko-arrow-nudge {
+  0%,100% { transform: translateX(0); }
+  50%     { transform: translateX(4px); }
+}
+
+/* apply */
+.hero-steps .step { animation: briko-step-in .36s ease-out both; }
+.hero-steps .step:nth-child(1) { animation-delay: .00s; }
+.hero-steps .step:nth-child(2) { animation-delay: .06s; }
+.hero-steps .step:nth-child(3) { animation-delay: .12s; }
+
+.hero-steps .arrow {
+  display: inline-block;
+  animation: briko-arrow-nudge .9s ease-out 1 .18s; /* 1 time, slight delay */
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-steps .step, .hero-steps .arrow { animation: none !important; }
+}
 </style>
