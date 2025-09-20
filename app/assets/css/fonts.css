@@ -1,0 +1,21 @@
+/* Headings & logo */
+@font-face {
+  font-family: "Bespoke Slab";
+  src:
+    url("/fonts/BespokeSlab-Bold.woff2") format("woff2"),
+    url("/fonts/BespokeSlab-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Body/UI */
+@font-face {
+  font-family: "Poppins";
+  src:
+    url("/fonts/Poppins-Medium.woff2") format("woff2"),
+    url("/fonts/Poppins-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

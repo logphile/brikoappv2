@@ -5,7 +5,7 @@
         <!-- Brand -->
         <NuxtLink to="/" class="flex items-center gap-2">
           <img src="/brand/briko-icon-accent.svg" class="h-6 w-6 md:h-7 md:w-7" alt="Briko" />
-          <span class="text-white font-semibold text-lg md:text-xl">Briko</span>
+          <span class="logo-text text-white text-lg md:text-xl">Briko</span>
         </NuxtLink>
 
         <!-- Main nav -->
