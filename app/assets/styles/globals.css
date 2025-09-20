@@ -91,4 +91,8 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
   /* Global focus ring */
   :focus-visible { outline: 2px solid rgba(0,229,160,.6); outline-offset: 2px; }
+
+  /* Hide horizontal scrollbar when enabling small-screen scroll for nav */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
