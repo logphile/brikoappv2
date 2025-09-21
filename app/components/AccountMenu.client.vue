@@ -4,80 +4,71 @@
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <div class="soft-card p-1 w-64" role="menu" aria-label="User menu">
-        <nav class="py-1 text-sm text-white">
-          <ul class="space-y-1">
-            <li>
-              <NuxtLink
-                to="/projects"
-                role="menuitem"
-                class="menu-item"
-                :class="route.path.startsWith('/projects') ? 'bg-white/20 text-white' : ''"
-              >
-                <img src="/icons/menu/yourprojects-mint.svg" alt="" aria-hidden="true" class="icon" />
-                <span>Your Projects</span>
-              </NuxtLink>
-            </li>
+      <ul class="p-1 rounded-2xl bg-white/5 border border-white/10 shadow-xl w-64 relative overflow-hidden" role="menu" aria-label="User menu">
+        <li>
+          <NuxtLink
+            to="/projects"
+            role="menuitem"
+            :class="[rowCls, route.path.startsWith('/projects') ? 'bg-white/20 text-white' : '']"
+          >
+            <img src="/icons/menu/yourprojects-mint.svg" alt="" class="menu-icon" />
+            <span>Your Projects</span>
+          </NuxtLink>
+        </li>
 
-            <li>
-              <NuxtLink
-                to="/gallery"
-                role="menuitem"
-                class="menu-item"
-                :class="route.path.startsWith('/gallery') ? 'bg-white/20 text-white' : ''"
-              >
-                <img src="/icons/menu/communitygallery-mint.svg" alt="" aria-hidden="true" class="icon" />
-                <span>Community Gallery</span>
-              </NuxtLink>
-            </li>
+        <li>
+          <NuxtLink
+            to="/gallery"
+            role="menuitem"
+            :class="[rowCls, route.path.startsWith('/gallery') ? 'bg-white/20 text-white' : '']"
+          >
+            <img src="/icons/menu/communitygallery-mint.svg" alt="" class="menu-icon" />
+            <span>Community Gallery</span>
+          </NuxtLink>
+        </li>
 
-            <li>
-              <NuxtLink
-                to="/projects/new"
-                role="menuitem"
-                class="menu-item"
-                :class="route.path === '/projects/new' ? 'bg-white/20 text-white' : ''"
-              >
-                <img src="/icons/menu/newproject-mint.svg" alt="" aria-hidden="true" class="icon" />
-                <span>New Project</span>
-              </NuxtLink>
-            </li>
+        <li>
+          <NuxtLink
+            to="/projects/new"
+            role="menuitem"
+            :class="[rowCls, route.path === '/projects/new' ? 'bg-white/20 text-white' : '']"
+          >
+            <img src="/icons/menu/newproject-mint.svg" alt="" class="menu-icon" />
+            <span>New Project</span>
+          </NuxtLink>
+        </li>
 
-            <li><div class="my-1 h-px bg-white/10" /></li>
+        <li><div class="my-1 h-px bg-white/10" /></li>
 
-            <li>
-              <NuxtLink
-                to="/settings/profile"
-                role="menuitem"
-                class="menu-item"
-                :class="route.path.startsWith('/settings') ? 'bg-white/20 text-white' : ''"
-              >
-                <img src="/icons/menu/settings-mint.svg" alt="" aria-hidden="true" class="icon" />
-                <span>Settings</span>
-              </NuxtLink>
-            </li>
+        <li>
+          <NuxtLink
+            to="/settings/profile"
+            role="menuitem"
+            :class="[rowCls, route.path.startsWith('/settings') ? 'bg-white/20 text-white' : '']"
+          >
+            <img src="/icons/menu/settings-mint.svg" alt="" class="menu-icon" />
+            <span>Settings</span>
+          </NuxtLink>
+        </li>
 
-            <li>
-              <NuxtLink
-                to="/how-it-works"
-                role="menuitem"
-                class="menu-item"
-                :class="route.path.startsWith('/how-it-works') ? 'bg-white/20 text-white' : ''"
-              >
-                <img src="/icons/menu/help-mint.svg" alt="" aria-hidden="true" class="icon" />
-                <span>Help</span>
-              </NuxtLink>
-            </li>
+        <li>
+          <NuxtLink
+            to="/how-it-works"
+            role="menuitem"
+            :class="[rowCls, route.path.startsWith('/how-it-works') ? 'bg-white/20 text-white' : '']"
+          >
+            <img src="/icons/menu/help-mint.svg" alt="" class="menu-icon" />
+            <span>Help</span>
+          </NuxtLink>
+        </li>
 
-            <li>
-              <button type="button" @click="signOut" class="menu-item text-left" role="menuitem">
-                <img src="/icons/menu/signout-mint.svg" alt="" aria-hidden="true" class="icon" />
-                <span>Sign out</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+        <li>
+          <button type="button" @click="signOut" :class="[rowCls, 'text-left']" role="menuitem">
+            <img src="/icons/menu/signout-mint.svg" alt="" class="menu-icon" />
+            <span>Sign out</span>
+          </button>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -95,6 +86,11 @@ const root = ref<HTMLElement | null>(null)
 const route = useRoute()
 const { logout } = useAuth()
 const router = useRouter()
+
+const rowCls =
+  'flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm ' +
+  'text-white/90 hover:bg-white/10 hover:text-white focus:outline-none ' +
+  'focus-visible:ring-2 focus-visible:ring-mint/60'
 
 function toggle(){ open.value = !open.value }
 
@@ -118,4 +114,11 @@ watch(() => route.fullPath, () => { open.value = false })
 </script>
 
 <style scoped>
+.menu-icon{
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+  object-fit: contain;
+}
 </style>
