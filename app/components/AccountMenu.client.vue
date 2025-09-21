@@ -4,7 +4,7 @@
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <ul class="p-1 rounded-2xl bg-white/5 border border-white/10 shadow-xl w-64 relative overflow-hidden" role="menu" aria-label="User menu">
+      <ul class="p-1 rounded-2xl border border-white/10 shadow-xl w-64 relative overflow-hidden menu-surface menu-surface--glassy" role="menu" aria-label="User menu">
         <li>
           <NuxtLink
             to="/projects"
@@ -89,7 +89,7 @@ const router = useRouter()
 
 const rowCls =
   'flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm ' +
-  'text-white/90 hover:bg-white/10 hover:text-white focus:outline-none ' +
+  'text-white/90 hover:bg-white/[0.12] hover:text-white focus:outline-none ' +
   'focus-visible:ring-2 focus-visible:ring-mint/60'
 
 function toggle(){ open.value = !open.value }
@@ -114,11 +114,25 @@ watch(() => route.fullPath, () => { open.value = false })
 </script>
 
 <style scoped>
+.menu-surface{
+  /* Solid ink surface: no glass, no bleed */
+  background: rgba(17, 24, 39, 0.96); /* #111827 @ 96% */
+  isolation: isolate;                 /* prevent parent backdrop/mix effects */
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 .menu-icon{
   width: 16px;
   height: 16px;
   flex-shrink: 0;
   display: block;
   object-fit: contain;
+}
+
+.menu-surface--glassy {
+  background: rgba(17, 24, 39, 0.85);
+  -webkit-backdrop-filter: saturate(120%) blur(6px);
+  backdrop-filter: saturate(120%) blur(6px);
 }
 </style>
