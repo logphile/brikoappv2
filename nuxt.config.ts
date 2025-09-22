@@ -60,7 +60,7 @@ export default defineNuxtConfig({
       titleTemplate: `%s | ${process.env.NUXT_PUBLIC_SITE_NAME || 'Briko'}`,
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#01161E' }
+        { name: 'theme-color', content: '#FFD808' }
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/brand/briko-favicon.svg?v=2' },

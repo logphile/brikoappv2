@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh flex flex-col bg-gradient-to-b from-slate-900 to-slate-950 text-white">
+  <div class="min-h-dvh flex flex-col bg-[var(--brand-bg)] text-white">
     <AppHeader />
     <div class="flex-1">
       <NuxtLayout>
