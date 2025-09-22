@@ -1,6 +1,6 @@
 <template>
   <div class="relative" ref="root">
-    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px] text-white/90 hover:bg-white/20 transition-colors">
+    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-transparent px-3 text-[15px] text-[#FF0062] hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
@@ -9,7 +9,7 @@
           <NuxtLink
             to="/projects"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/projects') ? 'bg-ink/80 text-mint' : '']"
+            :class="[rowCls, route.path.startsWith('/projects') ? 'font-semibold' : '']"
           >
             <img src="/icons/menu/yourprojects-mint.svg" alt="" class="menu-icon" />
             <span>Your Projects</span>
@@ -20,7 +20,7 @@
           <NuxtLink
             to="/gallery"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/gallery') ? 'bg-ink/80 text-mint' : '']"
+            :class="[rowCls, route.path.startsWith('/gallery') ? 'font-semibold' : '']"
           >
             <img src="/icons/menu/communitygallery-mint.svg" alt="" class="menu-icon" />
             <span>Community Gallery</span>
@@ -31,7 +31,7 @@
           <NuxtLink
             to="/projects/new"
             role="menuitem"
-            :class="[rowCls, route.path === '/projects/new' ? 'bg-ink/80 text-mint' : '']"
+            :class="[rowCls, route.path === '/projects/new' ? 'font-semibold' : '']"
           >
             <img src="/icons/menu/newproject-mint.svg" alt="" class="menu-icon" />
             <span>New Project</span>
@@ -44,7 +44,7 @@
           <NuxtLink
             to="/settings/profile"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/settings') ? 'bg-ink/80 text-mint' : '']"
+            :class="[rowCls, route.path.startsWith('/settings') ? 'font-semibold' : '']"
           >
             <img src="/icons/menu/settings-mint.svg" alt="" class="menu-icon" />
             <span>Settings</span>
@@ -55,7 +55,7 @@
           <NuxtLink
             to="/how-it-works"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/how-it-works') ? 'bg-ink/80 text-mint' : '']"
+            :class="[rowCls, route.path.startsWith('/how-it-works') ? 'font-semibold' : '']"
           >
             <img src="/icons/menu/help-mint.svg" alt="" class="menu-icon" />
             <span>Help</span>
@@ -87,10 +87,7 @@ const route = useRoute()
 const { logout } = useAuth()
 const router = useRouter()
 
-const rowCls =
-  'flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm ' +
-  'text-white hover:bg-ink/80 hover:text-mint focus:outline-none ' +
-  'focus-visible:ring-2 focus-visible:ring-mint/60'
+const rowCls = 'menu-item'
 
 function toggle(){ open.value = !open.value }
 

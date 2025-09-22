@@ -1,11 +1,11 @@
 <template>
-  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-ink/95 border-b border-midnight backdrop-blur" style="--app-header-h: 56px;">
+  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#FFD808] border-none backdrop-blur" style="--app-header-h: 56px;">
     <nav class="mx-auto max-w-7xl px-4 md:px-6">
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
         <NuxtLink to="/" class="flex items-center gap-2">
           <img src="/brand/briko-icon-accent.svg" class="h-6 w-6 md:h-7 md:w-7" alt="Briko" />
-          <span class="logo-text text-white text-lg md:text-xl">Briko</span>
+          <span class="logo-text text-[#FF0062] text-lg md:text-xl">Briko</span>
         </NuxtLink>
 
         <!-- Main nav -->
@@ -24,11 +24,11 @@
           <AccountMenu v-if="!loading && user" :label="identityLabel" />
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
             class="hidden md:inline-flex h-9 items-center rounded-md px-3 text-[15px]
-                   bg-midnight text-mint border border-mint/30 hover:shadow-mint-glow hover:text-ink transition-colors">
+                   bg-transparent text-[#FF0062] border-0 hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
             Login
           </NuxtLink>
           <!-- mobile menu button placeholder -->
-          <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-white/80 hover:text-white hover:bg-white/10">
+          <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-[#FF0062]/80 hover:text-[#FF0062] hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
             <span class="i-lucide-menu h-5 w-5">≡</span>
           </button>
         </div>

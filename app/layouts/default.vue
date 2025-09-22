@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh bg-gradient-to-b from-slate-900 to-slate-950 text-white">
+  <div class="min-h-dvh bg-[var(--brand-bg)] text-white">
     <slot />
   </div>
 </template>
