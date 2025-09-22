@@ -1,5 +1,5 @@
 <template>
-  <footer class="border-t border-white/10 bg-black/20">
+  <footer class="border-t border-midnight bg-ink">
     <!-- Top rail (optional CTA) -->
     <!--
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
@@ -60,7 +60,7 @@
       </div>
 
       <!-- Bottom fine print -->
-      <div class="mt-10 pt-6 border-t border-white/10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-white/60">
+      <div class="mt-10 pt-6 border-t border-midnight flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-white/60">
         <p>© {{ new Date().getFullYear() }} Briko</p>
         <p class="text-center sm:text-left">
           Briko is an independent tool — not affiliated with, endorsed by, or associated with the LEGO® Group.

@@ -21,7 +21,7 @@
       />
 
       <!-- Hover overlay actions (mint unified) -->
-      <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-opacity"></div>
+      <div class="pointer-events-none absolute inset-0 bg-midnight/0 group-hover:bg-midnight/90 transition-opacity"></div>
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity grid place-items-center">
         <div class="flex gap-2">
           <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5" @click.stop="toProject(publicId)">👁 View</button>

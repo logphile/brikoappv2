@@ -12,7 +12,7 @@
   line-height: 1.5;
   transition: box-shadow .2s ease, border-color .2s ease, filter .15s ease;
   /* mint chevron (data URI) */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='%2300E5A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='%233AE59F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: 18px 18px;
   background-position: right .65rem center;
@@ -20,17 +20,17 @@
 .select-mint:hover{ filter: brightness(1.03); }
 .select-mint:focus{
   outline: none;
-  border-color: rgba(0,229,160,.50);
-  box-shadow: 0 0 0 2px rgba(0,229,160,.50);
+  border-color: rgba(58,229,159,.50);
+  box-shadow: 0 0 0 2px rgba(58,229,159,.50);
 }
 /* Hide IE/Edge legacy dropdown arrow */
 .select-mint::-ms-expand{ display:none; }
 
 /* Darken option panels where supported (Chrome/FF honor this) */
 .select-mint option{
-  background-color: #0b1320; /* site dark bg */
+  background-color: #01161E; /* site dark bg (ink) */
   color: #e5e7eb;
 }
 
 /* Bonus: make checkboxes/radios mint across the site */
-input[type="checkbox"], input[type="radio"]{ accent-color:#00E5A0; }
+input[type="checkbox"], input[type="radio"]{ accent-color:#3AE59F; }

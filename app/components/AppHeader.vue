@@ -1,5 +1,5 @@
 <template>
-  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#0B0E13]/95 border-b border-white/5 backdrop-blur" style="--app-header-h: 56px;">
+  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-ink/95 border-b border-midnight backdrop-blur" style="--app-header-h: 56px;">
     <nav class="mx-auto max-w-7xl px-4 md:px-6">
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
@@ -23,8 +23,8 @@
         <div class="flex items-center gap-2">
           <AccountMenu v-if="!loading && user" :label="identityLabel" />
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
-            class="hidden md:inline-flex h-9 items-center rounded-md bg-white/10 px-3 text-[15px]
-                   text-white/90 hover:bg-white/20 transition-colors">
+            class="hidden md:inline-flex h-9 items-center rounded-md px-3 text-[15px]
+                   bg-midnight text-mint border border-mint/30 hover:shadow-mint-glow hover:text-ink transition-colors">
             Login
           </NuxtLink>
           <!-- mobile menu button placeholder -->

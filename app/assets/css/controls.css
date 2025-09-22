@@ -9,7 +9,7 @@ input[type="range"].range-mint {
   outline: none;
 }
 input[type="range"].range-mint:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0,229,160,.35);
+  box-shadow: 0 0 0 3px rgba(58,229,159,.35);
 }
 
 /* Track */
@@ -26,12 +26,12 @@ input[type="range"].range-mint::-moz-range-track {
 input[type="range"].range-mint::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 18px; width: 18px; border-radius: 9999px;
-  background: #00E5A0;
-  box-shadow: 0 0 0 6px rgba(0,229,160,.18);
+  background: #3AE59F;
+  box-shadow: 0 0 0 6px rgba(58,229,159,.18);
   margin-top: -6px;
 }
 input[type="range"].range-mint::-moz-range-thumb {
   height: 18px; width: 18px; border-radius: 9999px; border: 0;
-  background: #00E5A0;
-  box-shadow: 0 0 0 6px rgba(0,229,160,.18);
+  background: #3AE59F;
+  box-shadow: 0 0 0 6px rgba(58,229,159,.18);
 }

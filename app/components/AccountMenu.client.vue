@@ -4,12 +4,12 @@
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <ul class="p-1 rounded-2xl border shadow-xl w-64 relative overflow-hidden menu-surface border-[#2A3343]" role="menu" aria-label="User menu">
+      <ul class="p-1 rounded-2xl border border-midnight shadow-xl w-64 relative overflow-hidden menu-surface" role="menu" aria-label="User menu">
         <li>
           <NuxtLink
             to="/projects"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/projects') ? 'bg-[#263042] text-white' : '']"
+            :class="[rowCls, route.path.startsWith('/projects') ? 'bg-ink/80 text-mint' : '']"
           >
             <img src="/icons/menu/yourprojects-mint.svg" alt="" class="menu-icon" />
             <span>Your Projects</span>
@@ -20,7 +20,7 @@
           <NuxtLink
             to="/gallery"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/gallery') ? 'bg-[#263042] text-white' : '']"
+            :class="[rowCls, route.path.startsWith('/gallery') ? 'bg-ink/80 text-mint' : '']"
           >
             <img src="/icons/menu/communitygallery-mint.svg" alt="" class="menu-icon" />
             <span>Community Gallery</span>
@@ -31,20 +31,20 @@
           <NuxtLink
             to="/projects/new"
             role="menuitem"
-            :class="[rowCls, route.path === '/projects/new' ? 'bg-[#263042] text-white' : '']"
+            :class="[rowCls, route.path === '/projects/new' ? 'bg-ink/80 text-mint' : '']"
           >
             <img src="/icons/menu/newproject-mint.svg" alt="" class="menu-icon" />
             <span>New Project</span>
           </NuxtLink>
         </li>
 
-        <li><div class="my-1 h-px bg-[#2A3343]" /></li>
+        <li><div class="my-1 h-px bg-midnight" /></li>
 
         <li>
           <NuxtLink
             to="/settings/profile"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/settings') ? 'bg-[#263042] text-white' : '']"
+            :class="[rowCls, route.path.startsWith('/settings') ? 'bg-ink/80 text-mint' : '']"
           >
             <img src="/icons/menu/settings-mint.svg" alt="" class="menu-icon" />
             <span>Settings</span>
@@ -55,7 +55,7 @@
           <NuxtLink
             to="/how-it-works"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/how-it-works') ? 'bg-[#263042] text-white' : '']"
+            :class="[rowCls, route.path.startsWith('/how-it-works') ? 'bg-ink/80 text-mint' : '']"
           >
             <img src="/icons/menu/help-mint.svg" alt="" class="menu-icon" />
             <span>Help</span>
@@ -89,7 +89,7 @@ const router = useRouter()
 
 const rowCls =
   'flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm ' +
-  'text-white hover:bg-[#263042] focus:outline-none ' +
+  'text-white hover:bg-ink/80 hover:text-mint focus:outline-none ' +
   'focus-visible:ring-2 focus-visible:ring-mint/60'
 
 function toggle(){ open.value = !open.value }
@@ -116,7 +116,7 @@ watch(() => route.fullPath, () => { open.value = false })
 <style scoped>
 .menu-surface{
   /* Solid ink surface: no glass, no bleed */
-  background: #111827; /* fully opaque */
+  background: #124559; /* midnight, fully opaque */
   isolation: isolate;                 /* prevent parent backdrop/mix effects */
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
@@ -131,7 +131,7 @@ watch(() => route.fullPath, () => { open.value = false })
 }
 
 .menu-surface--glassy {
-  background: rgba(17, 24, 39, 0.85);
+  background: rgba(18, 69, 89, 0.85);
   -webkit-backdrop-filter: saturate(120%) blur(6px);
   backdrop-filter: saturate(120%) blur(6px);
 }
