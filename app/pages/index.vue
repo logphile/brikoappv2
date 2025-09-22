@@ -53,7 +53,7 @@ useHead({
 </script>
 
 <template>
-  <div class="bg-[#0B1220]">
+  <div class="bg-transparent">
     <HeroSection />
     <FeatureList />
 
