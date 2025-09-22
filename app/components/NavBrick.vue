@@ -31,7 +31,7 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* “plate” behind text (appears on hover/active) */
 .nav-brick::before {
   content: "";
-  @apply absolute inset-0 rounded-lg bg-white/5 opacity-0 transition-opacity;
+  @apply absolute inset-0 rounded-lg bg-midnight opacity-0 transition-opacity;
 }
 .nav-brick:hover::before,
 .nav-brick[data-active="true"]::before {

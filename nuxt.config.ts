@@ -60,14 +60,14 @@ export default defineNuxtConfig({
       titleTemplate: `%s | ${process.env.NUXT_PUBLIC_SITE_NAME || 'Briko'}`,
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#111827' }
+        { name: 'theme-color', content: '#01161E' }
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/brand/briko-favicon.svg?v=2' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/brand/favicon-32.png?v=2' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/brand/favicon-16.png?v=2' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/brand/apple-touch-icon.png?v=2' },
-        { rel: 'mask-icon', href: '/brand/safari-pinned-tab.svg?v=2', color: '#00E5A0' },
+        { rel: 'mask-icon', href: '/brand/safari-pinned-tab.svg?v=2', color: '#3AE59F' },
         { rel: 'manifest', href: '/manifest.webmanifest' },
         // Preload brand fonts to minimize FOUT
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Medium.woff2', crossorigin: 'anonymous' },
