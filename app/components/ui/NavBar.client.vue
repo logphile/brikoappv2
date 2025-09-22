@@ -1,5 +1,5 @@
 <template>
-  <header class="w-full bg-ink/90 border-b border-midnight backdrop-blur sticky top-0 z-40">
+  <header class="w-full bg-[#FFD808] border-none backdrop-blur sticky top-0 z-40">
     <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
       <NuxtLink to="/" class="flex items-center gap-2">
         <div aria-hidden="true" class="h-7 w-7 rounded-xl bg-cta-grad ring-1 ring-white/10"></div>

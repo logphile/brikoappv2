@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <section class="bg-[#0B1220] text-white">
+  <section class="bg-transparent text-white">
     <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
       <h2 class="h-section-46 text-center mb-8">
         Briko’s Geeky Superpowers
