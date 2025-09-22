@@ -21,9 +21,9 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* Base link */
 .nav-brick {
   /* text + hit area */
-  @apply relative inline-flex items-center px-3 py-1.5 text-sm text-white/80;
+  @apply relative inline-flex items-center px-3 py-1.5 text-sm text-[#FF0062];
   /* keyboard accessibility */
-  @apply outline-none focus-visible:ring-2 focus-visible:ring-mint/60 rounded-lg;
+  @apply outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50 rounded-lg;
   /* smooth color transitions */
   @apply transition-colors;
 }
@@ -41,15 +41,15 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* right “notch” (little 1×2 plate) */
 .nav-brick::after {
   content: "";
-  @apply absolute top-1/2 -right-1.5 h-4 w-2 -translate-y-1/2 rounded bg-white/10 transition;
+  @apply absolute top-1/2 -right-1.5 h-4 w-2 -translate-y-1/2 rounded bg-[#FF0062]/20 transition;
   /* -right-1.5 = -6px, h-4=16px, w-2=8px */
 }
 .nav-brick:hover::after,
 .nav-brick[data-active="true"]::after {
-  @apply translate-x-1 bg-mint;
+  @apply translate-x-1 bg-[#FF0062];
 }
 /* optional glow on hover for a subtle LEGO vibe */
-.nav-brick:hover::after { box-shadow: 0 0 0 2px rgba(0,229,160,.25); }
+.nav-brick:hover::after { box-shadow: 0 0 0 2px rgba(255,0,98,.25); }
 
-.label { @apply relative z-[1] text-white/90 group-hover:text-white; }
+.label { @apply relative z-[1] text-[#FF0062]; }
 </style>

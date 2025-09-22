@@ -33,6 +33,8 @@ export default <Partial<Config>>{
         },
         midnight:'#124559',
         highlight:'#FAF33E',
+        brandYellow:'#FFD808',
+        brandPink:'#FF0062',
         pacific:'#2563EB',
         sandstone:'#F7EFE6',
         firepink:'#FF2A6D'
