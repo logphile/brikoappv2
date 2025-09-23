@@ -29,7 +29,7 @@
           </NuxtLink>
           <!-- mobile menu button placeholder -->
           <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-[#FF0062]/80 hover:text-[#FF0062] hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
-            <span class="i-lucide-menu h-5 w-5">≡</span>
+            <span class="material-symbols-rounded text-[20px]" aria-hidden="true">menu</span>
           </button>
         </div>
       </div>

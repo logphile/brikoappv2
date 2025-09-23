@@ -5,8 +5,9 @@
         <h2 class="text-xl font-semibold text-white">{{ copy.studio.communitySectionTitle }}</h2>
         <p class="mt-1 text-white/70">{{ copy.studio.communitySubhead }}</p>
       </div>
-      <NuxtLink to="/gallery" class="text-sm text-mint hover:underline underline-offset-4 decoration-2">
-        {{ copy.studio.seeAll }} →
+      <NuxtLink to="/gallery" class="inline-flex items-center gap-1.5 text-sm text-mint hover:underline underline-offset-4 decoration-2">
+        {{ copy.studio.seeAll }}
+        <span class="material-symbols-rounded text-[18px]" aria-hidden="true">chevron_right</span>
       </NuxtLink>
     </header>
 
