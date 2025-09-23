@@ -12,10 +12,7 @@
         <!-- Icon -->
         <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
                      bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <!-- Bolt -->
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
-            <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>
-          </svg>
+          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">bolt</span>
         </span>
         <!-- Copy -->
         <p class="mt-1 text-base leading-snug">
@@ -33,10 +30,7 @@
       >
         <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
                      bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <!-- Layers -->
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
-            <path d="M12 2 2 7l10 5 10-5-10-5Zm0 7L2 4v3l10 5 10-5V4l-10 5Zm0 5L2 9v3l10 5 10-5V9l-10 5Z"/>
-          </svg>
+          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">layers</span>
         </span>
         <p class="mt-1 text-base leading-snug">
           <span class="font-semibold">Greedy tiling</span> → fewer plates, cleaner look
@@ -50,10 +44,7 @@
       >
         <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
                      bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <!-- Receipt -->
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
-            <path d="M7 2h10l2 2v18l-3-2-3 2-3-2-3 2V2Zm3 6h6v2h-6V8Zm0 4h6v2h-6v-2Zm-3-4h2v2H7V8Zm0 4h2v2H7v-2Z"/>
-          </svg>
+          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">inventory_2</span>
         </span>
         <p class="mt-1 text-base leading-snug">
           Auto <span class="font-semibold">Bill of Materials</span> + cost estimate
@@ -67,10 +58,7 @@
       >
         <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
                      bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <!-- Download -->
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor">
-            <path d="M12 3v10l4-4 1 1-6 6-6-6 1-1 4 4V3h2Zm-7 15h14v2H5v-2Z"/>
-          </svg>
+          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">file_download</span>
         </span>
         <p class="mt-1 text-base leading-snug">
           One-click exports: <span class="font-semibold">PNG · CSV · PDF</span>
