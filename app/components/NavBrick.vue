@@ -42,11 +42,11 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* right “notch” (little 1×2 plate) */
 .nav-brick::after {
   content: "";
-  @apply absolute top-1/2 -right-1.5 h-4 w-2 -translate-y-1/2 rounded bg-brand-dark transition;
+  @apply absolute top-1/2 -right-1.5 h-4 w-2 -translate-y-1/2 rounded bg-brand-purple transition;
 }
 .nav-brick:hover::after,
 .nav-brick[data-active="true"]::after {
-  @apply translate-x-1 bg-brand-dark;
+  @apply translate-x-1 bg-brand-purple;
 }
 /* optional glow on hover for a subtle LEGO vibe */
 .nav-brick:hover::after { box-shadow: none; }
