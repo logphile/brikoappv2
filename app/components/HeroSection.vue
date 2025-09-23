@@ -43,16 +43,16 @@ useIntersectionObserver(sentinel, ([entry]) => {
                  space-y-2 md:space-y-3
                  text-left text-[clamp(16px,3vw,20px)] leading-snug"
         >
-          <li class="flex items-baseline gap-2">
-            <span class="material-symbols-rounded text-brand-pink text-xl md:text-2xl" aria-hidden="true">chevron_right</span>
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-rounded text-brand-pink text-2xl md:text-3xl" aria-hidden="true">upload_file</span>
             <span>Upload your photo</span>
           </li>
-          <li class="flex items-baseline gap-2">
-            <span class="material-symbols-rounded text-brand-pink text-xl md:text-2xl" aria-hidden="true">chevron_right</span>
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-rounded text-brand-pink text-2xl md:text-3xl" aria-hidden="true">grid_view</span>
             <span>Instantly see it in bricks</span>
           </li>
-          <li class="flex items-baseline gap-2">
-            <span class="material-symbols-rounded text-brand-pink text-xl md:text-2xl" aria-hidden="true">chevron_right</span>
+          <li class="flex items-start gap-3">
+            <span class="material-symbols-rounded text-brand-pink text-2xl md:text-3xl" aria-hidden="true">inventory_2</span>
             <span>Get the parts, guide, and price</span>
           </li>
         </ul>
