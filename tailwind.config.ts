@@ -18,7 +18,12 @@ export default <Partial<Config>>{
           card: 'var(--brand-card)',
           text: 'var(--brand-text)',
           a1: 'var(--brand-a1)',
-          a2: 'var(--brand-a2)'
+          a2: 'var(--brand-a2)',
+          // extended brand palette for utilities like bg-brand-purple
+          pink: '#FF0062',
+          yellow: '#FFD808',
+          purple: '#2F3061',
+          paper: '#F5F4F1'
         },
         // Unified Briko palette
         // Windsurf tokens
