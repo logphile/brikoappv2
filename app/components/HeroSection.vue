@@ -34,7 +34,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
                  whitespace-nowrap
                  text-[clamp(28px,5.2vw,46px)]"
         >
-          Turn any picture into a brick build<span class="text-mint">!</span>
+          Create LEGO-style art from your images<span class="text-mint">!</span>
         </h1>
 
         <!-- Three lines: left-aligned, 24px on desktop, mint arrows before text -->
@@ -45,15 +45,15 @@ useIntersectionObserver(sentinel, ([entry]) => {
         >
           <li class="flex items-baseline gap-2">
             <span class="arrow text-mint" aria-hidden="true">→</span>
-            <span>Upload a photo</span>
+            <span>Upload your photo</span>
           </li>
           <li class="flex items-baseline gap-2">
             <span class="arrow text-mint" aria-hidden="true">→</span>
-            <span>See it transform into a LEGO-style build</span>
+            <span>Instantly see it in bricks</span>
           </li>
           <li class="flex items-baseline gap-2">
             <span class="arrow text-mint" aria-hidden="true">→</span>
-            <span>Download parts, build guide &amp; cost in seconds!</span>
+            <span>Get the parts, guide, and price</span>
           </li>
         </ul>
       </div>
