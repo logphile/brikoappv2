@@ -1,17 +1,17 @@
 <template>
   <div class="relative" ref="root">
-    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-transparent px-3 text-base text-[#FF0062] hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
+    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-transparent px-3 text-base text-[#FFD808] hover:text-[#FF0062] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50 font-medium">
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <ul class="p-1 rounded-2xl border border-midnight shadow-xl w-64 relative overflow-hidden menu-surface" role="menu" aria-label="User menu">
+      <ul class="menu-surface rounded-xl bg-[#2F3061] text-[#FFD808] shadow-lg p-2 w-64 relative overflow-hidden" role="menu" aria-label="User menu">
         <li>
           <NuxtLink
             to="/projects"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/projects') ? 'font-semibold' : '']"
+            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/projects') ? 'font-semibold' : '']"
           >
-            <img src="/icons/menu/yourprojects-mint.svg" alt="" class="menu-icon" />
+            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">folder_special</span>
             <span>Your Projects</span>
           </NuxtLink>
         </li>
@@ -20,9 +20,9 @@
           <NuxtLink
             to="/gallery"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/gallery') ? 'font-semibold' : '']"
+            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/gallery') ? 'font-semibold' : '']"
           >
-            <img src="/icons/menu/communitygallery-mint.svg" alt="" class="menu-icon" />
+            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">collections</span>
             <span>Community Gallery</span>
           </NuxtLink>
         </li>
@@ -31,22 +31,22 @@
           <NuxtLink
             to="/projects/new"
             role="menuitem"
-            :class="[rowCls, route.path === '/projects/new' ? 'font-semibold' : '']"
+            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path === '/projects/new' ? 'font-semibold' : '']"
           >
-            <img src="/icons/menu/newproject-mint.svg" alt="" class="menu-icon" />
+            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">add_circle</span>
             <span>New Project</span>
           </NuxtLink>
         </li>
 
-        <li><div class="my-1 h-px bg-midnight" /></li>
+        <li><div class="my-1 h-px bg-white/20" /></li>
 
         <li>
           <NuxtLink
             to="/settings/profile"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/settings') ? 'font-semibold' : '']"
+            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/settings') ? 'font-semibold' : '']"
           >
-            <img src="/icons/menu/settings-mint.svg" alt="" class="menu-icon" />
+            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">settings</span>
             <span>Settings</span>
           </NuxtLink>
         </li>
@@ -55,16 +55,16 @@
           <NuxtLink
             to="/how-it-works"
             role="menuitem"
-            :class="[rowCls, route.path.startsWith('/how-it-works') ? 'font-semibold' : '']"
+            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/how-it-works') ? 'font-semibold' : '']"
           >
-            <img src="/icons/menu/help-mint.svg" alt="" class="menu-icon" />
+            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">help</span>
             <span>Help</span>
           </NuxtLink>
         </li>
 
         <li>
-          <button type="button" @click="signOut" :class="[rowCls, 'text-left']" role="menuitem">
-            <img src="/icons/menu/signout-mint.svg" alt="" class="menu-icon" />
+          <button type="button" @click="signOut" :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-left text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]']" role="menuitem">
+            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">logout</span>
             <span>Sign out</span>
           </button>
         </li>
@@ -112,24 +112,20 @@ watch(() => route.fullPath, () => { open.value = false })
 
 <style scoped>
 .menu-surface{
-  /* Solid ink surface: no glass, no bleed */
-  background: #124559; /* midnight, fully opaque */
-  isolation: isolate;                 /* prevent parent backdrop/mix effects */
+  /* Strong branded surface: purple background */
+  background: #2F3061;
+  color: #FFD808;
+  isolation: isolate;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
 
+/* legacy icon style kept for compatibility if any <img> remains */
 .menu-icon{
   width: 16px;
   height: 16px;
   flex-shrink: 0;
   display: block;
   object-fit: contain;
-}
-
-.menu-surface--glassy {
-  background: rgba(18, 69, 89, 0.85);
-  -webkit-backdrop-filter: saturate(120%) blur(6px);
-  backdrop-filter: saturate(120%) blur(6px);
 }
 </style>
