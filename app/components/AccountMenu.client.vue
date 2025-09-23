@@ -1,7 +1,18 @@
 <template>
   <div class="relative" ref="root">
-    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-transparent px-3 text-base text-[#FFD808] hover:text-[#FF0062] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50 font-medium">
-      {{ label }}
+    <button
+      @click="toggle"
+      class="user-trigger inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 min-h-[40px]
+             bg-[#FF0062] text-[#FFD808] font-medium
+             shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-150
+             hover:shadow-[0_6px_14px_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:translate-y-0
+             focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD808]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+      aria-haspopup="menu"
+      :aria-expanded="open ? 'true' : 'false'"
+    >
+      <span class="material-symbols-rounded text-base" aria-hidden="true">account_circle</span>
+      <span class="max-w-[200px] truncate">{{ label || 'Sign in' }}</span>
+      <span class="material-symbols-rounded text-base -mr-1" aria-hidden="true">expand_more</span>
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
       <ul class="menu-surface rounded-xl bg-[#2F3061] text-[#FFD808] shadow-lg p-2 w-64 relative overflow-hidden" role="menu" aria-label="User menu">

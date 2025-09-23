@@ -20,12 +20,16 @@
         </ul>
 
         <!-- Account / CTA -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-4 shrink-0">
           <AccountMenu v-if="!loading && user" :label="identityLabel" />
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
-            class="hidden md:inline-flex h-9 items-center rounded-md px-3 text-base
-                   bg-transparent text-[#FF0062] border-0 hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
-            Login
+            class="user-trigger inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 min-h-[40px]
+                   bg-[#FF0062] text-[#FFD808] font-medium
+                   shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-150
+                   hover:shadow-[0_6px_14px_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:translate-y-0
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD808]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent">
+            <span class="material-symbols-rounded text-base" aria-hidden="true">account_circle</span>
+            <span class="max-w-[200px] truncate">Sign in</span>
           </NuxtLink>
           <!-- mobile menu button placeholder -->
           <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-[#FF0062]/80 hover:text-[#FF0062] hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
