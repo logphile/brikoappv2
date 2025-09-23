@@ -23,7 +23,7 @@
         <div class="flex items-center gap-2">
           <AccountMenu v-if="!loading && user" :label="identityLabel" />
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
-            class="hidden md:inline-flex h-9 items-center rounded-md px-3 text-[15px]
+            class="hidden md:inline-flex h-9 items-center rounded-md px-3 text-base
                    bg-transparent text-[#FF0062] border-0 hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
             Login
           </NuxtLink>

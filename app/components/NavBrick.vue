@@ -21,7 +21,7 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* Base link */
 .nav-brick {
   /* text + hit area */
-  @apply relative inline-flex items-center px-3 py-1.5 text-sm text-[#FF0062];
+  @apply relative inline-flex items-center px-3 py-1.5 text-base text-[#FF0062];
   /* keyboard accessibility */
   @apply outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50 rounded-lg;
   /* smooth color transitions */

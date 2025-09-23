@@ -5,7 +5,7 @@
         <div aria-hidden="true" class="h-7 w-7 rounded-xl bg-cta-grad ring-1 ring-white/10"></div>
         <span class="text-lg font-semibold tracking-tight">Briko</span>
       </NuxtLink>
-      <nav class="flex items-center gap-4 text-sm text-white/80">
+      <nav class="flex items-center gap-4 text-base text-white/80">
         <NuxtLink to="/mosaic" class="hover:text-white">Mosaic</NuxtLink>
         <NuxtLink to="/avatar" class="hover:text-white">Avatar</NuxtLink>
         <NuxtLink to="/gallery" class="hover:text-white">Gallery</NuxtLink>

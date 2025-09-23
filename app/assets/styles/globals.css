@@ -103,7 +103,7 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
   /* Header/Footer link helpers */
   .nav-link {
-    @apply text-[#FF0062] hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50;
+    @apply text-base text-[#FF0062] hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50;
   }
   .footer-link {
     @apply text-[#FF0062] hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50;
