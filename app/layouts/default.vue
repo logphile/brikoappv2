@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh bg-[var(--brand-bg)] text-brand-purple">
+  <div class="min-h-dvh bg-[var(--brand-bg)]">
     <slot />
   </div>
 </template>

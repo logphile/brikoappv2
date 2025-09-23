@@ -24,7 +24,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-from-class="opacity-0 translate-y-4"
     enter-to-class="opacity-100 translate-y-0"
   >
-    <section class="relative overflow-hidden bg-transparent text-brand-purple">
+    <section class="relative overflow-hidden bg-transparent text-[#343434]">
       <div class="mx-auto max-w-5xl px-6 pt-10 sm:pt-14">
       <!-- Inline-width wrapper aligns lines to H1 left edge while centering the block -->
       <div class="mx-auto w-fit">
@@ -34,7 +34,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
                  whitespace-nowrap
                  text-[clamp(28px,5.2vw,46px)]"
         >
-          Create LEGO-style art from your images<span class="text-mint">!</span>
+          Create LEGO-style art from your images
         </h1>
 
         <!-- Three lines: left-aligned, Material Symbols bullets before text -->

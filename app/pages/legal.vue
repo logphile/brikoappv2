@@ -11,17 +11,17 @@
     <Meta name="twitter:description" content="Terms, Privacy, Pricing Disclaimer and Trademarks for Briko (BrickMOC Companion)." />
     <Meta name="twitter:image" content="https://briko.app/og-default.png" />
   </Head>
-  <main class="mx-auto max-w-3xl px-6 py-12 text-white">
+  <main class="mx-auto max-w-3xl px-6 py-12 text-[#343434]">
     <h1 class="text-3xl font-bold mb-6">Legal</h1>
 
-    <nav class="text-sm text-white/70 mb-6">
-      <a href="#terms" class="hover:text-white">Terms</a>
+    <nav class="text-sm text-[#343434]/70 mb-6">
+      <a href="#terms" class="hover:opacity-80">Terms</a>
       <span class="mx-2">•</span>
-      <a href="#privacy" class="hover:text-white">Privacy</a>
+      <a href="#privacy" class="hover:opacity-80">Privacy</a>
       <span class="mx-2">•</span>
-      <a href="#pricing" class="hover:text-white">Pricing Disclaimer</a>
+      <a href="#pricing" class="hover:opacity-80">Pricing Disclaimer</a>
       <span class="mx-2">•</span>
-      <a href="#trademark" class="hover:text-white">Trademarks</a>
+      <a href="#trademark" class="hover:opacity-80">Trademarks</a>
     </nav>
 
     <section id="terms" class="prose prose-invert max-w-none">
@@ -59,7 +59,7 @@
       <p>{{ TRADEMARK_NOTICE_SHORT }}</p>
     </section>
 
-    <p class="mt-12 text-xs text-white/50">Last updated: {{ new Date().toISOString().slice(0,10) }}</p>
+    <p class="mt-12 text-xs text-[#343434]/50">Last updated: {{ new Date().toISOString().slice(0,10) }}</p>
   </main>
 </template>
 

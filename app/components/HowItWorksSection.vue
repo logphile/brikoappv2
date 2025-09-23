@@ -18,14 +18,14 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-from-class="opacity-0 translate-y-4"
     enter-to-class="opacity-100 translate-y-0"
   >
-    <section class="bg-transparent text-brand-purple">
+    <section class="bg-transparent text-[#343434]">
       <div class="mx-auto max-w-6xl px-6 pt-14 sm:pt-16 pb-0">
       <!-- Header -->
       <div class="text-center">
         <h2 class="h-section-46">
           How it works
         </h2>
-        <p class="mt-2 text-gray-300">
+        <p class="mt-2 text-[#343434]">
           Four quick steps from photo to bricks.
         </p>
         <span class="mt-4 inline-block h-1 w-20 rounded bg-[#00E5A0]"></span>

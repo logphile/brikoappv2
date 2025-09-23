@@ -2,10 +2,10 @@
   <section class="mt-16">
     <header class="mb-4 flex items-center justify-between">
       <div>
-        <h2 class="text-xl font-semibold text-white">{{ copy.studio.communitySectionTitle }}</h2>
-        <p class="mt-1 text-white/70">{{ copy.studio.communitySubhead }}</p>
+        <h2 class="text-xl font-semibold text-[#343434]">{{ copy.studio.communitySectionTitle }}</h2>
+        <p class="mt-1 text-[#343434]">{{ copy.studio.communitySubhead }}</p>
       </div>
-      <NuxtLink to="/gallery" class="inline-flex items-center gap-1.5 text-sm text-mint hover:underline underline-offset-4 decoration-2">
+      <NuxtLink to="/gallery" class="inline-flex items-center gap-1.5 text-sm text-[#343434] hover:underline underline-offset-4 decoration-2">
         {{ copy.studio.seeAll }}
         <span class="material-symbols-rounded text-[18px]" aria-hidden="true">chevron_right</span>
       </NuxtLink>

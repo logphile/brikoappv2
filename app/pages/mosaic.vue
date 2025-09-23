@@ -642,13 +642,13 @@ watchDebounced(
 </script>
 
 <template>
-  <main class="mx-auto max-w-7xl px-6 py-10 text-white">
+  <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434]">
     <h1 class="text-3xl font-bold">{{ copy.mosaic.title }}</h1>
     <p class="opacity-80">{{ copy.mosaic.subtitle }}</p>
     <nav aria-label="Quick guide" class="mt-2 flex items-center gap-4 flex-wrap">
       <a v-for="(s, i) in stepsGuide" :key="s.id" :href="'#' + s.id" class="flex items-center gap-2 group">
         <StepBadge :n="i+1" :active="i <= activeStepIndex" />
-        <span class="text-sm text-white/60 group-hover:text-white transition">{{ s.title }}</span>
+        <span class="text-sm text-[#343434]/60 group-hover:text-[#343434] transition">{{ s.title }}</span>
       </a>
     </nav>
 
@@ -672,7 +672,7 @@ watchDebounced(
 
           <!-- Presets row: Auto / Line Art / Photo Pop -->
           <div class="mt-3">
-            <label class="block text-sm font-medium text-white/80 mb-1">Preset</label>
+            <label class="block text-sm font-medium text-[#343434]/80 mb-1">Preset</label>
             <div class="flex gap-2 flex-wrap">
               <button :class="['px-3 py-1 rounded-full text-sm', mode==='auto' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='auto'">Auto</button>
               <button :class="['px-3 py-1 rounded-full text-sm', mode==='line-art' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='line-art'">Line Art</button>
@@ -682,7 +682,7 @@ watchDebounced(
           </section>
           <!-- Upload embedded -->
           <div>
-            <label class="block text-sm font-medium text-white/80 mb-2">Upload</label>
+            <label class="block text-sm font-medium text-[#343434]/80 mb-2">Upload</label>
             <MosaicUploader embedded @file="onFile" />
           </div>
           
@@ -694,7 +694,7 @@ watchDebounced(
             </div>
           </section>
           <div class="flex items-center gap-2">
-            <h3 class="text-white text-base font-semibold">Output size</h3>
+            <h3 class="text-[#343434] text-base font-semibold">Output size</h3>
             <InfoTip label="About output size">
               Bigger sizes use more bricks and show more detail.
             </InfoTip>
@@ -706,7 +706,7 @@ watchDebounced(
           <!-- Optional preset size chips -->
           <div class="mt-2 flex flex-wrap gap-2">
             <button v-for="preset in [[16,16],[20,20],[32,32],[48,48],[64,64]]" :key="(preset as any).join('x')"
-                    class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80 hover:border-mint/40"
+                    class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#343434]/80 hover:border-mint/40"
                     @click="choosePreset((preset as any)[0], (preset as any)[1])">
               {{ (preset as any)[0] }}×{{ (preset as any)[1] }}
             </button>
@@ -729,26 +729,26 @@ watchDebounced(
           <div class="h-px bg-white/5 my-3"></div>
           <div>
             <div class="flex items-center gap-2">
-              <h4 class="text-sm font-medium text-white/80">What size mosaic would you like?</h4>
+              <h4 class="text-sm font-medium text-[#343434]/80">What size mosaic would you like?</h4>
             </div>
-            <p class="mt-1 text-xs text-white/60">Pick exact dimensions, or use the sliders above.</p>
+            <p class="mt-1 text-xs text-[#343434]/60">Pick exact dimensions, or use the sliders above.</p>
             <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
               <div>
-                <label class="block text-xs text-white/60 mb-1">Width</label>
+                <label class="block text-xs text-[#343434]/60 mb-1">Width</label>
                 <select v-model.number="widthSelStuds" class="select-mint" :aria-describedby="'desc-width'">
                   <option v-for="n in dimOptions" :key="'w'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
                 </select>
                 <span id="desc-width" class="sr-only">Exact mosaic width. Matches the sliders above.</span>
               </div>
               <div>
-                <label class="block text-xs text-white/60 mb-1">Height</label>
+                <label class="block text-xs text-[#343434]/60 mb-1">Height</label>
                 <select v-model.number="heightSelStuds" class="select-mint" :aria-describedby="'desc-height'">
                   <option v-for="n in dimOptions" :key="'h'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
                 </select>
                 <span id="desc-height" class="sr-only">Exact mosaic height. Matches the sliders above.</span>
               </div>
               <div>
-                <label class="block text-xs text-white/60 mb-1">Units</label>
+                <label class="block text-xs text-[#343434]/60 mb-1">Units</label>
                 <select v-model="units" class="select-mint" :aria-describedby="'desc-units'">
                   <option value="studs">Studs</option>
                   <option value="inches">Inches</option>

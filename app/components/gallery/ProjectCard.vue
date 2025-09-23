@@ -38,11 +38,11 @@
         </div>
         <div class="min-w-0">
           <div class="truncate font-semibold">{{ username || '@anonymous' }}</div>
-          <div class="truncate text-sm text-white/80">{{ name }}</div>
+          <div class="truncate text-sm text-[#343434]/80">{{ name }}</div>
         </div>
       </div>
 
-      <div class="mt-2 flex items-center justify-between text-xs text-white/75">
+      <div class="mt-2 flex items-center justify-between text-xs text-[#343434]/75">
         <div class="flex items-center gap-2">
           <span>{{ bricks?.toLocaleString() }} bricks</span>
           <span class="opacity-60">·</span>
