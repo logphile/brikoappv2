@@ -1,5 +1,5 @@
 <template>
-  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#FFD808] border-none backdrop-blur" style="--app-header-h: 56px;">
+  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#FFD808] border-b border-brand-purple backdrop-blur" style="--app-header-h: 56px;">
     <nav class="mx-auto max-w-7xl px-4 md:px-6">
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
