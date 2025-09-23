@@ -3,8 +3,8 @@
     <nav class="mx-auto max-w-7xl px-4 md:px-6">
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
-        <NuxtLink to="/" class="flex items-center gap-2">
-          <img src="/brand/briko-icon-accent.svg" class="h-6 w-6 md:h-7 md:w-7" alt="Briko" />
+        <NuxtLink to="/" class="flex items-center gap-2 py-1">
+          <img src="/brand/briko-icon.svg" class="h-8 w-8" alt="Briko" />
           <span class="logo-text text-[#FF0062] text-lg md:text-xl">Briko</span>
         </NuxtLink>
 

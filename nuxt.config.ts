@@ -63,7 +63,7 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#FFD808' }
       ],
       link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/brand/briko-favicon.svg?v=2' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/brand/briko-icon.svg?v=1' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/brand/favicon-32.png?v=2' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/brand/favicon-16.png?v=2' },
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/brand/apple-touch-icon.png?v=2' },
