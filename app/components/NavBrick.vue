@@ -21,7 +21,7 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* Base link */
 .nav-brick {
   /* text + hit area */
-  @apply relative inline-flex items-center px-3 py-1.5 text-xl leading-7 text-[#FF0062];
+  @apply relative inline-flex items-center px-3 py-1.5 text-xl leading-7 text-[#FF0062] ring-2 ring-brand-dark;
   /* keyboard accessibility */
   @apply outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50 rounded-lg;
   /* smooth color transitions */
@@ -31,7 +31,8 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* “plate” behind text (appears on hover/active) */
 .nav-brick::before {
   content: "";
-  @apply absolute inset-0 rounded-lg bg-midnight opacity-0 transition-opacity;
+  /* Hover/active fill becomes pink; base remains transparent */
+  @apply absolute inset-0 rounded-lg bg-brand-pink opacity-0 transition-opacity;
 }
 .nav-brick:hover::before,
 .nav-brick[data-active="true"]::before {
@@ -52,4 +53,7 @@ const isActive = computed(() => route.path.startsWith(props.to))
 .nav-brick:hover::after { box-shadow: 0 0 0 2px rgba(255,0,98,.25); }
 
 .label { @apply relative z-[1] text-[#FF0062]; }
+/* Invert text color on hover/active to match pink background */
+.nav-brick:hover .label,
+.nav-brick[data-active="true"] .label { @apply text-brand-yellow; }
 </style>

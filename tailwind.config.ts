@@ -23,7 +23,8 @@ export default <Partial<Config>>{
           pink: '#FF0062',
           yellow: '#FFD808',
           purple: '#2F3061',
-          paper: '#F5F4F1'
+          paper: '#F5F4F1',
+          dark: '#343434'
         },
         // Unified Briko palette
         // Windsurf tokens
