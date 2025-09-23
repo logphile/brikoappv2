@@ -24,7 +24,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-from-class="opacity-0 translate-y-4"
     enter-to-class="opacity-100 translate-y-0"
   >
-    <section class="relative overflow-hidden bg-transparent text-white">
+    <section class="relative overflow-hidden bg-transparent text-brand-purple">
       <div class="mx-auto max-w-5xl px-6 pt-10 sm:pt-14">
       <!-- Inline-width wrapper aligns lines to H1 left edge while centering the block -->
       <div class="mx-auto w-fit">
@@ -105,7 +105,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
 .demo-card { @apply w-full rounded-2xl bg-white/5 border border-white/10 shadow-soft overflow-hidden; }
 .demo-card .media { aspect-ratio: 4 / 3; @apply overflow-hidden; }
 .demo-card .media img { @apply w-full h-full object-cover block; }
-.demo-card .caption { @apply px-4 py-3 text-center text-white/90 bg-white/5; }
+.demo-card .caption { @apply px-4 py-3 text-center text-brand-purple bg-white/5; }
 
 /* Snap-in rise with a tiny squish */
 @keyframes briko-step-in {

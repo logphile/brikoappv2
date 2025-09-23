@@ -6,7 +6,7 @@
 :root {
   --brand-bg:   #FFD808; /* site background */
   --brand-card: #124559; /* midnight */
-  --brand-text: #EDEFF2;
+  --brand-text: #2F3061; /* brand purple for body text */
   --brand-a1:   #7B2CFB;
   --brand-a2:   #00E5FF;
   /* Hint browsers to render native controls in dark mode (affects <select> popup) */
@@ -72,7 +72,7 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
   /* Inner rows in cards/menus */
   .soft-row {
-    @apply rounded-brk-inner px-4 py-2.5 text-sm text-white/90;
+    @apply rounded-brk-inner px-4 py-2.5 text-sm text-brand-purple;
   }
 
   /* Link-button */
