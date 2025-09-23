@@ -37,22 +37,22 @@ useIntersectionObserver(sentinel, ([entry]) => {
           Create LEGO-style art from your images<span class="text-mint">!</span>
         </h1>
 
-        <!-- Three lines: left-aligned, 24px on desktop, mint arrows before text -->
+        <!-- Three lines: left-aligned, Material Symbols bullets before text -->
         <ul
           class="mt-6 md:mt-7
-                 space-y-3 sm:space-y-3.5 md:space-y-4
+                 space-y-2 md:space-y-3
                  text-left text-[clamp(16px,3vw,20px)] leading-snug"
         >
           <li class="flex items-baseline gap-2">
-            <span class="arrow text-mint" aria-hidden="true">→</span>
+            <span class="material-symbols-rounded text-brand-pink text-xl md:text-2xl" aria-hidden="true">chevron_right</span>
             <span>Upload your photo</span>
           </li>
           <li class="flex items-baseline gap-2">
-            <span class="arrow text-mint" aria-hidden="true">→</span>
+            <span class="material-symbols-rounded text-brand-pink text-xl md:text-2xl" aria-hidden="true">chevron_right</span>
             <span>Instantly see it in bricks</span>
           </li>
           <li class="flex items-baseline gap-2">
-            <span class="arrow text-mint" aria-hidden="true">→</span>
+            <span class="material-symbols-rounded text-brand-pink text-xl md:text-2xl" aria-hidden="true">chevron_right</span>
             <span>Get the parts, guide, and price</span>
           </li>
         </ul>
@@ -113,8 +113,6 @@ useIntersectionObserver(sentinel, ([entry]) => {
   60%  { transform: translateY(0)    scaleY(1.01); opacity: 1; }
   100% { transform: translateY(0)    scaleY(1); }
 }
-/* Arrow token: +20% size, tidy baseline */
-.arrow { display:inline-block; font-size: 1.2em; line-height: 1; transform: translateY(0.03em); }
 /* apply */
 ul > li { animation: briko-step-in .36s ease-out both; }
 ul > li:nth-child(2) { animation-delay: .06s; }
@@ -122,6 +120,6 @@ ul > li:nth-child(3) { animation-delay: .12s; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  ul > li, .arrow { animation: none !important; }
+  ul > li { animation: none !important; }
 }
 </style>
