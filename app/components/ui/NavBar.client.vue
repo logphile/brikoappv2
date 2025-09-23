@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
       <NuxtLink to="/" class="flex items-center gap-2 py-1">
         <img src="/brand/briko-icon.svg" class="h-8 w-8" alt="Briko" />
-        <span class="text-lg font-semibold tracking-tight">Briko</span>
+        <span class="text-[2rem] font-semibold tracking-tight">Briko</span>
       </NuxtLink>
       <nav class="flex items-center gap-4 text-base text-white/80">
         <NuxtLink to="/mosaic" class="hover:text-white">Mosaic</NuxtLink>
