@@ -42,15 +42,14 @@ const isActive = computed(() => route.path.startsWith(props.to))
 /* right “notch” (little 1×2 plate) */
 .nav-brick::after {
   content: "";
-  @apply absolute top-1/2 -right-1.5 h-4 w-2 -translate-y-1/2 rounded bg-[#FF0062]/20 transition;
-  /* -right-1.5 = -6px, h-4=16px, w-2=8px */
+  @apply absolute top-1/2 -right-1.5 h-4 w-2 -translate-y-1/2 rounded bg-brand-dark transition;
 }
 .nav-brick:hover::after,
 .nav-brick[data-active="true"]::after {
-  @apply translate-x-1 bg-[#FF0062];
+  @apply translate-x-1 bg-brand-dark;
 }
 /* optional glow on hover for a subtle LEGO vibe */
-.nav-brick:hover::after { box-shadow: 0 0 0 2px rgba(255,0,98,.25); }
+.nav-brick:hover::after { box-shadow: none; }
 
 .label { @apply relative z-[1] text-[#FF0062]; }
 /* Invert text color on hover/active to match pink background */
