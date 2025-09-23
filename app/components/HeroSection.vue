@@ -2,10 +2,6 @@
 import { ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
 // No props needed yet
-// Bind image sources via runtime strings to prevent Vite from transforming into static imports during build
-// Append a version query to bust CDN/browser caches when assets are replaced
-const originalImg = '/demo-original.jpg?v=3'
-const mosaicImg = '/demo-mosaic.jpg?v=3'
 
 // Animate hero only when it comes into view
 const inView = ref(false)
@@ -25,74 +21,45 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="relative overflow-hidden bg-transparent text-[#343434]">
-      <div class="mx-auto max-w-5xl px-6 pt-10 sm:pt-14">
-      <!-- Inline-width wrapper aligns lines to H1 left edge while centering the block -->
-      <div class="mx-auto w-fit">
-        <!-- H1: single line, centered, no wrap, clamped size -->
-        <h1
-          class="block text-center font-brand font-bold leading-[1.05]
-                 whitespace-nowrap
-                 text-[clamp(28px,5.2vw,46px)]"
-        >
-          Create LEGO-style art from your images
-        </h1>
+      <div class="mx-auto max-w-7xl px-6 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
+          <!-- Left side: stacked CTA and bullets -->
+          <div class="flex flex-col items-start space-y-6">
+            <h1 class="text-5xl md:text-6xl font-brand font-bold leading-tight max-w-xl">
+              Create<br />
+              LEGO-style<br />
+              art from<br />
+              your images
+            </h1>
 
-        <!-- Three lines: left-aligned, Material Symbols bullets before text -->
-        <ul
-          class="mt-6 md:mt-7
-                 space-y-2 md:space-y-3
-                 text-left text-[clamp(16px,3vw,20px)] leading-snug"
-        >
-          <li class="flex items-start gap-3">
-            <span class="material-symbols-rounded text-brand-pink text-2xl md:text-3xl" aria-hidden="true">upload_file</span>
-            <span>Upload your photo</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="material-symbols-rounded text-brand-pink text-2xl md:text-3xl" aria-hidden="true">grid_view</span>
-            <span>Instantly see it in bricks</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <span class="material-symbols-rounded text-brand-pink text-2xl md:text-3xl" aria-hidden="true">inventory_2</span>
-            <span>Get the parts, guide, and price</span>
-          </li>
-        </ul>
-      </div>
-      
-      <!-- Visual divider -->
-      <div class="h-px w-24 bg-[#00E5A0] mx-auto my-10"></div>
+            <ul class="space-y-3 text-lg">
+              <li class="flex items-start gap-3">
+                <span class="material-symbols-rounded text-brand-pink text-2xl" aria-hidden="true">upload_file</span>
+                <span>Upload your photo</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="material-symbols-rounded text-brand-pink text-2xl" aria-hidden="true">grid_view</span>
+                <span>Instantly see it in bricks</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="material-symbols-rounded text-brand-pink text-2xl" aria-hidden="true">inventory_2</span>
+                <span>Get the parts, guide, and price</span>
+              </li>
+            </ul>
+          </div>
 
-      <!-- Demo row: make cards ~40% larger, keep tidy alignment -->
-      <section class="mt-8">
-        <div class="mx-auto max-w-7xl">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Original -->
-            <figure class="demo-card">
-              <div class="media">
-                <img
-                  :src="originalImg"
-                  @error="(e) => ((e.target as HTMLImageElement).src = '/og-default.png')"
-                  alt="Original photo uploaded to Briko"
-                />
-              </div>
-              <figcaption class="caption">Original photo</figcaption>
-            </figure>
-
-            <!-- Mosaic Result -->
-            <figure class="demo-card">
-              <div class="media">
-                <img
-                  :src="mosaicImg"
-                  @error="(e) => ((e.target as HTMLImageElement).src = '/demo-mosaic.png')"
-                  alt="Photo transformed into a LEGO-style mosaic"
-                />
-              </div>
-              <figcaption class="caption">
-                LEGO-style mosaic preview — <NuxtLink to="/mosaic" class="underline text-mint">made in seconds</NuxtLink>
-              </figcaption>
-            </figure>
+          <!-- Right side: before/after slider -->
+          <div class="relative w-full max-w-xl mx-auto">
+            <div class="rounded-2xl overflow-hidden h-[360px] md:h-[460px]">
+              <ClientOnly>
+                <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
+                <template #fallback>
+                  <div class="h-full w-full bg-white/5 border border-white/10 rounded-2xl" />
+                </template>
+              </ClientOnly>
+            </div>
           </div>
         </div>
-      </section>
       </div>
     </section>
   </Transition>
