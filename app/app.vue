@@ -27,6 +27,15 @@ const { siteName, siteUrl } = useSiteMeta()
 // Inject the Cloudflare Web Analytics beacon during SSR/SSG so it appears in View-Source
 const token = useRuntimeConfig().public.cloudflareAnalyticsToken
 useHead({
+  link: [
+    { rel: 'preconnect', href: 'https://briko.app' },
+    { rel: 'preconnect', href: 'https://www.googletagmanager.com', crossorigin: '' },
+    { rel: 'preconnect', href: 'https://www.google-analytics.com', crossorigin: '' },
+    { rel: 'preconnect', href: 'https://static.cloudflareinsights.com', crossorigin: '' },
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:FILL@0..1&display=swap' }
+  ],
   script: token
     ? [{
       key: 'cf-beacon',
