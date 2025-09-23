@@ -1,6 +1,6 @@
 <template>
   <div class="relative" ref="root">
-    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-transparent px-3 text-[15px] text-[#FF0062] hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
+    <button @click="toggle" class="inline-flex h-9 items-center rounded-md bg-transparent px-3 text-base text-[#FF0062] hover:opacity-80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
       {{ label }}
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
