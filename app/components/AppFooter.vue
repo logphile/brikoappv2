@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-[#FFD808]">
+  <footer class="bg-[#FFD808] border-t border-brand-purple">
     <!-- Top rail (optional CTA) -->
     <!--
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
