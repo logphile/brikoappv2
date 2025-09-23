@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="text-white">
+  <div class="text-[#343434]">
     <!-- Feature bites with icons, mint accents, and hover polish -->
     <ul class="space-y-3">
       <!-- 1 -->
@@ -11,13 +11,13 @@
       >
         <!-- Icon -->
         <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
-                     bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
+                     bg-[#00E5A0]/15 text-[#343434] ring-1 ring-[#00E5A0]/20">
           <span class="material-symbols-rounded text-[20px]" aria-hidden="true">bolt</span>
         </span>
         <!-- Copy -->
         <p class="mt-1 text-base leading-snug">
           <span class="font-semibold">Instant</span> LEGO-style color mapping
-          <span class="ml-1 inline-block rounded-full bg-[#00E5A0]/10 px-2 py-0.5 text-xs text-[#00E5A0]">
+          <span class="ml-1 inline-block rounded-full bg-[#00E5A0]/10 px-2 py-0.5 text-xs text-[#343434]">
             wow moment
           </span>
         </p>
@@ -71,7 +71,7 @@
       <!-- Badge 1 -->
       <div
         class="flex items-center justify-center gap-2 rounded-full bg-white/5
-               py-2.5 px-4 text-sm text-gray-200 ring-1 ring-white/10
+               py-2.5 px-4 text-sm text-[#343434] ring-1 ring-white/10
                hover:ring-[#00E5A0]/30 transition min-h-[44px]"
       >
         <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#00E5A0]" fill="currentColor" aria-hidden="true">
@@ -83,7 +83,7 @@
       <!-- Badge 2 -->
       <div
         class="flex items-center justify-center gap-2 rounded-full bg-white/5
-               py-2.5 px-4 text-sm text-gray-200 ring-1 ring-white/10
+               py-2.5 px-4 text-sm text-[#343434] ring-1 ring-white/10
                hover:ring-[#00E5A0]/30 transition min-h-[44px]"
       >
         <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#00E5A0]" fill="currentColor" aria-hidden="true">
@@ -95,7 +95,7 @@
       <!-- Badge 3 -->
       <div
         class="flex items-center justify-center gap-2 rounded-full bg-white/5
-               py-2.5 px-4 text-sm text-gray-200 ring-1 ring-white/10
+               py-2.5 px-4 text-sm text-[#343434] ring-1 ring-white/10
                hover:ring-[#00E5A0]/30 transition min-h-[44px]"
       >
         <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#00E5A0]" fill="currentColor" aria-hidden="true">

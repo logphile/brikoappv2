@@ -1,5 +1,5 @@
 <template>
-  <main class="mx-auto max-w-6xl px-6 py-10 text-white">
+  <main class="mx-auto max-w-6xl px-6 py-10 text-[#343434]">
     <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-semibold">Community Gallery</h1>
@@ -26,7 +26,7 @@
 
       <div v-if="loading" class="opacity-70">Loading…</div>
       <div v-else>
-        <p v-if="isEmptyLive && showSeeds" class="mb-3 text-sm text-white/80">Showing sample projects — log in to share your own build!</p>
+        <p v-if="isEmptyLive && showSeeds" class="mb-3 text-sm text-[#343434]/80">Showing sample projects — log in to share your own build!</p>
         <GalleryGrid :items="visibleItems" :liked-by-me-map="likedByMeMap" :saved-by-me-map="savedByMeMap" @like="likeItem" @unlike="unlikeItem" @save="saveItem" @unsave="unsaveItem" @remix="remixItem" @share="shareItem" />
         <div v-if="visibleItems.length === 0" class="opacity-70 mt-6">No results.</div>
       </div>
