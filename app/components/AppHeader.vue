@@ -1,5 +1,5 @@
 <template>
-  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#FFD808] border-b border-brand-purple backdrop-blur" style="--app-header-h: 56px;">
+  <header ref="headerRef" class="app-header sticky top-0 z-50 bg-[#FFD808] backdrop-blur" style="--app-header-h: 56px;">
     <nav class="mx-auto max-w-7xl px-4 md:px-6">
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
@@ -25,7 +25,7 @@
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
             class="user-trigger inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 min-h-[40px]
                    bg-[#FF0062] text-[#FFD808] font-medium
-                   shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-150
+                   shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-200
                    hover:shadow-[0_6px_14px_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:translate-y-0
                    focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD808]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent">
             <span class="material-symbols-rounded text-base" aria-hidden="true">account_circle</span>
