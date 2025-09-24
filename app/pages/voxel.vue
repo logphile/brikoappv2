@@ -167,9 +167,10 @@ watch(mode, scheduleRegen)
 onBeforeUnmount(() => voxelTask.cancel())
 
 // Quick view helpers calling child-exposed methods
-function toFront(){ previewRef.value?.toFront?.() }
-function toIso(){ previewRef.value?.toIso?.() }
-function toTop(){ previewRef.value?.toTop?.() }
+const view = ref<'front'|'iso'|'top'>('front')
+function toFront(){ previewRef.value?.toFront?.(); view.value = 'front' }
+function toIso(){ previewRef.value?.toIso?.(); view.value = 'iso' }
+function toTop(){ previewRef.value?.toTop?.(); view.value = 'top' }
 
 // Debug: capture unique instance-colors from child and assert against palette bar count
 const instUniqueColors = ref<number | null>(null)
@@ -252,6 +253,7 @@ async function makePublic(){
 <template>
   <main class="mx-auto max-w-6xl px-6 py-10 text-white">
     <h1 class="text-3xl font-bold">{{ copy.builder3d.title }}</h1>
+    <div class="mt-2 h-1 w-16 rounded-full bg-pink-500/80"></div>
     <p class="opacity-80">{{ copy.builder3d.subtitle }}</p>
     <!-- ... (rest of the template remains the same) -->
     <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
@@ -260,22 +262,53 @@ async function makePublic(){
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
       <section class="space-y-4">
-        <UploadBox :maxSizeMB="25" accept="image/*" @file="onFile" @error="(msg) => console.warn(msg)" />
-        <div class="card-glass p-4">
-          <label class="block text-sm">Resolution</label>
-          <select v-model.number="size" class="select-mint">
+        <!-- Upload card -->
+        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="flex items-center mb-2">
+            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
+            </div>
+            <h2 class="text-sm font-semibold text-white">Upload</h2>
+          </div>
+          <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+          <div class="mt-3">
+            <UploadBox :maxSizeMB="25" accept="image/*" @file="onFile" @error="(msg) => console.warn(msg)" />
+          </div>
+        </div>
+
+        <!-- Resolution card -->
+        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="flex items-center mb-2">
+            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">grid_4x4</span>
+            </div>
+            <label class="text-sm font-semibold">Resolution</label>
+          </div>
+          <select v-model.number="size" class="w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500">
             <option :value="32">32³</option>
             <option :value="64">64³</option>
           </select>
         </div>
-        <div class="card-glass p-4">
-          <label class="block text-sm mb-1">Brightness</label>
-          <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full range-mint" />
+        <!-- Brightness card -->
+        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="flex items-center mb-2">
+            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">light_mode</span>
+            </div>
+            <label class="text-sm font-semibold">Brightness</label>
+          </div>
+          <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full pink-slider" />
           <div class="text-xs text-white/60 mt-1">{{ exposure.toFixed(1) }}×</div>
         </div>
-        <div class="card-glass p-4">
-          <label class="block text-sm mb-1">3D mode</label>
-          <select v-model="mode" class="select-mint w-full">
+        <!-- 3D mode card -->
+        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="flex items-center mb-2">
+            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">layers</span>
+            </div>
+            <label class="text-sm font-semibold">3D mode</label>
+          </div>
+          <select v-model="mode" class="w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500">
             <option value="layered">Layered Mosaic (default)</option>
             <option value="relief">Relief (height-map)</option>
             <option value="hollow">Layered (hollow)</option>
@@ -283,27 +316,32 @@ async function makePublic(){
           <p class="text-xs opacity-70 mt-1">{{ modeHelp }}</p>
         </div>
         <!-- Debug (dev or via ?debug3d) -->
-        <div v-if="showDebug" class="card-glass p-4">
-          <label class="block text-sm mb-1">Debug</label>
+        <div v-if="showDebug" class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="flex items-center mb-2">
+            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">bug_report</span>
+            </div>
+            <label class="text-sm font-semibold">Debug</label>
+          </div>
           <div class="flex flex-col gap-1 text-sm">
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.useBasicMaterial" />
+              <input type="checkbox" v-model="debug.useBasicMaterial" class="accent-pink-500" />
               Use Basic Material
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.paintRainbow12" />
+              <input type="checkbox" v-model="debug.paintRainbow12" class="accent-pink-500" />
               Paint First 12 Studs Rainbow
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.wireframe" />
+              <input type="checkbox" v-model="debug.wireframe" class="accent-pink-500" />
               Wireframe
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.showBounds" />
+              <input type="checkbox" v-model="debug.showBounds" class="accent-pink-500" />
               Show Bounds Helper
             </label>
             <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.hideMesh" />
+              <input type="checkbox" v-model="debug.hideMesh" class="accent-pink-500" />
               Hide Mesh
             </label>
             <div>
@@ -312,17 +350,22 @@ async function makePublic(){
           </div>
           <p class="text-xs opacity-60 mt-1">Helps verify instanceColor path and lighting/tone mapping.</p>
         </div>
-        <div class="card-glass p-4">
-          <label class="block text-sm mb-1">View</label>
+        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="flex items-center mb-2">
+            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">view_in_ar</span>
+            </div>
+            <label class="text-sm font-semibold">View</label>
+          </div>
           <div class="flex gap-2">
-            <button class="btn-soft h-9 px-3 rounded-md" @click="toFront">Front</button>
-            <button class="btn-soft h-9 px-3 rounded-md" @click="toIso">Iso</button>
-            <button class="btn-soft h-9 px-3 rounded-md" @click="toTop">Top</button>
+            <button :class="['rounded-full px-3 py-1 text-sm font-medium', view==='front' ? 'border border-pink-500 text-pink-600 bg-white/70 shadow-sm' : 'border border-white/25 text-gray-900 bg-white/60']" @click="toFront">Front</button>
+            <button :class="['rounded-full px-3 py-1 text-sm font-medium', view==='iso' ? 'border border-pink-500 text-pink-600 bg-white/70 shadow-sm' : 'border border-white/25 text-gray-900 bg-white/60']" @click="toIso">Iso</button>
+            <button :class="['rounded-full px-3 py-1 text-sm font-medium', view==='top' ? 'border border-pink-500 text-pink-600 bg-white/70 shadow-sm' : 'border border-white/25 text-gray-900 bg-white/60']" @click="toTop">Top</button>
           </div>
         </div>
         <p v-if="vox" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
-      <section class="lg:col-span-2 card-glass p-2">
+      <section class="lg:col-span-2 rounded-3xl border border-white/10 bg-white/5 shadow-lg p-2">
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
           <div class="w-2/3 max-w-md text-center space-y-3">
             <div>Processing… <span v-if="progress">{{ progress }}%</span></div>
