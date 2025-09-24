@@ -18,17 +18,14 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-from-class="opacity-0 translate-y-4"
     enter-to-class="opacity-100 translate-y-0"
   >
-    <section class="bg-transparent text-[#343434]">
+    <section class="bg-transparent text-[#343434]" aria-labelledby="how-it-works">
       <div class="mx-auto max-w-6xl px-6 pt-14 sm:pt-16 pb-0">
       <!-- Header -->
       <div class="text-center">
-        <h2 class="h-section-46">
-          How it works
-        </h2>
-        <p class="mt-2 text-[#343434]">
-          Four quick steps from photo to bricks.
-        </p>
-        <span class="mt-4 inline-block h-1 w-20 rounded bg-[#00E5A0]"></span>
+        <h2 id="how-it-works" class="sr-only">How it works</h2>
+        <h2 class="h-section-46">How it works</h2>
+        <p class="mt-2 text-[#343434]">Four quick steps from photo to bricks.</p>
+        <div class="mx-auto mt-3 h-1 w-20 rounded-full bg-pink-500/80"></div>
       </div>
 
       <!-- Stepper -->
@@ -36,7 +33,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <!-- Faint flow line left→right (desktop) -->
         <div class="hidden md:block absolute top-1/2 left-0 right-0 h-px bg-white/10"></div>
         <ol
-          class="relative grid gap-4 sm:gap-5 md:grid-cols-4 z-10"
+          class="relative grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 z-10"
           aria-label="Four steps to create your brick build"
         >
         <!-- Step (repeatable pattern) -->
@@ -47,33 +44,17 @@ useIntersectionObserver(sentinel, ([entry]) => {
           enter-to-class="opacity-100 translate-y-0"
         >
           <li class="group">
-            <div
-              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-[#00E5A0]/[0.07]
-                     p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <!-- Number badge -->
-              <div class="absolute -top-3 left-5">
-                <span
-                  class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#00E5A0] text-[#111827] font-bold"
-                >1</span>
+            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
+              <!-- number badge -->
+              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">1</div>
+
+              <!-- icon tile -->
+              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
               </div>
 
-              <!-- Icon -->
-              <div
-                class="mt-3 inline-flex h-10 w-10 items-center justify-center rounded-xl
-                       bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/25"
-              >
-                <!-- Upload icon -->
-                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-                  <path d="M12 3v10l4-4 1 1-6 6-6-6 1-1 4 4V3h2Zm-7 15h14v2H5v-2Z"/>
-                </svg>
-              </div>
-
-              <h3 class="mt-4 text-lg font-semibold">Upload</h3>
-              <p class="mt-1 text-sm text-gray-300">
-                Drop in a favorite photo — pets, people, or art.
-              </p>
-
+              <h3 class="text-lg font-extrabold text-gray-900">Upload</h3>
+              <p class="mt-1 text-sm text-gray-800/75">Drop in a favorite photo — pets, people, or art.</p>
             </div>
           </li>
         </Transition>
@@ -85,22 +66,13 @@ useIntersectionObserver(sentinel, ([entry]) => {
           enter-to-class="opacity-100 translate-y-0"
         >
           <li class="group">
-            <div
-              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/8 to-[#00E5A0]/[0.07]
-                     p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg"
-            >
-              <div class="absolute -top-3 left-5">
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#00E5A0] text-[#111827] font-bold">2</span>
+            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
+              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">2</div>
+              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
               </div>
-              <div class="mt-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/25">
-                <!-- Palette icon -->
-                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-                  <path d="M12 2a10 10 0 0 0 0 20 2 2 0 0 0 0-4h4a4 4 0 0 0 0-8h-1a3 3 0 0 1-3-3 5 5 0 0 0-0-5zM7 8a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm-1 6a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6-3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5-1a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
-                </svg>
-              </div>
-              <h3 class="mt-4 text-lg font-semibold">Pick size & palette</h3>
-              <p class="mt-1 text-sm text-gray-300">Choose brick size and colors — we’ll map it for you.</p>
-              <div class="hidden md:block absolute top-1/2 right-[-10px] h-[2px] w-5 bg-[#00E5A0]/40"></div>
+              <h3 class="text-lg font-extrabold text-gray-900">Pick size &amp; palette</h3>
+              <p class="mt-1 text-sm text-gray-800/75">Choose brick size and colors — we’ll map it for you.</p>
             </div>
           </li>
         </Transition>
@@ -112,22 +84,13 @@ useIntersectionObserver(sentinel, ([entry]) => {
           enter-to-class="opacity-100 translate-y-0"
         >
           <li class="group">
-            <div
-              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-[#00E5A0]/[0.05]
-                     p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg"
-            >
-              <div class="absolute -top-3 left-5">
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#00E5A0] text-[#111827] font-bold">3</span>
+            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
+              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">3</div>
+              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">auto_awesome</span>
               </div>
-              <div class="mt-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/25">
-                <!-- Sparkles icon -->
-                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-                  <path d="M12 2 9 9 2 12l7 3 3 7 3-7 7-3-7-3-3-7zM6 5l-1 2-2 1 2 1 1 2 1-2 2-1-2-1-1-2zM18 5l-1 2-2 1 2 1 1 2 1-2 2-1-2-1-1-2z"/>
-                </svg>
-              </div>
-              <h3 class="mt-4 text-lg font-semibold">Generate</h3>
-              <p class="mt-1 text-sm text-gray-300">Preview the mosaic or 3D build in seconds.</p>
-              <div class="hidden md:block absolute top-1/2 right-[-10px] h-[2px] w-5 bg-[#00E5A0]/40"></div>
+              <h3 class="text-lg font-extrabold text-gray-900">Generate</h3>
+              <p class="mt-1 text-sm text-gray-800/75">Preview the mosaic or 3D build in seconds.</p>
             </div>
           </li>
         </Transition>
@@ -139,21 +102,13 @@ useIntersectionObserver(sentinel, ([entry]) => {
           enter-to-class="opacity-100 translate-y-0"
         >
           <li class="group">
-            <div
-              class="relative rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-[#00E5A0]/[0.05]
-                     p-5 h-full ring-1 ring-white/10 transition hover:ring-[#00E5A0]/30 hover:shadow-lg"
-            >
-              <div class="absolute -top-3 left-5">
-                <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#00E5A0] text-[#111827] font-bold">4</span>
+            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
+              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">4</div>
+              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">download</span>
               </div>
-              <div class="mt-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/25">
-                <!-- Download icon -->
-                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-                  <path d="M12 3v10l4-4 1 1-6 6-6-6 1-1 4 4V3h2Zm-7 15h14v2H5v-2Z"/>
-                </svg>
-              </div>
-              <h3 class="mt-4 text-lg font-semibold">Export</h3>
-              <p class="mt-1 text-sm text-gray-300">Get parts list, cost estimate, and build steps.</p>
+              <h3 class="text-lg font-extrabold text-gray-900">Export</h3>
+              <p class="mt-1 text-sm text-gray-800/75">Get parts list, cost estimate, and build steps.</p>
             </div>
           </li>
         </Transition>
