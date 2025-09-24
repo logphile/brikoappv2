@@ -60,8 +60,9 @@ useHead({
     <main class="px-6 pt-16 pb-0 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
       <section class="mt-12 sm:mt-16 grid md:grid-cols-2 gap-8">
-        <div class="rounded-2xl overflow-hidden h-[340px] md:h-[420px]">
+        <div class="relative overflow-hidden rounded-3xl border-2 border-[#343434] shadow-[0_12px_32px_rgba(0,0,0,0.18)] bg-[#F5F4F1]/10 h-[340px] md:h-[420px]">
           <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
+          <div class="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10"></div>
         </div>
         <div class="my-auto">
           <FeatureBites />

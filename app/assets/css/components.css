@@ -104,3 +104,16 @@ input[type="range"].range-mint::-moz-range-track { height: 2px; background: tran
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Nav pill utility (matches user trigger feel) */
+.nav-pill {
+  @apply inline-flex items-center rounded-xl px-3.5 py-1.5
+         bg-[var(--pink,#FF0062)] text-[var(--yellow,#FFD808)]
+         transition-all duration-200
+         shadow-[0_2px_0_rgba(0,0,0,0.25)];
+}
+.nav-pill:hover { box-shadow: 0 6px 14px rgba(0,0,0,0.20); transform: translateY(-1px); }
+.nav-pill:active { transform: translateY(0); box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+
+/* Balanced ragged edge for headlines (modern browsers) */
+.balance { text-wrap: balance; }
