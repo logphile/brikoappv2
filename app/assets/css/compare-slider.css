@@ -1,0 +1,66 @@
+/* assets/css/compare-slider.css */
+
+/* Reusable theme class */
+img-comparison-slider.compare-mono {
+  /* Try the lib’s custom properties first (supported by the web component) */
+  --divider-width: 2px;
+  --divider-color: #343434;
+  --default-handle-width: 72px;     /* large “invisible” grab area */
+  --default-handle-opacity: 0.9;    /* visible by default */
+}
+
+/* Fallback + fine control via ::part (works on modern browsers) */
+img-comparison-slider.compare-mono::part(divider) {
+  background-color: #343434;        /* thin vertical line */
+  width: 2px;
+}
+
+img-comparison-slider.compare-mono::part(handle) {
+  /* subtle circular handle, but low-chrome */
+  width: 72px;
+  height: 72px;
+  border-radius: 9999px;
+  border: 1px solid #343434;
+  background: rgba(52, 52, 52, 0.12);
+  box-shadow: 0 10px 30px -8px rgba(0,0,0,.45);
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+/* Chevrons / arrows color (if the component exposes them via color currentColor) */
+img-comparison-slider.compare-mono::part(handle),
+img-comparison-slider.compare-mono::part(controller) {
+  color: #343434;
+}
+
+/* Hover: tiny lift + clearer */
+img-comparison-slider.compare-mono:hover::part(handle) {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px -10px rgba(0,0,0,.55);
+}
+
+/* Keyboard focus: make the big handle disappear so the split line is hero */
+img-comparison-slider.compare-mono:focus-visible::part(handle),
+img-comparison-slider.compare-mono:focus::part(handle) {
+  opacity: 0;
+}
+
+/* Labels: pill chips that match our site tags */
+img-comparison-slider.compare-mono .compare-label {
+  font: 600 12px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #111827;                    /* ink */
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(255,255,255,.6);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+}
+
+/* Dark surfaces: keep contrast strong inside glass cards */
+@media (prefers-color-scheme: dark) {
+  img-comparison-slider.compare-mono .compare-label {
+    color: #111827;
+    background: rgba(255,255,255,.92);
+    border-color: rgba(255,255,255,.7);
+  }
+}
