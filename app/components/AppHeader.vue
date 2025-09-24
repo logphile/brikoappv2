@@ -5,7 +5,7 @@
         <!-- Brand -->
         <NuxtLink to="/" class="flex items-center gap-2 py-1">
           <img src="/brand/briko-icon.svg" class="h-8 w-8" alt="Briko" />
-          <span class="logo-text text-[#FF0062] text-[2rem]">Briko</span>
+          <span class="logo-text text-pink text-[2rem]">Briko</span>
         </NuxtLink>
 
         <!-- Main nav -->
@@ -24,15 +24,15 @@
           <AccountMenu v-if="!loading && user" :label="identityLabel" />
           <NuxtLink v-else :to="{ path: '/login', query: { next: '/studio' } }"
             class="user-trigger inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 min-h-[40px]
-                   bg-[#FF0062] text-[#FFD808] font-medium
+                   bg-pink text-brandYellow font-medium
                    shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-200
                    hover:shadow-[0_6px_14px_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:translate-y-0
-                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD808]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent">
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent">
             <span class="material-symbols-rounded text-base" aria-hidden="true">account_circle</span>
             <span class="max-w-[200px] truncate">Sign in</span>
           </NuxtLink>
           <!-- mobile menu button placeholder -->
-          <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-[#FF0062]/80 hover:text-[#FF0062] hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/50">
+          <button class="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-pink/80 hover:text-pink hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink/50">
             <span class="material-symbols-rounded text-[20px]" aria-hidden="true">menu</span>
           </button>
         </div>
