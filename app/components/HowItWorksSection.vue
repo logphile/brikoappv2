@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
+import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
+import ButtonOutline from '@/components/ui/ButtonOutline.vue'
 
 const inView = ref(false)
 const sentinel = ref<HTMLElement | null>(null)
@@ -117,24 +119,15 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
       <!-- CTA row -->
       <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <NuxtLink
-          to="/how-it-works"
-          class="inline-flex items-center gap-2 btn-mint"
-          aria-label="See Full Guide"
-        >
+        <ButtonPrimary as="NuxtLink" to="/how-it-works" aria-label="See Full Guide">
           See Full Guide
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-            <path d="M13 5l7 7-7 7-1.4-1.4L16.2 13H4v-2h12.2L11.6 6.4 13 5z"/>
-          </svg>
-        </NuxtLink>
+          <span aria-hidden>→</span>
+        </ButtonPrimary>
 
         <!-- Optional secondary nudge -->
-        <NuxtLink
-          to="/mosaic"
-          class="inline-flex items-center gap-2 btn-outline-mint"
-        >
+        <ButtonOutline as="NuxtLink" to="/mosaic">
           Try Photo to Bricks
-        </NuxtLink>
+        </ButtonOutline>
       </div>
       </div>
     </section>
