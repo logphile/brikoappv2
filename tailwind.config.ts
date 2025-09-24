@@ -33,7 +33,7 @@ export default <Partial<Config>>{
           200: '#FF99C6',
           300: '#FF70AF',
           400: '#FF4797',
-          500: '#FF0062', // brand pink
+          500: '#FF3EA5', // brand pink (hero)
           600: '#E73795',
           700: '#C41F7A',
           800: '#9D1961',
