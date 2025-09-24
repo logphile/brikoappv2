@@ -18,9 +18,6 @@ import StatusChip from '@/components/ui/StatusChip.vue'
         <!-- Copy -->
         <p class="mt-1 text-base leading-snug">
           <span class="font-semibold">Instant</span> LEGO-style color mapping
-          <span class="ml-1 inline-block rounded-full bg-[#111827]/10 px-2 py-0.5 text-xs text-[#111827]/80">
-            wow moment
-          </span>
         </p>
       </li>
 
