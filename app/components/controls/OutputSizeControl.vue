@@ -15,12 +15,14 @@
     <div class="grid grid-cols-2 gap-3">
       <label class="text-sm block">
         <span class="block opacity-80">Width</span>
-        <input type="number" min="8" max="256" step="1" class="select-mint mt-1"
+        <input type="number" min="8" max="256" step="1" class="mt-1 w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 px-3 py-2
+               focus:outline-none focus:ring-2 focus:ring-pink-500"
                :value="width" @input="$emit('update:width', toNum(($event.target as HTMLInputElement).value, width))" />
       </label>
       <label class="text-sm block">
         <span class="block opacity-80">Height</span>
-        <input type="number" min="8" max="256" step="1" class="select-mint mt-1"
+        <input type="number" min="8" max="256" step="1" class="mt-1 w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 px-3 py-2
+               focus:outline-none focus:ring-2 focus:ring-pink-500"
                :value="height" @input="$emit('update:height', toNum(($event.target as HTMLInputElement).value, height))" />
       </label>
     </div>

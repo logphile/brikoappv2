@@ -5,8 +5,10 @@
       <button
         v-for="opt in opts"
         :key="opt.value"
-        class="btn-soft h-8 px-3 rounded-md"
-        :class="preset === opt.value ? 'ring-1 ring-mint/60 bg-white/15' : ''"
+        class="h-8 px-3 rounded-full border text-xs font-medium transition
+               border-white/15 bg-white/10 text-white/90 hover:bg-white/15
+               focus:outline-none focus:ring-2 focus:ring-pink-500/60"
+        :class="preset === opt.value ? 'border-pink-500 text-gray-900 bg-white/80' : ''"
         @click.prevent="$emit('update:preset', opt.value)"
       >{{ opt.label }}</button>
     </div>

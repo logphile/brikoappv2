@@ -3,11 +3,12 @@
     <header class="mb-4 flex items-center justify-between">
       <div>
         <h2 class="text-xl font-semibold text-[#343434]">{{ copy.studio.communitySectionTitle }}</h2>
+        <div class="mt-1 h-1 w-10 rounded bg-pink-500/80"></div>
         <p class="mt-1 text-[#343434]">{{ copy.studio.communitySubhead }}</p>
       </div>
-      <NuxtLink to="/gallery" class="inline-flex items-center gap-1.5 text-sm text-[#343434] hover:underline underline-offset-4 decoration-2">
+      <NuxtLink to="/gallery" class="inline-flex items-center gap-1.5 text-sm text-[#343434] rounded-md px-2 py-1 transition hover:bg-white/10">
         {{ copy.studio.seeAll }}
-        <span class="material-symbols-rounded text-[18px]" aria-hidden="true">chevron_right</span>
+        <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">chevron_right</span>
       </NuxtLink>
     </header>
 
