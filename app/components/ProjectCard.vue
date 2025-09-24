@@ -1,8 +1,8 @@
 <template>
   <NuxtLink :to="`/p/${project.id}`"
     class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm
-           transition duration-200 ease-out hover:-translate-y-[2px] hover:shadow-lg">
-    <div class="aspect-[4/3] bg-black/30 overflow-hidden">
+           transition duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_18px_50px_-16px_rgba(0,229,160,.45)]">
+    <div class="framed-img aspect-[4/3] bg-black/30">
       <img v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
            class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"

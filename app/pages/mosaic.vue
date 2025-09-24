@@ -31,6 +31,7 @@ import { useProjects } from '@/composables/useProjects'
 import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
 import MosaicActions from '@/components/MosaicActions.vue'
+import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 
 const mosaic = useMosaicStore()
 const route = useRoute()
@@ -864,8 +865,8 @@ watchDebounced(
 
               <!-- Row 2: export buttons -->
               <div class="flex flex-wrap gap-2">
-                <button
-                  class="btn-mint h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                <ButtonPrimary type="button"
+                  class="h-10 px-3 rounded-lg whitespace-nowrap"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
                   @click="onDownloadPng"
@@ -875,10 +876,10 @@ watchDebounced(
                     <path d="M8 14l2.5-3 2 2.5L15 11l3 3"/>
                   </svg>
                   Export PNG
-                </button>
+                </ButtonPrimary>
 
-                <button
-                  class="btn-mint h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+                <ButtonPrimary type="button"
+                  class="h-10 px-3 rounded-lg whitespace-nowrap"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
                   @click="onDownloadPdf"
@@ -888,7 +889,7 @@ watchDebounced(
                     <path d="M4 19h16" stroke-linecap="round"/>
                   </svg>
                   Export PDF
-                </button>
+                </ButtonPrimary>
 
                 <button
                   class="btn-soft h-10 px-3 rounded-lg whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
@@ -905,10 +906,10 @@ watchDebounced(
 
               <!-- Row 3: buy CTA -->
               <div>
-                <a
+                <ButtonPrimary as="a"
                   href="https://briko.app/help/buy-bricks"
                   target="_blank" rel="noopener"
-                  class="btn-mint h-11 px-4 rounded-xl inline-flex items-center gap-2 justify-center w-full sm:w-auto"
+                  class="h-11 px-4 rounded-xl inline-flex items-center gap-2 justify-center w-full sm:w-auto"
                   aria-label="Where to buy pieces"
                   @click="onBuyClickHeader"
                 >
@@ -917,7 +918,7 @@ watchDebounced(
                     <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
                   </svg>
                   <span>Where to buy pieces</span>
-                </a>
+                </ButtonPrimary>
               </div>
             </header>
 
@@ -938,10 +939,10 @@ watchDebounced(
               <!-- Mobile-only sticky CTA -->
               <div class="sticky bottom-0 bg-gradient-to-t from-[#0B0F16]/90 to-transparent pt-3 pb-3 md:hidden">
                 <div class="flex justify-end">
-                  <a
+                  <ButtonPrimary as="a"
                     href="https://briko.app/help/buy-bricks"
                     target="_blank" rel="noopener"
-                    class="btn-mint h-11 px-4 rounded-xl inline-flex items-center gap-2"
+                    class="h-11 px-4 rounded-xl inline-flex items-center gap-2"
                     aria-label="Where to buy pieces"
                     @click="onBuyClickSticky"
                   >
@@ -950,7 +951,7 @@ watchDebounced(
                       <path d="M9 10V8a3 3 0 0 1 6 0v2"/>
                     </svg>
                     <span>Where to buy pieces</span>
-                  </a>
+                  </ButtonPrimary>
                 </div>
               </div>
             </div>
@@ -1051,14 +1052,14 @@ watchDebounced(
             <footer class="mt-4 border-t border-white/10 relative">
               <!-- Actions row: centered, consistent height -->
               <div class="px-4 pt-4 pb-3 flex flex-wrap items-center justify-center gap-3">
-                <button class="btn-mint inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
+                <ButtonPrimary type="button" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
                   <!-- Download icon -->
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M4 19h16" stroke-linecap="round"/>
                   </svg>
                   <span>Download Build Guide (PDF)</span>
-                </button>
+                </ButtonPrimary>
 
                 <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPng">
                   <!-- Image icon -->

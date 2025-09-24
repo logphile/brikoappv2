@@ -28,23 +28,25 @@ export default <Partial<Config>>{
         },
         // Brand-aligned pink scale for utility classes like text-pink-500
         pink: {
+          DEFAULT: '#FF0062',
           50: '#FFE1EE',
           100: '#FFC2DD',
           200: '#FF99C6',
           300: '#FF70AF',
           400: '#FF4797',
-          500: '#FF3EA5', // brand pink (hero)
+          500: '#FF0062', // correct brand pink
           600: '#E73795',
           700: '#C41F7A',
           800: '#9D1961',
           900: '#7A144B'
         },
         // Unified Briko palette
-        // Windsurf tokens
-        ink: '#01161E',
-        mint: '#3AE59F',
-        mintLight: '#34F5C7',
+        // Windsurf tokens (updated)
+        ink: '#111827',
+        mint: '#00E5A0',
+        mintLight: '#2CF0B7',
         mintRing: '#1ad5a6',
+        pinkLight: '#FF4F8A',
         brick: {
           50:'#FFF1E9',100:'#FFE4D6',200:'#FFC2AA',300:'#FF9A79',
           400:'#FF7A4E',500:'#FF5A1F',600:'#E04D18',700:'#C2410C',

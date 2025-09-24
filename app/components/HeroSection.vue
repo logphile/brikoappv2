@@ -24,7 +24,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
       <div class="mx-auto max-w-7xl px-6 pt-24 pb-16">
         <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
           <!-- Left side: stacked CTA and bullets -->
-          <div class="flex flex-col items-start space-y-6">
+          <div class="flex flex-col items-start space-y-6 md:space-y-8 lg:space-y-10 xl:space-y-12 2xl:space-y-14 mt-10 md:mt-14 lg:mt-16 xl:mt-20">
             <h1 class="text-[5.57rem] md:text-[5.57rem] font-brand font-bold leading-[0.92] balance max-w-[14ch]">
               Create<br />
               LEGO‑style<br />
@@ -34,15 +34,15 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
             <ul class="space-y-3 text-lg">
               <li class="flex items-start gap-3">
-                <span class="material-symbols-rounded text-brand-pink text-2xl" aria-hidden="true">upload_file</span>
+                <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">upload_file</span>
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-start gap-3">
-                <span class="material-symbols-rounded text-brand-pink text-2xl" aria-hidden="true">grid_view</span>
+                <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">grid_view</span>
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-start gap-3">
-                <span class="material-symbols-rounded text-brand-pink text-2xl" aria-hidden="true">inventory_2</span>
+                <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">inventory_2</span>
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>

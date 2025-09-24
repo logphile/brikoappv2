@@ -13,6 +13,8 @@ import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
+import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
+import ButtonOutline from '@/components/ui/ButtonOutline.vue'
 import StepChips from '@/components/StepChips.vue'
 // (computed imported above)
 import { LEGO_PALETTE } from '@/lib/legoPalette'
@@ -256,8 +258,8 @@ async function makePublic(){
     <div class="mt-2 h-1 w-16 rounded-full bg-pink-500/80"></div>
     <p class="opacity-80">{{ copy.builder3d.subtitle }}</p>
     <!-- ... (rest of the template remains the same) -->
-    <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
-    <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+    <ButtonPrimary type="button" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
+    <ButtonOutline type="button" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
     <!-- ... (rest of the template remains the same) -->
 
     <div class="mt-6 grid gap-6 lg:grid-cols-3">
@@ -388,14 +390,14 @@ async function makePublic(){
           </div>
         </div>
         <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
-          <button class="btn btn-primary px-4 rounded-xl" @click="exportPng">Export PNG</button>
-          <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</button>
-          <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
-          <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
-          <button id="one-click-pdf" type="button" class="btn-mint px-4 rounded-xl" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
+          <ButtonPrimary type="button" @click="exportPng">Export PNG</ButtonPrimary>
+          <ButtonOutline type="button" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</ButtonOutline>
+          <ButtonPrimary type="button" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
+          <ButtonOutline type="button" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
+          <ButtonPrimary id="one-click-pdf" type="button" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
             <span v-if="!pdfWorking">One-click PDF</span>
             <span v-else>Generating…</span>
-          </button>
+          </ButtonPrimary>
         </div>
         <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
