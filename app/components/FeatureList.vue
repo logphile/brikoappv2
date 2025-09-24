@@ -12,7 +12,7 @@
                        p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
                        transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[28px] text-[#FF0062]">grid_view</span>
+            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">grid_view</span>
             <h3 class="text-lg font-semibold">Mosaic Engine</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
@@ -26,7 +26,7 @@
                        p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
                        transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[28px] text-[#FF0062]">view_in_ar</span>
+            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">view_in_ar</span>
             <h3 class="text-lg font-semibold">3D Voxel Preview</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
@@ -40,7 +40,7 @@
                        p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
                        transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[28px] text-[#FF0062]">list_alt</span>
+            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">receipt_long</span>
             <h3 class="text-lg font-semibold">Smart BOM</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
@@ -54,7 +54,7 @@
                        p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
                        transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[28px] text-[#FF0062]">download</span>
+            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">download</span>
             <h3 class="text-lg font-semibold">Fast Exports</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
@@ -68,7 +68,7 @@
                        p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
                        transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[28px] text-[#FF0062]">share</span>
+            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">share</span>
             <h3 class="text-lg font-semibold">Save &amp; Share</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
@@ -83,7 +83,7 @@
                        p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
                        transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[28px] text-[#FF0062]">bolt</span>
+            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">bolt</span>
             <h3 class="text-lg font-semibold">Performance</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>

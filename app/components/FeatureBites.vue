@@ -2,22 +2,21 @@
 
 <template>
   <div class="text-[#343434]">
-    <!-- Feature bites with icons, mint accents, and hover polish -->
+    <!-- Feature bites with Material icons in neutral ink; no mint badges -->
     <ul class="space-y-3">
       <!-- 1 -->
       <li
         class="group flex items-start gap-4 rounded-xl border border-white/10 bg-white/5
-               p-4 transition hover:border-[#00E5A0]/30 hover:bg-white/[0.07]"
+               p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
       >
-        <!-- Icon -->
-        <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
-                     bg-[#00E5A0]/15 text-[#343434] ring-1 ring-[#00E5A0]/20">
-          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">bolt</span>
+        <!-- Icon (ink) -->
+        <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-[#111827] opacity-90 group-hover:opacity-100 transition">
+          <span class="material-symbols-rounded text-[22px]" aria-hidden="true">bolt</span>
         </span>
         <!-- Copy -->
         <p class="mt-1 text-base leading-snug">
           <span class="font-semibold">Instant</span> LEGO-style color mapping
-          <span class="ml-1 inline-block rounded-full bg-[#00E5A0]/10 px-2 py-0.5 text-xs text-[#343434]">
+          <span class="ml-1 inline-block rounded-full bg-[#111827]/10 px-2 py-0.5 text-xs text-[#111827]/80">
             wow moment
           </span>
         </p>
@@ -26,11 +25,10 @@
       <!-- 2 -->
       <li
         class="group flex items-start gap-4 rounded-xl border border-white/10 bg-white/5
-               p-4 transition hover:border-[#00E5A0]/30 hover:bg-white/[0.07]"
+               p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
       >
-        <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
-                     bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">layers</span>
+        <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-[#111827] opacity-90 group-hover:opacity-100 transition">
+          <span class="material-symbols-rounded text-[22px]" aria-hidden="true">grid_view</span>
         </span>
         <p class="mt-1 text-base leading-snug">
           <span class="font-semibold">Greedy tiling</span> → fewer plates, cleaner look
@@ -40,11 +38,10 @@
       <!-- 3 -->
       <li
         class="group flex items-start gap-4 rounded-xl border border-white/10 bg-white/5
-               p-4 transition hover:border-[#00E5A0]/30 hover:bg-white/[0.07]"
+               p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
       >
-        <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
-                     bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">inventory_2</span>
+        <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-[#111827] opacity-90 group-hover:opacity-100 transition">
+          <span class="material-symbols-rounded text-[22px]" aria-hidden="true">receipt_long</span>
         </span>
         <p class="mt-1 text-base leading-snug">
           Auto <span class="font-semibold">Bill of Materials</span> + cost estimate
@@ -54,11 +51,10 @@
       <!-- 4 -->
       <li
         class="group flex items-start gap-4 rounded-xl border border-white/10 bg-white/5
-               p-4 transition hover:border-[#00E5A0]/30 hover:bg-white/[0.07]"
+               p-4 transition hover:border-white/20 hover:bg-white/[0.07]"
       >
-        <span class="inline-flex h-9 w-9 flex-none items-center justify-center rounded-full
-                     bg-[#00E5A0]/15 text-[#00E5A0] ring-1 ring-[#00E5A0]/20">
-          <span class="material-symbols-rounded text-[20px]" aria-hidden="true">file_download</span>
+        <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-[#111827] opacity-90 group-hover:opacity-100 transition">
+          <span class="material-symbols-rounded text-[22px]" aria-hidden="true">download</span>
         </span>
         <p class="mt-1 text-base leading-snug">
           One-click exports: <span class="font-semibold">PNG · CSV · PDF</span>

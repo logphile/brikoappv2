@@ -71,20 +71,21 @@ watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
           Mosaic preview
         </div>
 
-        <!-- drag overlay: divider + handle (dark) -->
-        <div class="absolute inset-0 z-10" style="touch-action:none"
+        <!-- drag overlay: divider + handle (pink) -->
+        <div class="absolute inset-0 z-10 group" style="touch-action:none"
              @pointerdown="onDrag" @pointermove="onDrag" @pointerup="drag=false" @pointerleave="drag=false">
-          <!-- divider (dark) -->
-          <div class="absolute inset-y-4 w-[3px] rounded bg-[#343434] shadow-[0_0_0_1px_rgba(52,52,52,.35)]"
+          <!-- divider (pink) -->
+          <div class="absolute inset-y-4 w-[3px] rounded bg-[#FF0062] shadow-[0_0_0_1px_rgba(255,0,98,.35)]"
                :style="{ left: `calc(${pos}% - 1px)` }"></div>
 
-          <!-- handle (larger dark) -->
+          <!-- handle (larger, pink) -->
           <div class="handle absolute bottom-10 sm:bottom-8 -translate-x-1/2 grid place-items-center"
                :style="{ left: `${pos}%` }" aria-hidden="true"
                role="slider" aria-label="Compare slider" aria-valuemin="0" aria-valuemax="100"
                :aria-valuenow="Math.round(pos)">
-            <div class="h-8 w-8 sm:h-7 sm:w-7 rounded-full bg-[#343434] shadow-[0_4px_16px_rgba(0,0,0,.25)]
-                        ring-2 ring-[#343434]/70 outline-none"></div>
+            <div class="h-8 w-8 sm:h-7 sm:w-7 rounded-full bg-[#FF0062] shadow-[0_4px_16px_rgba(255,0,98,.35)]
+                        ring-2 ring-[#FF0062]/70 outline-none transition duration-200
+                        group-hover:ring-[#FF0062] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#FF0062]/60"></div>
           </div>
         </div>
 

@@ -8,10 +8,11 @@
       <img :src="beforeUrl" alt="before" class="absolute inset-0 w-full h-full object-contain" loading="lazy" decoding="async" />
     </div>
 
-    <!-- Slider handle -->
-    <div class="absolute top-0 bottom-0" :style="{ left: clipWidth }">
-      <div class="-translate-x-1/2 h-full w-0.5 bg-white/70"></div>
-      <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white text-black rounded-full px-2 py-1 text-xs shadow">
+    <!-- Slider handle (pink theme) -->
+    <div class="absolute top-0 bottom-0 group" :style="{ left: clipWidth }">
+      <div class="-translate-x-1/2 h-full w-[3px] rounded bg-[#FF0062]"></div>
+      <div class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full px-2 py-1 text-xs shadow transition
+                  bg-[#FF0062] text-white ring-2 ring-[#FF0062]/70 group-hover:ring-[#FF0062] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#FF0062]/60">
         ⇆
       </div>
     </div>
