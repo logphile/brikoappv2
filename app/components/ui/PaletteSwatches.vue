@@ -5,8 +5,8 @@
       :key="o.key"
       :title="o.tip"
       class="inline-flex items-center gap-3 px-3 py-2 rounded-xl border cursor-pointer select-none transition
-             border-white/10 bg-white/5 hover:border-mint/40 hover:bg-white/10"
-      :class="modelValue === o.key ? 'ring-2 ring-mint/50 shadow-mint-glow' : ''"
+             border-white/10 bg-white/5 hover:border-pink-500/50 hover:bg-white/10"
+      :class="modelValue === o.key ? 'border-pink-500 ring-2 ring-pink-500' : ''"
     >
       <input
         class="sr-only"

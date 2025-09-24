@@ -15,67 +15,73 @@
       <span class="material-symbols-rounded text-base -mr-1" aria-hidden="true">expand_more</span>
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
-      <ul class="menu-surface rounded-xl bg-[#2F3061] text-[#FFD808] shadow-lg p-2 w-64 relative overflow-hidden" role="menu" aria-label="User menu">
-        <li>
+      <ul class="menu-surface rounded-2xl bg-[#2A2356] text-[#FFD808] shadow-2xl ring-1 ring-white/10 p-2 w-64 relative overflow-hidden" role="menu" aria-label="User menu">
+        <li class="relative group">
           <NuxtLink
             to="/projects"
             role="menuitem"
-            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/projects') ? 'font-semibold' : '']"
+            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.path.startsWith('/projects') ? 'font-semibold' : '']"
           >
-            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">folder_special</span>
+            <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
+            <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">folder_special</span>
             <span>Your Projects</span>
           </NuxtLink>
         </li>
 
-        <li>
+        <li class="relative group">
           <NuxtLink
             to="/gallery"
             role="menuitem"
-            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/gallery') ? 'font-semibold' : '']"
+            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.path.startsWith('/gallery') ? 'font-semibold' : '']"
           >
-            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">collections</span>
+            <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
+            <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">collections</span>
             <span>Community Gallery</span>
           </NuxtLink>
         </li>
 
-        <li>
+        <li class="relative group">
           <NuxtLink
             to="/projects/new"
             role="menuitem"
-            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path === '/projects/new' ? 'font-semibold' : '']"
+            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.path === '/projects/new' ? 'font-semibold' : '']"
           >
-            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">add_circle</span>
+            <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
+            <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">add_circle</span>
             <span>New Project</span>
           </NuxtLink>
         </li>
 
-        <li><div class="my-1 h-px bg-white/20" /></li>
+        <li><div class="my-1 h-px bg-white/15" /></li>
 
-        <li>
+        <li class="relative group">
           <NuxtLink
             to="/settings/profile"
             role="menuitem"
-            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/settings') ? 'font-semibold' : '']"
+            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.path.startsWith('/settings') ? 'font-semibold' : '']"
           >
-            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">settings</span>
+            <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
+            <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">settings</span>
             <span>Settings</span>
           </NuxtLink>
         </li>
 
-        <li>
+        <li class="relative group">
           <NuxtLink
             to="/how-it-works"
             role="menuitem"
-            :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]', route.path.startsWith('/how-it-works') ? 'font-semibold' : '']"
+            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.path.startsWith('/how-it-works') ? 'font-semibold' : '']"
           >
-            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">help</span>
+            <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
+            <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">help</span>
             <span>Help</span>
           </NuxtLink>
         </li>
 
-        <li>
-          <button type="button" @click="signOut" :class="[rowCls, 'group flex items-center gap-3 px-3 py-2 text-left text-[#FFD808] hover:text-[#FF0062] hover:bg-[#2F3061]']" role="menuitem">
-            <span aria-hidden="true" class="material-symbols-rounded text-lg text-[#FFD808] group-hover:text-[#FF0062]">logout</span>
+        <li class="relative group">
+          <button type="button" @click="signOut" :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-left text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition']" role="menuitem">
+            <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
+            <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">logout</span>
             <span>Sign out</span>
           </button>
         </li>

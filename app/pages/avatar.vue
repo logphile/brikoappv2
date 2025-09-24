@@ -6,8 +6,25 @@
     <div class="flex items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-semibold">{{ copy.avatar.title }}</h1>
-        <p class="opacity-80 text-sm">{{ copy.avatar.subtitle }}</p>
-        <StepChips :steps="copy.avatar.steps" />
+        <div class="mt-2 h-1 w-16 rounded-full bg-pink-500/80"></div>
+        <p class="opacity-80 text-sm mt-2">{{ copy.avatar.subtitle }}</p>
+        <ul class="mt-3 flex flex-wrap items-center gap-4 select-none">
+          <li class="inline-flex items-center gap-2">
+            <span class="h-7 w-7 grid place-items-center rounded-full bg-pink-500 text-white text-xs font-bold ring-2 ring-white/60">1</span>
+            <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">file_upload</span>
+            <span class="text-sm text-[#343434]">{{ copy.avatar.steps[0] }}</span>
+          </li>
+          <li class="inline-flex items-center gap-2">
+            <span class="h-7 w-7 grid place-items-center rounded-full bg-pink-500 text-white text-xs font-bold ring-2 ring-white/60">2</span>
+            <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">palette</span>
+            <span class="text-sm text-[#343434]">{{ copy.avatar.steps[1] }}</span>
+          </li>
+          <li class="inline-flex items-center gap-2">
+            <span class="h-7 w-7 grid place-items-center rounded-full bg-pink-500 text-white text-xs font-bold ring-2 ring-white/60">3</span>
+            <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">download</span>
+            <span class="text-sm text-[#343434]">{{ copy.avatar.steps[2] }}</span>
+          </li>
+        </ul>
       </div>
       <div class="flex items-center gap-3">
         <button class="btn btn-primary h-10"
@@ -26,69 +43,141 @@
     </div>
 
     <section class="mt-6">
-      <div class="grid gap-6 lg:grid-cols-[460px,1fr]">
+      <div class="grid gap-6 lg:grid-cols-[460px,1fr] items-start">
         <!-- Controls column -->
-        <aside class="card-glass p-4 space-y-4">
-          <PresetChips v-model:preset="preset" />
-
-          <UploadBox
-            :maxSizeMB="25"
-            accept="image/*"
-            @file="handleSelfieFile"
-            @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }"
-          />
-
-          <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
-          <PreviewQualitySelect v-model:quality="quality" />
-
-          <div class="flex flex-wrap gap-4 items-center">
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="ditherFS" />
-              <span>Dither (FS)</span>
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="studStyle" />
-              <span>Stud style</span>
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="showPlateOutlines" />
-              <span>Show plate outlines</span>
-            </label>
+        <aside class="space-y-4">
+          <!-- Presets -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-2">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
+              </div>
+              <h3 class="text-base font-semibold">Style presets</h3>
+            </div>
+            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-4">
+              <PresetChips v-model:preset="preset" />
+            </div>
           </div>
 
-          <div class="block">
-            <span class="block">Palette</span>
-            <PaletteSwatches v-model="paletteName" class="mt-2" />
+          <!-- Upload -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-2">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
+              </div>
+              <h3 class="text-base font-semibold">Upload</h3>
+            </div>
+            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-4">
+              <UploadBox
+                :maxSizeMB="25"
+                accept="image/*"
+                @file="handleSelfieFile"
+                @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }"
+              />
+            </div>
           </div>
 
-          <div class="block">
-            <span class="block">Background</span>
-            <select v-model="bgMode" class="select-mint mt-2">
-              <option value="keep">Keep quantized image</option>
-              <option value="solid">Solid color</option>
-              <option value="transparent">Transparent</option>
-            </select>
-          </div>
-          <label v-if="bgMode==='solid'" class="block">
-            <span class="block">Solid color</span>
-            <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/10 rounded" />
-          </label>
-
-          <div class="flex items-center gap-3 pt-2">
-            <button class="btn-mint" :disabled="loading || !imgReady" @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
-            <span class="ml-auto text-xs opacity-70">OpenCV: <span :class="cvReady ? 'text-emerald-300' : 'text-yellow-300'">{{ cvReady ? 'ready' : 'loading…' }}</span></span>
+          <!-- Size & Quality -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-2">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">straighten</span>
+              </div>
+              <h3 class="text-base font-semibold">Output & Preview</h3>
+            </div>
+            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-4 space-y-4">
+              <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
+              <PreviewQualitySelect v-model:quality="quality" />
+            </div>
           </div>
 
-          <div class="flex gap-2 pt-1">
-            <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
-            <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+          <!-- Options -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-2">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+                <span class="material-symbols-rounded text:[20px] text-pink-500" aria-hidden="true">tune</span>
+              </div>
+              <h3 class="text-base font-semibold">Options</h3>
+            </div>
+            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-4 flex flex-wrap gap-4 items-center">
+              <label class="inline-flex items-center gap-2">
+                <input type="checkbox" class="accent-pink-500" v-model="ditherFS" />
+                <span>Dither (FS)</span>
+              </label>
+              <label class="inline-flex items-center gap-2">
+                <input type="checkbox" class="accent-pink-500" v-model="studStyle" />
+                <span>Stud style</span>
+              </label>
+              <label class="inline-flex items-center gap-2">
+                <input type="checkbox" class="accent-pink-500" v-model="showPlateOutlines" />
+                <span>Show plate outlines</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Palette -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-2">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
+              </div>
+              <h3 class="text-base font-semibold">Palette</h3>
+            </div>
+            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-4">
+              <PaletteSwatches v-model="paletteName" />
+            </div>
+          </div>
+
+          <!-- Background -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-2">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">format_color_fill</span>
+              </div>
+              <h3 class="text-base font-semibold">Background</h3>
+            </div>
+            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-4 space-y-3">
+              <select v-model="bgMode" class="w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500 px-3 py-2">
+                <option value="keep">Keep quantized image</option>
+                <option value="solid">Solid color</option>
+                <option value="transparent">Transparent</option>
+              </select>
+              <label v-if="bgMode==='solid'" class="block">
+                <span class="block opacity-80">Solid color</span>
+                <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/70 rounded border border-white/20" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+            <div class="flex items-center gap-3">
+              <button class="btn-mint" :disabled="loading || !imgReady" @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
+              <span class="inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-gray-900 ml-auto">
+                <span class="material-symbols-rounded text-[16px] text-pink-500" aria-hidden="true">check_circle</span>
+                <span>OpenCV: {{ cvReady ? 'ready' : 'loading…' }}</span>
+              </span>
+            </div>
+            <div class="flex gap-2 pt-3">
+              <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
+              <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+            </div>
           </div>
         </aside>
 
         <!-- Preview column -->
-        <main class="card-glass p-3">
-          <div class="text-sm opacity-80 mb-2">LEGO-mapped Output</div>
-          <div class="relative aspect-square bg-black/20 rounded-xl overflow-hidden flex items-center justify-center">
+        <main class="rounded-3xl border border-white/10 bg-white/5 shadow-lg p-4">
+          <div>
+            <h2 class="text-sm font-semibold">LEGO-mapped Output</h2>
+            <div class="mt-2 h-1 w-10 rounded bg-pink-500/80"></div>
+          </div>
+          <div class="relative aspect-square bg-black/20 rounded-2xl overflow-hidden flex items-center justify-center mt-2">
             <canvas ref="outCanvas" class="max-w-full"></canvas>
             <!-- Grid overlay -->
             <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none"
@@ -120,7 +209,6 @@ import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
 import { downloadPng } from '@/lib/exporters'
 import { copy } from '@/lib/copy'
-import StepChips from '@/components/StepChips.vue'
 import UploadBox from '@/components/ui/UploadBox.vue'
 import PaletteSwatches from '@/components/ui/PaletteSwatches.vue'
 import OutputSizeControl from '@/components/controls/OutputSizeControl.vue'

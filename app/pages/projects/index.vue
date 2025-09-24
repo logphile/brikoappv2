@@ -3,7 +3,8 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-semibold">{{ copy.studio.title }}</h1>
-        <p class="opacity-80 text-sm">{{ copy.studio.subtitle }}</p>
+        <div class="mt-2 h-1 w-16 rounded-full bg-pink-500/80"></div>
+        <p class="opacity-80 text-sm mt-2">{{ copy.studio.subtitle }}</p>
       </div>
       <div class="flex items-center gap-2">
         <NuxtLink to="/studio/community" class="btn-outline-mint" :aria-label="copy.studio.communityButtonAria">{{ copy.studio.communityButton }}</NuxtLink>
