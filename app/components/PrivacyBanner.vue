@@ -16,9 +16,9 @@
       <p class="font-sans text-base leading-6">
         We use GA4 analytics (no ads, no selling data) to see what features click and which ones crumble.
         You can change your choice anytime in
-        <NuxtLink to="/settings" class="underline underline-offset-2 hover:text-brand-pink">Settings</NuxtLink>
+        <NuxtLink to="/settings" class="underline underline-offset-2 hover:text-pink">Settings</NuxtLink>
         or our
-        <NuxtLink to="/privacy" class="underline underline-offset-2 hover:text-brand-pink">Privacy Policy</NuxtLink>.
+        <NuxtLink to="/privacy" class="underline underline-offset-2 hover:text-pink">Privacy Policy</NuxtLink>.
       </p>
 
       <!-- 50/50 buttons -->
@@ -29,8 +29,8 @@
                  font-medium px-4 py-2.5
                  shadow-[0_2px_0_rgba(0,0,0,0.2)]
                  transition-colors duration-150
-                 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink/70
-                 hover:bg-brand-pink hover:text-brand-yellow active:translate-y-[1px]"
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/70
+                 hover:bg-pink hover:text-brand-yellow active:translate-y-[1px]"
           @click="accept"
         >
           Yes, I Accept
@@ -41,8 +41,8 @@
                  font-medium px-4 py-2.5
                  shadow-[0_2px_0_rgba(0,0,0,0.2)]
                  transition-colors duration-150
-                 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-pink/70
-                 hover:bg-brand-pink hover:text-brand-yellow active:translate-y-[1px]"
+                 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/70
+                 hover:bg-pink hover:text-brand-yellow active:translate-y-[1px]"
           @click="decline"
         >
           No Thanks, I Decline

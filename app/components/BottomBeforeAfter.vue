@@ -22,7 +22,7 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
       <h2 class="h-section-46 text-center mb-6">See the Magic in Action</h2>
 
       <ClientOnly>
-        <div class="relative mx-auto w-full rounded-2xl border border-white/10 bg-white/5 p-3 shadow-soft-card transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
+        <div class="relative mx-auto w-full framed-img bg-white/5 p-3 transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
           <div class="rounded-xl overflow-hidden h-[420px] md:h-[560px]">
             <HeroDemo :original-src="'/briko-alley.jpg?v=1'" :mosaic-src="'/briko-alley-2.jpg?v=1'" :fixed-height="true" />
           </div>

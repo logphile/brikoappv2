@@ -30,90 +30,42 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <div class="mx-auto mt-3 h-1 w-20 rounded-full bg-pink-500/80"></div>
       </div>
 
-      <!-- Stepper -->
+      <!-- Stepper (mono sticker: number + icon in one pill, copy on right) -->
       <div class="relative mt-10">
-        <!-- Faint flow line left→right (desktop) -->
-        <div class="hidden md:block absolute top-1/2 left-0 right-0 h-px bg-white/10"></div>
-        <ol
-          class="relative grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 z-10"
-          aria-label="Four steps to create your brick build"
-        >
-        <!-- Step (repeatable pattern) -->
-        <Transition
-          appear
-          enter-active-class="transition ease-out duration-700 delay-100"
-          enter-from-class="opacity-0 translate-y-4"
-          enter-to-class="opacity-100 translate-y-0"
-        >
-          <li class="group">
-            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
-              <!-- number badge -->
-              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">1</div>
-
-              <!-- icon tile -->
-              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
-              </div>
-
-              <h3 class="text-lg font-extrabold text-gray-900">Upload</h3>
-              <p class="mt-1 text-sm text-gray-800/75">Drop in a favorite photo — pets, people, or art.</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Four steps to create your brick build">
+          <li class="flex items-start gap-3">
+            <!-- Sticker -->
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+              <span class="text-sm font-semibold text-ink/90">1</span>
+              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">file_upload</span>
             </div>
+            <!-- Copy -->
+            <div class="text-sm leading-snug text-[#343434]">Upload a photo</div>
           </li>
-        </Transition>
 
-        <Transition
-          appear
-          enter-active-class="transition ease-out duration-700 delay-300"
-          enter-from-class="opacity-0 translate-y-4"
-          enter-to-class="opacity-100 translate-y-0"
-        >
-          <li class="group">
-            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
-              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">2</div>
-              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
-              </div>
-              <h3 class="text-lg font-extrabold text-gray-900">Pick size &amp; palette</h3>
-              <p class="mt-1 text-sm text-gray-800/75">Choose brick size and colors — we’ll map it for you.</p>
+          <li class="flex items-start gap-3">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+              <span class="text-sm font-semibold text-ink/90">2</span>
+              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">palette</span>
             </div>
+            <div class="text-sm leading-snug text-[#343434]">Pick size &amp; palette</div>
           </li>
-        </Transition>
 
-        <Transition
-          appear
-          enter-active-class="transition ease-out duration-700 delay-500"
-          enter-from-class="opacity-0 translate-y-4"
-          enter-to-class="opacity-100 translate-y-0"
-        >
-          <li class="group">
-            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
-              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">3</div>
-              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">auto_awesome</span>
-              </div>
-              <h3 class="text-lg font-extrabold text-gray-900">Generate</h3>
-              <p class="mt-1 text-sm text-gray-800/75">Preview the mosaic or 3D build in seconds.</p>
+          <li class="flex items-start gap-3">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+              <span class="text-sm font-semibold text-ink/90">3</span>
+              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">auto_awesome</span>
             </div>
+            <div class="text-sm leading-snug text-[#343434]">Generate preview</div>
           </li>
-        </Transition>
 
-        <Transition
-          appear
-          enter-active-class="transition ease-out duration-700 delay-700"
-          enter-from-class="opacity-0 translate-y-4"
-          enter-to-class="opacity-100 translate-y-0"
-        >
-          <li class="group">
-            <div class="soft-card relative rounded-2xl border border-white/10 bg-white/5 p-6 text-gray-900 shadow-sm cursor-default select-none">
-              <div class="absolute -top-4 left-6 h-8 w-8 rounded-full bg-pink-500 text-white grid place-items-center text-sm font-bold ring-2 ring-white/50">4</div>
-              <div class="mb-3 inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">download</span>
-              </div>
-              <h3 class="text-lg font-extrabold text-gray-900">Export</h3>
-              <p class="mt-1 text-sm text-gray-800/75">Get parts list, cost estimate, and build steps.</p>
+          <li class="flex items-start gap-3">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+              <span class="text-sm font-semibold text-ink/90">4</span>
+              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">download</span>
             </div>
+            <div class="text-sm leading-snug text-[#343434]">Export PNG · CSV · PDF</div>
           </li>
-        </Transition>
         </ol>
       </div>
 
