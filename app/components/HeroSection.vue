@@ -21,11 +21,11 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-to-class="opacity-100 translate-y-0"
   >
     <section class="relative overflow-hidden bg-transparent text-[#343434]">
-      <div class="mx-auto max-w-7xl px-6 pt-20 pb-16">
+      <div class="mx-auto max-w-7xl px-6 pt-24 pb-16">
         <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
           <!-- Left side: stacked CTA and bullets -->
           <div class="flex flex-col items-start space-y-6">
-            <h1 class="text-[5.57rem] md:text-[5.57rem] font-brand font-bold leading-[0.95] balance max-w-[15ch]">
+            <h1 class="text-[5.57rem] md:text-[5.57rem] font-brand font-bold leading-[0.92] balance max-w-[14ch]">
               Create<br />
               LEGO‑style<br />
               art from<br />
@@ -49,15 +49,15 @@ useIntersectionObserver(sentinel, ([entry]) => {
           </div>
 
           <!-- Right side: before/after slider -->
-          <div class="relative w-full max-w-2xl lg:max-w-[44rem] mx-auto">
-            <div class="relative overflow-hidden rounded-3xl border-2 border-[#343434] shadow-[0_12px_32px_rgba(0,0,0,0.18)] bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
+          <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
+            <div class="relative overflow-hidden rounded-[22px] border-2 border-[#343434] shadow-[0_12px_32px_rgba(0,0,0,0.18)] bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
               <ClientOnly>
                 <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
                 <template #fallback>
                   <div class="h-full w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
               </ClientOnly>
-              <div class="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10"></div>
+              <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-white/10"></div>
             </div>
           </div>
         </div>
