@@ -26,6 +26,19 @@ export default <Partial<Config>>{
           paper: '#F5F4F1',
           dark: '#343434'
         },
+        // Brand-aligned pink scale for utility classes like text-pink-500
+        pink: {
+          50: '#FFE1EE',
+          100: '#FFC2DD',
+          200: '#FF99C6',
+          300: '#FF70AF',
+          400: '#FF4797',
+          500: '#FF0062', // brand pink
+          600: '#E73795',
+          700: '#C41F7A',
+          800: '#9D1961',
+          900: '#7A144B'
+        },
         // Unified Briko palette
         // Windsurf tokens
         ink: '#01161E',
