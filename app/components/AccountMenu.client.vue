@@ -3,10 +3,10 @@
     <button
       @click="toggle"
       class="user-trigger inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 min-h-[40px]
-             bg-[#FF0062] text-[#FFD808] font-medium
+             bg-pink text-brandYellow font-medium
              shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-150
              hover:shadow-[0_6px_14px_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:translate-y-0
-             focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD808]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+             focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
       aria-haspopup="menu"
       :aria-expanded="open ? 'true' : 'false'"
     >
