@@ -646,9 +646,12 @@ watchDebounced(
     <h1 class="text-3xl font-bold">{{ copy.mosaic.title }}</h1>
     <p class="opacity-80">{{ copy.mosaic.subtitle }}</p>
     <nav aria-label="Quick guide" class="mt-2 flex items-center gap-4 flex-wrap">
-      <a v-for="(s, i) in stepsGuide" :key="s.id" :href="'#' + s.id" class="flex items-center gap-2 group">
+      <a v-for="(s, i) in stepsGuide" :key="s.id" :href="'#' + s.id" class="flex items-center gap-2">
         <StepBadge :n="i+1" :active="i <= activeStepIndex" />
-        <span class="text-sm text-[#343434]/60 group-hover:text-[#343434] transition">{{ s.title }}</span>
+        <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">
+          {{ i === 0 ? 'file_upload' : (i === 1 ? 'tune' : (i === 2 ? 'format_list_numbered' : 'shopping_cart')) }}
+        </span>
+        <span :class="['text-sm', (i <= activeStepIndex) ? 'border-b-2 border-pink-500 text-[#343434]' : 'text-[#343434]/70']">{{ s.title }}</span>
       </a>
     </nav>
 
@@ -662,11 +665,14 @@ watchDebounced(
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
-        <div class="z-0 card-glass p-5 transition space-y-3 hover:shadow-mint-glow/30 hover:-translate-y-0.5">
+        <div class="z-0 card-glass p-5 space-y-3">
           <!-- Step 1: Upload -->
           <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
             <div class="flex items-center gap-3 mb-1">
               <StepBadge :n="1" size="lg" :active="activeStepIndex >= 0" />
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
+              </div>
               <h2 class="text-base font-semibold">Upload your photo</h2>
             </div>
 
@@ -674,9 +680,9 @@ watchDebounced(
           <div class="mt-3">
             <label class="block text-sm font-medium text-[#343434]/80 mb-1">Preset</label>
             <div class="flex gap-2 flex-wrap">
-              <button :class="['px-3 py-1 rounded-full text-sm', mode==='auto' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='auto'">Auto</button>
-              <button :class="['px-3 py-1 rounded-full text-sm', mode==='line-art' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='line-art'">Line Art</button>
-              <button :class="['px-3 py-1 rounded-full text-sm', mode==='photo' ? 'bg-mint text-ink' : 'bg-white/5 hover:bg-white/10']" @click="mode='photo'">Photo Pop</button>
+              <button :class="['px-3 py-1 rounded-full text-sm border', mode==='auto' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='auto'">Auto</button>
+              <button :class="['px-3 py-1 rounded-full text-sm border', mode==='line-art' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='line-art'">Line Art</button>
+              <button :class="['px-3 py-1 rounded-full text-sm border', mode==='photo' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='photo'">Photo Pop</button>
             </div>
           </div>
           </section>
@@ -690,6 +696,9 @@ watchDebounced(
           <section :id="stepsGuide[1].id" class="scroll-mt-28 pt-6">
             <div class="flex items-center gap-3 mb-1">
               <StepBadge :n="2" size="lg" :active="activeStepIndex >= 1" />
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">tune</span>
+              </div>
               <h2 class="text-base font-semibold">Tune mosaic</h2>
             </div>
           </section>
@@ -706,7 +715,7 @@ watchDebounced(
           <!-- Optional preset size chips -->
           <div class="mt-2 flex flex-wrap gap-2">
             <button v-for="preset in [[16,16],[20,20],[32,32],[48,48],[64,64]]" :key="(preset as any).join('x')"
-                    class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#343434]/80 hover:border-mint/40"
+                    class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#343434]/80 hover:border-pink-500/40"
                     @click="choosePreset((preset as any)[0], (preset as any)[1])">
               {{ (preset as any)[0] }}×{{ (preset as any)[1] }}
             </button>
@@ -794,7 +803,7 @@ watchDebounced(
                 </select>
               </div>
               <label class="ml-3 flex items-center gap-1 select-none">
-                <input type="checkbox" v-model="showGrid" class="accent-mint" />
+                <input type="checkbox" v-model="showGrid" class="accent-pink-500" />
                 <span>Show stud grid</span>
               </label>
             </div>
@@ -964,12 +973,12 @@ watchDebounced(
             <StepBadge :n="3" :active="activeStepIndex >= 2" />
             <h3 class="text-white/90 font-semibold">Build guide</h3>
             <div class="ml-2 flex items-center gap-2 text-sm">
-              <button :class="['px-3 py-1 rounded-md transition', tab==='2D' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5']" @click="tab='2D'">2D Mosaic</button>
-              <button :class="['px-3 py-1 rounded-md transition', tab==='3D' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5']" @click="tab='3D'">3D Preview</button>
+              <button :class="['px-3 py-1 rounded-md', tab==='2D' ? 'text-white border-b-2 border-pink-500' : 'text-white/70']" @click="tab='2D'">2D Mosaic</button>
+              <button :class="['px-3 py-1 rounded-md', tab==='3D' ? 'text-white border-b-2 border-pink-500' : 'text-white/70']" @click="tab='3D'">3D Preview</button>
             </div>
             <div class="ml-auto flex items-center gap-3">
               <label v-if="tab==='2D'" class="inline-flex items-center gap-2 text-xs text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
-                <input type="checkbox" class="accent-mint" v-model="showPlates" />
+                <input type="checkbox" class="accent-pink-500" v-model="showPlates" />
                 <span>{{ copy.mosaic.controls.showPlateOutlines }}</span>
               </label>
               <div v-if="mosaic.status==='error'" class="text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
