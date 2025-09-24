@@ -32,7 +32,7 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
         </template>
       </ClientOnly>
 
-      <p class="mt-4 text-center text-sm text-gray-400">
+      <p class="mt-4 text-sm text-pink-500 text-center">
         Drag the line to compare — original vs Briko mosaic (made in seconds).
       </p>
       </div>

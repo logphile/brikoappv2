@@ -8,85 +8,73 @@
       </h2>
       <div class="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         <!-- Mosaic Engine -->
-        <article class="group rounded-2xl border border-white/10 hover:border-[#FF0062] bg-gradient-to-br from-white/8 to-[#00E5A0]/[0.07] hover:to-[#00E5A0]/[0.12]
-                       p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
-                       transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
+        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">grid_view</span>
             <h3 class="text-lg font-semibold">Mosaic Engine</h3>
           </div>
-          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
+          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
           <p class="mt-2 text-sm text-[#343434]">
             Turn any photo into a colorful brick mosaic in seconds.
           </p>
         </article>
 
         <!-- 3D Voxel Preview -->
-        <article class="group rounded-2xl border border-white/10 hover:border-[#FF0062] bg-gradient-to-br from-white/8 to-[#00E5A0]/[0.07] hover:to-[#00E5A0]/[0.12]
-                       p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
-                       transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
+        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">view_in_ar</span>
             <h3 class="text-lg font-semibold">3D Voxel Preview</h3>
           </div>
-          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
+          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
           <p class="mt-2 text-sm text-[#343434]">
             See your build in 3D — rotate, zoom, and step through layers.
           </p>
         </article>
 
         <!-- Smart BOM -->
-        <article class="group rounded-2xl border border-white/10 hover:border-[#FF0062] bg-gradient-to-br from-white/8 to-[#00E5A0]/[0.07] hover:to-[#00E5A0]/[0.12]
-                       p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
-                       transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
+        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">receipt_long</span>
             <h3 class="text-lg font-semibold">Smart BOM</h3>
           </div>
-          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
+          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
           <p class="mt-2 text-sm text-[#343434]">
             Get an instant parts list with sizes and counts, ready to order.
           </p>
         </article>
 
         <!-- Fast Exports -->
-        <article class="group rounded-2xl border border-white/10 hover:border-[#FF0062] bg-gradient-to-br from-white/8 to-[#00E5A0]/[0.07] hover:to-[#00E5A0]/[0.12]
-                       p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
-                       transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
+        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">download</span>
             <h3 class="text-lg font-semibold">Fast Exports</h3>
           </div>
-          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
+          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
           <p class="mt-2 text-sm text-[#343434]">
             Download your build steps as PNG, CSV, or PDF with one click.
           </p>
         </article>
 
         <!-- Save & Share -->
-        <article class="group rounded-2xl border border-white/10 hover:border-[#FF0062] bg-gradient-to-br from-white/8 to-[#00E5A0]/[0.07] hover:to-[#00E5A0]/[0.12]
-                       p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
-                       transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
+        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">share</span>
             <h3 class="text-lg font-semibold">Save &amp; Share</h3>
           </div>
-          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
+          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
           <p class="mt-2 text-sm text-[#343434]">
             Keep your projects online and share them with friends
-            <span class="text-gray-400">(coming soon)</span>.
+            <span class="text-pink-500">(coming soon)</span>.
           </p>
         </article>
 
         <!-- Performance -->
-        <article class="group rounded-2xl border border-white/10 hover:border-[#FF0062] bg-gradient-to-br from-white/8 to-[#00E5A0]/[0.07] hover:to-[#00E5A0]/[0.12]
-                       p-5 ring-1 ring-white/10 hover:ring-[#FF0062]/30 focus-within:ring-[#FF0062]/40
-                       transform-gpu transition-transform transition-shadow duration-200 hover:-translate-y-1 hover:shadow-2xl">
+        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">bolt</span>
             <h3 class="text-lg font-semibold">Performance</h3>
           </div>
-          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-[#FF0062] transition-[width] duration-200 group-hover:w-16"></span>
+          <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
           <p class="mt-2 text-sm text-[#343434]">
             Smooth and instant — mosaics and 3D models render in under 2 seconds.
           </p>
