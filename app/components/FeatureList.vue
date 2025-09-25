@@ -3,9 +3,10 @@
 <template>
   <section class="bg-transparent text-[#343434]">
     <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
-      <h2 class="h-section-46 text-center mb-8">
-        Briko’s Geeky Superpowers
-      </h2>
+      <SectionHeader
+        title="Briko’s Geeky Superpowers"
+        subtitle="Smart color maps, cleaner tiling, instant exports."
+      />
       <div class="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         <!-- Mosaic Engine -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
