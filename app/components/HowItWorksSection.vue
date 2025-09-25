@@ -24,7 +24,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
       <div class="mx-auto max-w-6xl px-6 pt-14 sm:pt-16 pb-0">
       <!-- Custom Header (navy title, dark subhead, pink rule under subhead) -->
       <div class="text-center mb-8 md:mb-10">
-        <h2 class="font-extrabold tracking-tight text-[#2F3061] leading-[1.1] text-[46px]">
+        <h2 class="font-extrabold tracking-tight text-[#343434] leading-[1.1] text-[46px]">
           How it works
         </h2>
         <p class="mt-2 text-[#343434] leading-snug text-[1.125rem]">
@@ -40,21 +40,27 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">photo_camera</span>
           <div class="font-medium"><span class="font-bold mr-1">1.</span> Upload a photo</div>
         </li>
-        <li aria-hidden="true" class="hidden md:flex items-center px-1 text-[#343434]">→</li>
+        <li aria-hidden="true" class="hidden md:flex items-center px-2">
+          <span class="material-symbols-rounded text-[24px] text-[#343434]" aria-hidden="true">chevron_right</span>
+        </li>
 
         <!-- Step 2 -->
         <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
           <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">palette</span>
           <div class="font-medium"><span class="font-bold mr-1">2.</span> Pick size &amp; palette</div>
         </li>
-        <li aria-hidden="true" class="hidden md:flex items-center px-1 text-[#343434]">→</li>
+        <li aria-hidden="true" class="hidden md:flex items-center px-2">
+          <span class="material-symbols-rounded text-[24px] text-[#343434]" aria-hidden="true">chevron_right</span>
+        </li>
 
         <!-- Step 3 -->
         <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
           <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">visibility</span>
           <div class="font-medium"><span class="font-bold mr-1">3.</span> Generate preview</div>
         </li>
-        <li aria-hidden="true" class="hidden md:flex items-center px-1 text-[#343434]">→</li>
+        <li aria-hidden="true" class="hidden md:flex items-center px-2">
+          <span class="material-symbols-rounded text-[24px] text-[#343434]" aria-hidden="true">chevron_right</span>
+        </li>
 
         <!-- Step 4 -->
         <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
