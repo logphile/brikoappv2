@@ -26,6 +26,8 @@ useIntersectionObserver(sentinel, ([entry]) => {
       <SectionHeader
         title="How it works"
         subtitle="Four quick steps from photo to bricks."
+        align="center"
+        class="mb-8 md:mb-10"
       />
 
       <!-- Stepper (mono sticker: number + icon in one pill, copy on right) -->

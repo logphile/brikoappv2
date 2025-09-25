@@ -5,7 +5,9 @@
     <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
       <SectionHeader
         title="Briko’s Geeky Superpowers"
-        subtitle="Smart color maps, cleaner tiling, instant exports."
+        subtitle="The tech that makes bricks feel instant."
+        align="center"
+        class="mb-8 md:mb-10"
       />
       <div class="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         <!-- Mosaic Engine -->
