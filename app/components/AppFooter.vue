@@ -18,7 +18,7 @@
         <!-- Column: Build -->
         <section>
           <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Build</h3>
-          <ul class="space-y-1.5">
+          <ul class="space-y-3">
             <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
             <li><FooterBrick to="/voxel" label="3D Builder" /></li>
             <li><FooterBrick to="/avatar"  label="Brick Yourself" /></li>
@@ -29,7 +29,7 @@
         <!-- Column: Learn -->
         <section>
           <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Learn</h3>
-          <ul class="space-y-1.5">
+          <ul class="space-y-3">
             <li><FooterBrick to="/how-it-works"   label="Docs" /></li>
             <li><FooterBrick to="#"   label="Blog" /></li>
             <li><FooterBrick to="#"   label="Help Center" /></li>
@@ -40,7 +40,7 @@
         <!-- Column: Company -->
         <section>
           <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Company</h3>
-          <ul class="space-y-1.5">
+          <ul class="space-y-3">
             <li><FooterBrick to="mailto:hello@briko.app" label="Contact" /></li>
             <li><FooterBrick to="/gallery" label="Community Gallery" /></li>
             <li><FooterBrick to="#" label="Changelog" /></li>
@@ -51,7 +51,7 @@
         <!-- Column: Legal -->
         <section>
           <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Legal</h3>
-          <ul class="space-y-1.5">
+          <ul class="space-y-3">
             <li><FooterBrick to="/privacy" label="Privacy" /></li>
             <li><FooterBrick to="/terms"   label="Terms" /></li>
             <li><FooterBrick to="/sitemap.xml" label="Sitemap" /></li>
