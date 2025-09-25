@@ -69,7 +69,7 @@ useHead({
           tone="sun"
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
-          <div class="relative overflow-hidden rounded-3xl border border-[#343434] shadow-[0_6px_20px_rgba(52,52,52,0.35)] bg-[#2F3061] h-[340px] md:h-[420px]">
+          <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] h-[340px] md:h-[420px]">
             <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
             <!-- embedded look: no extra ring overlay -->
           </div>

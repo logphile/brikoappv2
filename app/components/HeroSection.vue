@@ -32,35 +32,35 @@ useIntersectionObserver(sentinel, ([entry]) => {
               your images
             </h1>
 
-            <ul class="space-y-3 text-lg">
+            <ul class="space-y-3 text-lg leading-relaxed">
               <li class="flex items-start gap-3">
                 <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">upload_file</span>
-                <span>Upload your photo</span>
+                <span class="pl-2 text-[#2F3061]">Upload your photo</span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">grid_view</span>
-                <span>Instantly see it in bricks</span>
+                <span class="pl-2 text-[#2F3061]">Instantly see it in bricks</span>
               </li>
               <li class="flex items-start gap-3">
                 <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">inventory_2</span>
-                <span>Get the parts, guide, and price</span>
+                <span class="pl-2 text-[#2F3061]">Get the parts, guide, and price</span>
               </li>
             </ul>
 
             <!-- Hero reassurance microcopy -->
-            <p class="mt-2 text-ink/80 text-sm">Free to try -- no signup required.</p>
+            <p class="mt-2 text-sm text-[#2F3061]">Free to try -- no signup required.</p>
           </div>
 
           <!-- Right side: before/after slider -->
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
-            <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-[0_4px_12px_rgba(0,0,0,0.15)] bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
+            <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
               <ClientOnly>
                 <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
                 <template #fallback>
                   <div class="h-full w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
               </ClientOnly>
-              <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-white/10"></div>
+              <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-[#343434]/20"></div>
             </div>
           </div>
         </div>
