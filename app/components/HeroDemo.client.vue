@@ -25,10 +25,10 @@ function refreshSources() {
 onMounted(refreshSources)
 watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
 
-// Purple theme runtime vars (belt-and-suspenders in addition to global CSS)
+// Theme runtime vars (belt-and-suspenders in addition to global CSS)
 const sliderVars = computed(() => ({
-  '--divider-color': '#2f3061',
-  '--default-handle-width': '96px',
+  '--divider-color': '#343434',
+  '--default-handle-width': '15px',
   '--default-handle-opacity': 0.9 as any
 }))
 
@@ -94,14 +94,14 @@ onMounted(() => {
           <!-- Interaction layer: purple divider + big handle -->
           <div class="absolute inset-0 z-10 group" style="touch-action:none"
                @pointerdown="onPointer" @pointermove="onPointer">
-            <!-- divider (purple) -->
-            <div class="absolute inset-y-4 w-[2px] rounded" :style="{ left: `calc(${pos}% - 1px)`, background: '#2f3061' }"></div>
+            <!-- divider (full height) -->
+            <div class="absolute inset-y-0 w-[2px]" :style="{ left: `calc(${pos}% - 1px)`, background: '#343434' }"></div>
 
-            <!-- handle (96px, purple, hide on keyboard focus) -->
-            <div class="absolute bottom-10 sm:bottom-8 -translate-x-1/2 grid place-items-center"
+            <!-- handle (12px, reduced by 50% from 24px) -->
+            <div class="absolute bottom-5 sm:bottom-4 -translate-x-1/2 grid place-items-center"
                  :style="{ left: `${pos}%` }" aria-hidden="true">
-              <div tabindex="0" class="h-24 w-24 rounded-full border border-[#2f3061]"
-                   style="background: rgba(47,48,97,0.12); box-shadow: 0 12px 32px -12px rgba(0,0,0,.55);"
+              <div tabindex="0" class="h-3 w-3 rounded-full border border-[#343434] focus:opacity-0"
+                   style="background: rgba(52,52,52,0.12); box-shadow: 0 8px 18px -10px rgba(0,0,0,.5);"
               ></div>
             </div>
           </div>
