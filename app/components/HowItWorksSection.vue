@@ -27,7 +27,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <h2 class="font-extrabold tracking-tight text-[#343434] leading-[1.1] text-[46px]">
           How it works
         </h2>
-        <p class="mt-2 text-[#343434] leading-snug text-[1.125rem]">
+        <p class="mt-2 text-[#2F3061] leading-snug text-[1.125rem]">
           Four quick steps from photo to bricks.
         </p>
         <span class="block mx-auto mt-3 h-[3px] w-16 rounded-full bg-pink"></span>
@@ -41,7 +41,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <div class="font-medium"><span class="font-bold mr-1">1.</span> Upload a photo</div>
         </li>
         <li aria-hidden="true" class="hidden md:flex items-center px-3">
-          <span class="material-symbols-rounded text-[32px] text-[#343434]" aria-hidden="true">chevron_right</span>
+          <span class="material-symbols-rounded text-[32px] text-[#343434] opacity-80 hover:opacity-100 transition" aria-hidden="true">chevron_right</span>
         </li>
 
         <!-- Step 2 -->
@@ -50,7 +50,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <div class="font-medium"><span class="font-bold mr-1">2.</span> Pick size &amp; palette</div>
         </li>
         <li aria-hidden="true" class="hidden md:flex items-center px-3">
-          <span class="material-symbols-rounded text-[32px] text-[#343434]" aria-hidden="true">chevron_right</span>
+          <span class="material-symbols-rounded text-[32px] text-[#343434] opacity-80 hover:opacity-100 transition" aria-hidden="true">chevron_right</span>
         </li>
 
         <!-- Step 3 -->
@@ -59,7 +59,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <div class="font-medium"><span class="font-bold mr-1">3.</span> Generate preview</div>
         </li>
         <li aria-hidden="true" class="hidden md:flex items-center px-3">
-          <span class="material-symbols-rounded text-[32px] text-[#343434]" aria-hidden="true">chevron_right</span>
+          <span class="material-symbols-rounded text-[32px] text-[#343434] opacity-80 hover:opacity-100 transition" aria-hidden="true">chevron_right</span>
         </li>
 
         <!-- Step 4 -->

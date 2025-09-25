@@ -17,7 +17,7 @@
             <h3 class="text-lg font-semibold">Mosaic Engine</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
-          <p class="mt-2 text-sm text-[#343434]">
+          <p class="mt-2 text-sm text-[#2F3061]">
             Turn any photo into a colorful brick mosaic in seconds.
           </p>
         </article>
@@ -29,7 +29,7 @@
             <h3 class="text-lg font-semibold">3D Voxel Preview</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
-          <p class="mt-2 text-sm text-[#343434]">
+          <p class="mt-2 text-sm text-[#2F3061]">
             See your build in 3D — rotate, zoom, and step through layers.
           </p>
         </article>
@@ -41,7 +41,7 @@
             <h3 class="text-lg font-semibold">Smart BOM</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
-          <p class="mt-2 text-sm text-[#343434]">
+          <p class="mt-2 text-sm text-[#2F3061]">
             Get an instant parts list with sizes and counts, ready to order.
           </p>
         </article>
@@ -53,7 +53,7 @@
             <h3 class="text-lg font-semibold">Fast Exports</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
-          <p class="mt-2 text-sm text-[#343434]">
+          <p class="mt-2 text-sm text-[#2F3061]">
             Download your build steps as PNG, CSV, or PDF with one click.
           </p>
         </article>
@@ -65,7 +65,7 @@
             <h3 class="text-lg font-semibold">Save &amp; Share</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
-          <p class="mt-2 text-sm text-[#343434]">
+          <p class="mt-2 text-sm text-[#2F3061]">
             Keep your projects online and share them with friends
             <span class="text-pink-500">(coming soon)</span>.
           </p>
@@ -78,7 +78,7 @@
             <h3 class="text-lg font-semibold">Performance</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
-          <p class="mt-2 text-sm text-[#343434]">
+          <p class="mt-2 text-sm text-[#2F3061]">
             Smooth and instant — mosaics and 3D models render in under 2 seconds.
           </p>
         </article>

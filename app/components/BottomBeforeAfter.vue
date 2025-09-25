@@ -27,8 +27,8 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
       />
 
       <ClientOnly>
-        <div class="relative mx-auto w-full framed-img bg-white/5 p-3 transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
-          <div class="rounded-xl overflow-hidden h-[420px] md:h-[560px]">
+        <div class="relative mx-auto w-full framed-img bg-white/5 p-3 shadow-lg transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
+          <div class="rounded-xl overflow-hidden ring-1 ring-[#343434]/20 h-[420px] md:h-[560px]">
             <HeroDemo :original-src="'/briko-alley.jpg?v=1'" :mosaic-src="'/briko-alley-2.jpg?v=1'" :fixed-height="true" />
           </div>
         </div>
@@ -37,7 +37,7 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
         </template>
       </ClientOnly>
 
-      <p class="mt-4 text-sm text-pink-500 text-center">
+      <p class="mt-4 text-sm text-[#2F3061] text-center">
         Drag the line to compare — original vs Briko mosaic (made in seconds).
       </p>
       </div>

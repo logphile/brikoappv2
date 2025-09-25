@@ -10,7 +10,9 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <li
         :class="[
           'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[#FF0062] bg-white/5 hover:bg-white/[0.07]'
+          accent === 'sun'
+            ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]'
+            : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <!-- Icon (pink) -->
@@ -18,7 +20,7 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
           <span class="material-symbols-rounded text-[22px]" aria-hidden="true">bolt</span>
         </span>
         <!-- Copy -->
-        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : '']">
+        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : 'text-[#2F3061]']">
           <span class="font-semibold">Instant</span> LEGO-style color mapping
         </p>
       </li>
@@ -27,13 +29,13 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <li
         :class="[
           'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[#FF0062] bg-white/5 hover:bg-white/[0.07]'
+          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <span :class="['inline-flex h-8 w-8 flex-none items-center justify-center rounded-md', accent === 'sun' ? 'text-[#FFD808]' : 'text-pink-500']">
           <span class="material-symbols-rounded text-[22px]" aria-hidden="true">grid_view</span>
         </span>
-        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : '']">
+        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : 'text-[#2F3061]']">
           <span class="font-semibold">Greedy tiling</span> → fewer plates, cleaner look
         </p>
       </li>
@@ -42,13 +44,13 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <li
         :class="[
           'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[#FF0062] bg-white/5 hover:bg-white/[0.07]'
+          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <span :class="['inline-flex h-8 w-8 flex-none items-center justify-center rounded-md', accent === 'sun' ? 'text-[#FFD808]' : 'text-pink-500']">
           <span class="material-symbols-rounded text-[22px]" aria-hidden="true">receipt_long</span>
         </span>
-        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : '']">
+        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : 'text-[#2F3061]']">
           Auto <span class="font-semibold">Bill of Materials</span> + cost estimate
         </p>
       </li>
@@ -57,13 +59,13 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <li
         :class="[
           'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[#FF0062] bg-white/5 hover:bg-white/[0.07]'
+          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <span :class="['inline-flex h-8 w-8 flex-none items-center justify-center rounded-md', accent === 'sun' ? 'text-[#FFD808]' : 'text-pink-500']">
           <span class="material-symbols-rounded text-[22px]" aria-hidden="true">download</span>
         </span>
-        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : '']">
+        <p :class="['mt-1 text-base leading-snug', accent === 'sun' ? 'text-[#FFD808]' : 'text-[#2F3061]']">
           One-click exports: <span class="font-semibold">PNG · CSV · PDF</span>
         </p>
       </li>

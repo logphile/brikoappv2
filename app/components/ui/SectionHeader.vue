@@ -9,7 +9,7 @@
 
     <p v-if="subtitle" :class="[
       'mt-2 leading-snug text-[1.125rem]',
-      tone === 'sun' ? 'text-[#FFD808]' : tone === 'light' ? 'text-white/90' : 'text-ink/80'
+      tone === 'sun' ? 'text-[#FFD808]' : tone === 'light' ? 'text-white/90' : 'text-[#2F3061]'
     ]">
       {{ subtitle }}
     </p>
