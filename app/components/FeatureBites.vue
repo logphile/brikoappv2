@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import StatusChip from '@/components/ui/StatusChip.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="text-[#343434]">
@@ -61,11 +59,14 @@ import StatusChip from '@/components/ui/StatusChip.vue'
       </li>
     </ul>
 
-    <!-- Trust badges / stats row (equal width, fills the column) -->
-    <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-      <StatusChip icon="speed" label="< 2s preview" />
-      <StatusChip icon="check_circle" label="Free to try" />
-      <StatusChip icon="lock_open" label="No signup required" />
+    <!-- Section CTA (two-line) -->
+    <div class="mt-5">
+      <ButtonPrimarySublabel
+        to="/mosaic"
+        label="Start free"
+        sublabel="No signup • Instant preview"
+        data-cta="section-start-free"
+      />
     </div>
   </div>
 </template>

@@ -46,6 +46,9 @@ useIntersectionObserver(sentinel, ([entry]) => {
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
+
+            <!-- Hero reassurance microcopy -->
+            <p class="mt-2 text-ink/80 text-sm">Free to try -- no signup required.</p>
           </div>
 
           <!-- Right side: before/after slider -->
