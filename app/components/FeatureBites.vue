@@ -8,7 +8,7 @@ import StatusChip from '@/components/ui/StatusChip.vue'
     <ul class="space-y-3">
       <!-- 1 -->
       <li
-        class="group flex items-start gap-4 rounded-xl border border-[#FF0062] bg-white/5
+        class="group flex items-start gap-4 rounded-xl border-2 border-[#FF0062] bg-white/5
                p-4 transition hover:border-[#FF0062] hover:bg-white/[0.07]"
       >
         <!-- Icon (pink) -->
@@ -23,7 +23,7 @@ import StatusChip from '@/components/ui/StatusChip.vue'
 
       <!-- 2 -->
       <li
-        class="group flex items-start gap-4 rounded-xl border border-[#FF0062] bg-white/5
+        class="group flex items-start gap-4 rounded-xl border-2 border-[#FF0062] bg-white/5
                p-4 transition hover:border-[#FF0062] hover:bg-white/[0.07]"
       >
         <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-pink-500">
@@ -36,7 +36,7 @@ import StatusChip from '@/components/ui/StatusChip.vue'
 
       <!-- 3 -->
       <li
-        class="group flex items-start gap-4 rounded-xl border border-[#FF0062] bg-white/5
+        class="group flex items-start gap-4 rounded-xl border-2 border-[#FF0062] bg-white/5
                p-4 transition hover:border-[#FF0062] hover:bg-white/[0.07]"
       >
         <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-pink-500">
@@ -49,7 +49,7 @@ import StatusChip from '@/components/ui/StatusChip.vue'
 
       <!-- 4 -->
       <li
-        class="group flex items-start gap-4 rounded-xl border border-[#FF0062] bg-white/5
+        class="group flex items-start gap-4 rounded-xl border-2 border-[#FF0062] bg-white/5
                p-4 transition hover:border-[#FF0062] hover:bg-white/[0.07]"
       >
         <span class="inline-flex h-8 w-8 flex-none items-center justify-center rounded-md text-pink-500">
