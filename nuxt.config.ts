@@ -7,6 +7,8 @@ const rootDir = dirname(fileURLToPath(import.meta.url))
 export default defineNuxtConfig({
   ssr: true,
   srcDir: 'app',
+  components: [{ path: '~/components', pathPrefix: false }],
+  devtools: { enabled: true },
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   plugins: [
     { src: '~/plugins/img-comparison-slider.client', mode: 'client' }

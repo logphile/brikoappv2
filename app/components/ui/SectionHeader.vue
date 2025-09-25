@@ -1,10 +1,10 @@
 <template>
-  <header :class="['mx-auto', align === 'center' ? 'text-center' : 'text-left']">
+  <header :class="['mx-auto', align === 'left' ? 'text-left' : 'text-center']">
     <h2 class="font-extrabold tracking-tight text-ink leading-[1.1] text-[46px]">
       {{ title }}
     </h2>
 
-    <p class="mt-2 text-ink/80 leading-snug text-[1.125rem]">
+    <p v-if="subtitle" class="mt-2 text-ink/80 leading-snug text-[1.125rem]">
       {{ subtitle }}
     </p>
 
@@ -17,7 +17,7 @@
 <script setup lang="ts">
 withDefaults(defineProps<{
   title: string
-  subtitle: string
+  subtitle?: string
   align?: 'left' | 'center'
 }>(), { align: 'center' })
 </script>
