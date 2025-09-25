@@ -32,7 +32,7 @@ const btn = {
   <div class="space-y-4">
     <!-- Row 1: Primary CTA -->
     <div :class="btn.row">
-      <ButtonPrimary type="button" :disabled="!canGenerate || busy" @click="emit('generate')">
+      <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canGenerate || busy" @click="emit('generate')">
         Generate Mosaic
       </ButtonPrimary>
       <!-- <p class="text-xs text-white/50">Step 1: generate your mosaic preview.</p> -->
@@ -40,7 +40,7 @@ const btn = {
 
     <!-- Row 2: Default next step (save private) -->
     <div :class="btn.row">
-      <ButtonOutline type="button" :disabled="!canSave || busy" @click="emit('savePrivate')">
+      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canSave || busy" @click="emit('savePrivate')">
         Save to Gallery (private)
       </ButtonOutline>
       <!-- <p class="text-xs text-white/50">Step 2: save privately to your gallery.</p> -->
@@ -48,11 +48,11 @@ const btn = {
 
     <!-- Row 3: Publish options -->
     <div :class="btn.row2">
-      <ButtonPrimary type="button" :disabled="!canSave || busy" @click="emit('saveAndPublish')">
+      <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canSave || busy" @click="emit('saveAndPublish')">
         Save &amp; Publish
       </ButtonPrimary>
 
-      <ButtonOutline type="button" :disabled="!canPublish || busy" @click="emit('publish')">
+      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canPublish || busy" @click="emit('publish')">
         Make Public
       </ButtonOutline>
     </div>
@@ -60,9 +60,9 @@ const btn = {
     <!-- Row 4: Utilities (de-emphasized) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
       <button
-        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium
-               text-white/80 hover:text-white hover:bg-white/5 transition duration-200 ease-out
-               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70
+        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium
+               text-[#2F3061] hover:text-white hover:bg-[#343434] transition duration-200 ease-out
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]
                disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="busy"
         @click="emit('saveProjectLegacy')"
@@ -70,9 +70,9 @@ const btn = {
         Save Project
       </button>
       <button
-        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium
-               text-white/80 hover:text-white hover:bg-white/5 transition duration-200 ease-out
-               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70
+        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium
+               text-[#2F3061] hover:text-white hover:bg-[#343434] transition duration-200 ease-out
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]
                disabled:opacity-50 disabled:cursor-not-allowed"
         :disabled="busy"
         @click="emit('uploadPreview')"
