@@ -30,47 +30,46 @@ useIntersectionObserver(sentinel, ([entry]) => {
         class="mb-8 md:mb-10"
       />
 
-      <!-- Stepper (mono sticker: number + icon in one pill, copy on right) -->
-      <div class="relative mt-10">
-        <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Four steps to create your brick build">
-          <li class="flex items-start gap-3">
-            <!-- Sticker -->
-            <div class="inline-flex items-center gap-2 rounded-full px-3.5 py-2 bg-sun border border-black/5 shadow-[0_6px_20px_-6px_rgba(0,0,0,.25)]">
-              <span class="text-sm font-semibold text-ink/90">1</span>
-              <span class="material-symbols-rounded w-5 h-5 text-ink" aria-hidden="true">file_upload</span>
-            </div>
-            <!-- Copy -->
-            <div class="text-sm leading-snug text-[#343434]">Upload a photo</div>
-          </li>
+      <!-- Steps: simple list on mobile, 2x2 soft cards on md+ -->
+      <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Step 1 -->
+        <li
+          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
+        >
+          <span
+            class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm"
+            aria-hidden="true"
+          >1</span>
+          <div class="text-ink font-semibold">Upload a photo</div>
+        </li>
 
-          <li class="flex items-start gap-3">
-            <div class="inline-flex items-center gap-2 rounded-full px-3.5 py-2 bg-sun border border-black/5 shadow-[0_6px_20px_-6px_rgba(0,0,0,.25)]">
-              <span class="text-sm font-semibold text-ink/90">2</span>
-              <span class="material-symbols-rounded w-5 h-5 text-ink" aria-hidden="true">palette</span>
-            </div>
-            <div class="text-sm leading-snug text-[#343434]">Pick size &amp; palette</div>
-          </li>
+        <!-- Step 2 -->
+        <li
+          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
+        >
+          <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm" aria-hidden="true">2</span>
+          <div class="text-ink font-semibold">Pick size &amp; palette</div>
+        </li>
 
-          <li class="flex items-start gap-3">
-            <div class="inline-flex items-center gap-2 rounded-full px-3.5 py-2 bg-sun border border-black/5 shadow-[0_6px_20px_-6px_rgba(0,0,0,.25)]">
-              <span class="text-sm font-semibold text-ink/90">3</span>
-              <span class="material-symbols-rounded w-5 h-5 text-ink" aria-hidden="true">auto_awesome</span>
-            </div>
-            <div class="text-sm leading-snug text-[#343434]">Generate preview</div>
-          </li>
+        <!-- Step 3 -->
+        <li
+          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
+        >
+          <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm" aria-hidden="true">3</span>
+          <div class="text-ink font-semibold">Generate preview</div>
+        </li>
 
-          <li class="flex items-start gap-3">
-            <div class="inline-flex items-center gap-2 rounded-full px-3.5 py-2 bg-sun border border-black/5 shadow-[0_6px_20px_-6px_rgba(0,0,0,.25)]">
-              <span class="text-sm font-semibold text-ink/90">4</span>
-              <span class="material-symbols-rounded w-5 h-5 text-ink" aria-hidden="true">download</span>
-            </div>
-            <div class="text-sm leading-snug text-[#343434]">Export PNG · CSV · PDF</div>
-          </li>
-        </ol>
-      </div>
+        <!-- Step 4 -->
+        <li
+          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
+        >
+          <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm" aria-hidden="true">4</span>
+          <div class="text-ink font-semibold">Export PNG · CSV · PDF</div>
+        </li>
+      </ul>
 
       <!-- CTA row -->
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <div class="mt-6 flex items-center gap-4 justify-center md:justify-start">
         <ButtonPrimary as="NuxtLink" to="/how-it-works" aria-label="See Full Guide" variant="pink">
           See Full Guide
           <span aria-hidden>→</span>
