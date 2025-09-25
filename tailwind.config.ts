@@ -46,6 +46,7 @@ export default <Partial<Config>>{
         mint: '#00E5A0',
         mintLight: '#2CF0B7',
         mintRing: '#1ad5a6',
+        sun: '#FFDA23',
         pinkLight: '#FF4F8A',
         brick: {
           50:'#FFF1E9',100:'#FFE4D6',200:'#FFC2AA',300:'#FF9A79',
