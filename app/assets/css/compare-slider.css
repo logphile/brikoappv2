@@ -9,6 +9,60 @@ img-comparison-slider.compare-mono {
   --default-handle-opacity: 0.9;    /* visible by default */
 }
 
+/* Purple theme: thicker purple divider, big handle, hide-on-focus */
+img-comparison-slider.compare-purple {
+  /* Custom properties supported by the web component */
+  --divider-width: 2px;
+  --divider-color: #2f3061;          /* brand purple */
+  --default-handle-width: 96px;      /* large/easy hit target */
+  --default-handle-opacity: 0.9;     /* visible by default */
+}
+
+/* Extra control via ::part() */
+img-comparison-slider.compare-purple::part(divider) {
+  width: 2px;
+  background-color: #2f3061;
+}
+
+img-comparison-slider.compare-purple::part(handle) {
+  width: 96px;
+  height: 96px;
+  border-radius: 9999px;
+  border: 1px solid #2f3061;
+  background: rgba(47,48,97,0.12);  /* faint glass */
+  box-shadow: 0 12px 32px -12px rgba(0,0,0,.55);
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+/* Hover: small lift; clearer */
+img-comparison-slider.compare-purple:hover::part(handle) {
+  opacity: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 42px -14px rgba(0,0,0,.6);
+}
+
+/* Keyboard focus: hide the handle so the split line is hero */
+img-comparison-slider.compare-purple:focus-visible::part(handle),
+img-comparison-slider.compare-purple:focus::part(handle) {
+  opacity: 0;
+}
+
+/* Optional: controller color */
+img-comparison-slider.compare-purple::part(controller) {
+  color: #2f3061;
+}
+
+/* Label chips for purple theme */
+img-comparison-slider.compare-purple .compare-label {
+  font: 600 12px/1.1 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #111827;                     /* ink */
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(255,255,255,.7);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+
 /* Fallback + fine control via ::part (works on modern browsers) */
 img-comparison-slider.compare-mono::part(divider) {
   background-color: #343434;        /* thin vertical line */
