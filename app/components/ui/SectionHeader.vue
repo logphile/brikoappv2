@@ -8,8 +8,8 @@
       {{ subtitle }}
     </p>
 
-    <!-- short pink underline: 64px wide, 3px thick -->
-    <span class="block mt-3 h-[3px] w-16 rounded-full bg-pink"></span>
+    <!-- short pink underline: 64px wide, 3px thick, centered -->
+    <span class="block mx-auto mt-3 h-[3px] w-16 rounded-full bg-pink"></span>
   </header>
   
 </template>
