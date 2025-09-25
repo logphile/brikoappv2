@@ -9,9 +9,9 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <!-- 1 -->
       <li
         :class="[
-          'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
+          'group flex items-start gap-4 rounded-xl border-2 p-4 transition-colors duration-200',
           accent === 'sun'
-            ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]'
+            ? 'border-[#FFD808] bg-transparent hover:bg-[#343434] hover:text-[#FFD808]'
             : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
@@ -28,8 +28,8 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <!-- 2 -->
       <li
         :class="[
-          'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
+          'group flex items-start gap-4 rounded-xl border-2 p-4 transition-colors duration-200',
+          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434] hover:text-[#FFD808]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <span :class="['inline-flex h-8 w-8 flex-none items-center justify-center rounded-md', accent === 'sun' ? 'text-[#FFD808]' : 'text-pink-500']">
@@ -43,8 +43,8 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <!-- 3 -->
       <li
         :class="[
-          'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
+          'group flex items-start gap-4 rounded-xl border-2 p-4 transition-colors duration-200',
+          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434] hover:text-[#FFD808]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <span :class="['inline-flex h-8 w-8 flex-none items-center justify-center rounded-md', accent === 'sun' ? 'text-[#FFD808]' : 'text-pink-500']">
@@ -58,8 +58,8 @@ withDefaults(defineProps<{ tone?: 'dark' | 'light'; accent?: 'pink' | 'sun' }>()
       <!-- 4 -->
       <li
         :class="[
-          'group flex items-start gap-4 rounded-xl border-2 p-4 transition',
-          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
+          'group flex items-start gap-4 rounded-xl border-2 p-4 transition-colors duration-200',
+          accent === 'sun' ? 'border-[#FFD808] bg-transparent hover:bg-[#343434] hover:text-[#FFD808]' : 'border-[rgba(52,52,52,0.25)] bg-transparent hover:bg-[#FFD808] hover:ring-1 hover:ring-[#343434]/10'
         ]"
       >
         <span :class="['inline-flex h-8 w-8 flex-none items-center justify-center rounded-md', accent === 'sun' ? 'text-[#FFD808]' : 'text-pink-500']">

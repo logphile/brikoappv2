@@ -34,16 +34,16 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
             <ul class="space-y-3 text-lg leading-relaxed">
               <li class="flex items-start gap-3">
-                <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">upload_file</span>
-                <span class="pl-2 text-[#2F3061]">Upload your photo</span>
+                <span class="material-symbols-rounded text-pink text-2xl mr-2" aria-hidden="true">upload_file</span>
+                <span class="text-[#2F3061]">Upload your photo</span>
               </li>
               <li class="flex items-start gap-3">
-                <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">grid_view</span>
-                <span class="pl-2 text-[#2F3061]">Instantly see it in bricks</span>
+                <span class="material-symbols-rounded text-pink text-2xl mr-2" aria-hidden="true">grid_view</span>
+                <span class="text-[#2F3061]">Instantly see it in bricks</span>
               </li>
               <li class="flex items-start gap-3">
-                <span class="material-symbols-rounded text-pink text-2xl" aria-hidden="true">inventory_2</span>
-                <span class="pl-2 text-[#2F3061]">Get the parts, guide, and price</span>
+                <span class="material-symbols-rounded text-pink text-2xl mr-2" aria-hidden="true">inventory_2</span>
+                <span class="text-[#2F3061]">Get the parts, guide, and price</span>
               </li>
             </ul>
 
