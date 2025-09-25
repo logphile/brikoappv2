@@ -1,6 +1,6 @@
 <template>
   <header :class="['mx-auto', align === 'left' ? 'text-left' : 'text-center']">
-    <h2 class="font-extrabold tracking-tight text-ink leading-[1.1] text-[46px]">
+    <h2 class="font-extrabold tracking-tight text-[#343434] leading-[1.1] text-[46px]">
       {{ title }}
     </h2>
 
