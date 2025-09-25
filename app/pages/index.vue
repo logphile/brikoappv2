@@ -62,7 +62,9 @@ useHead({
       <section class="mt-12 sm:mt-16">
         <SectionHeader
           title="From Photo to Parts—Fast"
-          subtitle="Color mapping, greedy tiling, BOM, and exports — done in under two seconds."
+          subtitle="Color mapping, greedy tiling, BOM, and exports—done in under two seconds."
+          align="center"
+          class="mb-8 md:mb-10"
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border-2 border-[#343434] shadow-[0_12px_32px_rgba(0,0,0,0.18)] bg-[#F5F4F1]/10 h-[340px] md:h-[420px]">
