@@ -40,8 +40,8 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">photo_camera</span>
           <div class="font-medium"><span class="font-bold mr-1">1.</span> Upload a photo</div>
         </li>
-        <li aria-hidden="true" class="hidden md:flex items-center px-2">
-          <span class="material-symbols-rounded text-[24px] text-[#343434]" aria-hidden="true">chevron_right</span>
+        <li aria-hidden="true" class="hidden md:flex items-center px-3">
+          <span class="material-symbols-rounded text-[32px] text-[#343434]" aria-hidden="true">chevron_right</span>
         </li>
 
         <!-- Step 2 -->
@@ -49,8 +49,8 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">palette</span>
           <div class="font-medium"><span class="font-bold mr-1">2.</span> Pick size &amp; palette</div>
         </li>
-        <li aria-hidden="true" class="hidden md:flex items-center px-2">
-          <span class="material-symbols-rounded text-[24px] text-[#343434]" aria-hidden="true">chevron_right</span>
+        <li aria-hidden="true" class="hidden md:flex items-center px-3">
+          <span class="material-symbols-rounded text-[32px] text-[#343434]" aria-hidden="true">chevron_right</span>
         </li>
 
         <!-- Step 3 -->
@@ -58,8 +58,8 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">visibility</span>
           <div class="font-medium"><span class="font-bold mr-1">3.</span> Generate preview</div>
         </li>
-        <li aria-hidden="true" class="hidden md:flex items-center px-2">
-          <span class="material-symbols-rounded text-[24px] text-[#343434]" aria-hidden="true">chevron_right</span>
+        <li aria-hidden="true" class="hidden md:flex items-center px-3">
+          <span class="material-symbols-rounded text-[32px] text-[#343434]" aria-hidden="true">chevron_right</span>
         </li>
 
         <!-- Step 4 -->

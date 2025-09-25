@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+withDefaults(defineProps<{ tone?: 'dark' | 'light' }>(), { tone: 'dark' })
+</script>
 
 <template>
-  <div class="text-[#343434]">
+  <div :class="[tone === 'light' ? 'text-white' : 'text-[#343434]']">
     <!-- Feature bites with Material icons in neutral ink; no mint badges -->
     <ul class="space-y-3">
       <!-- 1 -->
@@ -66,6 +68,7 @@
         label="Start free"
         sublabel="No signup • Instant preview"
         data-cta="section-start-free"
+        variant="pinkWhite"
       />
     </div>
   </div>

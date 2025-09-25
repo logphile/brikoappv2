@@ -20,7 +20,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
     enter-from-class="opacity-0 translate-y-4"
     enter-to-class="opacity-100 translate-y-0"
   >
-    <section class="relative overflow-hidden bg-transparent text-[#343434]">
+    <section class="relative overflow-hidden bg-[#FFD808] text-[#343434]">
       <div class="mx-auto max-w-7xl px-6 pt-24 pb-16">
         <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-12">
           <!-- Left side: stacked CTA and bullets -->
@@ -53,7 +53,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
           <!-- Right side: before/after slider -->
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
-            <div class="relative overflow-hidden rounded-[22px] border-2 border-[#343434] shadow-[0_12px_32px_rgba(0,0,0,0.18)] bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
+            <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-[0_4px_12px_rgba(0,0,0,0.15)] bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
               <ClientOnly>
                 <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
                 <template #fallback>

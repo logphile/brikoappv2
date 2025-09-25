@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <section class="bg-transparent text-[#343434]">
+  <section class="bg-[#FFD808] text-[#343434]">
     <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
       <SectionHeader
         title="Briko’s Geeky Superpowers"

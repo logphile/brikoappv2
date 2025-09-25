@@ -59,20 +59,21 @@ useHead({
 
     <main class="px-6 pt-16 pb-0 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
-      <section class="mt-12 sm:mt-16">
+      <section class="mt-12 sm:mt-16 bg-[#2F3061] text-white">
         <SectionHeader
           title="From Photo to Parts—Fast"
           subtitle="Color mapping, greedy tiling, BOM, and exports—done in under two seconds."
           align="center"
           class="mb-8 md:mb-10"
+          tone="light"
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
-          <div class="relative overflow-hidden rounded-3xl border-2 border-[#343434] shadow-[0_12px_32px_rgba(0,0,0,0.18)] bg-[#F5F4F1]/10 h-[340px] md:h-[420px]">
+          <div class="relative overflow-hidden rounded-3xl border border-[rgba(52,52,52,0.2)] shadow-[0_4px_12px_rgba(0,0,0,0.15)] bg-[#F5F4F1]/10 h-[340px] md:h-[420px]">
             <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
             <div class="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-white/10"></div>
           </div>
           <div class="my-auto">
-            <FeatureBites />
+            <FeatureBites tone="light" />
           </div>
         </div>
       </section>
@@ -83,7 +84,7 @@ useHead({
       </section>
     </main>
 
-    <section class="mt-12 sm:mt-16">
+    <section class="mt-12 sm:mt-16 bg-[#FFD808]">
       <BottomBeforeAfter />
     </section>
   </div>
