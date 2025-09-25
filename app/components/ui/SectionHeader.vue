@@ -1,10 +1,16 @@
 <template>
   <header :class="['mx-auto', align === 'left' ? 'text-left' : 'text-center']">
-    <h2 class="font-extrabold tracking-tight text-[#343434] leading-[1.1] text-[46px]">
+    <h2 :class="[
+      'font-extrabold tracking-tight leading-[1.1] text-[46px]',
+      tone === 'light' ? 'text-white' : 'text-[#343434]'
+    ]">
       {{ title }}
     </h2>
 
-    <p v-if="subtitle" class="mt-2 text-ink/80 leading-snug text-[1.125rem]">
+    <p v-if="subtitle" :class="[
+      'mt-2 leading-snug text-[1.125rem]',
+      tone === 'light' ? 'text-white/90' : 'text-ink/80'
+    ]">
       {{ subtitle }}
     </p>
 
@@ -19,5 +25,6 @@ withDefaults(defineProps<{
   title: string
   subtitle?: string
   align?: 'left' | 'center'
-}>(), { align: 'center' })
+  tone?: 'dark' | 'light'
+}>(), { align: 'center', tone: 'dark' })
 </script>
