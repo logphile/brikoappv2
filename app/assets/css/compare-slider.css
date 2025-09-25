@@ -7,6 +7,9 @@ img-comparison-slider.compare-mono {
   --divider-color: #343434;
   --default-handle-width: 15px;     /* large “invisible” grab area */
   --default-handle-opacity: 0.9;    /* visible by default */
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* Purple theme: thicker purple divider, big handle, hide-on-focus */
@@ -16,12 +19,19 @@ img-comparison-slider.compare-purple {
   --divider-color: #2f3061;          /* brand purple */
   --default-handle-width: 15px;      /* reduced size */
   --default-handle-opacity: 0.9;     /* visible by default */
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* Extra control via ::part() */
 img-comparison-slider.compare-purple::part(divider) {
   width: 2px;
   background-color: #2f3061;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  inset-block: 0;      /* logical top/bottom for safety */
 }
 
 img-comparison-slider.compare-purple::part(handle) {
@@ -67,6 +77,10 @@ img-comparison-slider.compare-purple .compare-label {
 img-comparison-slider.compare-mono::part(divider) {
   background-color: #343434;        /* thin vertical line */
   width: 2px;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  inset-block: 0;      /* logical top/bottom for safety */
 }
 
 img-comparison-slider.compare-mono::part(handle) {
