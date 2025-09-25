@@ -35,34 +35,34 @@ useIntersectionObserver(sentinel, ([entry]) => {
         <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Four steps to create your brick build">
           <li class="flex items-start gap-3">
             <!-- Sticker -->
-            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-[#FF0062] shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
               <span class="text-sm font-semibold text-ink/90">1</span>
-              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">file_upload</span>
+              <span class="material-symbols-rounded w-5 h-5 text-[#FF0062]" aria-hidden="true">file_upload</span>
             </div>
             <!-- Copy -->
             <div class="text-sm leading-snug text-[#343434]">Upload a photo</div>
           </li>
 
           <li class="flex items-start gap-3">
-            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-[#FF0062] shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
               <span class="text-sm font-semibold text-ink/90">2</span>
-              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">palette</span>
+              <span class="material-symbols-rounded w-5 h-5 text-[#FF0062]" aria-hidden="true">palette</span>
             </div>
             <div class="text-sm leading-snug text-[#343434]">Pick size &amp; palette</div>
           </li>
 
           <li class="flex items-start gap-3">
-            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-[#FF0062] shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
               <span class="text-sm font-semibold text-ink/90">3</span>
-              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">auto_awesome</span>
+              <span class="material-symbols-rounded w-5 h-5 text-[#FF0062]" aria-hidden="true">auto_awesome</span>
             </div>
             <div class="text-sm leading-snug text-[#343434]">Generate preview</div>
           </li>
 
           <li class="flex items-start gap-3">
-            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-white/10 shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/8 border border-[#FF0062] shadow-[0_6px_18px_-8px_rgba(0,0,0,.45)]">
               <span class="text-sm font-semibold text-ink/90">4</span>
-              <span class="material-symbols-rounded w-5 h-5 text-mint" aria-hidden="true">download</span>
+              <span class="material-symbols-rounded w-5 h-5 text-[#FF0062]" aria-hidden="true">download</span>
             </div>
             <div class="text-sm leading-snug text-[#343434]">Export PNG · CSV · PDF</div>
           </li>
