@@ -1,20 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 
-const pos = ref(60) // slider position (percent)
-let drag = false
-const clamp = (n: number) => Math.max(0, Math.min(100, n))
-function onDrag(e: PointerEvent) {
-  if (e.type === 'pointerdown') {
-    drag = true
-    ;(e.currentTarget as HTMLElement)?.setPointerCapture?.(e.pointerId)
-  }
-  if (!drag) return
-  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-  pos.value = clamp(((e.clientX - rect.left) / rect.width) * 100)
-}
-const originalOk = ref(true)
-const mosaicOk = ref(true)
 const props = defineProps<{
   originalSrc?: string
   mosaicSrc?: string
@@ -38,6 +24,13 @@ function refreshSources() {
 
 onMounted(refreshSources)
 watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
+
+// Purple theme runtime vars (belt-and-suspenders in addition to global CSS)
+const sliderVars = computed(() => ({
+  '--divider-color': '#2f3061',
+  '--default-handle-width': '96px',
+  '--default-handle-opacity': 0.9 as any
+}))
 </script>
 
 <template>
@@ -48,46 +41,16 @@ watch(() => [props.originalSrc, props.mosaicSrc], refreshSources)
              fixedHeight ? 'relative h-full' : 'relative aspect-[3/4] sm:aspect-[4/3]',
              'bg-gradient-to-br from-neutral-100/60 to-neutral-800/40'
            ]">
-        <!-- base: mosaic -->
-        <img :src="mosaicUrl"
-             alt="Mosaic preview"
-             class="absolute inset-0 h-full w-full object-cover select-none pointer-events-none" />
-
-        <!-- overlay: mosaic, clipped by slider -->
-        <div class="absolute inset-0 overflow-hidden" :style="{ width: pos + '%' }">
-          <img :src="originalUrl"
-               alt="Original photo"
-               class="h-full w-full object-cover select-none pointer-events-none" />
-          <!-- studs texture overlay -->
-          <div class="absolute inset-0 opacity-[.18] mix-blend-overlay"
-               style="background:url('/patterns/studs.svg') 0 0/24px 24px"></div>
-        </div>
-
-        <!-- labels -->
-        <div class="absolute left-3 top-3 text-[11px] px-2 py-0.5 rounded-full bg-black/55 text-white/90 backdrop-blur-sm">
-          Original
-        </div>
-        <div class="absolute right-3 top-3 text-[11px] px-2 py-0.5 rounded-full bg-black/55 text-white/90 backdrop-blur-sm">
-          Mosaic preview
-        </div>
-
-        <!-- drag overlay: divider + handle (pink) -->
-        <div class="absolute inset-0 z-10 group" style="touch-action:none"
-             @pointerdown="onDrag" @pointermove="onDrag" @pointerup="drag=false" @pointerleave="drag=false">
-          <!-- divider (pink) -->
-          <div class="rail absolute inset-y-4 w-[3px] rounded"
-               :style="{ left: `calc(${pos}% - 1px)` }"></div>
-
-          <!-- handle (larger, pink) -->
-          <div class="absolute bottom-10 sm:bottom-8 -translate-x-1/2 grid place-items-center"
-               :style="{ left: `${pos}%` }" aria-hidden="true"
-               role="slider" aria-label="Compare slider" aria-valuemin="0" aria-valuemax="100"
-               :aria-valuenow="Math.round(pos)">
-            <div tabindex="0" class="handle h-8 w-8 sm:h-7 sm:w-7 rounded-full bg-[var(--pink)] shadow-[0_4px_16px_rgba(255,0,98,.35)]
-                        transition duration-200 border-2 border-[rgba(17,24,39,.85)]"></div>
-          </div>
-        </div>
-
+        <img-comparison-slider
+          class="compare-purple block w-full h-full"
+          aria-label="Compare original and mosaic preview"
+          :style="sliderVars as any"
+        >
+          <img slot="first" :src="originalUrl" alt="Original image" style="width:100%;height:100%;object-fit:cover;" />
+          <img slot="second" :src="mosaicUrl" alt="Mosaic preview" style="width:100%;height:100%;object-fit:cover;" />
+          <span slot="first-label" class="compare-label">Original</span>
+          <span slot="second-label" class="compare-label">Mosaic preview</span>
+        </img-comparison-slider>
       </div>
     </div>
   </div>
