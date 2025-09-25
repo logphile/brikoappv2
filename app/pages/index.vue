@@ -59,7 +59,7 @@ useHead({
 
     <main class="px-6 pt-16 pb-0 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
-      <section class="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-[#2F3061] text-white py-16 md:py-28 scroll-mt-24 mt-24 mb-24">
+      <section class="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-[#2F3061] text-white py-16 md:py-28 scroll-mt-24 mt-16 md:mt-20 mb-24">
         <div class="mx-auto max-w-7xl px-4">
         <SectionHeader
           title="From Photo to Parts—Fast"
