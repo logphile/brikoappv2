@@ -71,13 +71,13 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
       <!-- CTA row -->
       <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <ButtonPrimary as="NuxtLink" to="/how-it-works" aria-label="See Full Guide">
+        <ButtonPrimary as="NuxtLink" to="/how-it-works" aria-label="See Full Guide" variant="pink">
           See Full Guide
           <span aria-hidden>→</span>
         </ButtonPrimary>
 
         <!-- Optional secondary nudge -->
-        <ButtonOutline as="NuxtLink" to="/mosaic">
+        <ButtonOutline as="NuxtLink" to="/mosaic" variant="pink">
           Try Photo to Bricks
         </ButtonOutline>
       </div>

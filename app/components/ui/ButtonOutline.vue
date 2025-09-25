@@ -1,14 +1,7 @@
 <template>
   <component
     :is="as"
-    class="relative inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold
-           text-mint border border-mint/60 bg-transparent
-           transition-all duration-200 will-change-transform
-           hover:bg-mint/10 hover:translate-y-[-1px]
-           hover:shadow-[0_10px_30px_-6px_rgba(0,229,160,0.45)]
-           active:translate-y-0
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70
-           disabled:opacity-50 disabled:pointer-events-none"
+    :class="btnClass"
     v-bind="$attrs"
   >
     <slot />
@@ -16,5 +9,29 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{ as?: string }>(), { as: 'button' })
+import { computed } from 'vue'
+
+const props = withDefaults(defineProps<{ as?: string; variant?: 'mint' | 'pink' }>(), { as: 'button', variant: 'mint' })
+
+const btnClass = computed(() => {
+  const base = `relative inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold
+                transition-all duration-200 will-change-transform
+                hover:translate-y-[-1px]
+                active:translate-y-0
+                focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none`
+  if (props.variant === 'pink') {
+    return [
+      base,
+      'text-pink border border-pink/60 bg-transparent',
+      'hover:bg-pink/10 hover:shadow-[0_10px_30px_-6px_rgba(255,0,98,0.35)]',
+      'focus-visible:ring-2 focus-visible:ring-pink/60'
+    ]
+  }
+  return [
+    base,
+    'text-mint border border-mint/60 bg-transparent',
+    'hover:bg-mint/10 hover:shadow-[0_10px_30px_-6px_rgba(0,229,160,0.45)]',
+    'focus-visible:ring-2 focus-visible:ring-mint/70'
+  ]
+})
 </script>
