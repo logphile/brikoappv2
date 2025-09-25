@@ -96,14 +96,6 @@ onMounted(() => {
                @pointerdown="onPointer" @pointermove="onPointer">
             <!-- divider (full height) -->
             <div class="absolute inset-y-0 w-[2px]" :style="{ left: `calc(${pos}% - 1px)`, background: '#343434' }"></div>
-
-            <!-- handle (12px, reduced by 50% from 24px) -->
-            <div class="absolute bottom-5 sm:bottom-4 -translate-x-1/2 grid place-items-center"
-                 :style="{ left: `${pos}%` }" aria-hidden="true">
-              <div tabindex="0" class="h-3 w-3 rounded-full border border-[#343434] focus:opacity-0"
-                   style="background: rgba(52,52,52,0.12); box-shadow: 0 8px 18px -10px rgba(0,0,0,.5);"
-              ></div>
-            </div>
           </div>
         </template>
       </div>

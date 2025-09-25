@@ -37,20 +37,20 @@ img-comparison-slider.compare-purple::part(divider) {
 }
 
 img-comparison-slider.compare-purple::part(handle) {
-  width: 15px;
-  height: 15px;
-  border-radius: 9999px;
-  border: 1px solid #343434;
-  background: rgba(52,52,52,0.12);  /* faint glass */
-  box-shadow: 0 12px 32px -12px rgba(0,0,0,.55);
-  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+  /* Hidden handle */
+  opacity: 0;
+  width: 0;
+  height: 0;
+  border: 0;
+  box-shadow: none;
+  pointer-events: none;
 }
 
 /* Hover: small lift; clearer */
 img-comparison-slider.compare-purple:hover::part(handle) {
-  opacity: 1;
-  transform: translateY(-1px);
-  box-shadow: 0 16px 42px -14px rgba(0,0,0,.6);
+  opacity: 0;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Keyboard focus: hide the handle so the split line is hero */
@@ -86,14 +86,13 @@ img-comparison-slider.compare-mono::part(divider) {
 }
 
 img-comparison-slider.compare-mono::part(handle) {
-  /* subtle circular handle, but low-chrome */
-  width: 16px;
-  height: 16px;
-  border-radius: 9999px;
-  border: 1px solid #343434;
-  background: rgba(52, 52, 52, 0.12);
-  box-shadow: 0 10px 30px -8px rgba(0,0,0,.45);
-  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+  /* Hidden handle */
+  opacity: 0;
+  width: 0;
+  height: 0;
+  border: 0;
+  box-shadow: none;
+  pointer-events: none;
 }
 
 /* Chevrons / arrows color (if the component exposes them via color currentColor) */
@@ -104,9 +103,9 @@ img-comparison-slider.compare-mono::part(controller) {
 
 /* Hover: tiny lift + clearer */
 img-comparison-slider.compare-mono:hover::part(handle) {
-  opacity: 1;
-  transform: translateY(-1px);
-  box-shadow: 0 14px 34px -10px rgba(0,0,0,.55);
+  opacity: 0;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Keyboard focus: make the big handle disappear so the split line is hero */
