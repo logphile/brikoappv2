@@ -640,23 +640,31 @@ watchDebounced(
   () => scheduleRetile(),
   { debounce: 250, maxWait: 1000, deep: true }
 )
+
 </script>
 
 <template>
-  <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434]">
-    <h1 class="text-3xl font-bold">{{ copy.mosaic.title }}</h1>
-    <p class="opacity-80">{{ copy.mosaic.subtitle }}</p>
-    <nav aria-label="Quick guide" class="mt-2 flex items-center gap-4 flex-wrap">
-      <a v-for="(s, i) in stepsGuide" :key="s.id" :href="'#' + s.id" class="flex items-center gap-2">
-        <StepBadge :n="i+1" :active="i <= activeStepIndex" />
-        <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">
-          {{ i === 0 ? 'file_upload' : (i === 1 ? 'tune' : (i === 2 ? 'format_list_numbered' : 'shopping_cart')) }}
+  <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434] mb-20">
+    <h1 class="text-4xl md:text-5xl font-bold text-[#343434]">{{ copy.mosaic.title }}</h1>
+    <p class="text-lg md:text-xl text-[#2F3061] mb-8">{{ copy.mosaic.subtitle }}</p>
+    <nav aria-label="Quick guide" class="mt-2 flex flex-col sm:flex-row gap-4">
+      <a
+        v-for="(s, i) in stepsGuide"
+        :key="s.id"
+        :href="'#' + s.id"
+        :class="[
+          'rounded-lg px-4 py-2 flex items-center gap-2 transition-colors duration-200',
+          (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808]' : 'bg-[#2F3061] text-white'
+        ]"
+      >
+        <span class="material-symbols-rounded text-[20px]" aria-hidden="true">
+          {{ i === 0 ? 'file_upload' : (i === 1 ? 'tune' : (i === 2 ? 'build' : 'shopping_cart')) }}
         </span>
-        <span :class="['text-sm', (i <= activeStepIndex) ? 'border-b-2 border-pink-500 text-[#343434]' : 'text-[#343434]/70']">{{ s.title }}</span>
+        <span class="text-sm">{{ s.title }}</span>
       </a>
     </nav>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(360px,420px)_1fr] items-start">
+    <div class="mt-12 grid gap-8 lg:grid-cols-[460px,1fr] items-start">
       <!-- left column -->
       <div class="lg:col-span-1">
         <aside class="space-y-6">
@@ -666,7 +674,7 @@ watchDebounced(
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
-        <div class="z-0 card-glass p-5 space-y-3">
+        <div class="z-0 bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6 space-y-6">
           <!-- Step 1: Upload -->
           <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
             <div class="flex items-center gap-3 mb-1">
@@ -674,12 +682,12 @@ watchDebounced(
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
                 <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
               </div>
-              <h2 class="text-base font-semibold">Upload your photo</h2>
+              <h2 class="text-xl font-semibold text-[#343434]">Upload your photo</h2>
             </div>
 
           <!-- Presets row: Auto / Line Art / Photo Pop -->
           <div class="mt-3">
-            <label class="block text-sm font-medium text-[#343434]/80 mb-1">Preset</label>
+            <label class="block text-sm font-medium text-[#2F3061] mb-1">Preset</label>
             <div class="flex gap-2 flex-wrap">
               <button :class="['px-3 py-1 rounded-full text-sm border', mode==='auto' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='auto'">Auto</button>
               <button :class="['px-3 py-1 rounded-full text-sm border', mode==='line-art' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='line-art'">Line Art</button>
@@ -700,11 +708,11 @@ watchDebounced(
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
                 <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">tune</span>
               </div>
-              <h2 class="text-base font-semibold">Tune mosaic</h2>
+              <h2 class="text-xl font-semibold text-[#343434]">Tune mosaic</h2>
             </div>
           </section>
           <div class="flex items-center gap-2">
-            <h3 class="text-[#343434] text-base font-semibold">Output size</h3>
+            <h3 class="text-[#343434] text-xl font-semibold">Output size</h3>
             <InfoTip label="About output size">
               Bigger sizes use more bricks and show more detail.
             </InfoTip>
@@ -722,11 +730,11 @@ watchDebounced(
             </button>
           </div>
           <div class="grid grid-cols-2 gap-5 text-sm">
-            <label>Width
-              <input type="range" min="16" max="256" step="1" v-model.number="target.w" @change="snapDim('w')" class="range-mint">
+            <label class="text-[#2F3061]">Width
+              <input type="range" min="16" max="256" step="1" v-model.number="target.w" @change="snapDim('w')" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
             </label>
-            <label>Height
-              <input type="range" min="16" max="256" step="1" v-model.number="target.h" @change="snapDim('h')" class="range-mint">
+            <label class="text-[#2F3061]">Height
+              <input type="range" min="16" max="256" step="1" v-model.number="target.h" @change="snapDim('h')" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
             </label>
           </div>
           <InlineStats :items="[
@@ -744,22 +752,22 @@ watchDebounced(
             <p class="mt-1 text-xs text-[#343434]/60">Pick exact dimensions, or use the sliders above.</p>
             <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
               <div>
-                <label class="block text-xs text-[#343434]/60 mb-1">Width</label>
-                <select v-model.number="widthSelStuds" class="select-mint" :aria-describedby="'desc-width'">
+                <label class="block text-xs text-[#2F3061] mb-1">Width</label>
+                <select v-model.number="widthSelStuds" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-width'">
                   <option v-for="n in dimOptions" :key="'w'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
                 </select>
                 <span id="desc-width" class="sr-only">Exact mosaic width. Matches the sliders above.</span>
               </div>
               <div>
-                <label class="block text-xs text-[#343434]/60 mb-1">Height</label>
-                <select v-model.number="heightSelStuds" class="select-mint" :aria-describedby="'desc-height'">
+                <label class="block text-xs text-[#2F3061] mb-1">Height</label>
+                <select v-model.number="heightSelStuds" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-height'">
                   <option v-for="n in dimOptions" :key="'h'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
                 </select>
                 <span id="desc-height" class="sr-only">Exact mosaic height. Matches the sliders above.</span>
               </div>
               <div>
-                <label class="block text-xs text-[#343434]/60 mb-1">Units</label>
-                <select v-model="units" class="select-mint" :aria-describedby="'desc-units'">
+                <label class="block text-xs text-[#2F3061] mb-1">Units</label>
+                <select v-model="units" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-units'">
                   <option value="studs">Studs</option>
                   <option value="inches">Inches</option>
                   <option value="centimeters">Centimeters</option>
@@ -794,10 +802,10 @@ watchDebounced(
             </div>
           </div>
           <div class="mt-3" v-if="showAdvanced">
-            <label class="block text-sm">Orientation</label>
+            <label class="block text-sm text-[#2F3061]">Orientation</label>
             <div class="flex items-center mt-1">
               <div class="min-w-[160px] max-w-[220px]">
-                <select v-model="mosaic.settings.snapOrientation" class="select-mint">
+                <select v-model="mosaic.settings.snapOrientation" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
                   <option value="both">Both</option>
                   <option value="horizontal">Horizontal</option>
                   <option value="vertical">Vertical</option>
@@ -814,12 +822,12 @@ watchDebounced(
           </label>
           <div class="mt-4 text-sm">
             <div class="flex items-center gap-2">
-              <label class="block text-sm text-white/80">Preview quality</label>
+              <label class="block text-sm text-[#2F3061]">Preview quality</label>
               <InfoTip label="About preview quality">
                 Faster preview = fewer bricks. Detail = more bricks, sharper look.
               </InfoTip>
             </div>
-            <select v-model.number="previewQuality" class="select-mint">
+            <select v-model.number="previewQuality" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
               <option :value="32">Fast (32×32)</option>
               <option :value="64">Balanced (64×64)</option>
               <option :value="96">Sharper (96×96)</option>
@@ -968,7 +976,7 @@ watchDebounced(
       <!-- Step 3: Build guide (preview + export) -->
       <section :id="stepsGuide[2].id" class="scroll-mt-28">
         <ClientOnly>
-        <div class="card-glass overflow-hidden">
+        <div class="bg-[#2F3061] rounded-xl shadow-lg ring-1 ring-[#343434]/20 p-6 overflow-hidden">
           <!-- Unified header -->
           <div class="flex flex-wrap items-center gap-3 border-b border-white/10 px-5 py-3">
             <StepBadge :n="3" :active="activeStepIndex >= 2" />
@@ -1173,6 +1181,7 @@ watchDebounced(
           <EmptyMosaicPlaceholder v-else />
           </div>
         </div>
+        <p class="mt-4 text-sm text-[#FFD808]/80">Upload a photo to generate your mosaic.</p>
         </div>
         </ClientOnly>
       </section>
