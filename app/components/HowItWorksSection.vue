@@ -22,62 +22,61 @@ useIntersectionObserver(sentinel, ([entry]) => {
   >
     <section class="bg-transparent text-[#343434]">
       <div class="mx-auto max-w-6xl px-6 pt-14 sm:pt-16 pb-0">
-      <!-- Unified Section Header -->
-      <SectionHeader
-        title="How it works"
-        subtitle="Four quick steps from photo to bricks."
-        align="center"
-        class="mb-8 md:mb-10"
-      />
+      <!-- Custom Header (navy title, dark subhead, pink rule under subhead) -->
+      <div class="text-center mb-8 md:mb-10">
+        <h2 class="font-extrabold tracking-tight text-[#2F3061] leading-[1.1] text-[46px]">
+          How it works
+        </h2>
+        <p class="mt-2 text-[#343434] leading-snug text-[1.125rem]">
+          Four quick steps from photo to bricks.
+        </p>
+        <span class="block mx-auto mt-3 h-[3px] w-16 rounded-full bg-pink"></span>
+      </div>
 
-      <!-- Steps: simple list on mobile, 2x2 soft cards on md+ -->
-      <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Steps: navy cards; vertical on mobile, horizontal row with arrows on md+ -->
+      <ul class="mt-6 flex flex-col gap-3 md:flex-row md:items-stretch md:gap-4">
         <!-- Step 1 -->
-        <li
-          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
-        >
-          <span
-            class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm"
-            aria-hidden="true"
-          >1</span>
-          <div class="text-ink font-semibold">Upload a photo</div>
+        <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
+          <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">photo_camera</span>
+          <div class="font-medium"><span class="font-bold mr-1">1.</span> Upload a photo</div>
         </li>
+        <li aria-hidden="true" class="hidden md:flex items-center px-1 text-[#343434]">→</li>
 
         <!-- Step 2 -->
-        <li
-          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
-        >
-          <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm" aria-hidden="true">2</span>
-          <div class="text-ink font-semibold">Pick size &amp; palette</div>
+        <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
+          <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">palette</span>
+          <div class="font-medium"><span class="font-bold mr-1">2.</span> Pick size &amp; palette</div>
         </li>
+        <li aria-hidden="true" class="hidden md:flex items-center px-1 text-[#343434]">→</li>
 
         <!-- Step 3 -->
-        <li
-          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
-        >
-          <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm" aria-hidden="true">3</span>
-          <div class="text-ink font-semibold">Generate preview</div>
+        <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
+          <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">visibility</span>
+          <div class="font-medium"><span class="font-bold mr-1">3.</span> Generate preview</div>
         </li>
+        <li aria-hidden="true" class="hidden md:flex items-center px-1 text-[#343434]">→</li>
 
         <!-- Step 4 -->
-        <li
-          class="flex items-center gap-3 md:items-start md:p-4 md:bg-white/5 md:border md:border-white/10 md:rounded-2xl md:shadow-[0_14px_40px_-18px_rgba(0,0,0,.6)]"
-        >
-          <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sun text-ink font-bold ring-1 ring-black/5 shadow-sm" aria-hidden="true">4</span>
-          <div class="text-ink font-semibold">Export PNG · CSV · PDF</div>
+        <li class="flex items-center gap-3 px-6 py-4 bg-[#2F3061] text-white rounded-2xl border border-white/10 shadow-[0_14px_40px_-18px_rgba(52,52,52,0.25)]">
+          <span class="material-symbols-rounded text-white text-[20px]" aria-hidden="true">download</span>
+          <div class="font-medium"><span class="font-bold mr-1">4.</span> Export PNG · CSV · PDF</div>
         </li>
       </ul>
 
       <!-- CTA row -->
-      <div class="mt-6 flex items-center gap-4 justify-center md:justify-start">
-        <ButtonPrimary as="NuxtLink" to="/how-it-works" aria-label="See Full Guide" variant="pink">
-          See Full Guide
-          <span aria-hidden>→</span>
-        </ButtonPrimary>
-
-        <!-- Optional secondary nudge -->
-        <ButtonOutline as="NuxtLink" to="/mosaic" variant="pink">
+      <div class="mt-10 flex items-center gap-4 justify-center">
+        <!-- Primary: solid pink with white text -->
+        <NuxtLink
+          to="/mosaic"
+          class="inline-flex items-center rounded-2xl px-5 py-3 font-semibold text-white bg-[#FF0062]
+                 transition hover:bg-[#E00559] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink/60"
+        >
           Try Photo to Bricks
+        </NuxtLink>
+
+        <!-- Secondary: outline pink -->
+        <ButtonOutline as="NuxtLink" to="/how-it-works" variant="pink">
+          See Full Guide →
         </ButtonOutline>
       </div>
       </div>
