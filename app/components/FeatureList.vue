@@ -8,7 +8,7 @@
       </h2>
       <div class="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         <!-- Mosaic Engine -->
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
+        <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">grid_view</span>
             <h3 class="text-lg font-semibold">Mosaic Engine</h3>
@@ -20,7 +20,7 @@
         </article>
 
         <!-- 3D Voxel Preview -->
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
+        <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">view_in_ar</span>
             <h3 class="text-lg font-semibold">3D Voxel Preview</h3>
@@ -32,7 +32,7 @@
         </article>
 
         <!-- Smart BOM -->
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
+        <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">receipt_long</span>
             <h3 class="text-lg font-semibold">Smart BOM</h3>
@@ -44,7 +44,7 @@
         </article>
 
         <!-- Fast Exports -->
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
+        <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">download</span>
             <h3 class="text-lg font-semibold">Fast Exports</h3>
@@ -56,7 +56,7 @@
         </article>
 
         <!-- Save & Share -->
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
+        <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">share</span>
             <h3 class="text-lg font-semibold">Save &amp; Share</h3>
@@ -69,7 +69,7 @@
         </article>
 
         <!-- Performance -->
-        <article class="rounded-2xl border border-white/10 bg-white/5 p-5 ring-1 ring-white/10 cursor-default select-none">
+        <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
             <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">bolt</span>
             <h3 class="text-lg font-semibold">Performance</h3>
