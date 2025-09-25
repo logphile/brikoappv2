@@ -8,6 +8,9 @@ export default defineNuxtConfig({
   ssr: true,
   srcDir: 'app',
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
+  plugins: [
+    { src: '~/plugins/img-comparison-slider.client', mode: 'client' }
+  ],
   typescript: { strict: true },
   routeRules: {
     '/community-studio': { redirect: '/gallery' },
