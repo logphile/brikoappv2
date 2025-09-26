@@ -6,10 +6,10 @@
         v-for="t in toasts"
         :key="t.id"
         :class="[
-          'pointer-events-auto rounded-xl px-4 py-3 shadow ring-1 text-sm flex items-start gap-3',
-          t.type === 'success' ? 'bg-green-500/15 ring-green-400/30 text-green-50' :
-          t.type === 'error' ? 'bg-red-500/15 ring-red-400/30 text-red-50' :
-                               'bg-white/10 ring-white/20 text-white'
+          'pointer-events-auto rounded-xl px-4 py-3 shadow-lg ring-1 text-sm flex items-start gap-3',
+          t.type === 'error' ? 'bg-[#FF0062] ring-[#FF0062]/30 text-[#FFD808]' :
+          t.type === 'success' ? 'bg-[#2F3061] ring-white/10 text-white' :
+                                 'bg-[#2F3061] ring-white/10 text-white'
         ]"
       >
         <div class="mt-0.5">

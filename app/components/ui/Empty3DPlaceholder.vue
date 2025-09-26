@@ -1,17 +1,16 @@
 <template>
-  <div class="relative h-[480px] rounded-2xl overflow-hidden ring-1 ring-white/10 bg-black/30 grid place-items-center">
+  <div class="relative h-[480px] rounded-xl overflow-hidden ring-1 ring-[#343434]/20 bg-[#2F3061] grid place-items-center">
     <!-- faint voxel-ish grid using two rotated linear-gradients -->
     <div class="absolute inset-0 opacity-20 pointer-events-none" :style="gridStyle"></div>
-    <div class="relative z-10 text-center space-y-3">
-      <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
-      <p class="text-white/80 text-sm">Upload an image to begin.</p>
+    <div class="relative z-10 text-center">
+      <span class="material-symbols-rounded block mx-auto text-[64px] text-[#FF0062]" aria-hidden="true">cloud_upload</span>
+      <p class="text-[#FFD808]/80 text-sm mt-4">Upload a photo to see your 3D bricks.</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useEmptyIcon } from '@/composables/useEmptyIcon'
 
 const gridStyle = computed(() => ({
   backgroundImage: [
@@ -21,7 +20,7 @@ const gridStyle = computed(() => ({
   backgroundSize: '16px 16px, 16px 16px'
 }))
 
-const emptySrc = useEmptyIcon()
+// icon is rendered via Material Symbols in the template
 </script>
 
 <style>

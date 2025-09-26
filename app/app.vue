@@ -10,7 +10,7 @@
     <ToastHost />
     <PrivacyBanner />
     <!-- vue-sonner toaster host -->
-    <Toaster position="bottom-right" expand rich-colors theme="dark" :duration="2500" />
+    <Toaster position="top-right" expand rich-colors theme="dark" :duration="2500" />
   </div>
 </template>
 

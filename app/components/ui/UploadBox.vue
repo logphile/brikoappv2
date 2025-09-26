@@ -72,26 +72,27 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
 
 <template>
   <div
-    class="uploadbox rounded-xl border border-white/10 bg-white/5 backdrop-blur p-4 sm:p-5
-           transition ring-0 focus-within:ring-2 ring-emerald-400/60"
-    :class="over ? 'border-emerald-400/60 bg-emerald-400/5' : ''"
+    class="uploadbox rounded-md border border-[#343434]/20 bg-white p-4 sm:p-5 text-[#2F3061]
+           transition focus-within:ring-2 focus-within:ring-[#FF0062] focus-within:ring-offset-2 focus-within:ring-offset-[#FFD808]"
+    :class="over ? 'border-[#FF0062]' : ''"
     :data-dragover="over ? 'true' : null"
     @dragover="onOver" @dragleave="onLeave" @drop="onDrop"
     role="button" tabindex="0" aria-label="Upload image"
   >
     <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
-    <p class="text-sm text-white/80">{{ label }}</p>
+    <p class="text-sm text-[#2F3061]">{{ label }}</p>
     <div class="mt-2">
       <button
         type="button"
-        class="px-3 py-2 rounded-md bg-white/10 hover:bg-white/20 text-sm font-medium
-               transition disabled:opacity-50 disabled:pointer-events-none"
+        class="px-3 py-2 rounded-md border border-[#FF0062] text-[#FF0062] bg-transparent text-sm font-medium
+               hover:bg-[#343434] hover:text-white transition disabled:opacity-50 disabled:pointer-events-none
+               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]"
         :disabled="disabled"
         @click="onBrowse"
       >
         {{ buttonText }}
       </button>
-      <span class="ml-3 text-xs text-white/50">PNG, JPG, or WebP • up to {{ maxSizeMB }} MB</span>
+      <span class="ml-3 text-xs text-[#2F3061]/70">PNG, JPG, or WebP • up to {{ maxSizeMB }} MB</span>
     </div>
 
     <!-- Hidden input -->

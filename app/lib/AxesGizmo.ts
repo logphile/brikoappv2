@@ -7,6 +7,7 @@ export class AxesGizmo {
   private size = 96 // px
   private padding = 12
   private root = new THREE.Group()
+  private base: any | null = null
 
   constructor() {
     const axes = new THREE.AxesHelper(0.7)
@@ -28,6 +29,36 @@ export class AxesGizmo {
 
     this.root.add(cx, cy, cz)
 
+    // Dark base plate behind gizmo for contrast
+    const baseGeo = new THREE.PlaneGeometry(1.6, 1.6)
+    const baseMat = new THREE.MeshBasicMaterial({ color: 0x343434, transparent: true, opacity: 0.6 })
+    this.base = new THREE.Mesh(baseGeo, baseMat)
+    ;(this.base as any).position.set(0, 0, -0.12)
+    this.scene.add(this.base)
+
+    // Yellow axis labels X/Y/Z
+    const makeLabel = (txt: string) => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 64; canvas.height = 64
+      const ctx = canvas.getContext('2d')!
+      ctx.clearRect(0,0,64,64)
+      ctx.fillStyle = '#FFD808'
+      ctx.font = 'bold 36px sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(txt, 32, 32)
+      const tex = new THREE.CanvasTexture(canvas)
+      tex.needsUpdate = true
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true })
+      const spr = new THREE.Sprite(mat)
+      spr.scale.set(0.35, 0.35, 0.35)
+      return spr
+    }
+    const lx = makeLabel('X'); lx.position.set(0.95, 0, 0)
+    const ly = makeLabel('Y'); ly.position.set(0, 0.95, 0)
+    const lz = makeLabel('Z'); lz.position.set(0, 0, 0.95)
+    this.root.add(lx, ly, lz)
+
     this.scene.add(this.root)
     this.camera.position.set(1.2, 1.2, 1.2)
     this.camera.lookAt(0, 0, 0)
@@ -45,7 +76,8 @@ export class AxesGizmo {
     const w = domElement.width / pr
     const h = domElement.height / pr
 
-    const x = w - this.size - this.padding
+    // Bottom-left corner inside the canvas
+    const x = this.padding
     const y = this.padding
 
     renderer.clearDepth()
