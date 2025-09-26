@@ -40,7 +40,7 @@ const btn = {
 
     <!-- Row 2: Default next step (save private) -->
     <div :class="btn.row">
-      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] hover:bg-[#343434] hover:text-[#FFD808] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!canSave || busy" @click="emit('savePrivate')">
+      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!canSave || busy" @click="emit('savePrivate')">
         Save to Gallery (private)
       </ButtonOutline>
       <!-- <p class="text-xs text-white/50">Step 2: save privately to your gallery.</p> -->
@@ -52,7 +52,7 @@ const btn = {
         Save &amp; Publish
       </ButtonPrimary>
 
-      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] hover:bg-[#343434] hover:text-[#FFD808] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!canPublish || busy" @click="emit('publish')">
+      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!canPublish || busy" @click="emit('publish')">
         Make Public
       </ButtonOutline>
     </div>

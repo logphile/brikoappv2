@@ -2,9 +2,9 @@
   <div class="relative h-[360px] rounded-xl overflow-hidden ring-1 ring-[#343434]/20 bg-[#2F3061] grid place-items-center">
     <!-- faint mosaic grid -->
     <div class="absolute inset-0 opacity-25 pointer-events-none" :style="gridStyle"></div>
-    <div class="relative z-10 text-center space-y-3">
+    <div class="relative z-10 text-center">
       <span class="material-symbols-rounded block mx-auto text-[64px] text-[#FF0062]" aria-hidden="true">cloud_upload</span>
-      <p class="text-[#FFD808]/80 text-sm">Upload a photo to generate your mosaic.</p>
+      <p class="text-[#FFD808]/80 text-sm mt-4">Upload a photo to see your mosaic.</p>
     </div>
   </div>
 </template>
