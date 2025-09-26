@@ -28,6 +28,8 @@ let currentMesh: any | null = null
 let animId = 0
 let glCanvas: HTMLCanvasElement | null = null
 let slicePlane: any | null = null
+let groundGrid: any | null = null
+let material: any | null = null
 let appearStart = 0
 let gizmo: AxesGizmo | null = null
 let baseRGB: Float32Array | null = null
@@ -312,10 +314,10 @@ function build () {
       wireframe: !!props.debug?.wireframe,
     })
   }
-  let material: any = makeMaterial()
+  material = makeMaterial()
   function applyMaterial(newMat?: any) {
     if (!inst) return
-    try { material?.dispose?.() } catch {}
+    try { (material as any)?.dispose?.() } catch {}
     material = newMat || makeMaterial()
     ;(inst as any).material = material
     ;(inst as any).material.needsUpdate = true
@@ -565,22 +567,22 @@ function build () {
 
   // Ground grid (faint) — centered at origin under the mesh
   const gridSize = Math.max(Math.max(w, h) * 2, 128)
-  const grid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
-  ;(grid as any).rotation.x = Math.PI / 2 // lie on XY
-  ;(grid as any).position.set(0, 0, 0)
+  groundGrid = new THREE.GridHelper(gridSize, gridSize, 0x2f3545, 0x1a1f2a)
+  ;(groundGrid as any).rotation.x = Math.PI / 2 // lie on XY
+  ;(groundGrid as any).position.set(0, 0, 0)
   // fade grid (draw behind and let studs occlude it)
-  const gm = (grid as any).material
+  const gm = (groundGrid as any).material
   if (Array.isArray(gm)) { gm.forEach((m:any) => { m.transparent = true; m.opacity = 0.25; m.depthWrite = false; m.depthTest = true }) }
   else { gm.transparent = true; gm.opacity = 0.25; (gm as any).depthWrite = false; (gm as any).depthTest = true }
-  ;(grid as any).renderOrder = -1
-  scene.add(grid)
+  ;(groundGrid as any).renderOrder = -1
+  scene.add(groundGrid)
 
   // Clipping plane to reveal layers [0..k] — arm after first successful render
   plane = null
 
-  // Slice plane visual indicator (mint, semi-transparent)
+  // Slice plane visual indicator (dark, semi-transparent)
   const pgeom = new (THREE as any).PlaneGeometry(Math.max(w, h), Math.max(w, h)) // XY plane by default
-  const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x00e5a0, transparent: true, opacity: 0.12, depthWrite: false, depthTest: false })
+  const pmat = new (THREE as any).MeshBasicMaterial({ color: 0x343434, transparent: true, opacity: 0.14, depthWrite: false, depthTest: false })
   slicePlane = new (THREE as any).Mesh(pgeom, pmat)
   ;(slicePlane as any).position.set(0, 0, layer.value)
   ;(slicePlane as any).renderOrder = 999
@@ -833,7 +835,31 @@ async function exportPng(filename = 'briko-voxel.png', scale = 1, bg?: string) {
   }
 }
 
-defineExpose({ setView, toFront, toIso, toTop, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null), exportPdf, exportPng })
+function resetCam(){ try { frameToGrid(gridW, gridH, gridD) } catch {}
+}
+function toggleGrid(){ try { if (groundGrid) groundGrid.visible = !groundGrid.visible } catch {}
+}
+function toggleWire(){ try { if (inst && (inst as any).material) { const mat:any = (inst as any).material; mat.wireframe = !mat.wireframe; mat.needsUpdate = true } } catch {}
+}
+function toggleLight(){ try {
+  if (!inst || !renderer) return
+  const mat:any = (inst as any).material
+  if ((mat as any).isMeshBasicMaterial) {
+    // switch to Standard material (lit)
+    material?.dispose?.()
+    material = new (THREE as any).MeshStandardMaterial({ vertexColors: true, flatShading: true, wireframe: !!props.debug?.wireframe, side: (THREE as any).FrontSide, toneMapped: false, metalness: 0.0, roughness: 1.0 })
+    ;(inst as any).material = material
+    renderer.toneMapping = (THREE as any).ACESFilmicToneMapping
+  } else {
+    // switch back to Basic (unlit)
+    material?.dispose?.()
+    material = new (THREE as any).MeshBasicMaterial({ vertexColors: true, flatShading: true, wireframe: !!props.debug?.wireframe, side: (THREE as any).DoubleSide, toneMapped: false })
+    ;(inst as any).material = material
+    renderer.toneMapping = (THREE as any).NoToneMapping
+  }
+} catch {}
+}
+defineExpose({ setView, toFront, toIso, toTop, resetCam, toggleGrid, toggleWire, toggleLight, renderer, scene, camera, depth: () => props.vox.depth, setLayer: (k:number) => { layer.value = k }, getCountsForLayer, testPaintStuds, debugInfo, ensureClipping, getCanvas: () => (renderer ? renderer.domElement : null), exportPdf, exportPng })
 // Compute a simple BOM directly from the voxel buffer using LEGO_PALETTE
 function computeBomFromVox(v: { colors: Uint8Array }) {
   const counts = new Map<number, number>()
@@ -906,7 +932,7 @@ async function exportPdf() {
     </div>
     <div v-if="vox && showLayerSlider" class="mt-2">
       <label class="block text-sm mb-1">Step through layers</label>
-      <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full range-mint" />
+      <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]" />
       <div class="text-xs text-white/60">Showing layers 0–{{ layer }} of {{ vox.depth }}</div>
     </div>
   </div>

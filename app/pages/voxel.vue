@@ -15,7 +15,6 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import ButtonOutline from '@/components/ui/ButtonOutline.vue'
-import StepChips from '@/components/StepChips.vue'
 // (computed imported above)
 import { LEGO_PALETTE } from '@/lib/legoPalette'
 import { useProjects } from '@/composables/useProjects'
@@ -41,6 +40,19 @@ const route = useRoute()
 const debug3d = computed(() => 'debug3d' in route.query)
 const showDebug = computed(() => process.dev || ('debug3d' in route.query))
 const autoDemo = computed(() => 'demo' in route.query)
+
+// Stepper data and gating
+const steps3d = [
+  { id: 'upload', title: 'Upload', icon: 'cloud_upload' },
+  { id: 'voxelize', title: 'Voxelize', icon: 'grid_view' },
+  { id: 'build-steps', title: 'Build steps', icon: 'layers' },
+  { id: 'preview', title: '3D preview', icon: 'view_in_ar' },
+]
+const activeStepIndex = computed(() => {
+  if (vox.value) return 3
+  if (srcBitmap.value || loading.value) return 1
+  return 0
+})
 
 // Empty placeholder grid for debug3d mounting (all empty voxels)
 const emptyVox: VoxelGrid = { w: 32, h: 32, depth: 1, colors: new Uint8Array(32 * 32 * 1).fill(255) as Uint8Array }
@@ -138,6 +150,39 @@ async function onFile(file: File) {
 
 function exportPng(){ previewRef.value?.exportPng?.('briko-voxel.png', 2, '#0f1422') }
 async function uploadPreview(){ await mosaic.uploadPreview() }
+
+// Export a simple CSV based on palette counts
+function exportCsv(){
+  if (!vox.value) return
+  const counts = new Map<number, number>()
+  const arr = vox.value.colors
+  for (let i=0;i<arr.length;i++) { const ci = arr[i]; if (ci !== 255) counts.set(ci, (counts.get(ci) || 0) + 1) }
+  const rows = [['ColorName','Hex','Qty']]
+  counts.forEach((qty, idx) => {
+    const entry = LEGO_PALETTE[idx]
+    const name = entry?.name || `Color ${idx}`
+    const hex = '#' + ((entry?.hex ?? 0x999999) & 0xFFFFFF).toString(16).padStart(6, '0')
+    rows.push([name, hex, String(qty)])
+  })
+  const csv = rows.map(r => r.map(v => /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v).join(',')).join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'briko-voxel.csv'
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+}
+
+// Quick sample loader
+async function useSample(){
+  try {
+    let res = await fetch('/samples/parrot-32.png')
+    if (!res.ok) res = await fetch('/demo-original.jpg')
+    if (!res.ok) return
+    const blob = await res.blob()
+    await onFile(new File([blob], 'sample.png', { type: blob.type }))
+  } catch (e) { console.warn('Sample load failed', e) }
+}
 
 // Previous multi-layer PDF export function removed in favor of client-only single-page exporter
 
@@ -253,123 +298,105 @@ async function makePublic(){
 </script>
 
 <template>
-  <main class="mx-auto max-w-6xl px-6 py-10 text-white">
-    <h1 class="text-3xl font-bold">{{ copy.builder3d.title }}</h1>
-    <div class="mt-2 h-1 w-16 rounded-full bg-pink-500/80"></div>
-    <p class="opacity-80">{{ copy.builder3d.subtitle }}</p>
-    <!-- ... (rest of the template remains the same) -->
-    <ButtonPrimary type="button" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
-    <ButtonOutline type="button" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
-    <!-- ... (rest of the template remains the same) -->
+  <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434] mb-20">
+    <!-- Page header -->
+    <h1 class="text-[#343434] text-4xl md:text-5xl font-bold">{{ copy.builder3d.title }}</h1>
+    <p class="text-[#2F3061] text-lg md:text-xl mb-8">{{ copy.builder3d.subtitle }}</p>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
-      <section class="space-y-4">
-        <!-- Upload card -->
-        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
-          <div class="flex items-center mb-2">
-            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
+    <!-- Stepper / mode tabs -->
+    <nav aria-label="Quick guide" class="mt-2 flex flex-wrap gap-6 md:gap-8 items-center">
+      <a v-for="(s, i) in steps3d" :key="s.id" :href="'#' + s.id"
+         :class="[
+           'rounded-lg min-h-[40px] px-4 py-2 flex items-center gap-3 transition-colors duration-150 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+           (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808] shadow-md' : 'bg-[#2F3061] text-white'
+         ]">
+        <span class="material-symbols-rounded text-[20px]" :class="(i <= activeStepIndex) ? 'text-[#FFD808]' : 'text-[#FF0062]'" aria-hidden="true">{{ s.icon }}</span>
+        <span class="text-sm" :class="(i <= activeStepIndex) ? 'font-semibold' : ''">{{ s.title }}</span>
+      </a>
+    </nav>
+
+    <!-- Two-column layout -->
+    <div class="mt-12 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
+      <!-- Controls panel (left) -->
+      <aside class="lg:col-span-1">
+        <div class="bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6 space-y-6">
+          <!-- Upload -->
+          <section id="upload" class="scroll-mt-28 pt-2">
+            <div class="flex items-center gap-3 mb-1">
+              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">cloud_upload</span>
+              </div>
+              <h2 class="text-xl font-semibold text-[#343434]">Upload</h2>
             </div>
-            <h2 class="text-sm font-semibold text-white">Upload</h2>
+            <div class="pt-2">
+              <UploadBox :maxSizeMB="25" accept="image/*" :label="'Drag a photo here or'" :buttonText="'browse'" @file="onFile" @error="(msg) => console.warn(msg)" />
+            </div>
+          </section>
+
+          <div class="divide-y divide-[#343434]/10">
+            <!-- Voxel settings -->
+            <section class="pt-2 pb-6">
+              <h3 class="text-xl font-semibold text-[#343434] mb-1">Voxel settings</h3>
+              <label class="block text-sm text-[#2F3061] mb-1">Resolution</label>
+              <input type="range" min="16" max="96" step="8" v-model.number="size" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
+              <div class="text-xs text-[#2F3061] mt-1">Higher = more detail (slower).</div>
+            </section>
+
+            <!-- Lighting -->
+            <section class="pt-2 pb-6">
+              <h3 class="text-xl font-semibold text-[#343434] mb-1">Lighting</h3>
+              <label class="block text-sm text-[#2F3061] mb-1">Brightness</label>
+              <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]" />
+              <div class="text-xs text-[#2F3061] mt-1">{{ exposure.toFixed(1) }}×</div>
+            </section>
+
+            <!-- Build steps -->
+            <section class="pt-2 pb-6">
+              <h3 class="text-xl font-semibold text-[#343434] mb-1">Build steps</h3>
+              <p class="text-sm text-[#2F3061]">Control how many layers per step.</p>
+            </section>
+
+            <!-- Export -->
+            <section class="pt-2 pb-0">
+              <h3 class="text-xl font-semibold text-[#343434] mb-3">Export</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
+                  <span v-if="!pdfWorking">One-click PDF</span>
+                  <span v-else>Generating…</span>
+                </ButtonPrimary>
+                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!vox" @click="exportPng">Export PNG</ButtonOutline>
+                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!vox" @click="exportCsv">Export CSV</ButtonOutline>
+              </div>
+            </section>
           </div>
-          <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
-          <div class="mt-3">
-            <UploadBox :maxSizeMB="25" accept="image/*" @file="onFile" @error="(msg) => console.warn(msg)" />
+
+          <!-- Primary/secondary actions -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!srcBitmap || loading" :aria-busy="loading" @click="scheduleRegen">{{ vox ? 'Rebuild' : 'Run voxelize' }}</ButtonPrimary>
+            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" @click="useSample">Use sample</ButtonOutline>
           </div>
+
+          <!-- Save/Publish -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
+            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- Viewport panel (right) -->
+      <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-4 md:p-6 relative">
+        <!-- Toolbar top-right -->
+        <div class="absolute right-4 top-4 z-10 flex gap-2">
+          <button type="button" title="Reset camera" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.resetCam?.()">Reset</button>
+          <button type="button" title="Toggle grid" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleGrid?.()">Grid</button>
+          <button type="button" title="Wireframe" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleWire?.()">Wire</button>
+          <button type="button" title="Lighting" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleLight?.()">Light</button>
         </div>
 
-        <!-- Resolution card -->
-        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
-          <div class="flex items-center mb-2">
-            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">grid_4x4</span>
-            </div>
-            <label class="text-sm font-semibold">Resolution</label>
-          </div>
-          <select v-model.number="size" class="w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500">
-            <option :value="32">32³</option>
-            <option :value="64">64³</option>
-          </select>
-        </div>
-        <!-- Brightness card -->
-        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
-          <div class="flex items-center mb-2">
-            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">light_mode</span>
-            </div>
-            <label class="text-sm font-semibold">Brightness</label>
-          </div>
-          <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full pink-slider" />
-          <div class="text-xs text-white/60 mt-1">{{ exposure.toFixed(1) }}×</div>
-        </div>
-        <!-- 3D mode card -->
-        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
-          <div class="flex items-center mb-2">
-            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">layers</span>
-            </div>
-            <label class="text-sm font-semibold">3D mode</label>
-          </div>
-          <select v-model="mode" class="w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500">
-            <option value="layered">Layered Mosaic (default)</option>
-            <option value="relief">Relief (height-map)</option>
-            <option value="hollow">Layered (hollow)</option>
-          </select>
-          <p class="text-xs opacity-70 mt-1">{{ modeHelp }}</p>
-        </div>
-        <!-- Debug (dev or via ?debug3d) -->
-        <div v-if="showDebug" class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
-          <div class="flex items-center mb-2">
-            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">bug_report</span>
-            </div>
-            <label class="text-sm font-semibold">Debug</label>
-          </div>
-          <div class="flex flex-col gap-1 text-sm">
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.useBasicMaterial" class="accent-pink-500" />
-              Use Basic Material
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.paintRainbow12" class="accent-pink-500" />
-              Paint First 12 Studs Rainbow
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.wireframe" class="accent-pink-500" />
-              Wireframe
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.showBounds" class="accent-pink-500" />
-              Show Bounds Helper
-            </label>
-            <label class="inline-flex items-center gap-2">
-              <input type="checkbox" v-model="debug.hideMesh" class="accent-pink-500" />
-              Hide Mesh
-            </label>
-            <div>
-              <button class="btn-soft h-8 px-3 rounded-md mt-1" @click="previewRef?.testPaintStuds?.(100)">Draw 100 Test Studs</button>
-            </div>
-          </div>
-          <p class="text-xs opacity-60 mt-1">Helps verify instanceColor path and lighting/tone mapping.</p>
-        </div>
-        <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
-          <div class="flex items-center mb-2">
-            <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-              <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">view_in_ar</span>
-            </div>
-            <label class="text-sm font-semibold">View</label>
-          </div>
-          <div class="flex gap-2">
-            <button :class="['rounded-full px-3 py-1 text-sm font-medium', view==='front' ? 'border border-pink-500 text-pink-600 bg-white/70 shadow-sm' : 'border border-white/25 text-gray-900 bg-white/60']" @click="toFront">Front</button>
-            <button :class="['rounded-full px-3 py-1 text-sm font-medium', view==='iso' ? 'border border-pink-500 text-pink-600 bg-white/70 shadow-sm' : 'border border-white/25 text-gray-900 bg-white/60']" @click="toIso">Iso</button>
-            <button :class="['rounded-full px-3 py-1 text-sm font-medium', view==='top' ? 'border border-pink-500 text-pink-600 bg-white/70 shadow-sm' : 'border border-white/25 text-gray-900 bg-white/60']" @click="toTop">Top</button>
-          </div>
-        </div>
-        <p v-if="vox" class="mt-2 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
-      </section>
-      <section class="lg:col-span-2 rounded-3xl border border-white/10 bg-white/5 shadow-lg p-2">
-        <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
-          <div class="w-2/3 max-w-md text-center space-y-3">
+        <div v-if="loading" class="h-[480px] grid place-items-center opacity-90">
+          <div class="w-2/3 max-w-md text-center space-y-3 text-white">
             <div>Processing… <span v-if="progress">{{ progress }}%</span></div>
             <div class="h-2 w-full bg-white/10 rounded">
               <div class="h-2 bg-white/60 rounded" :style="{ width: Math.max(2, progress) + '%' }"></div>
@@ -380,26 +407,17 @@ async function makePublic(){
           :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef"
           @unique-colors="(n:number)=> instUniqueColors = n" @exporting="onExporting" />
         <Empty3DPlaceholder v-else />
-        <!-- Palette swatch bar -->
-        <div v-if="vox && paletteUsed.length" class="px-2 pb-2">
+
+        <!-- Palette swatches -->
+        <div v-if="vox && paletteUsed.length" class="mt-3">
           <div class="flex items-center gap-3 flex-wrap">
-            <span class="text-xs opacity-70">Colors used in this build ({{ paletteUsed.length }}):</span>
+            <span class="text-xs text-white/80">Colors used in this build ({{ paletteUsed.length }}):</span>
             <div class="flex flex-wrap gap-1">
               <div v-for="c in paletteUsed" :key="c.idx" class="w-4 h-4 rounded-sm ring-1 ring-white/10" :style="{ backgroundColor: c.hex }" :title="`${c.name} (${c.count.toLocaleString()} bricks)`"></div>
             </div>
           </div>
         </div>
-        <div v-if="vox" class="px-2 pb-2 flex gap-2 flex-wrap">
-          <ButtonPrimary type="button" @click="exportPng">Export PNG</ButtonPrimary>
-          <ButtonOutline type="button" :disabled="!mosaic.currentProjectId" @click="uploadPreview">Upload Preview</ButtonOutline>
-          <ButtonPrimary type="button" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
-          <ButtonOutline type="button" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
-          <ButtonPrimary id="one-click-pdf" type="button" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
-            <span v-if="!pdfWorking">One-click PDF</span>
-            <span v-else>Generating…</span>
-          </ButtonPrimary>
-        </div>
-        <p v-if="vox" class="px-2 pb-3 text-xs opacity-60">{{ PRICE_ESTIMATE_SHORT }}</p>
+        <p v-if="vox" class="mt-2 text-xs text-white/70">{{ PRICE_ESTIMATE_SHORT }}</p>
       </section>
     </div>
   </main>
