@@ -14,8 +14,8 @@ const sz = computed(() => props.size === 'lg'
 
 const state = computed(() =>
   props.active
-    ? 'bg-pink-500 text-white ring-2 ring-white/60 shadow-sm'
-    : 'bg-white text-zinc-900 ring-1 ring-zinc-200 dark:bg-zinc-800 dark:text-white dark:ring-white/10'
+    ? 'bg-[#FFD808] text-[#343434] border border-[#343434]/20 shadow-sm'
+    : 'bg-white text-[#343434] border border-[#343434]/10 shadow-sm'
 )
 </script>
 

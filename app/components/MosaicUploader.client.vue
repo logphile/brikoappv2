@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useEmptyIcon } from '@/composables/useEmptyIcon'
 
 const emit = defineEmits<{(e:'file', f:File):void}>()
 const props = defineProps<{ embedded?: boolean }>()
 
 const over = ref(false)
-const emptySrc = useEmptyIcon()
 const inputEl = ref<HTMLInputElement | null>(null)
 
 function onPick(e:Event){
@@ -28,11 +26,11 @@ function onKey(e: KeyboardEvent){ if(e.key === 'Enter' || e.key === ' '){ e.prev
     :data-dragover="over ? 'true' : null"
     :class="[
       props.embedded
-        ? 'rounded-xl border border-white/10 bg-white/[.04] p-5 text-white/70 hover:border-mint/40 hover:bg-white/[.06] transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70'
-        : 'p-4 rounded-2xl bg-white/5 ring-1 ring-white/10 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-mintRing/70'
+        ? 'rounded-xl border border-[#343434]/20 bg-white/70 p-5 text-[#343434]/80 hover:bg-white/80 hover:border-[#FF0062]/40 transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]'
+        : 'p-4 rounded-2xl bg-white/5 ring-1 ring-white/10 text-sm text-white/80 hover:bg-white/10 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]'
     ]"
   >
-    <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
+    <span class="material-symbols-rounded block mx-auto text-[64px] text-[#FF0062]" aria-hidden="true">cloud_upload</span>
     <div class="mt-3 text-sm text-center">Drag & drop an image or</div>
     <label class="mt-2 inline-block cursor-pointer px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20">
       Browse… <input ref="inputEl" type="file" accept="image/*" class="hidden" @change="onPick">
