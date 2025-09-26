@@ -32,7 +32,7 @@ const btn = {
   <div class="space-y-4">
     <!-- Row 1: Primary CTA -->
     <div :class="btn.row">
-      <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canGenerate || busy" @click="emit('generate')">
+      <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!canGenerate || busy" @click="emit('generate')">
         Generate Mosaic
       </ButtonPrimary>
       <!-- <p class="text-xs text-white/50">Step 1: generate your mosaic preview.</p> -->
@@ -40,7 +40,7 @@ const btn = {
 
     <!-- Row 2: Default next step (save private) -->
     <div :class="btn.row">
-      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canSave || busy" @click="emit('savePrivate')">
+      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] hover:bg-[#343434] hover:text-[#FFD808] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!canSave || busy" @click="emit('savePrivate')">
         Save to Gallery (private)
       </ButtonOutline>
       <!-- <p class="text-xs text-white/50">Step 2: save privately to your gallery.</p> -->
@@ -48,11 +48,11 @@ const btn = {
 
     <!-- Row 3: Publish options -->
     <div :class="btn.row2">
-      <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canSave || busy" @click="emit('saveAndPublish')">
+      <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!canSave || busy" @click="emit('saveAndPublish')">
         Save &amp; Publish
       </ButtonPrimary>
 
-      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2" :disabled="!canPublish || busy" @click="emit('publish')">
+      <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] hover:bg-[#343434] hover:text-[#FFD808] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!canPublish || busy" @click="emit('publish')">
         Make Public
       </ButtonOutline>
     </div>

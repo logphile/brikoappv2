@@ -647,24 +647,26 @@ watchDebounced(
   <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434] mb-20">
     <h1 class="text-4xl md:text-5xl font-bold text-[#343434]">{{ copy.mosaic.title }}</h1>
     <p class="text-lg md:text-xl text-[#2F3061] mb-8">{{ copy.mosaic.subtitle }}</p>
-    <nav aria-label="Quick guide" class="mt-2 flex flex-col sm:flex-row gap-4">
+    <nav aria-label="Quick guide" class="mt-2 flex flex-wrap gap-4 items-center">
       <a
         v-for="(s, i) in stepsGuide"
         :key="s.id"
         :href="'#' + s.id"
         :class="[
-          'rounded-lg px-4 py-2 flex items-center gap-2 transition-colors duration-200',
-          (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808]' : 'bg-[#2F3061] text-white'
+          'rounded-lg px-4 py-2 flex items-center gap-3 transition-colors duration-150 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+          (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808] shadow-md' : 'bg-[#2F3061] text-white'
         ]"
       >
-        <span class="material-symbols-rounded text-[20px]" aria-hidden="true">
+        <span class="material-symbols-rounded text-[20px]"
+              :class="(i <= activeStepIndex) ? 'text-[#FFD808]' : 'text-[#FF0062]'"
+              aria-hidden="true">
           {{ i === 0 ? 'file_upload' : (i === 1 ? 'tune' : (i === 2 ? 'build' : 'shopping_cart')) }}
         </span>
-        <span class="text-sm">{{ s.title }}</span>
+        <span class="text-sm" :class="(i <= activeStepIndex) ? 'font-semibold' : ''">{{ s.title }}</span>
       </a>
     </nav>
 
-    <div class="mt-12 grid gap-8 lg:grid-cols-[460px,1fr] items-start">
+    <div class="mt-12 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
       <!-- left column -->
       <div class="lg:col-span-1">
         <aside class="space-y-6">
@@ -680,7 +682,7 @@ watchDebounced(
             <div class="flex items-center gap-3 mb-1">
               <StepBadge :n="1" size="lg" :active="activeStepIndex >= 0" />
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
+                <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">file_upload</span>
               </div>
               <h2 class="text-xl font-semibold text-[#343434]">Upload your photo</h2>
             </div>
@@ -706,7 +708,7 @@ watchDebounced(
             <div class="flex items-center gap-3 mb-1">
               <StepBadge :n="2" size="lg" :active="activeStepIndex >= 1" />
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">tune</span>
+                <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">tune</span>
               </div>
               <h2 class="text-xl font-semibold text-[#343434]">Tune mosaic</h2>
             </div>
@@ -856,12 +858,7 @@ watchDebounced(
 
           <!-- B) Parts list (NOT inside the sticky parent) -->
           <!-- Step 4: Buy parts (BOM & exports) -->
-          <section :id="stepsGuide[3].id" class="scroll-mt-28 pt-8">
-            <div class="flex items-center gap-3 mb-3">
-              <StepBadge :n="4" size="lg" :active="activeStepIndex >= 3" />
-              <h2 class="text-base font-semibold">Buy parts</h2>
-            </div>
-          </section>
+          <section :id="stepsGuide[3].id" class="scroll-mt-28 pt-8"></section>
           <div v-if="mosaic.tilingResult" class="relative z-10 card-glass p-5">
             <!-- Header -->
             <header class="px-4 pt-4 space-y-3">
@@ -873,7 +870,7 @@ watchDebounced(
 
               <!-- Row 2: export buttons -->
               <div class="flex flex-wrap gap-2">
-                <ButtonPrimary type="button"
+                <ButtonPrimary type="button" variant="pink"
                   class="h-10 px-3 rounded-lg whitespace-nowrap"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
@@ -886,7 +883,7 @@ watchDebounced(
                   Export PNG
                 </ButtonPrimary>
 
-                <ButtonPrimary type="button"
+                <ButtonPrimary type="button" variant="pink"
                   class="h-10 px-3 rounded-lg whitespace-nowrap"
                   :disabled="!mosaic.canExport"
                   :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''"
@@ -914,7 +911,7 @@ watchDebounced(
 
               <!-- Row 3: buy CTA -->
               <div>
-                <ButtonPrimary as="a"
+                <ButtonPrimary as="a" variant="pink"
                   href="https://briko.app/help/buy-bricks"
                   target="_blank" rel="noopener"
                   class="h-11 px-4 rounded-xl inline-flex items-center gap-2 justify-center w-full sm:w-auto"
@@ -947,7 +944,7 @@ watchDebounced(
               <!-- Mobile-only sticky CTA -->
               <div class="sticky bottom-0 bg-gradient-to-t from-[#0B0F16]/90 to-transparent pt-3 pb-3 md:hidden">
                 <div class="flex justify-end">
-                  <ButtonPrimary as="a"
+                  <ButtonPrimary as="a" variant="pink"
                     href="https://briko.app/help/buy-bricks"
                     target="_blank" rel="noopener"
                     class="h-11 px-4 rounded-xl inline-flex items-center gap-2"
@@ -982,8 +979,8 @@ watchDebounced(
             <StepBadge :n="3" :active="activeStepIndex >= 2" />
             <h3 class="text-white/90 font-semibold">Build guide</h3>
             <div class="ml-2 flex items-center gap-2 text-sm">
-              <button :class="['px-3 py-1 rounded-md', tab==='2D' ? 'text-white border-b-2 border-pink-500' : 'text-white/70']" @click="tab='2D'">2D Mosaic</button>
-              <button :class="['px-3 py-1 rounded-md', tab==='3D' ? 'text-white border-b-2 border-pink-500' : 'text-white/70']" @click="tab='3D'">3D Preview</button>
+              <button :class="['px-3 py-1 rounded-md', tab==='2D' ? 'text-white border-b-2 border-[#FF0062]' : 'text-white/70']" @click="tab='2D'">2D Mosaic</button>
+              <button :class="['px-3 py-1 rounded-md', tab==='3D' ? 'text-white border-b-2 border-[#FF0062]' : 'text-white/70']" @click="tab='3D'">3D Preview</button>
             </div>
             <div class="ml-auto flex items-center gap-3">
               <label v-if="tab==='2D'" class="inline-flex items-center gap-2 text-xs text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
@@ -1181,7 +1178,6 @@ watchDebounced(
           <EmptyMosaicPlaceholder v-else />
           </div>
         </div>
-        <p class="mt-4 text-sm text-[#FFD808]/80">Upload a photo to generate your mosaic.</p>
         </div>
         </ClientOnly>
       </section>
