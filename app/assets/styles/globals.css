@@ -81,6 +81,20 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
   /* Focus */
   .focus-cyber:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,0,98,.35); }
+
+  /* Disabled buttons */
+  .btn-pink:disabled,
+  .btn-purple-outline:disabled,
+  .btn-ivory-outline:disabled{
+    opacity:.5; cursor:not-allowed; transform:none; filter:none;
+  }
+
+  /* Remove number input spinners for consistent UI */
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  input[type=number]{ -moz-appearance: textfield; }
   /* Primary mint button (solid) */
   .btn-mint { /* existing class defined in buttons.css; keep here for consistency if used alone */
     @apply inline-flex items-center gap-2 rounded-xl px-3 py-1.5

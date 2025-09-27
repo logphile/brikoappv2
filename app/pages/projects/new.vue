@@ -1,18 +1,57 @@
 <template>
-  <main class="mx-auto max-w-md px-6 py-10 text-white">
-    <h1 class="text-2xl font-semibold">New Project</h1>
-    <form class="mt-6 space-y-4" @submit.prevent="create">
-      <label class="block text-sm">
-        <span>Title</span>
-        <input v-model="title" required class="mt-1 w-full rounded-xl bg-white/10 px-3 py-2" placeholder="My Mosaic" />
-      </label>
-      <div class="grid grid-cols-2 gap-3 text-sm">
-        <label>Width<input type="number" v-model.number="width" min="8" max="256" class="mt-1 w-full rounded-xl bg-white/10 px-3 py-2"/></label>
-        <label>Height<input type="number" v-model.number="height" min="8" max="256" class="mt-1 w-full rounded-xl bg-white/10 px-3 py-2"/></label>
-      </div>
-      <button class="w-full py-2 rounded-xl bg-cta-grad disabled:opacity-50" :disabled="loading">{{ loading ? 'Creating…' : 'Create' }}</button>
-    </form>
-    <p v-if="error" class="mt-3 text-sm text-red-300">{{ error }}</p>
+  <main class="min-h-screen bg-[var(--yellow)] text-[var(--dark)]">
+    <div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h1 class="text-3xl md:text-4xl font-bold">New Project</h1>
+      <p class="mt-2 text-[color:var(--dark)/.7]">Create a fresh build.</p>
+
+      <form class="card-ivory mt-6 p-6 sm:p-8 rounded-2xl space-y-6" @submit.prevent="create">
+        <!-- Title -->
+        <div>
+          <label for="title" class="block font-semibold">Title</label>
+          <input id="title" v-model="title" autocomplete="off"
+                 class="mt-2 w-full h-11 rounded-xl bg-[var(--ivory)]
+                        border border-[color:var(--ivory-border)]
+                        text-[var(--dark)] placeholder-[color:var(--dark)/.5]
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--purple)]"
+                 placeholder="My Mosaic" />
+        </div>
+
+        <!-- Dimensions -->
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="block font-semibold">Dimensions</span>
+            <span class="text-sm text-[color:var(--dark)/.6]">Range 16–512</span>
+          </div>
+          <div class="mt-2 grid grid-cols-2 gap-3">
+            <div>
+              <label for="w" class="sr-only">Width</label>
+              <input id="w" type="number" v-model.number="width" min="16" max="512" step="1"
+                     class="w-full h-11 rounded-xl bg-[var(--ivory)]
+                            border border-[color:var(--ivory-border)]
+                            text-[var(--dark)] placeholder-[color:var(--dark)/.5]
+                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--purple)]"
+                     placeholder="128" />
+            </div>
+            <div>
+              <label for="h" class="sr-only">Height</label>
+              <input id="h" type="number" v-model.number="height" min="16" max="512" step="1"
+                     class="w-full h-11 rounded-xl bg-[var(--ivory)]
+                            border border-[color:var(--ivory-border)]
+                            text-[var(--dark)] placeholder-[color:var(--dark)/.5]
+                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--purple)]"
+                     placeholder="128" />
+            </div>
+          </div>
+          <p v-if="error" class="mt-2 text-sm" style="color:#FF0062">{{ error }}</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button type="submit" class="btn-pink focus-cyber" :disabled="loading">Create</button>
+          <NuxtLink to="/studio" class="btn-purple-outline focus-cyber">Cancel</NuxtLink>
+        </div>
+      </form>
+    </div>
   </main>
 </template>
 
