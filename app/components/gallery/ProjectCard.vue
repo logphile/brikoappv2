@@ -1,75 +1,37 @@
 <template>
-  <article v-if="!broken" class="rounded-2xl bg-white/5 ring-1 ring-white/10 overflow-hidden group relative transition hover:shadow-mint-glow/20">
-    <!-- Preview: mosaic by default, original on hover/tap -->
-    <div class="h-[220px] bg-white/5 overflow-hidden relative"
-         @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
+  <article v-if="!broken" class="rounded-2xl border border-white/10 bg-white/5 shadow-[0_4px_18px_rgba(0,0,0,0.12)] hover:border-white/20 hover:shadow-[0_8px_28px_rgba(0,0,0,0.16)] transition overflow-hidden group relative">
+    <!-- Preview area: square, original swap on hover/tap -->
+    <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
       <img v-if="thumbUrl" :src="thumbUrl" alt=""
            loading="lazy" decoding="async"
-           class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300"
+           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
            :class="{ 'opacity-0': showOriginal }"
-           @error="onImgError"
-      />
+           @error="onImgError" />
       <div v-else class="absolute inset-0 grid place-items-center text-white/70 text-sm">No preview</div>
 
       <!-- Original (hover/tap reveal) -->
       <img v-if="originalUrl" :src="originalUrl" alt=""
            loading="lazy" decoding="async"
-           class="absolute inset-0 w-full h-[220px] object-cover transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100"
+           class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100"
            :class="{ 'opacity-100': showOriginal }"
-           @error="onImgError"
-      />
+           @error="onImgError" />
 
-      <!-- Hover overlay actions (mint unified) -->
-      <div class="pointer-events-none absolute inset-0 bg-midnight/0 group-hover:bg-midnight/90 transition-opacity"></div>
-      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity grid place-items-center">
-        <div class="flex gap-2">
-          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5" @click.stop="toProject(publicId)">👁 View</button>
-          <button class="pointer-events-auto btn-mint text-sm px-3 py-1.5 ml-1" @click.stop="remixProject">🔄 Remix</button>
+      <!-- Hover overlay actions: Remix (mint outline), View (pink solid) -->
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
+        <div class="w-full flex gap-2">
+          <button class="flex-1 px-3 py-1.5 rounded-xl border border-[#00E5A0]/60 text-[#00E5A0] bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30" @click.stop="remixProject">Remix</button>
+          <button class="flex-1 px-3 py-1.5 rounded-xl bg-[#FF0062] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30" @click.stop="toProject(publicId)">View</button>
         </div>
       </div>
     </div>
 
-    <!-- Meta -->
-    <div class="p-3">
-      <div class="flex items-center gap-2">
-        <div class="h-8 w-8 rounded-full bg-white/10 grid place-items-center text-xs font-semibold">
-          {{ avatarInitial }}
-        </div>
-        <div class="min-w-0">
-          <div class="truncate font-semibold">{{ username || '@anonymous' }}</div>
-          <div class="truncate text-sm text-[#343434]/80">{{ name }}</div>
-        </div>
+    <!-- Meta: title + date chip -->
+    <div class="flex items-center gap-2 px-3 py-2">
+      <div class="text-[14px] font-medium text-black/80 truncate">
+        {{ name }}
       </div>
-
-      <div class="mt-2 flex items-center justify-between text-xs text-[#343434]/75">
-        <div class="flex items-center gap-2">
-          <span>{{ bricks?.toLocaleString() }} bricks</span>
-          <span class="opacity-60">·</span>
-          <span>${{ cost?.toLocaleString() }} est.</span>
-        </div>
-        <div>{{ relative }}</div>
-      </div>
-
-      <div class="mt-2 flex items-center justify-between text-xs">
-        <div class="flex items-center gap-3">
-          <!-- Like (mint unified) -->
-          <button :aria-pressed="likedByMe" :title="likedByMe ? 'Unlike' : 'Like'" @click.stop="onLikeClick" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30 inline-flex items-center gap-1">
-            <span :class="likedByMe ? 'icon-mint' : 'icon-mint-dim'">♥</span>
-            <span :class="likedByMe ? 'react-mint' : 'react-mint-dim'">{{ likesLocal }}</span>
-          </button>
-          <!-- Save / Pin (mint unified) -->
-          <button :aria-pressed="savedByMe" :title="savedByMe ? 'Unsave' : 'Save'" @click.stop="onSaveClick" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30 inline-flex items-center gap-1">
-            <span :class="savedByMe ? 'icon-mint' : 'icon-mint-dim'">📌</span>
-            <span :class="savedByMe ? 'react-mint' : 'react-mint-dim'">{{ savesLocal }}</span>
-          </button>
-        </div>
-        <button title="Share" @click.stop="$emit('share')" class="px-2 py-1 rounded-lg border border-white/15 hover:border-white/30">↗</button>
-      </div>
-
-      <div v-if="tags?.length" class="mt-2 flex flex-wrap gap-2">
-        <span v-for="t in tags" :key="t" class="chip-mint">#{{ t }}</span>
-      </div>
+      <span class="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-black/5 text-black/60">{{ dateLocal }}</span>
     </div>
   </article>
 </template>
@@ -109,6 +71,7 @@ const emit = defineEmits<{
 
 const broken = ref(false)
 
+// local reaction state is not displayed in the simplified card, but keep emit-compatible handlers
 const likesLocal = ref(props.likes)
 const savesLocal = ref(props.saves ?? 0)
 watch(() => props.likes, v => { likesLocal.value = v })
@@ -168,6 +131,8 @@ function relativeTime(input?: string){
   const y = Math.floor(mo/12); return r(y,'year')
 }
 
-const relative = computed(() => relativeTime(props.date))
 const viewHref = computed(() => props.publicId ? `/p/${props.publicId}-${slugify(props.name)}` : '/mosaic')
+const dateLocal = computed(() => {
+  try { return props.date ? new Date(props.date).toLocaleDateString() : '' } catch { return '' }
+})
 </script>

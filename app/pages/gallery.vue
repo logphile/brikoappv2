@@ -1,34 +1,49 @@
 <template>
-  <main class="mx-auto max-w-6xl px-6 py-10 text-[#343434]">
-    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold">Community Gallery</h1>
-        <p class="opacity-80 text-sm">Public remixes and builds shared by the community.</p>
-        <InlineLoginBanner />
-      </div>
-      <div class="flex flex-wrap items-center gap-2 text-sm">
-        <button v-for="s in sorts" :key="s" @click="setSort(s)" class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40" :class="{ 'bg-white/10': sort===s }">{{ s }}</button>
-      </div>
+  <main class="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 pb-20 bg-[#FFD808] text-[#343434]">
+    <header class="">
+      <h1 class="text-[28px] font-bold tracking-tight">Community Gallery</h1>
+      <p class="mt-1 text-black/70">Public remixes and builds shared by the community.</p>
+      <div class="h-1 w-16 bg-[#00E5A0] rounded-full mt-3 mb-5"></div>
+      <InlineLoginBanner />
     </header>
 
-    <section class="mt-6 grid gap-4">
-      <div class="rounded-2xl bg-white/5 ring-1 ring-white/10 p-4">
-        <div class="flex flex-wrap items-center gap-3 text-sm">
-          <div class="flex items-center gap-2">
-            <span class="opacity-75">Kind:</span>
-            <button v-for="k in kinds" :key="k" @click="setKind(k)" class="px-3 py-1.5 rounded-xl border border-white/20 hover:border-white/40 capitalize" :class="{ 'bg-white/10': kind===k }">{{ k }}</button>
-          </div>
-          <div class="grow min-w-[260px]">
-            <TagPicker :model-value="selectedTags" :suggestions="tagSuggestions" placeholder="Filter by tag…" hint="Press Enter to create a new tag" @create="createTag" @select="addTag" @remove="removeTag" @search="searchTags" />
-          </div>
+    <!-- Filters bar -->
+    <section class="rounded-2xl border border-black/10 bg-white/30 backdrop-blur p-3 md:p-4 mb-6">
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Kind chips -->
+        <button v-for="k in kinds" :key="k" @click="setKind(k)"
+                class="px-3 py-1.5 rounded-full text-sm capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+                :class="kind===k ? 'bg-[#FF0062] text-white shadow-[0_6px_18px_rgba(255,0,98,0.28)]' : 'border border-black/10 bg-white/30 hover:bg-white/40 text-black/80'">
+          {{ k }}
+        </button>
+        <!-- Sort chips on the right -->
+        <div class="ml-auto flex gap-2">
+          <button v-for="s in sorts" :key="s" @click="setSort(s)"
+                  class="px-3 py-1.5 rounded-full text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+                  :class="sort===s ? 'bg-[#FF0062] text-white shadow-[0_6px_18px_rgba(255,0,98,0.28)]' : 'border border-black/10 bg-white/30 hover:bg-white/40 text-black/80'">
+            {{ s }}
+          </button>
         </div>
       </div>
+      <!-- Tag input line under chips -->
+      <div class="mt-3">
+        <TagPicker :model-value="selectedTags" :suggestions="tagSuggestions"
+                   placeholder="Filter by tag…" hint="Press Enter to create a new tag"
+                   @create="createTag" @select="addTag" @remove="removeTag" @search="searchTags" />
+      </div>
+    </section>
 
+    <!-- Gallery grid -->
+    <section>
       <div v-if="loading" class="opacity-70">Loading…</div>
       <div v-else>
         <p v-if="isEmptyLive && showSeeds" class="mb-3 text-sm text-[#343434]/80">Showing sample projects — log in to share your own build!</p>
-        <GalleryGrid :items="visibleItems" :liked-by-me-map="likedByMeMap" :saved-by-me-map="savedByMeMap" @like="likeItem" @unlike="unlikeItem" @save="saveItem" @unsave="unsaveItem" @remix="remixItem" @share="shareItem" />
-        <div v-if="visibleItems.length === 0" class="opacity-70 mt-6">No results.</div>
+        <GalleryGrid :items="visiblePaged" :liked-by-me-map="likedByMeMap" :saved-by-me-map="savedByMeMap"
+                     @like="likeItem" @unlike="unlikeItem" @save="saveItem" @unsave="unsaveItem" @remix="remixItem" @share="shareItem" />
+        <div v-if="visibleItems.length === 0" class="rounded-2xl border border-black/10 bg-white/30 p-8 text-center text-black/70 mt-6">
+          No results. Try clearing filters or <NuxtLink to="/studio" class="underline decoration-[#00E5A0]">browse all in Studio</NuxtLink>.
+        </div>
+        <button v-if="hasMore" @click="loadMore" class="mt-6 mx-auto block px-4 py-2 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] hover:shadow-[0_0_16px_rgba(0,229,160,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30">Load More</button>
       </div>
     </section>
   </main>
@@ -147,6 +162,12 @@ const visibleItems = computed(() => {
   else list.sort((a:any,b:any)=> (b as any).trending - (a as any).trending)
   return list
 })
+
+// Client-side pagination for the grid
+const displayLimit = ref(25)
+const visiblePaged = computed(() => visibleItems.value.slice(0, displayLimit.value))
+const hasMore = computed(() => visibleItems.value.length > displayLimit.value)
+function loadMore(){ displayLimit.value += 25 }
 
 onMounted(async () => {
   await fetchGallery()
