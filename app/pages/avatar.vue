@@ -2,32 +2,32 @@
   <Transition appear enter-active-class="transition ease-out duration-600"
               enter-from-class="opacity-0 translate-y-2"
               enter-to-class="opacity-100 translate-y-0">
-  <main class="mx-auto max-w-6xl px-6 py-10 text-white">
+  <main class="mx-auto max-w-6xl px-6 py-10 text-white bg-ink">
     <div class="flex items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-semibold">{{ copy.avatar.title }}</h1>
-        <div class="mt-2 h-1 w-16 rounded-full bg-pink-500/80"></div>
+        <div class="mt-2 h-1 w-16 rounded-full bg-mint/70"></div>
         <p class="opacity-80 text-sm mt-2">{{ copy.avatar.subtitle }}</p>
         <ul class="mt-3 flex flex-wrap items-center gap-4 select-none">
           <li class="inline-flex items-center gap-2">
-            <span class="h-7 w-7 grid place-items-center rounded-full bg-pink-500 text-white text-xs font-bold ring-2 ring-white/60">1</span>
-            <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">file_upload</span>
-            <span class="text-sm text-[#343434]">{{ copy.avatar.steps[0] }}</span>
+            <span :class="['h-7 w-7 grid place-items-center rounded-full text-xs font-bold ring-2', currentStep >= 1 ? 'bg-mint text-ink ring-white/60' : 'bg-white/10 text-white/60 ring-white/20']">1</span>
+            <span :class="['material-symbols-rounded text-[18px]', currentStep >= 1 ? 'text-mint' : 'text-white/40']" aria-hidden="true">file_upload</span>
+            <span :class="['text-sm', currentStep >= 1 ? 'text-white/90' : 'text-white/40']">{{ copy.avatar.steps[0] }}</span>
           </li>
           <li class="inline-flex items-center gap-2">
-            <span class="h-7 w-7 grid place-items-center rounded-full bg-pink-500 text-white text-xs font-bold ring-2 ring-white/60">2</span>
-            <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">palette</span>
-            <span class="text-sm text-[#343434]">{{ copy.avatar.steps[1] }}</span>
+            <span :class="['h-7 w-7 grid place-items-center rounded-full text-xs font-bold ring-2', currentStep >= 2 ? 'bg-mint text-ink ring-white/60' : 'bg-white/10 text-white/60 ring-white/20']">2</span>
+            <span :class="['material-symbols-rounded text-[18px]', currentStep >= 2 ? 'text-mint' : 'text-white/40']" aria-hidden="true">palette</span>
+            <span :class="['text-sm', currentStep >= 2 ? 'text-white/90' : 'text-white/40']">{{ copy.avatar.steps[1] }}</span>
           </li>
           <li class="inline-flex items-center gap-2">
-            <span class="h-7 w-7 grid place-items-center rounded-full bg-pink-500 text-white text-xs font-bold ring-2 ring-white/60">3</span>
-            <span class="material-symbols-rounded text-[18px] text-pink-500" aria-hidden="true">download</span>
-            <span class="text-sm text-[#343434]">{{ copy.avatar.steps[2] }}</span>
+            <span :class="['h-7 w-7 grid place-items-center rounded-full text-xs font-bold ring-2', currentStep >= 3 ? 'bg-mint text-ink ring-white/60' : 'bg-white/10 text-white/60 ring-white/20']">3</span>
+            <span :class="['material-symbols-rounded text-[18px]', currentStep >= 3 ? 'text-mint' : 'text-white/40']" aria-hidden="true">download</span>
+            <span :class="['text-sm', currentStep >= 3 ? 'text-white/90' : 'text-white/40']">{{ copy.avatar.steps[2] }}</span>
           </li>
         </ul>
       </div>
       <div class="flex items-center gap-3">
-        <button class="btn btn-primary h-10"
+        <button class="btn-mint"
                 :disabled="!outReady"
                 @click="doExportPng">Export PNG</button>
         <button class="btn-outline-mint h-10"
@@ -47,30 +47,31 @@
         <!-- Controls column -->
         <aside class="space-y-4">
           <!-- Presets -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-2">
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
+                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">palette</span>
               </div>
               <h3 class="text-base font-semibold">Style presets</h3>
             </div>
-            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
             <div class="mt-4">
               <PresetChips v-model:preset="preset" />
             </div>
           </div>
 
           <!-- Upload -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-2">
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">file_upload</span>
+                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">file_upload</span>
               </div>
               <h3 class="text-base font-semibold">Upload</h3>
             </div>
-            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
             <div class="mt-4">
               <UploadBox
+                variant="glass"
                 :maxSizeMB="25"
                 accept="image/*"
                 @file="handleSelfieFile"
@@ -80,14 +81,14 @@
           </div>
 
           <!-- Size & Quality -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-2">
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">straighten</span>
+                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">straighten</span>
               </div>
               <h3 class="text-base font-semibold">Output & Preview</h3>
             </div>
-            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
             <div class="mt-4 space-y-4">
               <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
               <PreviewQualitySelect v-model:quality="quality" />
@@ -95,55 +96,55 @@
           </div>
 
           <!-- Options -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-2">
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text:[20px] text-pink-500" aria-hidden="true">tune</span>
+                <span class="material-symbols-rounded text:[20px] text-mint" aria-hidden="true">tune</span>
               </div>
               <h3 class="text-base font-semibold">Options</h3>
             </div>
-            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
             <div class="mt-4 flex flex-wrap gap-4 items-center">
               <label class="inline-flex items-center gap-2">
-                <input type="checkbox" class="accent-pink-500" v-model="ditherFS" />
+                <input type="checkbox" class="accent-mint" v-model="ditherFS" />
                 <span>Dither (FS)</span>
               </label>
               <label class="inline-flex items-center gap-2">
-                <input type="checkbox" class="accent-pink-500" v-model="studStyle" />
+                <input type="checkbox" class="accent-mint" v-model="studStyle" />
                 <span>Stud style</span>
               </label>
               <label class="inline-flex items-center gap-2">
-                <input type="checkbox" class="accent-pink-500" v-model="showPlateOutlines" />
+                <input type="checkbox" class="accent-mint" v-model="showPlateOutlines" />
                 <span>Show plate outlines</span>
               </label>
             </div>
           </div>
 
           <!-- Palette -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-2">
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
                 <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
               </div>
               <h3 class="text-base font-semibold">Palette</h3>
             </div>
-            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
             <div class="mt-4">
               <PaletteSwatches v-model="paletteName" />
             </div>
           </div>
 
           <!-- Background -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-2">
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">format_color_fill</span>
+                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">format_color_fill</span>
               </div>
               <h3 class="text-base font-semibold">Background</h3>
             </div>
-            <div class="mt-2 h-1 w-8 rounded bg-pink-500/90"></div>
+            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
             <div class="mt-4 space-y-3">
-              <select v-model="bgMode" class="w-full rounded-xl border border-white/20 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-500 px-3 py-2">
+              <select v-model="bgMode" class="select-mint">
                 <option value="keep">Keep quantized image</option>
                 <option value="solid">Solid color</option>
                 <option value="transparent">Transparent</option>
@@ -156,7 +157,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-sm p-5 cursor-default select-none">
+          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
             <div class="flex items-center gap-3">
               <button class="btn-mint" :disabled="loading || !imgReady" @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
               <span class="inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-gray-900 ml-auto">
@@ -165,20 +166,22 @@
               </span>
             </div>
             <div class="flex gap-2 pt-3">
-              <button class="btn-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
-              <button class="btn-outline-mint px-4 rounded-xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+              <button class="btn-mint rounded-2xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
+              <button class="btn-outline-mint rounded-2xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
             </div>
           </div>
         </aside>
 
         <!-- Preview column -->
-        <main class="rounded-3xl border border-white/10 bg-white/5 shadow-lg p-4">
+        <main class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6">
           <div>
             <h2 class="text-sm font-semibold">LEGO-mapped Output</h2>
-            <div class="mt-2 h-1 w-10 rounded bg-pink-500/80"></div>
+            <div class="mt-2 h-1 w-10 rounded bg-mint/70"></div>
           </div>
           <div class="relative aspect-square bg-black/20 rounded-2xl overflow-hidden flex items-center justify-center mt-2">
-            <canvas ref="outCanvas" class="max-w-full"></canvas>
+            <Transition name="fadein">
+              <canvas v-show="outReady" ref="outCanvas" class="max-w-full"></canvas>
+            </Transition>
             <!-- Grid overlay -->
             <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none"
                  :style="gridOverlayStyle"></div>
@@ -218,6 +221,9 @@ import { useRemixLoader } from '@/composables/useRemixLoader'
 import { useProjects } from '@/composables/useProjects'
 
 const { show } = useToasts()
+
+// Stepper current step: 1 Upload → 2 Pick style → 3 Download
+const currentStep = computed(() => outReady.value ? 3 : (imgReady.value ? 2 : 1))
 
 // SEO
 useHead({
@@ -665,3 +671,8 @@ const gridOverlayStyle = computed(() => {
   } as any
 })
 </script>
+
+<style scoped>
+.fadein-enter-active, .fadein-leave-active { transition: opacity .25s ease, transform .25s ease; }
+.fadein-enter-from, .fadein-leave-to { opacity: 0; transform: translateY(6px); }
+</style>

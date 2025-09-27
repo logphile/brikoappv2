@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<{
   paste?: boolean
   label?: string
   buttonText?: string
+  variant?: 'panel' | 'glass'
 }>(), {
   accept: 'image/*',
   maxSizeMB: 25,
@@ -22,6 +23,7 @@ const props = withDefaults(defineProps<{
   paste: true,
   label: 'Drag & drop an image or',
   buttonText: 'Browse…',
+  variant: 'panel',
 })
 
 const emit = defineEmits<{
@@ -70,9 +72,13 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
 
 <template>
   <div
-    class="uploadbox rounded-md border border-[#343434]/20 bg-white p-4 sm:p-5 text-[#2F3061]
-           transition focus-within:ring-2 focus-within:ring-[#FF0062] focus-within:ring-offset-2 focus-within:ring-offset-[#FFD808]"
-    :class="over ? 'border-[#FF0062]' : ''"
+    class="uploadbox transition"
+    :class="[
+      props.variant === 'glass'
+        ? 'rounded-xl border border-white/10 border-dashed bg-white/5 p-4 sm:p-5 text-white/90 focus-within:ring-2 focus-within:ring-mintRing/70'
+        : 'rounded-md border border-[#343434]/20 bg-white p-4 sm:p-5 text-[#2F3061] focus-within:ring-2 focus-within:ring-[#FF0062] focus-within:ring-offset-2 focus-within:ring-offset-[#FFD808]',
+      over ? (props.variant === 'glass' ? 'border-mint/60 bg-white/10' : 'border-[#FF0062]') : ''
+    ]"
     :data-dragover="over ? 'true' : null"
     @dragover="onOver" @dragleave="onLeave" @drop="onDrop"
     role="button" tabindex="0" aria-label="Upload image"
@@ -80,19 +86,22 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
     <div class="flex items-center justify-center">
       <img src="/icons/icon-upload-circle-pink.svg" alt="" class="w-10 h-10 select-none pointer-events-none" aria-hidden="true" />
     </div>
-    <p class="text-sm text-[#2F3061]">{{ label }}</p>
+    <p :class="props.variant==='glass' ? 'text-sm text-white/70' : 'text-sm text-[#2F3061]'">{{ label }}</p>
     <div class="mt-2">
       <button
         type="button"
-        class="px-3 py-2 rounded-md border border-[#FF0062] text-[#FF0062] bg-transparent text-sm font-medium
-               hover:bg-[#343434] hover:text-white transition disabled:opacity-50 disabled:pointer-events-none
-               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]"
+        :class="[
+          props.variant==='glass'
+            ? 'btn-outline-mint'
+            : 'px-3 py-2 rounded-md border border-[#FF0062] text-[#FF0062] bg-transparent text-sm font-medium hover:bg-[#343434] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]'
+        ]"
+        class="transition disabled:opacity-50 disabled:pointer-events-none"
         :disabled="disabled"
         @click="onBrowse"
       >
         {{ buttonText }}
       </button>
-      <span class="ml-3 text-xs text-[#2F3061]/70">PNG, JPG, or WebP • up to {{ maxSizeMB }} MB</span>
+      <span :class="props.variant==='glass' ? 'ml-3 text-xs text-white/60' : 'ml-3 text-xs text-[#2F3061]/70'">PNG, JPG, or WebP • up to {{ maxSizeMB }} MB</span>
     </div>
 
     <!-- Hidden input -->
