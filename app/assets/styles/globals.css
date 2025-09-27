@@ -55,7 +55,7 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
   /* Cyber buttons */
   .btn-pink{
     display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-    padding:.6rem 1rem;border-radius:1rem;font-weight:600;
+    padding:.6rem 1rem;border-radius:1rem;font-weight:600; min-height:40px;
     background:var(--pink); color:var(--ivory); border:1px solid transparent;
     transition:transform .12s ease, filter .15s ease;
   }
@@ -63,7 +63,7 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
   .btn-purple-outline{
     display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
-    padding:.6rem 1rem;border-radius:1rem;font-weight:600;
+    padding:.6rem 1rem;border-radius:1rem;font-weight:600; min-height:40px;
     border:1px solid var(--purple); color:var(--purple); background:transparent;
     transition:background-color .15s ease, transform .12s ease;
   }
