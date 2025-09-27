@@ -55,7 +55,7 @@ useIntersectionObserver(sentinel, ([entry]) => {
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
             <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
               <ClientOnly>
-                <HeroDemo :original-src="'/home-1-original.jpg'" :mosaic-src="'/home-1-mosaic.png'" :fixed-height="true" />
+                <HeroDemo :original-src="'/home-1-original.jpg?v=2'" :mosaic-src="'/home-1-mosaic.png?v=2'" :fixed-height="true" />
                 <template #fallback>
                   <div class="h-full w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
