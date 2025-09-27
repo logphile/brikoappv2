@@ -1076,9 +1076,9 @@ watchDebounced(
               <!-- Metrics -->
               <div class="px-4 pb-2 flex items-center gap-4">
                 <p v-if="mosaic.tilingResult" class="text-white/80 text-sm">
-                  <span class="font-semibold">Bricks:</span> {{ mosaic.tilingResult.bricks.length }}
+                  <span class="font-semibold">Bricks:</span> <span class="tabular-nums">{{ mosaic.tilingResult.bricks.length }}</span>
                   <span class="mx-3 opacity-30">•</span>
-                  <span class="font-semibold">Est. cost:</span> ${{ mosaic.tilingResult.estTotalCost.toFixed(2) }}
+                  <span class="font-semibold">Est. cost:</span> <span class="tabular-nums">{{ formattedCost }}</span>
                 </p>
               </div>
 
