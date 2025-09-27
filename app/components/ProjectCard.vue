@@ -33,7 +33,7 @@
       <!-- hover overlay -->
       <div class="absolute inset-0 bg-[rgba(47,48,97,.35)] opacity-0 group-hover:opacity-100 transition"></div>
       <div class="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-        <NuxtLink :to="`${viewPrefix}/${project.id}`" class="btn-purple-outline focus-cyber">View</NuxtLink>
+        <NuxtLink :to="`${viewPrefix}/${project.id}`" class="btn-ivory-outline focus-cyber">View</NuxtLink>
         <NuxtLink :to="`/project/${project.id}?remix=1`" class="btn-pink focus-cyber">Remix</NuxtLink>
       </div>
     </div>
@@ -41,7 +41,7 @@
     <div class="px-3 pb-3">
       <div class="flex items-center justify-between gap-2">
         <h3 class="text-sm font-semibold truncate">{{ project.title || 'Untitled' }}</h3>
-        <span class="text-[10px] px-2 py-0.5 rounded-full border border-[color:var(--glass-b)] text-dim bg-white/70">{{ new Date(project.created_at).toLocaleDateString() }}</span>
+        <span class="text-[10px] px-2 py-0.5 rounded-full border border-[color:var(--ivory-border)] bg-white/70 text-[color:var(--text-dim)]">{{ new Date(project.created_at).toLocaleDateString() }}</span>
       </div>
     </div>
   </div>

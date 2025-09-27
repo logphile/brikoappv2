@@ -1,27 +1,42 @@
 <template>
-  <main class="mx-auto max-w-xl px-6 py-10 text-white">
-    <h1 class="text-2xl font-semibold">Profile</h1>
-    <p class="opacity-80 text-sm mb-6">Update how your name appears publicly.</p>
+  <main class="min-h-screen bg-[var(--yellow)] text-[var(--dark)]">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h1 class="text-3xl md:text-4xl font-bold">Profile</h1>
+      <p class="mt-2 text-[color:var(--text-dim)]">Update how your name appears publicly.</p>
 
-    <div v-if="loading" class="opacity-70">Loading…</div>
+      <div v-if="loading" class="mt-6 text-[color:var(--text-dim)]">Loading…</div>
 
-    <form v-else class="grid gap-4 max-w-md" @submit.prevent="save">
-      <label class="block text-sm">
-        <span class="opacity-80">Handle</span>
-        <input v-model.trim="handle" type="text" class="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2" placeholder="yourname" minlength="2" maxlength="32" />
-        <span class="text-[12px] opacity-70">Shown as @handle. Only letters, numbers, dashes and underscores recommended.</span>
-      </label>
+      <form v-else class="card-ivory mt-6 p-6 sm:p-8 rounded-2xl" @submit.prevent="save">
+        <!-- Handle -->
+        <label class="block font-semibold">Handle</label>
+        <input
+          v-model.trim="handle"
+          type="text"
+          class="mt-2 w-full h-11 rounded-xl bg-[var(--ivory)] border border-[color:var(--ivory-border)]
+                 text-[var(--dark)] placeholder-[color:var(--text-dim)]
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--purple)]"
+          placeholder="yourname" minlength="2" maxlength="32" />
+        <p class="mt-2 text-sm text-[color:var(--text-dim)]">
+          Shown as @handle. Only letters, numbers, dashes and underscores recommended.
+        </p>
 
-      <label class="block text-sm">
-        <span class="opacity-80">Display name</span>
-        <input v-model.trim="displayName" type="text" class="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2" placeholder="Your Name" maxlength="64" />
-      </label>
+        <!-- Display name -->
+        <label class="block font-semibold mt-6">Display name</label>
+        <input
+          v-model.trim="displayName"
+          type="text"
+          class="mt-2 w-full h-11 rounded-xl bg-[var(--ivory)] border border-[color:var(--ivory-border)]
+                 text-[var(--dark)] placeholder-[color:var(--text-dim)]
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--purple)]"
+          placeholder="Your Name" maxlength="64" />
 
-      <div class="flex items-center gap-2 pt-2">
-        <button class="btn-mint" :disabled="saving">{{ saving ? 'Saving…' : 'Save' }}</button>
-        <NuxtLink to="/projects" class="btn-outline-mint">Cancel</NuxtLink>
-      </div>
-    </form>
+        <!-- Actions -->
+        <div class="mt-6 flex gap-3">
+          <button type="submit" class="btn-pink focus-cyber" :disabled="saving">{{ saving ? 'Saving…' : 'Save' }}</button>
+          <NuxtLink to="/studio" class="btn-purple-outline focus-cyber">Cancel</NuxtLink>
+        </div>
+      </form>
+    </div>
   </main>
 </template>
 
