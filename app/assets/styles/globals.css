@@ -9,8 +9,15 @@
   --brand-text: #343434; /* global body text */
   --brand-a1:   #7B2CFB;
   --brand-a2:   #00E5FF;
-  /* Brand pink (used across hero icons and sliders) */
-  --pink: #FF3EA5;
+  /* Brand pink (site-wide) */
+  --pink: #FF0062;
+  /* Cyberpunk Studio tokens */
+  --yellow: #FFD808;
+  --purple: #2F3061;
+  --dark: #343434;
+  --ivory: #F5F4F1;
+  --glass-b: #00000014;   /* 8% dark border for ivory cards */
+  --text-dim: #343434B3;  /* 70% dark */
   /* Hint browsers to render native controls in dark mode (affects <select> popup) */
   color-scheme: dark;
 }
@@ -32,6 +39,38 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
 /* Mint Unification: shared component utilities */
 @layer components {
+  /* Helpers */
+  .bg-yellow { background: var(--yellow); }
+  .text-dark { color: var(--dark); }
+  .text-dim  { color: var(--text-dim); }
+
+  /* Ivory card (Studio) */
+  .card-ivory{
+    background: var(--ivory);
+    border: 1px solid var(--glass-b);
+    border-radius: 1rem; /* rounded-2xl */
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  }
+
+  /* Cyber buttons */
+  .btn-pink{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    padding:.6rem 1rem;border-radius:1rem;font-weight:600;
+    background:var(--pink); color:var(--ivory); border:1px solid transparent;
+    transition:transform .12s ease, filter .15s ease;
+  }
+  .btn-pink:hover{ transform:translateY(-1px); filter:brightness(.96); }
+
+  .btn-purple-outline{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    padding:.6rem 1rem;border-radius:1rem;font-weight:600;
+    border:1px solid var(--purple); color:var(--purple); background:transparent;
+    transition:background-color .15s ease, transform .12s ease;
+  }
+  .btn-purple-outline:hover{ background-color:rgba(47,48,97,.08); transform:translateY(-1px); }
+
+  /* Focus */
+  .focus-cyber:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(255,0,98,.35); }
   /* Primary mint button (solid) */
   .btn-mint { /* existing class defined in buttons.css; keep here for consistency if used alone */
     @apply inline-flex items-center gap-2 rounded-xl px-3 py-1.5
