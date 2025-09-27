@@ -1,24 +1,26 @@
 <template>
-  <NuxtLink :to="`/p/${project.id}`"
-    class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm
-           transition duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_18px_50px_-16px_rgba(0,229,160,.45)]">
-    <div class="framed-img aspect-[4/3] bg-black/30">
+  <div class="group relative rounded-2xl border border-white/10 bg-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-white/20 hover:shadow-[0_8px_28px_rgba(0,0,0,0.16)] transition overflow-hidden">
+    <div class="rounded-xl overflow-hidden aspect-square bg-[#1F2A44]">
       <img v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
            class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
            @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-white/40 text-sm">No preview</div>
     </div>
-    <div class="p-3">
-      <div class="flex items-center justify-between gap-2">
-        <h3 class="text-sm font-semibold text-white/90 truncate">{{ project.title || 'Untitled' }}</h3>
-        <span class="text-xs text-white/50">{{ new Date(project.created_at).toLocaleDateString() }}</span>
+    <div class="px-3 pb-3">
+      <div class="mt-2 flex items-center gap-2">
+        <h3 class="text-[14px] font-medium text-black/80 truncate">{{ project.title || 'Untitled' }}</h3>
+        <span class="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-black/5 text-black/60">{{ new Date(project.created_at).toLocaleDateString() }}</span>
       </div>
-      <p v-if="project.owner && (project.owner.handle || project.owner.display_name)" class="mt-1 text-xs text-white/60 truncate">
-        by {{ project.owner.handle ? ('@' + project.owner.handle) : (project.owner.display_name || '@user') }}
-      </p>
     </div>
-  </NuxtLink>
+    <!-- Hover overlay actions -->
+    <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/10 transition">
+      <div class="absolute inset-x-0 bottom-3 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition">
+        <NuxtLink :to="`/p/${project.id}`" class="pointer-events-auto px-3 py-1.5 rounded-2xl text-ink font-medium bg-gradient-to-r from-[#00E5A0] to-[#4FF3C3] shadow-[0_8px_24px_rgba(0,229,160,0.35)] hover:shadow-[0_12px_28px_rgba(0,229,160,0.45)] transition">View</NuxtLink>
+        <NuxtLink to="/mosaic" class="pointer-events-auto px-3 py-1.5 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] shadow-[0_0_0_1px_rgba(0,229,160,0.25)] hover:shadow-[0_0_20px_rgba(0,229,160,0.35)] transition">Remix</NuxtLink>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

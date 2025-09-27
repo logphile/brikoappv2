@@ -7,53 +7,56 @@
         <p class="text-white/80 text-sm md:text-base">Start a new project or explore the community.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <NuxtLink to="/gallery" class="btn-outline-mint">Open Community Gallery</NuxtLink>
-        <NuxtLink to="/projects/new" class="btn-mint">New Project</NuxtLink>
+        <NuxtLink to="/community-studio" class="px-4 py-2 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] shadow-[0_0_0_1px_rgba(0,229,160,0.25)] hover:shadow-[0_0_20px_rgba(0,229,160,0.35)] transition">Community Studio</NuxtLink>
+        <NuxtLink to="/projects/new" class="px-4 py-2 rounded-2xl text-ink font-medium bg-gradient-to-r from-[#00E5A0] to-[#4FF3C3] shadow-[0_8px_24px_rgba(0,229,160,0.35)] hover:shadow-[0_12px_28px_rgba(0,229,160,0.45)] transition">New Project</NuxtLink>
       </div>
     </header>
 
     <!-- Your Projects -->
     <section v-if="user && myItems.length" class="mt-10 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-soft-card">
       <div class="mb-4">
-        <h2 class="text-xl font-semibold">Your Projects</h2>
-        <div class="mt-1 h-1 w-10 rounded bg-mint/70"></div>
+        <h2 class="text-[28px] font-bold tracking-tight mb-3">Your Projects</h2>
+        <div class="h-1 w-16 bg-[#00E5A0] rounded-full mb-4"></div>
       </div>
-      <TransitionGroup name="fadegrid" tag="div" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-        <NuxtLink v-for="p in myItems" :key="p.id" :to="`/projects/${p.id}`"
-          class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm transition duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_18px_50px_-16px_rgba(0,229,160,.45)]">
-          <div class="framed-img aspect-[4/3] bg-black/30">
+      <TransitionGroup name="fadegrid" tag="div" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+        <div v-for="p in myItems" :key="p.id" class="group relative rounded-2xl border border-white/10 bg-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.12)] hover:border-white/20 hover:shadow-[0_8px_28px_rgba(0,0,0,0.16)] transition overflow-hidden">
+          <div class="rounded-xl overflow-hidden aspect-square bg-[#1F2A44]">
             <img v-if="p.cover_url" :src="p.cover_url" alt="" class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
             <div v-else class="h-full w-full grid place-items-center text-white/40 text-sm">No preview</div>
           </div>
-          <div class="p-3">
-            <div class="flex items-center justify-between gap-2">
-              <h3 class="text-sm font-semibold text-white/90 truncate">{{ p.title || 'Untitled' }}</h3>
-              <span class="text-xs text-white/50">{{ new Date(p.created_at).toLocaleDateString() }}</span>
+          <div class="px-3 pb-3">
+            <div class="mt-2 flex items-center gap-2">
+              <h3 class="text-[14px] font-medium text-black/80 truncate">{{ p.title || 'Untitled' }}</h3>
+              <span class="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-black/5 text-black/60">{{ new Date(p.created_at).toLocaleDateString() }}</span>
             </div>
           </div>
-        </NuxtLink>
+          <!-- Hover overlay actions -->
+          <div class="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/10 transition">
+            <div class="absolute inset-x-0 bottom-3 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition">
+              <NuxtLink :to="`/projects/${p.id}`" class="pointer-events-auto px-3 py-1.5 rounded-2xl text-ink font-medium bg-gradient-to-r from-[#00E5A0] to-[#4FF3C3] shadow-[0_8px_24px_rgba(0,229,160,0.35)] hover:shadow-[0_12px_28px_rgba(0,229,160,0.45)] transition">View</NuxtLink>
+              <NuxtLink to="/mosaic" class="pointer-events-auto px-3 py-1.5 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] shadow-[0_0_0_1px_rgba(0,229,160,0.25)] hover:shadow-[0_0_20px_rgba(0,229,160,0.35)] transition">Remix</NuxtLink>
+            </div>
+          </div>
+        </div>
       </TransitionGroup>
     </section>
 
     <!-- Community Projects -->
     <section class="mt-10 rounded-2xl bg-white/5 ring-1 ring-white/10 p-5 shadow-soft-card">
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <h2 class="text-xl font-semibold">Community Projects</h2>
-          <div class="mt-1 h-1 w-10 rounded bg-mint/70"></div>
-        </div>
-        <NuxtLink to="/gallery" class="hidden sm:inline-flex btn-outline-mint">See all</NuxtLink>
+      <div class="mb-4">
+        <h2 class="text-[28px] font-bold tracking-tight mb-3">Community Projects</h2>
+        <div class="h-1 w-16 bg-[#00E5A0] rounded-full mb-4"></div>
       </div>
 
       <div v-if="loadingComm && commItems.length===0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
         <div v-for="n in pageSize" :key="n" class="rounded-2xl h-40 bg-white/10 animate-pulse"></div>
       </div>
-      <TransitionGroup v-else name="fadegrid" tag="div" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+      <TransitionGroup v-else name="fadegrid" tag="div" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
         <ProjectCard v-for="p in commItems" :key="p.id" :project="p" @img-error="onCommImgError" />
       </TransitionGroup>
-      <div class="mt-6 flex items-center justify-center gap-3">
-        <NuxtLink to="/gallery" class="btn-outline-mint">Open Community Gallery</NuxtLink>
-        <button v-if="hasMoreComm" @click="loadMoreComm" class="btn-outline-mint" :disabled="loadingComm">Load More</button>
+      <div class="mt-6">
+        <button v-if="hasMoreComm" @click="loadMoreComm" :disabled="loadingComm" class="mt-6 mx-auto block px-4 py-2 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] hover:shadow-[0_0_20px_rgba(0,229,160,0.35)]">Load More</button>
+        <NuxtLink v-else to="/gallery" class="mt-6 mx-auto block px-4 py-2 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] hover:shadow-[0_0_20px_rgba(0,229,160,0.35)]">See All</NuxtLink>
       </div>
     </section>
   </main>
