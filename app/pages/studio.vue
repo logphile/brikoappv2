@@ -1,42 +1,44 @@
 <template>
-  <main class="min-h-screen bg-ink text-white">
+  <main class="min-h-screen bg-yellow text-dark">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
       <header class="mb-8 flex items-start justify-between gap-3">
         <div>
-          <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">Briko Studio</h1>
-          <p class="mt-2 text-white/70">Start a new project or explore the community.</p>
+          <h1 class="text-3xl md:text-4xl font-bold">Briko Studio</h1>
+          <p class="mt-2 text-dim">Start a new project or explore the community.</p>
         </div>
 
         <div class="flex items-center gap-2">
-          <NuxtLink to="/gallery" class="btn-outline-mint">Community Gallery</NuxtLink>
-          <NuxtLink to="/projects/new" class="btn-mint">New Project</NuxtLink>
+          <NuxtLink to="/gallery" class="btn-purple-outline focus-cyber">Community Gallery</NuxtLink>
+          <NuxtLink to="/studio/new" class="btn-pink focus-cyber">New Project</NuxtLink>
         </div>
       </header>
 
-      <section class="soft-card mb-8">
+      <!-- Your Projects -->
+      <section class="card-ivory p-4 sm:p-6 mb-8">
         <SectionHeader title="Your Projects" />
         <div v-if="loadingMy" class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/10 animate-pulse"></div>
+          <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
         </div>
-        <ProjectGrid v-else-if="myItems.length" :items="myItems" view-prefix="/projects" />
-        <div v-else class="text-center py-12">
-          <p class="text-white/70">No projects yet.</p>
-          <NuxtLink to="/projects/new" class="btn-mint mt-4 inline-flex">Create your first project</NuxtLink>
+        <ProjectGrid v-else-if="myItems.length" :items="myItems" />
+        <div v-else class="text-center py-10">
+          <p class="text-dim">No projects yet.</p>
+          <NuxtLink to="/studio/new" class="btn-pink mt-4 focus-cyber">Create your first project</NuxtLink>
         </div>
       </section>
 
-      <section class="soft-card">
+      <!-- Community Projects -->
+      <section class="card-ivory p-4 sm:p-6">
         <SectionHeader title="Community Projects" />
         <div v-if="loadingComm && commItems.length===0" class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          <div v-for="n in pageSize" :key="`skc-${n}`" class="aspect-square rounded-2xl bg-white/10 animate-pulse"></div>
+          <div v-for="n in pageSize" :key="`skc-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
         </div>
         <ProjectGrid v-else-if="commItems.length" :items="commItems" more-link="/gallery" more-label="See all" />
-        <div v-else class="text-center py-12">
-          <p class="text-white/70">No projects yet.</p>
-          <NuxtLink to="/gallery" class="btn-outline-mint mt-4 inline-flex">Browse the Community Gallery</NuxtLink>
+        <div v-else class="text-center py-10">
+          <p class="text-dim">No projects yet.</p>
+          <NuxtLink to="/gallery" class="btn-purple-outline mt-4 focus-cyber">Browse the Community Gallery</NuxtLink>
         </div>
         <div v-if="hasMoreComm" class="mt-6 flex justify-center">
-          <button @click="loadMoreComm" :disabled="loadingComm" class="btn-outline-mint">Load More</button>
+          <button @click="loadMoreComm" :disabled="loadingComm" class="btn-purple-outline focus-cyber">Load More</button>
         </div>
       </section>
     </div>
