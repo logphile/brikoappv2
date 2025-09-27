@@ -8,6 +8,42 @@ input[type="range"].range-mint {
   border-radius: 9999px;
   outline: none;
 }
+
+/* Pink sliders: brand track/thumb for 3D Builder */
+input[type="range"].pink-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 0.5rem;
+  background: rgba(52,52,52,0.20); /* inactive track */
+  border-radius: 9999px;
+  outline: none;
+}
+input[type="range"].pink-slider:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255,0,98,.35);
+}
+/* Track */
+input[type="range"].pink-slider::-webkit-slider-runnable-track {
+  height: 0.5rem; border-radius: 9999px;
+  background: rgba(52,52,52,0.20);
+}
+input[type="range"].pink-slider::-moz-range-track {
+  height: 0.5rem; border-radius: 9999px;
+  background: rgba(52,52,52,0.20);
+}
+/* Thumb */
+input[type="range"].pink-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px; width: 18px; border-radius: 9999px;
+  background: #FF0062;
+  box-shadow: 0 0 0 6px rgba(255,0,98,.18);
+  margin-top: -6px;
+}
+input[type="range"].pink-slider::-moz-range-thumb {
+  height: 18px; width: 18px; border-radius: 9999px; border: 0;
+  background: #FF0062;
+  box-shadow: 0 0 0 6px rgba(255,0,98,.18);
+}
 input[type="range"].range-mint:focus-visible {
   box-shadow: 0 0 0 3px rgba(58,229,159,.35);
 }
