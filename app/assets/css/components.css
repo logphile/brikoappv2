@@ -70,6 +70,11 @@
   @apply rounded-2xl bg-white/5 border border-white/10 shadow-soft-card backdrop-blur;
 }
 
+/* Soft glass card utility for page sections (Studio, etc.) */
+.soft-card {
+  @apply rounded-2xl bg-white/5 border border-white/10 shadow-soft-card backdrop-blur p-4 sm:p-6;
+}
+
 /* Framed image utility for showcase images and thumbnails */
 .framed-img {
   @apply rounded-2xl overflow-hidden;
