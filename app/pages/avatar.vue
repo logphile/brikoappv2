@@ -2,38 +2,29 @@
   <Transition appear enter-active-class="transition ease-out duration-600"
               enter-from-class="opacity-0 translate-y-2"
               enter-to-class="opacity-100 translate-y-0">
-  <main class="mx-auto max-w-6xl px-6 py-10 text-white bg-ink">
+  <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434] mb-20">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-semibold">{{ copy.avatar.title }}</h1>
-        <div class="mt-2 h-1 w-16 rounded-full bg-mint/70"></div>
-        <p class="opacity-80 text-sm mt-2">{{ copy.avatar.subtitle }}</p>
-        <ul class="mt-3 flex flex-wrap items-center gap-4 select-none">
-          <li class="inline-flex items-center gap-2">
-            <span :class="['h-7 w-7 grid place-items-center rounded-full text-xs font-bold ring-2', currentStep >= 1 ? 'bg-mint text-ink ring-white/60' : 'bg-white/10 text-white/60 ring-white/20']">1</span>
-            <span :class="['material-symbols-rounded text-[18px]', currentStep >= 1 ? 'text-mint' : 'text-white/40']" aria-hidden="true">file_upload</span>
-            <span :class="['text-sm', currentStep >= 1 ? 'text-white/90' : 'text-white/40']">{{ copy.avatar.steps[0] }}</span>
-          </li>
-          <li class="inline-flex items-center gap-2">
-            <span :class="['h-7 w-7 grid place-items-center rounded-full text-xs font-bold ring-2', currentStep >= 2 ? 'bg-mint text-ink ring-white/60' : 'bg-white/10 text-white/60 ring-white/20']">2</span>
-            <span :class="['material-symbols-rounded text-[18px]', currentStep >= 2 ? 'text-mint' : 'text-white/40']" aria-hidden="true">palette</span>
-            <span :class="['text-sm', currentStep >= 2 ? 'text-white/90' : 'text-white/40']">{{ copy.avatar.steps[1] }}</span>
-          </li>
-          <li class="inline-flex items-center gap-2">
-            <span :class="['h-7 w-7 grid place-items-center rounded-full text-xs font-bold ring-2', currentStep >= 3 ? 'bg-mint text-ink ring-white/60' : 'bg-white/10 text-white/60 ring-white/20']">3</span>
-            <span :class="['material-symbols-rounded text-[18px]', currentStep >= 3 ? 'text-mint' : 'text-white/40']" aria-hidden="true">download</span>
-            <span :class="['text-sm', currentStep >= 3 ? 'text-white/90' : 'text-white/40']">{{ copy.avatar.steps[2] }}</span>
-          </li>
-        </ul>
+        <h1 class="text-[#343434] text-4xl md:text-5xl font-bold">{{ copy.avatar.title }}</h1>
+        <p class="text-[#2F3061] text-lg md:text-xl mb-8">{{ copy.avatar.subtitle }}</p>
+        <nav aria-label="Quick guide" class="mt-8 flex flex-wrap gap-6 md:gap-8 items-center">
+          <a v-for="(s, i) in stepsAvatar" :key="s.id" :href="'#' + s.id"
+             :class="[
+               'rounded-lg min-h-[40px] px-4 py-2 flex items-center gap-3 transition-colors duration-150 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+               (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808] shadow-md' : 'bg-[#2F3061] text-white'
+             ]">
+            <UploadIcon v-if="s.id==='upload'" class="w-5 h-5" />
+            <span v-else class="material-symbols-rounded text-[20px]" :class="(i <= activeStepIndex) ? 'text-[#FFD808]' : 'text-white'" aria-hidden="true">{{ s.icon }}</span>
+            <span class="text-sm" :class="(i <= activeStepIndex) ? 'font-semibold' : ''">{{ s.title }}</span>
+          </a>
+        </nav>
       </div>
       <div class="flex items-center gap-3">
-        <button class="btn-mint"
-                :disabled="!outReady"
-                @click="doExportPng">Export PNG</button>
-        <button class="btn-outline-mint h-10"
-                :disabled="saving || !$supabase || !outReady"
-                @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</button>
-        <label class="btn-outline-mint h-10 inline-flex items-center gap-2 text-sm px-3 rounded-2xl cursor-pointer select-none"
+        <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
+                       :disabled="!outReady" @click="doExportPng">Export PNG</ButtonOutline>
+        <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
+                       :disabled="saving || !$supabase || !outReady" @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</ButtonOutline>
+        <label class="rounded-lg px-4 py-2 border border-[#FF0062] text-[#FF0062] bg-transparent text-sm cursor-pointer select-none hover:bg-[#343434] hover:text-white transition"
                :class="(!projectId || !canShare) ? 'opacity-50 pointer-events-none' : ''">
           <input type="checkbox" class="sr-only" v-model="isPublic" :disabled="!projectId || !canShare" @change="onTogglePublic" />
           <span>{{ isPublic ? 'Public' : 'Make Public' }}</span>
@@ -44,155 +35,116 @@
 
     <section class="mt-6">
       <div class="grid gap-6 lg:grid-cols-[460px,1fr] items-start">
-        <!-- Controls column -->
-        <aside class="space-y-4">
-          <!-- Presets -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-2">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">palette</span>
+        <!-- Controls column (yellow panel) -->
+        <aside class="lg:col-span-1">
+          <div class="bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6">
+            <!-- Upload -->
+            <section id="upload" class="scroll-mt-28 pt-2">
+              <div class="flex items-center gap-3 mb-1">
+                <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
+                  <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">file_upload</span>
+                </div>
+                <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
               </div>
-              <h3 class="text-base font-semibold">Style presets</h3>
-            </div>
-            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
-            <div class="mt-4">
-              <PresetChips v-model:preset="preset" />
-            </div>
-          </div>
-
-          <!-- Upload -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-2">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">file_upload</span>
+              <div class="pt-2">
+                <UploadBox :maxSizeMB="25" accept="image/*" :label="'Drag a photo here or'" :buttonText="'browse'" @file="handleSelfieFile" @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }" />
               </div>
-              <h3 class="text-base font-semibold">Upload</h3>
-            </div>
-            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
-            <div class="mt-4">
-              <UploadBox
-                variant="glass"
-                :maxSizeMB="25"
-                accept="image/*"
-                @file="handleSelfieFile"
-                @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }"
-              />
-            </div>
-          </div>
+            </section>
 
-          <!-- Size & Quality -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-2">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">straighten</span>
-              </div>
-              <h3 class="text-base font-semibold">Output & Preview</h3>
-            </div>
-            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
-            <div class="mt-4 space-y-4">
-              <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
-              <PreviewQualitySelect v-model:quality="quality" />
-            </div>
-          </div>
+            <div class="divide-y divide-[#343434]/10">
+              <!-- Style presets -->
+              <section class="pt-4 pb-6">
+                <h3 class="text-lg font-semibold text-[#343434] mb-1">Style presets</h3>
+                <div class="mt-2">
+                  <PresetChips v-model:preset="preset" />
+                </div>
+              </section>
+              <!-- Output & Preview -->
+              <section class="pt-4 pb-6">
+                <h3 class="text-lg font-semibold text-[#343434] mb-1">Output & Preview</h3>
+                <div class="space-y-4">
+                  <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
+                  <PreviewQualitySelect v-model:quality="quality" />
+                </div>
+              </section>
 
-          <!-- Options -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-2">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text:[20px] text-mint" aria-hidden="true">tune</span>
-              </div>
-              <h3 class="text-base font-semibold">Options</h3>
-            </div>
-            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
-            <div class="mt-4 flex flex-wrap gap-4 items-center">
-              <label class="inline-flex items-center gap-2">
-                <input type="checkbox" class="accent-mint" v-model="ditherFS" />
-                <span>Dither (FS)</span>
-              </label>
-              <label class="inline-flex items-center gap-2">
-                <input type="checkbox" class="accent-mint" v-model="studStyle" />
-                <span>Stud style</span>
-              </label>
-              <label class="inline-flex items-center gap-2">
-                <input type="checkbox" class="accent-mint" v-model="showPlateOutlines" />
-                <span>Show plate outlines</span>
-              </label>
-            </div>
-          </div>
+              <!-- Options -->
+              <section class="pt-4 pb-6">
+                <h3 class="text-lg font-semibold text-[#343434] mb-1">Options</h3>
+                <div class="mt-2 flex flex-wrap gap-4 items-center text-[#2F3061]">
+                  <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" class="accent-[#FF0062]" v-model="ditherFS" />
+                    <span>Dither (FS)</span>
+                  </label>
+                  <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" class="accent-[#FF0062]" v-model="studStyle" />
+                    <span>Stud style</span>
+                  </label>
+                  <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" class="accent-[#FF0062]" v-model="showPlateOutlines" />
+                    <span>Show plate outlines</span>
+                  </label>
+                </div>
+              </section>
 
-          <!-- Palette -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-2">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-pink-500" aria-hidden="true">palette</span>
-              </div>
-              <h3 class="text-base font-semibold">Palette</h3>
-            </div>
-            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
-            <div class="mt-4">
-              <PaletteSwatches v-model="paletteName" />
-            </div>
-          </div>
+              <!-- Palette -->
+              <section class="pt-4 pb-6">
+                <h3 class="text-lg font-semibold text-[#343434] mb-1">Palette</h3>
+                <PaletteSwatches v-model="paletteName" />
+              </section>
 
-          <!-- Background -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-2">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70 mr-2">
-                <span class="material-symbols-rounded text-[20px] text-mint" aria-hidden="true">format_color_fill</span>
-              </div>
-              <h3 class="text-base font-semibold">Background</h3>
-            </div>
-            <div class="mt-2 h-1 w-8 rounded bg-mint/70"></div>
-            <div class="mt-4 space-y-3">
-              <select v-model="bgMode" class="select-mint">
-                <option value="keep">Keep quantized image</option>
-                <option value="solid">Solid color</option>
-                <option value="transparent">Transparent</option>
-              </select>
-              <label v-if="bgMode==='solid'" class="block">
-                <span class="block opacity-80">Solid color</span>
-                <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white/70 rounded border border-white/20" />
-              </label>
-            </div>
-          </div>
+              <!-- Background -->
+              <section class="pt-4 pb-6">
+                <h3 class="text-lg font-semibold text-[#343434] mb-1">Background</h3>
+                <div class="space-y-3">
+                  <select v-model="bgMode" class="w-full rounded-xl border border-[#343434]/20 bg-white text-[#2F3061] focus:outline-none focus:ring-2 focus:ring-[#FF0062] px-3 py-2">
+                    <option value="keep">Keep quantized image</option>
+                    <option value="solid">Solid color</option>
+                    <option value="transparent">Transparent</option>
+                  </select>
+                  <label v-if="bgMode==='solid'" class="block">
+                    <span class="block text-[#2F3061]">Solid color</span>
+                    <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white rounded border border-[#343434]/20" />
+                  </label>
+                </div>
+              </section>
 
-          <!-- Actions -->
-          <div class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6 cursor-default select-none">
-            <div class="flex items-center gap-3">
-              <button class="btn-mint" :disabled="loading || !imgReady" @click="process">{{ loading ? 'Processing…' : 'Generate' }}</button>
-              <span class="inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-gray-900 ml-auto">
-                <span class="material-symbols-rounded text-[16px] text-pink-500" aria-hidden="true">check_circle</span>
-                <span>OpenCV: {{ cvReady ? 'ready' : 'loading…' }}</span>
-              </span>
-            </div>
-            <div class="flex gap-2 pt-3">
-              <button class="btn-mint rounded-2xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</button>
-              <button class="btn-outline-mint rounded-2xl disabled:opacity-40 disabled:pointer-events-none" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+              <!-- Actions -->
+              <section class="pt-4 pb-0">
+                <h3 class="text-lg font-semibold text-[#343434] mb-3">Actions</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
+                  <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="loading || !imgReady" @click="process">
+                    <span v-if="!loading">Generate</span>
+                    <span v-else>Processing…</span>
+                  </ButtonPrimary>
+                  <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonOutline>
+                  <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
+                </div>
+                <div class="mt-3 inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-[#343434]">
+                  <span class="material-symbols-rounded text-[16px] text-pink-500" aria-hidden="true">check_circle</span>
+                  <span>OpenCV: {{ cvReady ? 'ready' : 'loading…' }}</span>
+                </div>
+              </section>
             </div>
           </div>
         </aside>
 
-        <!-- Preview column -->
-        <main class="rounded-2xl border border-white/10 bg-white/5 shadow-soft-card p-4 md:p-6">
-          <div>
-            <h2 class="text-sm font-semibold">LEGO-mapped Output</h2>
-            <div class="mt-2 h-1 w-10 rounded bg-mint/70"></div>
-          </div>
-          <div class="relative aspect-square bg-black/20 rounded-2xl overflow-hidden flex items-center justify-center mt-2">
+        <!-- Preview column (navy card) -->
+        <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-6 relative">
+          <div class="relative aspect-square rounded-2xl overflow-hidden flex items-center justify-center">
             <Transition name="fadein">
               <canvas v-show="outReady" ref="outCanvas" class="max-w-full"></canvas>
             </Transition>
             <!-- Grid overlay -->
-            <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none"
-                 :style="gridOverlayStyle"></div>
-            <div v-if="!outReady" class="absolute inset-0 grid place-items-center text-white/70">
+            <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none" :style="gridOverlayStyle"></div>
+            <div v-if="!outReady" class="absolute inset-0 grid place-items-center">
               <div class="text-center">
-                <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto mb-2 w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
-                <div class="text-sm">Upload an image to begin.</div>
+                <img src="/icons/icon-upload-circle-pink.svg" alt="" aria-hidden="true" class="mx-auto mb-2 w-16 h-16 select-none" />
+                <p class="text-sm text-[#FFD808]/80">Upload an image to begin.</p>
               </div>
             </div>
           </div>
-        </main>
+        </section>
       </div>
       <!-- Hidden source canvas for processing -->
       <canvas ref="srcCanvas" class="hidden"></canvas>
@@ -206,7 +158,9 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
-import { useEmptyIcon } from '@/composables/useEmptyIcon'
+import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
+import ButtonOutline from '@/components/ui/ButtonOutline.vue'
+import UploadIcon from '@/components/ui/UploadIcon.vue'
 import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
@@ -222,8 +176,17 @@ import { useProjects } from '@/composables/useProjects'
 
 const { show } = useToasts()
 
-// Stepper current step: 1 Upload → 2 Pick style → 3 Download
-const currentStep = computed(() => outReady.value ? 3 : (imgReady.value ? 2 : 1))
+// Stepper data and gating (align with 3D Builder style)
+const stepsAvatar = [
+  { id: 'upload', title: 'Upload', icon: 'cloud_upload' },
+  { id: 'style', title: 'Pick style', icon: 'palette' },
+  { id: 'download', title: 'Download poster', icon: 'download' },
+]
+const activeStepIndex = computed(() => {
+  if (outReady.value) return 2
+  if (imgReady.value) return 1
+  return 0
+})
 
 // SEO
 useHead({
@@ -265,8 +228,7 @@ const activePalette = computed(() => (paletteName.value === 'lego16' ? lego16 : 
 const bgMode = ref<BgMode>('keep')
 const route = useRoute()
 const bgSolid = ref('#111827')
-// Branded empty/upload icon for preview overlay
-const emptySrc = useEmptyIcon()
+// Preview overlay now uses inline pink upload icon to match 3D Builder
 
 // Supabase and persistence
 const { $supabase } = useNuxtApp() as any
