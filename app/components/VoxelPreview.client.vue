@@ -549,7 +549,7 @@ function build () {
   // Optional bounds helper for debugging
   if (props.debug?.showBounds) {
     const box = new (THREE as any).Box3().setFromObject(inst)
-    boundsHelper = new (THREE as any).Box3Helper(box, 0x00e5a0)
+    boundsHelper = new (THREE as any).Box3Helper(box, 0x343434)
     scene.add(boundsHelper)
   }
   currentMesh = inst
@@ -932,7 +932,7 @@ async function exportPdf() {
     </div>
     <div v-if="vox && showLayerSlider" class="mt-2">
       <label class="block text-sm mb-1">Step through layers</label>
-      <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]" />
+      <input type="range" min="0" :max="vox.depth - 1" v-model.number="layer" class="w-full pink-slider" />
       <div class="text-xs text-white/60">Showing layers 0–{{ layer }} of {{ vox.depth }}</div>
     </div>
   </div>

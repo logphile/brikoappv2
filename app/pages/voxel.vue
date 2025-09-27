@@ -304,19 +304,19 @@ async function makePublic(){
     <p class="text-[#2F3061] text-lg md:text-xl mb-8">{{ copy.builder3d.subtitle }}</p>
 
     <!-- Stepper / mode tabs -->
-    <nav aria-label="Quick guide" class="mt-2 flex flex-wrap gap-6 md:gap-8 items-center">
+    <nav aria-label="Quick guide" class="mt-8 flex flex-wrap gap-6 md:gap-8 items-center">
       <a v-for="(s, i) in steps3d" :key="s.id" :href="'#' + s.id"
          :class="[
            'rounded-lg min-h-[40px] px-4 py-2 flex items-center gap-3 transition-colors duration-150 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
            (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808] shadow-md' : 'bg-[#2F3061] text-white'
          ]">
-        <span class="material-symbols-rounded text-[20px]" :class="(i <= activeStepIndex) ? 'text-[#FFD808]' : 'text-[#FF0062]'" aria-hidden="true">{{ s.icon }}</span>
+        <span class="material-symbols-rounded text-[20px]" :class="(i <= activeStepIndex) ? 'text-[#FFD808]' : 'text-white'" aria-hidden="true">{{ s.icon }}</span>
         <span class="text-sm" :class="(i <= activeStepIndex) ? 'font-semibold' : ''">{{ s.title }}</span>
       </a>
     </nav>
 
     <!-- Two-column layout -->
-    <div class="mt-12 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
+    <div class="mt-8 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
       <!-- Controls panel (left) -->
       <aside class="lg:col-span-1">
         <div class="bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6 space-y-6">
@@ -326,7 +326,7 @@ async function makePublic(){
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
                 <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">cloud_upload</span>
               </div>
-              <h2 class="text-xl font-semibold text-[#343434]">Upload</h2>
+              <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
             </div>
             <div class="pt-2">
               <UploadBox :maxSizeMB="25" accept="image/*" :label="'Drag a photo here or'" :buttonText="'browse'" @file="onFile" @error="(msg) => console.warn(msg)" />
@@ -335,64 +335,64 @@ async function makePublic(){
 
           <div class="divide-y divide-[#343434]/10">
             <!-- Voxel settings -->
-            <section class="pt-2 pb-6">
-              <h3 class="text-xl font-semibold text-[#343434] mb-1">Voxel settings</h3>
+            <section class="pt-4 pb-6">
+              <h3 class="text-lg font-semibold text-[#343434] mb-1">Voxel settings</h3>
               <label class="block text-sm text-[#2F3061] mb-1">Resolution</label>
-              <input type="range" min="16" max="96" step="8" v-model.number="size" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
+              <input type="range" min="16" max="96" step="8" v-model.number="size" class="w-full pink-slider">
               <div class="text-xs text-[#2F3061] mt-1">Higher = more detail (slower).</div>
             </section>
 
             <!-- Lighting -->
-            <section class="pt-2 pb-6">
-              <h3 class="text-xl font-semibold text-[#343434] mb-1">Lighting</h3>
+            <section class="pt-4 pb-6">
+              <h3 class="text-lg font-semibold text-[#343434] mb-1">Lighting</h3>
               <label class="block text-sm text-[#2F3061] mb-1">Brightness</label>
-              <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]" />
+              <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full pink-slider" />
               <div class="text-xs text-[#2F3061] mt-1">{{ exposure.toFixed(1) }}×</div>
             </section>
 
             <!-- Build steps -->
-            <section class="pt-2 pb-6">
-              <h3 class="text-xl font-semibold text-[#343434] mb-1">Build steps</h3>
+            <section class="pt-4 pb-6">
+              <h3 class="text-lg font-semibold text-[#343434] mb-1">Build steps</h3>
               <p class="text-sm text-[#2F3061]">Control how many layers per step.</p>
             </section>
 
             <!-- Export -->
-            <section class="pt-2 pb-0">
-              <h3 class="text-xl font-semibold text-[#343434] mb-3">Export</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
+            <section class="pt-4 pb-0">
+              <h3 class="text-lg font-semibold text-[#343434] mb-3">Export</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
+                <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
                   <span v-if="!pdfWorking">One-click PDF</span>
                   <span v-else>Generating…</span>
                 </ButtonPrimary>
-                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!vox" @click="exportPng">Export PNG</ButtonOutline>
-                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!vox" @click="exportCsv">Export CSV</ButtonOutline>
+                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!vox" @click="exportPng">Export PNG</ButtonOutline>
+                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!vox" @click="exportCsv">Export CSV</ButtonOutline>
               </div>
             </section>
           </div>
 
           <!-- Primary/secondary actions -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!srcBitmap || loading" :aria-busy="loading" @click="scheduleRegen">{{ vox ? 'Rebuild' : 'Run voxelize' }}</ButtonPrimary>
-            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" @click="useSample">Use sample</ButtonOutline>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
+            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!srcBitmap || loading" :aria-busy="loading" @click="scheduleRegen">{{ vox ? 'Rebuild' : 'Run voxelize' }}</ButtonPrimary>
+            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" @click="useSample">Use sample</ButtonOutline>
           </div>
 
           <!-- Save/Publish -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808]" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
-            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px]" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
+            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
+            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
           </div>
 
         </div>
       </aside>
 
       <!-- Viewport panel (right) -->
-      <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-4 md:p-6 relative">
+      <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-6 relative">
         <!-- Toolbar top-right -->
-        <div class="absolute right-4 top-4 z-10 flex gap-2">
-          <button type="button" title="Reset camera" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.resetCam?.()">Reset</button>
-          <button type="button" title="Toggle grid" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleGrid?.()">Grid</button>
-          <button type="button" title="Wireframe" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleWire?.()">Wire</button>
-          <button type="button" title="Lighting" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleLight?.()">Light</button>
+        <div class="absolute right-3 top-3 z-10 flex gap-2">
+          <button type="button" title="Reset camera" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.resetCam?.()">Reset</button>
+          <button type="button" title="Toggle grid" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleGrid?.()">Grid</button>
+          <button type="button" title="Wireframe" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleWire?.()">Wire</button>
+          <button type="button" title="Lighting" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.toggleLight?.()">Light</button>
         </div>
 
         <div v-if="loading" class="h-[480px] grid place-items-center opacity-90">
