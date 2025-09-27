@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="64" cy="64" r="56" fill="#FF0062"/>
+  <!-- Up arrow -->
+  <path d="M64 28 L64 84" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M44 48 L64 28 L84 48" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Base line -->
+  <rect x="36" y="90" width="56" height="12" rx="6" fill="#FFFFFF"/>
+</svg>

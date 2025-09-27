@@ -7,7 +7,6 @@
  * - Emits `file` (File) or `error` (message)
  */
 import { onMounted, onBeforeUnmount, ref } from 'vue'
-import { useEmptyIcon } from '@/composables/useEmptyIcon'
 
 const props = withDefaults(defineProps<{
   accept?: string
@@ -32,7 +31,6 @@ const emit = defineEmits<{
 
 const over = ref(false)
 const inputEl = ref<HTMLInputElement | null>(null)
-const emptySrc = useEmptyIcon()
 
 function isOk(file: File) {
   if (!file) return 'No file selected'
@@ -79,7 +77,9 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
     @dragover="onOver" @dragleave="onLeave" @drop="onDrop"
     role="button" tabindex="0" aria-label="Upload image"
   >
-    <img :src="emptySrc" alt="" aria-hidden="true" class="mx-auto w-24 h-24 sm:w-32 sm:h-32 select-none" draggable="false" />
+    <div class="flex items-center justify-center">
+      <img src="/icons/icon-upload-circle-pink.svg" alt="" class="w-10 h-10 select-none pointer-events-none" aria-hidden="true" />
+    </div>
     <p class="text-sm text-[#2F3061]">{{ label }}</p>
     <div class="mt-2">
       <button
