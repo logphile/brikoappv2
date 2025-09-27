@@ -48,11 +48,11 @@
         <div class="h-1 w-16 bg-[#00E5A0] rounded-full mb-4"></div>
       </div>
 
-      <div v-if="loadingComm && commItems.length===0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+      <div v-if="loadingComm && commItems.length===0" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
         <div v-for="n in pageSize" :key="n" class="rounded-2xl h-40 bg-white/10 animate-pulse"></div>
       </div>
       <TransitionGroup v-else name="fadegrid" tag="div" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-        <ProjectCard v-for="p in commItems" :key="p.id" :project="p" @img-error="onCommImgError" />
+        <ProjectCard v-for="p in commItems" :key="p.id" :project="p" overlay @img-error="onCommImgError" />
       </TransitionGroup>
       <div class="mt-6">
         <button v-if="hasMoreComm" @click="loadMoreComm" :disabled="loadingComm" class="mt-6 mx-auto block px-4 py-2 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] hover:shadow-[0_0_20px_rgba(0,229,160,0.35)]">Load More</button>
