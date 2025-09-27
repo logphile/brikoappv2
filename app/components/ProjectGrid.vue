@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-      <ProjectCard v-for="p in items" :key="p.id" :project="p" overlay />
+      <ProjectCard v-for="p in items" :key="p.id" :project="p" overlay :view-prefix="viewPrefix" />
     </div>
 
     <div v-if="moreLink" class="mt-4 flex justify-center">
@@ -13,5 +13,7 @@
 <script setup lang="ts">
 import ProjectCard from '@/components/ProjectCard.vue'
 
-defineProps<{ items: any[]; moreLink?: string; moreLabel?: string }>()
+withDefaults(defineProps<{ items: any[]; moreLink?: string; moreLabel?: string; viewPrefix?: string }>(), {
+  viewPrefix: '/project'
+})
 </script>

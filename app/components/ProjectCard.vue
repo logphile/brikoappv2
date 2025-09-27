@@ -33,7 +33,7 @@
       <!-- hover overlay -->
       <div class="absolute inset-0 bg-[rgba(47,48,97,.35)] opacity-0 group-hover:opacity-100 transition"></div>
       <div class="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-        <NuxtLink :to="`/project/${project.id}`" class="btn-purple-outline focus-cyber">View</NuxtLink>
+        <NuxtLink :to="`${viewPrefix}/${project.id}`" class="btn-purple-outline focus-cyber">View</NuxtLink>
         <NuxtLink :to="`/project/${project.id}?remix=1`" class="btn-pink focus-cyber">Remix</NuxtLink>
       </div>
     </div>
@@ -58,7 +58,8 @@ interface CommunityProject {
   owner?: OwnerInfo
 }
 
-const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: boolean }>(), {
+const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: boolean; viewPrefix?: string }>(), {
   overlay: false,
+  viewPrefix: '/project',
 })
 </script>
