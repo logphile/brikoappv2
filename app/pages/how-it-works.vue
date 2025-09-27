@@ -38,53 +38,94 @@ useHead({
     { type: 'application/ld+json', innerHTML: JSON.stringify(hiwBreadcrumbs) }
   ]
 })
+
+// FAQ items
+const faq = [
+  { q: 'What image types are supported?', a: 'PNG, JPG, or WebP up to 25 MB.' },
+  { q: 'How accurate is the parts list?', a: 'It reflects the chosen palette and tiling; integrate BrickLink/Rebrickable later for live pricing.' },
+  { q: 'Can I share my build?', a: 'Yes—save to your Studio and choose “Make Public”.' },
+]
 </script>
 
 <template>
-  <main class="px-6 py-16 max-w-6xl mx-auto">
-    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">How Briko Works</h1>
-    <p class="mt-3 text-lg opacity-80">
-      Briko turns images into LEGO-style mosaics or 3D voxel builds. It’s optimized for speed and clarity so your preview feels instant and your parts list is accurate.
-    </p>
+  <main class="min-h-screen bg-[var(--yellow)] text-[var(--dark)]">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Hero -->
+      <header class="mb-8">
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">How Briko Works</h1>
+        <p class="mt-3 text-lg text-[color:var(--text-dim)]">
+          Turn any image into a LEGO-style mosaic or 3D voxel build—fast previews, clean parts lists, and easy exports.
+        </p>
+      </header>
 
-    <!-- Steps -->
-    <section class="mt-10 grid gap-4 md:grid-cols-4">
-      <div class="rounded-2xl border border-white/10 p-5">
-        <h2 class="font-semibold">1) Upload</h2>
-        <p class="opacity-80 mt-1">Drag & drop or select a file. Briko preprocesses the image for clean edges.</p>
-      </div>
-      <div class="rounded-2xl border border-white/10 p-5">
-        <h2 class="font-semibold">2) Choose Mode & Palette</h2>
-        <p class="opacity-80 mt-1">Mosaic or Voxel. Pick sizes, dimensions, and a brick color palette.</p>
-      </div>
-      <div class="rounded-2xl border border-white/10 p-5">
-        <h2 class="font-semibold">3) Generate</h2>
-        <p class="opacity-80 mt-1">Greedy tiler / voxelizer optimizes for fewer plates and a clean look.</p>
-      </div>
-      <div class="rounded-2xl border border-white/10 p-5">
-        <h2 class="font-semibold">4) Export</h2>
-        <p class="opacity-80 mt-1">Download PNG, CSV parts list, or PDF build steps.</p>
-      </div>
-    </section>
+      <!-- Quick nav -->
+      <nav class="mb-6 flex flex-wrap gap-2">
+        <a href="#steps" class="btn-purple-outline focus-cyber h-9 px-3 text-sm">Steps</a>
+        <a href="#tips" class="btn-purple-outline focus-cyber h-9 px-3 text-sm">Tips</a>
+        <a href="#faq" class="btn-purple-outline focus-cyber h-9 px-3 text-sm">FAQ</a>
+      </nav>
 
-    <!-- Tips -->
-    <section class="mt-12 rounded-2xl border border-white/10 p-6">
-      <h2 class="text-2xl font-bold">Tips</h2>
-      <ul class="mt-3 space-y-2 opacity-90 list-disc pl-5">
-        <li><strong>Image quality:</strong> Higher contrast images tile better.</li>
-        <li><strong>Palette:</strong> Start with default; refine later for a specific look.</li>
-        <li><strong>Performance:</strong> Targeting &lt;2s for 256×256 mosaics and 64³ voxels on modern hardware.</li>
-      </ul>
-    </section>
+      <!-- Steps -->
+      <section id="steps" class="card-ivory p-5 sm:p-6 mb-8">
+        <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center gap-3">
+          The 4-Step Flow
+          <span class="h-[3px] w-10 rounded-full" style="background:#2F3061"></span>
+        </h2>
 
-    <!-- CTA -->
-    <div class="text-center mt-10">
-      <NuxtLink
-        to="/mosaic"
-        class="inline-flex items-center justify-center btn-mint"
-      >
-        Photo to Bricks
-      </NuxtLink>
+        <div class="grid gap-4 md:grid-cols-2">
+          <StepCard num="1" title="Upload">
+            Drag & drop an image or pick a file. Briko preprocesses it for crisp edges.
+          </StepCard>
+
+          <StepCard num="2" title="Choose Mode & Palette">
+            Mosaic or Voxel. Pick sizes, dimensions, and a brick color palette.
+          </StepCard>
+
+          <StepCard num="3" title="Generate">
+            Greedy tiler / voxelizer minimizes plates for a cleaner look.
+          </StepCard>
+
+          <StepCard num="4" title="Export">
+            Download PNG, CSV parts list, or PDF build steps.
+          </StepCard>
+        </div>
+
+        <div class="mt-6">
+          <NuxtLink to="/mosaic" class="btn-pink focus-cyber">Photo to Bricks</NuxtLink>
+        </div>
+      </section>
+
+      <!-- Tips -->
+      <section id="tips" class="card-ivory p-5 sm:p-6 mb-8">
+        <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center gap-3">
+          Tips
+          <span class="h-[3px] w-10 rounded-full" style="background:#2F3061"></span>
+        </h2>
+        <ul class="space-y-3">
+          <li class="flex gap-3">
+            <span class="h-6 w-6 rounded-full flex items-center justify-center text-[var(--ivory)]" style="background:#2F3061">•</span>
+            <div><strong>Image quality:</strong> Higher contrast images tile better.</div>
+          </li>
+          <li class="flex gap-3">
+            <span class="h-6 w-6 rounded-full flex items-center justify-center text-[var(--ivory)]" style="background:#2F3061">•</span>
+            <div><strong>Palette:</strong> Start with default; refine later for a specific look.</div>
+          </li>
+          <li class="flex gap-3">
+            <span class="h-6 w-6 rounded-full flex items-center justify-center text-[var(--ivory)]" style="background:#2F3061">•</span>
+            <div><strong>Performance:</strong> Targeting &lt;2s for 256×256 mosaics and 64³ voxels on modern hardware.</div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- FAQ (accordion) -->
+      <section id="faq" class="card-ivory p-5 sm:p-6">
+        <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center gap-3">
+          FAQ
+          <span class="h-[3px] w-10 rounded-full" style="background:#2F3061"></span>
+        </h2>
+
+        <FAQ :items="faq" />
+      </section>
     </div>
   </main>
 </template>
