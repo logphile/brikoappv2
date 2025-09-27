@@ -89,12 +89,20 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
     opacity:.5; cursor:not-allowed; transform:none; filter:none;
   }
 
+  /* Improve disabled readability for outline button on light backgrounds */
+  .btn-purple-outline:disabled{
+    opacity:1; background:var(--ivory); color:rgba(52,52,52,.6); border-color:var(--ivory-border);
+  }
+
   /* Remove number input spinners for consistent UI */
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none; margin: 0;
   }
   input[type=number]{ -moz-appearance: textfield; }
+
+  /* Numeric alignment utility */
+  .tabular-nums{ font-variant-numeric: tabular-nums; }
   /* Primary mint button (solid) */
   .btn-mint { /* existing class defined in buttons.css; keep here for consistency if used alone */
     @apply inline-flex items-center gap-2 rounded-xl px-3 py-1.5
