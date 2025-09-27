@@ -25,8 +25,8 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery
-    { rel: 'preload', as: 'image', href: '/briko-champloo-2.jpg?v=1' },
-    { rel: 'preload', as: 'image', href: '/briko-champloo.jpg?v=1' }
+    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png' },
+    { rel: 'preload', as: 'image', href: '/home-1-original.jpg' }
   ]
 })
 
@@ -70,7 +70,7 @@ useHead({
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] h-[340px] md:h-[420px]">
-            <HeroDemo :original-src="'/briko-champloo.jpg?v=1'" :mosaic-src="'/briko-champloo-2.jpg?v=1'" :fixed-height="true" />
+            <HeroDemo :original-src="'/home-1-original.jpg'" :mosaic-src="'/home-1-mosaic.png'" :fixed-height="true" />
             <!-- embedded look: no extra ring overlay -->
           </div>
           <div class="my-auto">
