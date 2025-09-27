@@ -1,5 +1,5 @@
 <template>
-  <div class="grid gap-4" :class="gridCols">
+  <div class="grid gap-5" :class="gridCols">
     <ProjectCard
       v-for="item in displayItems"
       :key="item.public_id || item.id || item.name"
@@ -76,5 +76,5 @@ function onCardImgError(id?: string | number){ if (id != null) broken.value.add(
 
 const displayItems = computed(() => props.items.filter(i => !broken.value.has(String(i.id))))
 
-const gridCols = computed(() => 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5')
+const gridCols = computed(() => 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5')
 </script>
