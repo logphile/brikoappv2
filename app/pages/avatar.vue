@@ -73,15 +73,15 @@
                 <h3 class="text-lg font-semibold text-[#343434] mb-1">Options</h3>
                 <div class="mt-2 flex flex-wrap gap-4 items-center text-[#2F3061]">
                   <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" class="accent-[#FF0062]" v-model="ditherFS" />
+                    <input type="checkbox" class="h-4 w-4 accent-[#2F3061]" v-model="ditherFS" />
                     <span>Dither (FS)</span>
                   </label>
                   <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" class="accent-[#FF0062]" v-model="studStyle" />
+                    <input type="checkbox" class="h-4 w-4 accent-[#2F3061]" v-model="studStyle" />
                     <span>Stud style</span>
                   </label>
                   <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" class="accent-[#FF0062]" v-model="showPlateOutlines" />
+                    <input type="checkbox" class="h-4 w-4 accent-[#2F3061]" v-model="showPlateOutlines" />
                     <span>Show plate outlines</span>
                   </label>
                 </div>
