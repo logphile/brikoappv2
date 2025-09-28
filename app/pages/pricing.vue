@@ -56,7 +56,7 @@ useHead({
           <li>• PNG / CSV exports</li>
           <li>• Basic voxel preview</li>
         </ul>
-        <NuxtLink to="/mosaic" class="inline-block mt-6 btn-mint">Try Mosaic</NuxtLink>
+        <NuxtLink to="/mosaic" class="inline-block mt-6 btn-pink focus-cyber">Try Mosaic</NuxtLink>
       </div>
 
       <!-- Pro Plan (coming soon) -->
@@ -68,7 +68,7 @@ useHead({
           <li>• Curated MOC packs</li>
           <li>• Save & share projects</li>
         </ul>
-        <NuxtLink to="#waitlist" class="inline-block mt-6 btn-mint">Join Waitlist</NuxtLink>
+        <NuxtLink to="#waitlist" class="inline-block mt-6 btn-pink focus-cyber">Join Waitlist</NuxtLink>
       </div>
     </div>
 

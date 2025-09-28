@@ -21,8 +21,8 @@
     </div>
 
     <div class="mt-6 flex items-center justify-center gap-3">
-      <NuxtLink to="/gallery" class="btn-outline-mint">{{ copy.studio.seeAll }}</NuxtLink>
-      <button v-if="hasMore" @click="loadMore" class="btn-mint">{{ copy.studio.loadMore }}</button>
+      <NuxtLink to="/gallery" class="btn-purple-outline focus-cyber">{{ copy.studio.seeAll }}</NuxtLink>
+      <button v-if="hasMore" @click="loadMore" class="btn-pink focus-cyber">{{ copy.studio.loadMore }}</button>
     </div>
   </section>
 </template>

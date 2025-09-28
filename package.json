@@ -12,7 +12,8 @@
     "icons:generate": "node scripts/generate-icons.mjs",
     "seed:storage": "node --env-file=.env.local scripts/create-storage-folders.mjs",
     "e2e": "playwright test --reporter=line",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:no-mint": "rg -n 'btn-mint' 'app/**/*.vue' -S && echo '❌ Mint button detected; use btn-pink/btn-ivory-outline instead.' && exit 1 || echo 'OK: no mint button found'"
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.1",

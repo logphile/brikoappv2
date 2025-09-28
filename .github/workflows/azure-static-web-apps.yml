@@ -66,6 +66,12 @@ jobs:
             echo "Sentry DSN is set (masked)."
           fi
 
+      - name: "Guard: kill mint buttons"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+          pnpm run check:no-mint
+
       - name: Generate static site
         env:
           NUXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ secrets.CF_WEB_ANALYTICS_TOKEN }}

@@ -22,9 +22,9 @@
         <p class="mt-2 text-white/80 text-sm">See trending builds, remixes, and fan favorites.</p>
 
         <div class="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <NuxtLink to="/gallery" class="btn-mint">Open Community Gallery</NuxtLink>
-          <NuxtLink to="/login" class="btn-outline-mint">Log in to create your Studio</NuxtLink>
-          <NuxtLink to="/projects" class="btn-outline-mint">Your Projects</NuxtLink>
+          <NuxtLink to="/gallery" class="btn-pink focus-cyber">Open Community Gallery</NuxtLink>
+          <NuxtLink to="/login" class="btn-ivory-outline focus-cyber">Log in to create your Studio</NuxtLink>
+          <NuxtLink to="/projects" class="btn-ivory-outline focus-cyber">Your Projects</NuxtLink>
         </div>
       </div>
     </section>

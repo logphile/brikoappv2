@@ -11,7 +11,7 @@
         <span>Email</span>
         <input v-model="email" type="email" required class="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2" placeholder="you@example.com"/>
       </label>
-      <button class="btn-mint w-full" :disabled="sent || loading">
+      <button class="btn-pink focus-cyber w-full" :disabled="sent || loading">
         {{ sent ? 'Link sent — check email' : (loading ? 'Sending…' : 'Send magic link') }}
       </button>
     </form>
@@ -22,7 +22,7 @@
       <div class="h-px flex-1 bg-white/10"></div>
     </div>
 
-    <button class="btn-mint w-full" @click="loginWithGoogle">
+    <button class="btn-pink focus-cyber w-full" @click="loginWithGoogle">
       Continue with Google
     </button>
 
