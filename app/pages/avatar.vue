@@ -47,7 +47,35 @@
                 <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
               </div>
               <div class="pt-2">
-                <UploadBox :maxSizeMB="25" accept="image/png,image/jpeg,image/webp" :label="'Drag a photo here or'" :buttonText="'browse'" @file="handleSelfieFile" @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }" />
+                <!-- Upload block -->
+                <div class="card-ivory p-4 rounded-2xl"
+                     @dragover.prevent @dragenter.prevent @drop.prevent="onDrop" @paste="onPaste">
+                  <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold">Upload</h3>
+                  </div>
+
+                  <!-- Hidden input + explicit trigger -->
+                  <input
+                    ref="fileEl"
+                    type="file"
+                    class="sr-only"
+                    accept="image/png,image/jpeg,image/webp"
+                    :disabled="isProcessing"
+                    @change="onFileChange"
+                  />
+
+                  <button type="button" class="btn-purple-outline focus-cyber"
+                          @click="fileEl?.click()">
+                    browse
+                  </button>
+
+                  <!-- Optional: keep the whole drop area clickable -->
+                  <div class="mt-3 h-32 rounded-xl border border-[color:var(--ivory-border)]
+                              bg-[rgba(0,0,0,.04)] flex items-center justify-center cursor-pointer"
+                       @click="fileEl?.click()">
+                    <p class="text-[color:var(--text-dim)]">Drag & drop an image or click to browse…</p>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -166,7 +194,6 @@ import { lego16, lego32 } from '@/lib/palette/legoPresets'
 import { mapBitmapToPalette } from '@/lib/color-distance'
 import { downloadPng } from '@/lib/exporters'
 import { copy } from '@/lib/copy'
-import UploadBox from '@/components/ui/UploadBox.vue'
 import PaletteSwatches from '@/components/ui/PaletteSwatches.vue'
 import OutputSizeControl from '@/components/controls/OutputSizeControl.vue'
 import PreviewQualitySelect from '@/components/controls/PreviewQualitySelect.vue'
@@ -246,6 +273,10 @@ const srcCanvas = ref<HTMLCanvasElement | null>(null)
 const outCanvas = ref<HTMLCanvasElement | null>(null)
 const lastTileSizePx = ref(8)
 const srcFileRef = ref<File | null>(null)
+// Upload wiring refs
+const fileEl = ref<HTMLInputElement | null>(null)
+const isProcessing = ref(false)
+const MAX_MB = 25
 
 let srcBitmap: ImageBitmap | null = null
 let cv: any = null
@@ -274,6 +305,49 @@ function loadOpenCV() {
     s.onerror = (e) => { console.error(e); reject(new Error('Failed to load OpenCV.js')) }
     document.head.appendChild(s)
   })
+}
+
+// Upload helpers (fail-safe, mirror working pages)
+function pickFile(f?: File | null): { file?: File; err?: string } {
+  if (!f) return { err: 'No file selected.' }
+  if (!f.type?.startsWith('image/')) return { err: 'Please choose an image file.' }
+  if (f.size > MAX_MB * 1024 * 1024) return { err: `Max size is ${MAX_MB} MB.` }
+  return { file: f }
+}
+
+async function handle(file: File) {
+  try {
+    isProcessing.value = true
+    // Reuse existing handler which decodes bitmap and primes preview
+    await handleSelfieFile(file)
+  } catch (e) {
+    console.error('[avatar upload] load error', e)
+    try { show('Could not read that image.', 'error') } catch {}
+  } finally {
+    isProcessing.value = false
+    if (fileEl.value) fileEl.value.value = '' // allow selecting same file twice
+  }
+}
+
+function onFileChange(e: Event) {
+  const f = (e.target as HTMLInputElement).files?.[0]
+  const { file, err } = pickFile(f || null)
+  if (err) { try { show(err, 'error') } catch { console.warn(err) }; return }
+  handle(file!)
+}
+
+function onDrop(e: DragEvent) {
+  const f = e.dataTransfer?.files?.[0]
+  const { file, err } = pickFile(f || null)
+  if (err) { try { show(err, 'error') } catch { console.warn(err) }; return }
+  handle(file!)
+}
+
+function onPaste(e: ClipboardEvent) {
+  const f = Array.from(e.clipboardData?.files || [])[0]
+  const { file, err } = pickFile(f || null)
+  if (err) { try { show(err, 'error') } catch { console.warn(err) }; return }
+  handle(file!)
 }
 
 function drawToCanvas(bitmap: ImageBitmap, cvs: HTMLCanvasElement, wTarget: number, hTarget: number) {
