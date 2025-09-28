@@ -63,6 +63,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      htmlAttrs: { lang: 'en' },
       title: process.env.NUXT_PUBLIC_SITE_NAME || 'Briko',
       titleTemplate: `%s | ${process.env.NUXT_PUBLIC_SITE_NAME || 'Briko'}`,
       meta: [
