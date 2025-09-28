@@ -204,7 +204,15 @@ useHead({
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: 'Avatar Builder | Briko' },
     { name: 'twitter:description', content: 'Upload a photo, map it to the LEGO palette, and export a stud-style avatar.' },
-    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }],
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+
+ : { width: mw, height: Math.round(mw/sr) }
+}
+
+ = fitContain(bitmap.width, bitmap.height, 768, 768)
+  drawToCanvas(bitmap, outCanvas.value, width, height)
+}
+  ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/avatar' }
   ]
@@ -698,5 +706,4 @@ const gridOverlayStyle = computed(() => {
 .fadein-enter-active, .fadein-leave-active { transition: opacity .25s ease, transform .25s ease; }
 .fadein-enter-from, .fadein-leave-to { opacity: 0; transform: translateY(6px); }
 </style>
-
 
