@@ -139,8 +139,8 @@ onMounted(fetchDetail)
           <span>📌</span> <span>{{ saves }}</span>
         </button>
         <div class="ml-auto flex gap-2">
-          <button class="btn-outline-mint px-3 py-1.5 rounded-xl" @click="share">Copy link</button>
-          <button class="btn-mint px-3 py-1.5 rounded-xl" @click="remix">Remix</button>
+          <button class="btn-ivory-outline focus-cyber px-3 py-1.5 rounded-xl" @click="share">Copy link</button>
+          <button class="btn-pink focus-cyber px-3 py-1.5 rounded-xl" @click="remix">Remix</button>
         </div>
       </section>
 
