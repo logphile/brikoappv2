@@ -780,22 +780,22 @@ watchDebounced(
             <p class="mt-1 text-xs text-[#343434]/60">Pick exact dimensions, or use the sliders above.</p>
             <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
               <div>
-                <label class="block text-xs text-[#2F3061] mb-1">Width</label>
-                <select v-model.number="widthSelStuds" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-width'">
+                <label class="block text-xs text-[#2F3061] mb-1" for="sel-width">Width</label>
+                <select id="sel-width" v-model.number="widthSelStuds" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-width'">
                   <option v-for="n in dimOptions" :key="'w'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
                 </select>
                 <span id="desc-width" class="sr-only">Exact mosaic width. Matches the sliders above.</span>
               </div>
               <div>
-                <label class="block text-xs text-[#2F3061] mb-1">Height</label>
-                <select v-model.number="heightSelStuds" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-height'">
+                <label class="block text-xs text-[#2F3061] mb-1" for="sel-height">Height</label>
+                <select id="sel-height" v-model.number="heightSelStuds" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-height'">
                   <option v-for="n in dimOptions" :key="'h'+n" :value="n">{{ units==='studs' ? n : (units==='inches' ? fmt1(n*0.315) : fmt1(n*0.8)) }}</option>
                 </select>
                 <span id="desc-height" class="sr-only">Exact mosaic height. Matches the sliders above.</span>
               </div>
               <div>
-                <label class="block text-xs text-[#2F3061] mb-1">Units</label>
-                <select v-model="units" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-units'">
+                <label class="block text-xs text-[#2F3061] mb-1" for="sel-units">Units</label>
+                <select id="sel-units" v-model="units" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]" :aria-describedby="'desc-units'">
                   <option value="studs">Studs</option>
                   <option value="inches">Inches</option>
                   <option value="centimeters">Centimeters</option>
@@ -830,10 +830,10 @@ watchDebounced(
             </div>
           </div>
           <div class="mt-3" v-if="showAdvanced">
-            <label class="block text-sm text-[#2F3061]">Orientation</label>
+            <label class="block text-sm text-[#2F3061]" for="sel-orientation">Orientation</label>
             <div class="flex items-center mt-1">
               <div class="min-w-[160px] max-w-[220px]">
-                <select v-model="mosaic.settings.snapOrientation" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
+                <select id="sel-orientation" v-model="mosaic.settings.snapOrientation" class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FF0062]">
                   <option value="both">Both</option>
                   <option value="horizontal">Horizontal</option>
                   <option value="vertical">Vertical</option>
@@ -1151,8 +1151,8 @@ watchDebounced(
             </footer>
           </div>
 
-          <!-- Fallback 1: show uploaded image before mosaic is ready -->
-          <img v-else-if="sourceImgUrl" :src="sourceImgUrl" alt="Uploaded" class="max-w-full max-h-full object-contain pointer-events-none select-none" />
+          <!-- Fallback 1: show uploaded image before mosaic is ready (decorative) -->
+          <img v-else-if="sourceImgUrl" :src="sourceImgUrl" alt="" role="presentation" class="max-w-full max-h-full object-contain pointer-events-none select-none" />
 
           <!-- Fallback 2: empty state before any upload -->
           <EmptyMosaicPlaceholder v-else />

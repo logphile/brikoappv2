@@ -7,7 +7,7 @@
       </span>
     </div>
     <div class="relative">
-      <input v-model="q" type="text" :placeholder="placeholder"
+      <input v-model="q" type="text" :placeholder="placeholder" :aria-label="placeholder || 'Filter by tag'"
              class="w-full h-11 rounded-xl bg-[rgba(0,0,0,.04)]
                     border border-[color:var(--ivory-border)] text-[#343434]
                     placeholder-[#343434B3] px-3 text-sm
