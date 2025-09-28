@@ -2,11 +2,13 @@
   <div class="space-y-3">
     <div class="flex items-center justify-between">
       <label class="text-sm">Output size (studs)</label>
-      <div class="flex flex-wrap gap-1 text-xs opacity-80">
+      <div class="chip-group" role="tablist" aria-label="Output size (studs)">
         <button
           v-for="p in presetsComputed"
           :key="p.label"
-          class="btn-soft h-7 px-2 rounded-md"
+          :class="['chip', (width===p.w && height===p.h) && 'chip--active']"
+          role="tab"
+          :aria-selected="width===p.w && height===p.h"
           @click.prevent="applyPreset(p)"
         >{{ p.label }}</button>
       </div>

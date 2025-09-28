@@ -1,14 +1,11 @@
 <template>
   <div class="space-y-2">
     <label class="block text-sm">Preset</label>
-    <div class="flex flex-wrap gap-2">
+    <div class="chip-group">
       <button
         v-for="opt in opts"
         :key="opt.value"
-        class="h-8 px-3 rounded-full border text-xs font-medium transition
-               border-white/15 bg-white/10 text-white/90 hover:bg-white/15
-               focus:outline-none focus:ring-2 focus:ring-pink-500/60"
-        :class="preset === opt.value ? 'border-pink-500 text-gray-900 bg-white/80' : ''"
+        :class="['chip', preset === opt.value && 'chip--active']"
         @click.prevent="$emit('update:preset', opt.value)"
       >{{ opt.label }}</button>
     </div>
