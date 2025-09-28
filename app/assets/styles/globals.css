@@ -238,3 +238,15 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
+
+/* Legal prose (readable copy on ivory) */
+@layer components {
+  .legal-prose p{ margin-top:1rem; line-height:1.7; color:var(--dark); }
+  .legal-prose h2{ margin-top:1.5rem; font-weight:700; font-size:1.125rem; color:var(--dark); }
+  .legal-prose ul{ margin-top:.75rem; padding-left:1.25rem; list-style:disc; }
+  .legal-prose li{ margin-top:.5rem; }
+  .legal-prose a{
+    color:#2F3061; text-decoration:underline; text-underline-offset:2px; font-weight:600;
+  }
+  .legal-prose strong{ color:var(--dark); }
+}

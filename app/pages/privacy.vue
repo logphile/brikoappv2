@@ -1,22 +1,41 @@
 <template>
-  <main class="mx-auto max-w-3xl px-6 py-12 text-white">
-    <h1 class="text-3xl font-semibold mb-4">Privacy Policy</h1>
-    <p class="opacity-80 mb-6">Your privacy matters. This page outlines what data Briko collects and how it is used.</p>
+  <main class="min-h-screen bg-[var(--yellow)] text-[var(--dark)]">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <header class="mb-6">
+        <h1 class="text-3xl md:text-4xl font-extrabold">Privacy Policy</h1>
+        <div class="mt-2 h-[3px] w-12 rounded-full" style="background:#2F3061"></div>
+        <p class="mt-2 text-[color:#343434B3] text-sm">Last updated: {{ lastUpdated }}</p>
+      </header>
 
-    <section class="space-y-4 leading-relaxed opacity-90">
-      <p>
-        We collect minimal analytics to improve the product. We use privacy-friendly Cloudflare Web Analytics which does not
-        use cookies or store personal data.
-      </p>
-      <p>
-        Authentication is powered by Supabase. If you sign in, your email address is processed solely to provide access and
-        account-related features. We do not sell or share your data with third parties.
-      </p>
-      <p>
-        If you have any questions, contact us at <a class="underline" href="mailto:support@briko.app">support@briko.app</a>.
-      </p>
-    </section>
+      <!-- readable content surface -->
+      <article class="card-ivory rounded-2xl p-6 sm:p-8 legal-prose">
+        <p>Your privacy matters. This page outlines what data Briko collects and how it’s used.</p>
+
+        <h2>What we collect</h2>
+        <ul>
+          <li><strong>Analytics:</strong> Privacy-friendly Cloudflare Web Analytics (no cookies, no personal data).</li>
+          <li><strong>Authentication:</strong> Email address via Supabase to provide account features.</li>
+          <li><strong>Projects:</strong> Images/metadata you upload or create in Briko Studio.</li>
+        </ul>
+
+        <h2>How we use it</h2>
+        <ul>
+          <li>Operate the app, improve performance, and troubleshoot.</li>
+          <li>No sale of personal data. No third-party ads.</li>
+        </ul>
+
+        <h2>Storage &amp; sharing</h2>
+        <ul>
+          <li>Project files are stored in Supabase Storage. Public projects are visible to anyone with the link.</li>
+          <li>We may retain logs for security and abuse prevention.</li>
+        </ul>
+
+        <h2>Contact</h2>
+        <p>Questions? Email <a href="mailto:support@briko.app">support@briko.app</a>.</p>
+      </article>
+    </div>
   </main>
+  
 </template>
 
 <script setup lang="ts">
@@ -26,6 +45,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 const siteUrl = 'https://briko.app'
 const name = 'Privacy Policy'
 const description = 'Learn how Briko collects and uses data. We use privacy-friendly analytics and keep your data safe.'
+const lastUpdated = 'Sept 2025'
 
 useHead({
   title: name,
