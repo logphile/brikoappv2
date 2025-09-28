@@ -46,6 +46,8 @@ function handleFiles(list: FileList | null) {
   const msg = file ? isOk(file) : 'No file selected'
   if (msg) { emit('error', msg); return }
   emit('file', file!)
+  // Allow re-selecting the same file by clearing the input value
+  if (inputEl.value) inputEl.value.value = ''
 }
 
 function onDrop(e: DragEvent) {
@@ -110,6 +112,7 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
       type="file"
       class="sr-only"
       :accept="accept"
+      :disabled="disabled"
       @change="onChange"
     />
   </div>
