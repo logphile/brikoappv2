@@ -47,7 +47,7 @@
                 <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
               </div>
               <div class="pt-2">
-                <UploadBox :maxSizeMB="25" accept="image/*" :label="'Drag a photo here or'" :buttonText="'browse'" @file="handleSelfieFile" @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }" />
+                <UploadBox :maxSizeMB="25" accept="image/png,image/jpeg,image/webp" :label="'Drag a photo here or'" :buttonText="'browse'" @file="handleSelfieFile" @error="(msg) => { try { show(msg, 'error') } catch { console.warn(msg) } }" />
               </div>
             </section>
 
