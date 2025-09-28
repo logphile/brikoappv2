@@ -288,11 +288,18 @@ async function publishToGallery(){
 async function makePublic(){
   if (!galleryProjectId.value) return
   const { $supabase } = useNuxtApp() as any
-  const { makePublic } = useProjects()
   if (!$supabase) return
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
-  try { await makePublic(galleryProjectId.value, user.id) } catch (e) { console.warn(e) }
+  // Precondition
+  if (!vox.value) { console.warn('[Voxel] Nothing to publish yet'); return }
+  try {
+    const { publishProject } = useProjects()
+    const title = `3D Build ${vox.value.w}×${vox.value.h}×${vox.value.depth}`
+    await publishProject(galleryProjectId.value, { title })
+  } catch (e: any) {
+    console.error('[Voxel Make Public] error:', e)
+  }
 }
 
 

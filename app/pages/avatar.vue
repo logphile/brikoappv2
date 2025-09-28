@@ -620,8 +620,18 @@ async function makePublic(){
   if (!$supabase) return
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
-  try { await makePublicProject(galleryProjectId.value, user.id); try { show('Your avatar is public!', 'success') } catch {} }
-  catch(e){ console.warn(e); try { show('Failed to publish', 'error') } catch {} }
+  // Preconditions
+  if (!widthStuds.value || !heightStuds.value) { try { show('Pick size first.', 'error') } catch {}; return }
+  try {
+    const { publishProject } = useProjects()
+    const title = `Avatar ${widthStuds.value}×${heightStuds.value}`
+    await publishProject(galleryProjectId.value, { title })
+    try { show('Published!', 'success') } catch {}
+  } catch (e: any) {
+    console.error('[Avatar Make Public] error:', e)
+    const msg = e?.message ? String(e.message) : String(e)
+    try { show(`Publish failed: ${msg}`, 'error') } catch {}
+  }
 }
 
 const gridOverlayStyle = computed(() => {
