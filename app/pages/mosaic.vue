@@ -205,14 +205,24 @@ async function publishToGallery(){
 }
 
 async function makePublic(){
-  if (!galleryProjectId.value) { try { showToast('Save to Gallery first', 'info', 1600) } catch {}; return }
+  if (!galleryProjectId.value) { try { showToast('Save the project before publishing.', 'error', 2200) } catch {}; return }
   const { $supabase } = useNuxtApp() as any
-  const { makePublic } = useProjects()
   if (!$supabase) return
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
-  try { await makePublic(galleryProjectId.value, user.id); try { showToast('Your project is public!', 'success', 2200) } catch {} }
-  catch(e){ console.warn(e); try { showToast('Failed to publish', 'error', 2200) } catch {} }
+  try {
+    const { publishProject } = useProjects()
+    const title = `Mosaic ${mosaic.width || target.value.w}×${mosaic.height || target.value.h}`
+    await publishProject(galleryProjectId.value, { title })
+    try { showToast('Published!', 'success', 2200) } catch {}
+  } catch (e:any) {
+    console.error('[Make Public] error:', e)
+    const raw = e?.message ? String(e.message) : String(e)
+    const friendly = /duplicate key|unique constraint/i.test(raw)
+      ? 'That title/slug already exists—try another name.'
+      : raw
+    try { showToast(`Publish failed: ${friendly}`, 'error', 3000) } catch {}
+  }
 }
 
 // React to top surface for preview defaults
@@ -379,10 +389,15 @@ function choosePreset(w: number, h: number){
 
 // Save & Publish using new createProject helper (uploads WebP preview first)
 async function saveAndPublish(){
+  // Preconditions (surface useful messages instead of guessing)
+  if (!target.value.w || !target.value.h) { try { showToast('Pick mosaic size first.', 'error', 2200) } catch {}; return }
+  if (!mosaic.tilingResult) { try { showToast('Generate a preview first.', 'error', 2200) } catch {}; return }
   try {
-    const { createProject } = useProjects()
+    const { createProject, publishProject } = useProjects()
+    const title = `Mosaic ${target.value.w}×${target.value.h}`
+    // Save private first (idempotent if already saved differently)
     const rec = await createProject({
-      title: `Mosaic ${target.value.w}×${target.value.h}`,
+      title,
       kind: 'mosaic',
       width: target.value.w,
       height: target.value.h,
@@ -392,13 +407,19 @@ async function saveAndPublish(){
       mode: (resolvedMode.value as any) || mode.value,
       bricks_est: mosaic.tilingResult?.bricks?.length || (target.value.w * target.value.h),
       cost_est_usd: mosaic.tilingResult?.estTotalCost || 0,
-      makePublic: true,
+      makePublic: false,
     })
     galleryProjectId.value = rec.id
-    try { showToast('Project published to Gallery', 'success', 2200) } catch {}
+    // Then publish with slug + cover checks
+    await publishProject(rec.id, { title })
+    try { showToast('Published!', 'success', 2200) } catch {}
   } catch (e:any) {
-    console.error(e)
-    try { showToast('Save failed', 'error', 2200) } catch {}
+    console.error('[Save & Publish] error:', e)
+    const raw = e?.message ? String(e.message) : String(e)
+    const friendly = /duplicate key|unique constraint/i.test(raw)
+      ? 'That title/slug already exists—try another name.'
+      : raw
+    try { showToast(`Publish failed: ${friendly}`, 'error', 3000) } catch {}
   }
 }
 

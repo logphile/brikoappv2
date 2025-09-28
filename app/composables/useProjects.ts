@@ -156,6 +156,109 @@ export const useProjects = () => {
     if (error) throw error
   }
 
+  // --- Publishing helpers ---------------------------------------------------
+  function slugify(title: string) {
+    return String(title || 'untitled')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .slice(0, 80)
+  }
+
+  async function ensureUniqueSlug(title: string) {
+    if (!$supabase) return slugify(title)
+    const base = slugify(title || 'untitled')
+    let slug = base, n = 2
+    // If slug column doesn't exist, this select will error — we fail open
+    while (true) {
+      try {
+        const { count, error } = await $supabase
+          .from('user_projects')
+          .select('id', { count: 'exact', head: true })
+          .eq('slug', slug)
+        if (error) break
+        if ((count ?? 0) === 0) break
+        slug = `${base}-${n++}`
+      } catch {
+        break
+      }
+    }
+    return slug
+  }
+
+  async function ensurePublicCover(projectId: string, _userId?: string) {
+    if (!$supabase) throw new Error('Supabase unavailable')
+    // Fetch preview_path for this project
+    const { data, error } = await $supabase
+      .from('user_projects')
+      .select('preview_path')
+      .eq('id', projectId)
+      .single()
+    if (error) { console.warn('[ensurePublicCover] fetch failed', error); return null }
+    const previewPath = (data as any)?.preview_path as string | undefined
+    if (!previewPath) return null
+    const publicUrl = buildPreviewUrl(previewPath)
+    // Best-effort: set cover_url if the column exists
+    try { await $supabase.from('user_projects').update({ cover_url: publicUrl }).eq('id', projectId) } catch {}
+    return publicUrl
+  }
+
+  async function publishProject(projectId: string, opts?: { title?: string }) {
+    if (!$supabase) throw new Error('Supabase unavailable')
+    const { data: { user } } = await $supabase.auth.getUser()
+    if (!user?.id) throw new Error('Not authenticated')
+    if (!projectId) throw new Error('Missing projectId')
+
+    // Compute a unique slug if possible
+    let slug: string | null = null
+    if (opts?.title) {
+      try { slug = await ensureUniqueSlug(opts.title) } catch { slug = null }
+    }
+
+    // 1) Minimal update: set status public (should exist in new schema)
+    {
+      const { error } = await $supabase
+        .from('user_projects')
+        .update({ status: 'public' })
+        .eq('id', projectId)
+        .eq('user_id', user.id)
+      if (error) throw error
+    }
+    // 2) Optional: set slug if column exists (propagate unique constraint errors)
+    if (slug) {
+      const { error } = await $supabase
+        .from('user_projects')
+        .update({ slug })
+        .eq('id', projectId)
+        .eq('user_id', user.id)
+      if (error) {
+        // If column missing, ignore; otherwise propagate so UI can show real message
+        const msg = String((error as any)?.message || '')
+        if (!/column .*slug.* does not exist/i.test(msg)) throw error
+      }
+    }
+    // 3) Optional: set published_at if column exists; swallow missing-column errors
+    {
+      const ts = new Date().toISOString()
+      const { error } = await $supabase
+        .from('user_projects')
+        .update({ published_at: ts })
+        .eq('id', projectId)
+        .eq('user_id', user.id)
+      if (error) {
+        const msg = String((error as any)?.message || '')
+        if (!/column .*published_at.* does not exist/i.test(msg)) throw error
+      }
+    }
+
+    // Ensure cover is publicly resolvable
+    const coverUrl = await ensurePublicCover(projectId, user.id)
+    if (!coverUrl) throw new Error('cover image not public')
+
+    return { id: projectId, slug: slug || undefined, coverUrl }
+  }
+
   // Create a project with a fingerprinted WebP preview path and upload the preview blob first.
   async function createProject(input: {
     title: string
@@ -259,9 +362,12 @@ export const useProjects = () => {
     insertUserProject,
     createProject,
     makePublic,
+    publishProject,
     queryPublicProjects,
     getReactionsByMe,
     upsertReaction,
     deleteReaction,
+    ensureUniqueSlug,
+    ensurePublicCover,
   }
 }
