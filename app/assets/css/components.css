@@ -163,6 +163,33 @@ input[type="range"].range-mint::-moz-range-track { height: 2px; background: tran
   display:inline-flex; gap:.5rem; flex-wrap:wrap;
 }
 
+/* Chips on purple surfaces (e.g., Build guide card) */
+.on-purple .chip{
+  height: auto; padding: .25rem .75rem; /* py-1 px-3 */
+  font-size: .875rem; /* text-sm */
+  border-color: rgba(47,48,97,.40); /* #2F3061/40 */
+  background: rgba(47,48,97,.20);  /* #2F3061/20 */
+  color: rgba(245,244,241,.90);    /* ivory/90 */
+  font-variant-numeric: tabular-nums;
+}
+.on-purple .chip:hover{
+  background: rgba(47,48,97,.30);
+  border-color: rgba(47,48,97,.60);
+}
+.on-purple .chip--active{
+  border-width: 2px;
+  border-color: #FF0062;           /* pink */
+  color: #FF0062;                  /* pink text */
+  background: rgba(47,48,97,.10);  /* faint purple backdrop */
+  box-shadow: 0 0 0 3px rgba(47,48,97,0.25);
+}
+.on-purple .chip--disabled{
+  opacity: .60; cursor: not-allowed;
+  border-color: rgba(47,48,97,.30);
+  background: rgba(47,48,97,.15);
+  color: rgba(245,244,241,.60);
+}
+
 /* Global design tokens for badges and ivory surfaces */
 :root{
   --pink:#FF0062; --yellow:#FFD808; --purple:#2F3061;

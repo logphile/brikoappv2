@@ -980,10 +980,10 @@ watchDebounced(
             @dragover="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
           >
           <RegeneratingChip />
-          <!-- Applied preset & size chips -->
-          <div class="mb-2 text-xs opacity-80 flex gap-2 items-center" v-if="resolvedMode || (target.w && target.h)">
-            <span class="px-2 py-0.5 rounded-full bg-white/5">Preset: {{ resolvedMode }}</span>
-            <span class="px-2 py-0.5 rounded-full bg-white/5">{{ target.w }}×{{ target.h }} studs</span>
+          <!-- Applied preset & size chips (on purple surface) -->
+          <div class="mt-2 flex items-center gap-2 on-purple" v-if="resolvedMode || (target.w && target.h)">
+            <span class="chip chip--active">Preset: {{ resolvedMode }}</span>
+            <span class="chip chip--active">{{ target.w }}×{{ target.h }} studs</span>
           </div>
           <div v-if="dropActive"
                class="absolute inset-0 rounded-2xl ring-2 ring-white/40 bg-white/5 pointer-events-none"></div>
