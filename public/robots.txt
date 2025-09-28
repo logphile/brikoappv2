@@ -1,3 +1,10 @@
 User-agent: *
 Allow: /
+
+# app/private areas
+Disallow: /studio
+Disallow: /settings
+Disallow: /account
+Disallow: /projects
+
 Sitemap: https://briko.app/sitemap.xml
