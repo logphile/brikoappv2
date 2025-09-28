@@ -1037,7 +1037,7 @@ watchDebounced(
             <footer class="mt-4 border-t border-white/10 relative">
               <!-- Actions row: centered, consistent height -->
               <div class="px-4 pt-4 pb-3 flex flex-wrap items-center justify-center gap-3">
-                <ButtonPrimary type="button" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
+                <ButtonPrimary type="button" variant="pink" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl focus-cyber" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
                   <!-- Download icon -->
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1046,7 +1046,7 @@ watchDebounced(
                   <span>Download Build Guide (PDF)</span>
                 </ButtonPrimary>
 
-                <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPng">
+                <button class="btn-ivory-outline focus-cyber inline-flex items-center gap-2 h-11 px-4 rounded-xl" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPng">
                   <!-- Image icon -->
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <rect x="3" y="4" width="18" height="14" rx="2" ry="2"/>
@@ -1056,7 +1056,7 @@ watchDebounced(
                   <span>Export PNG</span>
                 </button>
 
-                <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadCsv">
+                <button class="btn-ivory-outline focus-cyber inline-flex items-center gap-2 h-11 px-4 rounded-xl" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadCsv">
                   <!-- List icon -->
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
@@ -1064,7 +1064,7 @@ watchDebounced(
                   <span>Download Parts List (CSV)</span>
                 </button>
 
-                <button class="btn-soft inline-flex items-center gap-2 h-11 px-4 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">
+                <button class="btn-ivory-outline focus-cyber inline-flex items-center gap-2 h-11 px-4 rounded-xl" :disabled="!mosaic.canExport" @click="openBLDialog" :title="'Downloads a BrickLink Wanted List you can upload at BrickLink → Wanted → Upload.'">
                   <!-- Package icon -->
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3Z" stroke-linejoin="round"/>
@@ -1088,8 +1088,8 @@ watchDebounced(
                   </div>
                   <label class="inline-flex items-center gap-2"><input type="checkbox" v-model="blAddRemarks"> Add remarks “Briko • Mosaic”</label>
                   <div class="flex justify-end gap-2 pt-2">
-                    <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white/80 hover:text-white hover:border-mint/40" @click="closeBLDialog">Cancel</button>
-                    <button class="rounded-xl border border-white/10 px-3 py-1.5 text-white bg-mint/20 hover:border-mint/50" @click="onDownloadBrickLink">Export XML</button>
+                    <button class="btn-ivory-outline focus-cyber px-3 py-1.5" @click="closeBLDialog">Cancel</button>
+                    <button class="btn-ivory-outline focus-cyber px-3 py-1.5" @click="onDownloadBrickLink">Export XML</button>
                   </div>
                 </div>
               </div>

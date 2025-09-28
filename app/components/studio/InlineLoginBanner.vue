@@ -24,7 +24,7 @@ function dismiss() { visible.value = false; try { localStorage.setItem(KEY, '1')
               border border-mint/40 bg-mint/10 px-3 py-1.5 text-sm text-mint
               shadow-[0_0_0_1px_rgba(0,229,160,.15)_inset]">
     <span class="text-white/85">Log in to see your projects</span>
-    <button class="btn-mint px-3 py-1 text-sm" @click="goLogin">Log in</button>
+    <button class="btn-pink focus-cyber px-3 py-1 text-sm" @click="goLogin">Log in</button>
     <button class="ml-1 rounded-full bg-white/5 p-1 leading-none
                    text-white/70 hover:bg-white/10"
             aria-label="Dismiss" @click="dismiss">×</button>

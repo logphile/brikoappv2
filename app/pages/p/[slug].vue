@@ -92,7 +92,7 @@ function remixProject(){
           <p class="text-sm text-white/75">by {{ project.handle ? ('@' + project.handle) : (project.display_name || '@user') }}</p>
         </div>
         <div class="flex items-center gap-2">
-          <button class="btn-mint px-4 rounded-xl" @click="remixProject">🔄 Remix</button>
+          <button class="btn-pink focus-cyber px-4 rounded-xl" @click="remixProject">🔄 Remix</button>
         </div>
       </header>
 

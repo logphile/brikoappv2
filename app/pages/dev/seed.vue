@@ -56,7 +56,7 @@ async function run(){
 
     <div class="mt-4 space-y-3">
       <input type="file" accept="image/*" multiple @change="(e:any)=> files = Array.from(e.target.files || [])" />
-      <button class="btn-mint" :disabled="running || !files.length || !isAllowed" @click="run">Seed {{ files.length }} images</button>
+      <button class="btn-pink focus-cyber" :disabled="running || !files.length || !isAllowed" @click="run">Seed {{ files.length }} images</button>
       <div v-if="running" class="text-sm">Seeding… {{ pct }}%</div>
       <p class="text-xs opacity-80">Uses your account. Please only upload content you own or CC0/Public Domain for the public gallery.</p>
     </div>
