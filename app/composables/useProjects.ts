@@ -112,21 +112,22 @@ export const useProjects = () => {
     let orderKey = 'created_at'
     if (sort === 'Trending') orderKey = 'trend_score'
     if (sort === 'Top') orderKey = 'popularity'
-    // If columns missing, Supabase will error; we will fall back to client sort on caller side
-    const { data, error } = await $supabase
+    // Attempt extended select with ordering; if it fails (missing columns), fall back to a minimal schema without ordering
+    const extended = 'id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, status, is_public'
+    const first = await $supabase
       .from('user_projects_public')
-      .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity, status, is_public')
+      .select(extended)
       .order(orderKey as any, { ascending: false })
       .limit(limit)
-    if (error) {
-      // fallback to un-ordered fetch
-      const { data: d2 } = await $supabase
+    if (first.error) {
+      const minimal = 'id, title, kind, preview_path, created_at, updated_at'
+      const second = await $supabase
         .from('user_projects_public')
-        .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, trend_score, popularity, status, is_public')
+        .select(minimal)
         .limit(limit)
-      return d2 || []
+      return second.data || []
     }
-    return data || []
+    return first.data || []
   }
 
   async function getReactionsByMe(projectIds: string[], userId: string) {

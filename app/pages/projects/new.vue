@@ -82,7 +82,6 @@ async function create(){
   const payload = {
     owner: user.id,
     title: title.value,
-    slug: `${slugify(title.value)}-${rand(4)}`,
     width: width.value,
     height: height.value,
     is_public: false

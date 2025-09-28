@@ -135,7 +135,7 @@ async function fetchCommPage(){
   const to = from + pageSize - 1
   const { data, error } = await $supabase
     .from('user_projects_public')
-    .select('id, title, kind, preview_path, created_at, updated_at, handle, display_name')
+    .select('id, title, kind, preview_path, created_at, updated_at')
     .order('created_at', { ascending: false })
     .range(from, to)
   if(!error){
