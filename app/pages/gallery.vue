@@ -3,7 +3,7 @@
     <header class="">
       <h1 class="text-[28px] font-bold tracking-tight">Community Gallery</h1>
       <p class="mt-1 text-black/70">Public remixes and builds shared by the community.</p>
-      <div class="h-1 w-16 bg-[#00E5A0] rounded-full mt-3 mb-5"></div>
+      <div class="mt-3 mb-5 h-[3px] w-12 rounded-full" style="background:#2F3061"></div>
       <InlineLoginBanner />
     </header>
 
@@ -12,15 +12,13 @@
       <div class="flex flex-wrap items-center gap-2">
         <!-- Kind chips -->
         <button v-for="k in kinds" :key="k" @click="setKind(k)"
-                class="px-3 py-1.5 rounded-full text-sm capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
-                :class="kind===k ? 'bg-[#FF0062] text-white shadow-[0_6px_18px_rgba(255,0,98,0.28)]' : 'border border-black/10 bg-white/30 hover:bg-white/40 text-black/80'">
+                class="chip capitalize" :class="{ 'chip--active': kind===k }">
           {{ k }}
         </button>
         <!-- Sort chips on the right -->
         <div class="ml-auto flex gap-2">
           <button v-for="s in sorts" :key="s" @click="setSort(s)"
-                  class="px-3 py-1.5 rounded-full text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
-                  :class="sort===s ? 'bg-[#FF0062] text-white shadow-[0_6px_18px_rgba(255,0,98,0.28)]' : 'border border-black/10 bg-white/30 hover:bg-white/40 text-black/80'">
+                  class="chip" :class="{ 'chip--active': sort===s }">
             {{ s }}
           </button>
         </div>
@@ -41,9 +39,9 @@
         <GalleryGrid :items="visiblePaged" :liked-by-me-map="likedByMeMap" :saved-by-me-map="savedByMeMap"
                      @like="likeItem" @unlike="unlikeItem" @save="saveItem" @unsave="unsaveItem" @remix="remixItem" @share="shareItem" />
         <div v-if="visibleItems.length === 0" class="rounded-2xl border border-black/10 bg-white/30 p-8 text-center text-black/70 mt-6">
-          No results. Try clearing filters or <NuxtLink to="/studio" class="underline decoration-[#00E5A0]">browse all in Studio</NuxtLink>.
+          No results. Try clearing filters or <NuxtLink to="/studio" class="underline decoration-[#2F3061]">browse all in Studio</NuxtLink>.
         </div>
-        <button v-if="hasMore" @click="loadMore" class="mt-6 mx-auto block px-4 py-2 rounded-2xl border border-[#00E5A0]/60 text-[#00E5A0] hover:shadow-[0_0_16px_rgba(0,229,160,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30">Load More</button>
+        <button v-if="hasMore" @click="loadMore" class="mt-6 mx-auto block btn-purple-outline focus-cyber">Load More</button>
       </div>
     </section>
   </main>

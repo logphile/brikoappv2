@@ -7,7 +7,13 @@
       </span>
     </div>
     <div class="relative">
-      <input v-model="q" type="text" :placeholder="placeholder" class="w-full rounded-xl bg-black/20 ring-1 ring-white/10 px-3 py-2 text-sm outline-none focus:ring-white/30" @keydown.enter.prevent="handleEnter" @input="$emit('search', q)" />
+      <input v-model="q" type="text" :placeholder="placeholder"
+             class="w-full h-11 rounded-xl bg-[rgba(0,0,0,.04)]
+                    border border-[color:var(--ivory-border)] text-[#343434]
+                    placeholder-[#343434B3] px-3 text-sm
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F3061]
+                    focus:border-[#2F3061]"
+             @keydown.enter.prevent="handleEnter" @input="$emit('search', q)" />
       <div v-if="open && suggestions.length > 0" class="absolute z-10 mt-1 w-full rounded-xl bg-slate-900 ring-1 ring-white/10 shadow-lg overflow-hidden">
         <button v-for="s in suggestions" :key="s.id ?? s.slug ?? s.name" class="w-full text-left px-3 py-2 text-sm hover:bg-white/5" @click.prevent="selectSuggestion(s)">
           #{{ s.name }}
