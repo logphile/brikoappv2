@@ -162,3 +162,30 @@ input[type="range"].range-mint::-moz-range-track { height: 2px; background: tran
 .chip-group{
   display:inline-flex; gap:.5rem; flex-wrap:wrap;
 }
+
+/* Global design tokens for badges and ivory surfaces */
+:root{
+  --pink:#FF0062; --yellow:#FFD808; --purple:#2F3061;
+  --dark:#343434; --ivory:#F5F4F1; --ivory-border:#00000014;
+}
+
+/* Base pill for read-only badges */
+.badge{
+  display:inline-flex; align-items:center; gap:.4rem;
+  height:28px; padding:0 .6rem; border-radius:999px;
+  font-weight:600; font-size:.875rem;
+  background:var(--ivory);
+  color:var(--dark);
+  border:1px solid var(--ivory-border);
+  font-variant-numeric: tabular-nums; /* numbers don’t jitter */
+}
+
+/* Informational accent (purple on subtle background; readable on yellow) */
+.badge--info{
+  background:rgba(47,48,97,.08);
+  color:var(--purple);
+  border-color:var(--purple);
+}
+
+/* Optional tiny icon slot */
+.badge__icon{ display:inline-flex; align-items:center; }

@@ -716,10 +716,10 @@ watchDebounced(
           <!-- Presets row: Auto / Line Art / Photo Pop -->
           <div class="mt-3">
             <label class="block text-sm font-medium text-[#2F3061] mb-1">Preset</label>
-            <div class="flex gap-2 flex-wrap">
-              <button :class="['px-3 py-1 rounded-full text-sm border', mode==='auto' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='auto'">Auto</button>
-              <button :class="['px-3 py-1 rounded-full text-sm border', mode==='line-art' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='line-art'">Line Art</button>
-              <button :class="['px-3 py-1 rounded-full text-sm border', mode==='photo' ? 'border-pink-500 bg-white/10 text-[#343434]' : 'border-white/10 bg-white/5 text-[#343434]/80']" @click="mode='photo'">Photo Pop</button>
+            <div class="chip-group">
+              <button type="button" class="chip" :class="{ 'chip--active': mode==='auto' }" @click="mode='auto'">Auto</button>
+              <button type="button" class="chip" :class="{ 'chip--active': mode==='line-art' }" @click="mode='line-art'">Line Art</button>
+              <button type="button" class="chip" :class="{ 'chip--active': mode==='photo' }" @click="mode='photo'">Photo Pop</button>
             </div>
           </div>
           </section>
