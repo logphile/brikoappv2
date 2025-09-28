@@ -840,7 +840,7 @@ watchDebounced(
                 </select>
               </div>
               <label class="ml-3 flex items-center gap-1 select-none">
-                <input type="checkbox" v-model="showGrid" class="accent-pink-500" />
+                <input type="checkbox" v-model="showGrid" />
                 <span>Show stud grid</span>
               </label>
             </div>
@@ -900,7 +900,7 @@ watchDebounced(
               <button type="button" class="btn-purple-outline focus-cyber" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPng">
                 Export PNG
               </button>
-              <button type="button" class="btn-purple-outline focus-cyber" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
+              <button type="button" class="btn-pink focus-cyber" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
                 Export PDF
               </button>
               <button type="button" class="btn-purple-outline focus-cyber" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadCsv">
@@ -964,7 +964,7 @@ watchDebounced(
             </div>
             <div class="ml-auto flex items-center gap-3">
               <label v-if="tab==='2D'" class="inline-flex items-center gap-2 text-xs text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
-                <input type="checkbox" class="accent-pink-500" v-model="showPlates" />
+                <input type="checkbox" v-model="showPlates" />
                 <span>{{ copy.mosaic.controls.showPlateOutlines }}</span>
               </label>
               <div v-if="mosaic.status==='error'" class="text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
