@@ -150,7 +150,7 @@ async function remix(){
   const u = (await $supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   try{
-    const { data: parent, error: pErr } = await $supabase.from('projects').select('*').eq('public_id', project.value.public_id).single()
+    const { data: parent, error: pErr } = await $supabase.from('projects').select('id, public_id, name, data').eq('public_id', project.value.public_id).single()
     if(pErr) throw pErr
     const child = {
       user_id: u.id,
