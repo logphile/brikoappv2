@@ -20,7 +20,7 @@
           <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Build</h3>
           <ul class="space-y-3">
             <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
-            <li><FooterBrick to="/voxel" label="3D Builder" /></li>
+            <li v-if="cfg?.features?.builder3d"><FooterBrick to="/voxel" label="3D Builder" /></li>
             <li><FooterBrick to="/avatar"  label="Brick Yourself" /></li>
             <li><FooterBrick to="/studio"  label="Briko Studio" /></li>
           </ul>
@@ -73,4 +73,6 @@
 
 <script setup lang="ts">
 import FooterBrick from '@/components/FooterBrick.vue'
+import { useRuntimeConfig } from 'nuxt/app'
+const { public: cfg } = useRuntimeConfig() as any
 </script>

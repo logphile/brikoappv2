@@ -1,4 +1,3 @@
-import { renderBuildGuideV2 } from '@/lib/buildGuideV2'
 import { legoPalette } from '@/lib/palette/lego'
 import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
@@ -126,6 +125,7 @@ export async function prepareBuildGuidePDF(opts: BuildGuideOpts){
   const distinctColors = colorIds.length
   const totalBricks = bomRows.reduce((s:number, r:any) => s + (r.qty||0), 0)
 
+  const { renderBuildGuideV2 } = await import('@/lib/buildGuideV2')
   const pdf = await renderBuildGuideV2({
     cols: width, rows: height,
     widthIn, heightIn, widthCm, heightCm,

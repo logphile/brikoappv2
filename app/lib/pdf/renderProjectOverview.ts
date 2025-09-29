@@ -86,6 +86,13 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   // Image
   pdf.addImage(ctx.originalImg, ctx.originalType, imgX, imgY, fitted.w, fitted.h);
 
+  // TEMP: watermark to prove V2 is live; remove after validation
+  pdf.setFont("Outfit", "bold");
+  pdf.setTextColor(140);
+  pdf.setFontSize(8);
+  const buildId = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now().toString();
+  pdf.text(`OVERVIEW V2 • ${buildId}` , 40, pdf.internal.pageSize.getHeight() - 22);
+
   let cursorY = imgY + fitted.h + GAP_L;
 
   // --- Two-column area: left = Value box, right = Specs grid ---

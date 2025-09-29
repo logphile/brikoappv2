@@ -1,5 +1,7 @@
 // app/utils/exportBuildPdf.ts
 // Minimal, dependency-free PDF export using jsPDF.
+// Legacy guard: do not use this module anymore. Use the V2 adapter path instead.
+throw new Error('[Legacy] app/utils/exportBuildPdf.ts imported. Use app/lib/pdf/buildGuideAdapter.ts (renderBuildGuideV2) instead.')
 
 export type BomRow = { name: string; hex: string; count: number }
 

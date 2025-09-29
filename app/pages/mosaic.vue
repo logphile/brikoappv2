@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
-import { useHead, useNuxtApp } from 'nuxt/app'
+import { useHead, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
 import { useRemixLoader } from '@/composables/useRemixLoader'
 import MosaicUploader from '@/components/MosaicUploader.client.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
@@ -34,6 +34,7 @@ import MosaicActions from '@/components/MosaicActions.vue'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 
 const mosaic = useMosaicStore()
+const { public: cfg } = useRuntimeConfig() as any
 const route = useRoute()
 const { show: showToast, dismiss: dismissToast, toasts } = useToasts()
 const { loadingFromSrc, loadInto } = useRemixLoader()
@@ -710,6 +711,10 @@ watchDebounced(
               <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
                 <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">file_upload</span>
               </div>
+              <!-- simple skeleton while preparing Build Guide inputs -->
+              <div v-if="!mosaic.isReady" class="px-4">
+                <div class="mt-4 h-40 rounded-xl bg-white/5 border border-white/10 animate-pulse"></div>
+              </div>
               <h2 class="text-xl font-semibold text-[#343434]">Upload your photo</h2>
             </div>
 
@@ -1020,7 +1025,7 @@ watchDebounced(
                     @view-bom="onViewBomEvt"
                   />
                 </template>
-                <template v-else>
+                <template v-else-if="cfg?.features?.builder3d">
                   <ClientOnly>
                     <div class="animate-fade-in-up">
                       <VoxelViewer :bricks="mosaic.tilingResult?.bricks || []" :visibleLayers="mosaic.visibleLayers" :studSize="1" :surface="(mosaic.settings.topSurface || 'plates') as any"/>
@@ -1037,7 +1042,7 @@ watchDebounced(
             <footer class="mt-4 border-t border-white/10 relative">
               <!-- Actions row: centered, consistent height -->
               <div class="px-4 pt-4 pb-3 flex flex-wrap items-center justify-center gap-3">
-                <ButtonPrimary type="button" variant="pink" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl focus-cyber" :disabled="!mosaic.canExport" :title="!mosaic.canExport ? 'Generate a mosaic to enable' : ''" @click="onDownloadPdf">
+                <ButtonPrimary type="button" variant="pink" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl focus-cyber" :disabled="!mosaic.isReady" :title="!mosaic.isReady ? 'Preparing…' : ''" @click="onDownloadPdf">
                   <!-- Download icon -->
                   <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke-linecap="round" stroke-linejoin="round"/>

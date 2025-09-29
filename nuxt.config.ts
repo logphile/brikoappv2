@@ -17,12 +17,22 @@ export default defineNuxtConfig({
   ],
   typescript: { strict: true },
   routeRules: {
+    '/**': {
+      headers: {
+        'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; font-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://sentry.io https://*.ingest.sentry.io;",
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'X-Content-Type-Options': 'nosniff',
+        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+      }
+    },
     '/community-studio': { redirect: '/gallery' },
     '/community-studio/**': { redirect: '/gallery' },
     '/studio/new': { redirect: '/projects/new' },
     // Robustness: if any link points to /sitemap, redirect to the static sitemap.xml
     '/sitemap': { redirect: '/sitemap.xml' },
-    '/sitemap/': { redirect: '/sitemap.xml' }
+    '/sitemap/': { redirect: '/sitemap.xml' },
+    // HTML should not be cached
+    '/': { headers: { 'Cache-Control': 'no-store' } }
   },
   css: [
     '@/assets/css/fonts.css',
@@ -47,7 +57,12 @@ export default defineNuxtConfig({
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
       siteName: process.env.NUXT_PUBLIC_SITE_NAME || 'Briko',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://briko.app',
-      showSeeds: process.env.NUXT_PUBLIC_SHOW_SEEDS || ''
+      showSeeds: process.env.NUXT_PUBLIC_SHOW_SEEDS || '',
+      features: {
+        builder3d: false,
+        remix: false,
+        livePricing: false
+      }
     }
   },
   nitro: {
