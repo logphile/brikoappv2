@@ -189,40 +189,54 @@ function summarizeColors(
   }));
 }
 
-/** Draw a wrapping swatch strip; returns bottom Y */
+/** Draw a wrapping swatch strip; returns bottom Y. Caps rows and adds +N more. */
 function drawColorStrip(
   pdf: jsPDF,
   items: Array<{ hex: string; name: string; count: number }>,
   x: number,
   y: number,
-  maxW: number
+  maxW: number,
+  maxRows = 2
 ) {
-  // compact per-step swatches
   const sw = 10;                 // swatch size
-  const gap = 6;                 // horizontal gap
+  const gap = 6;                 // gap between swatch and text
+  const pad = 10;                // extra space after each chip
   const labelSize = 9;           // small text
   const lineH = sw + 3 + labelSize + 2;
-  const perRow = Math.max(6, Math.min(14, Math.floor((maxW + gap) / (sw + gap + 70)))); // reserve ~70px for text
 
   pdf.setFont("Outfit", "normal");
   pdf.setFontSize(labelSize);
   pdf.setTextColor(60);
 
-  let cx = x, cy = y;
-  items.forEach((it, idx) => {
-    if (idx > 0 && idx % perRow === 0) {
-      cy += lineH + 6;
-      cx = x;
-    }
+  let cx = x, cy = y; let rows = 1; let overflow = 0;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
     const [r, g, b] = rgb(it.hex);
-    pdf.setFillColor(r, g, b);
-    pdf.rect(cx, cy, sw, sw, "F");
-
     const label = `${it.name} (${it.count})`;
-    pdf.text(truncate(pdf, label, 120), cx + sw + 6, cy + sw - 1);
+    const tw = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : 90;
+    const w = sw + gap + Math.min(tw, 120) + pad; // cap label width to avoid huge chips
 
-    cx += sw + gap + 120; // swatch + gap + label block width
-  });
+    // wrap if this chip would exceed available width
+    if (cx + w > x + maxW) {
+      rows++;
+      if (rows > maxRows) { overflow = items.length - i; break; }
+      cx = x; cy += lineH; // next row
+    }
+
+    // chip
+    pdf.setFillColor(r, g, b); pdf.rect(cx, cy, sw, sw, "F");
+    // label (truncate visually if long)
+    const maxLabel = 120;
+    pdf.text(truncate(pdf, label, maxLabel), cx + sw + gap, cy + sw - 1);
+
+    cx += w;
+  }
+
+  if (overflow > 0) {
+    const more = `+${overflow} more`;
+    const mw = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(more) : 40;
+    pdf.setTextColor(110); pdf.text(more, x + maxW - mw, cy + sw - 1);
+  }
 
   return cy + lineH;
 }
