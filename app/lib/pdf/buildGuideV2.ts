@@ -38,6 +38,7 @@ export async function renderBuildGuideV2(ctx: Ctx) {
     totalBricks: ctx.totalBricks, distinctColors: ctx.distinctColors,
     estimateUSD: ctx.estimateUSD,
     palette: ctx.palette,
+    bom: Array.isArray(ctx.bom) ? ctx.bom.map(r => ({ colorName: r.colorName, qty: r.qty })) : undefined,
     originalImg: ctx.originalImg, originalType: ctx.originalType,
     originalImgW: ctx.originalImgW, originalImgH: ctx.originalImgH
   })
