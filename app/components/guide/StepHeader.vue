@@ -16,7 +16,7 @@ const extra = computed(() => Math.max(0, props.activeColors.length - shown.value
 
 <template>
   <header
-    class="grid grid-cols-[1fr_auto] items-start gap-4 rounded-2xl border border-[#2F3061]/40 bg-[#2F3061]/15 px-4 py-3">
+    class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 rounded-2xl border border-[#2F3061]/40 bg-[#2F3061]/15 px-4 py-3">
     <!-- LEFT: title + legend -->
     <div class="min-w-0">
       <div class="flex items-baseline gap-2">
@@ -27,7 +27,7 @@ const extra = computed(() => Math.max(0, props.activeColors.length - shown.value
       <p class="mt-2 text-xs uppercase tracking-wide text-[#343434]/70">Colors used in this step:</p>
 
       <!-- WRAPPING legend -->
-      <ul class="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 max-w-full overflow-hidden">
+      <ul class="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2 max-w-full whitespace-normal overflow-hidden step-legend">
         <li v-for="c in shown" :key="c.hex + c.name"
             class="flex items-center gap-2 text-sm basis-[150px] grow min-w-[150px] tabular-nums">
           <span class="h-3.5 w-3.5 rounded-sm border border-[#343434]/25"
