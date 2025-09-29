@@ -35,6 +35,7 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
 
   // Steps
   let placedBefore: StepCell[] = [];
+  const totalStepPages = ctx.steps.length;
   ctx.steps.forEach((placedThisStep, i) => {
     pdf.addPage();
     renderStepPage(pdf, {
@@ -46,6 +47,8 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
       ink: "#111827", gridLight: "#E5E7EB", gridHeavy: "#9CA3AF",
       inkSaver: !!ctx.inkSaver
     });
+    // Tiny neutral footer (brand + page numbers)
+    drawFooter(pdf, i + 1, totalStepPages);
     placedBefore = placedBefore.concat(placedThisStep);
   });
 
@@ -54,4 +57,21 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
   renderBOM(pdf, ctx.bom);
 
   return pdf;
+}
+
+function drawFooter(pdf: jsPDF, page: number, total: number) {
+  const W = pdf.internal.pageSize.getWidth();
+  const H = pdf.internal.pageSize.getHeight();
+  const M = 54; // match other exporters' bottom margin
+  const y = H - M + 6;
+  // separator
+  pdf.setDrawColor(230); pdf.setLineWidth(0.5);
+  pdf.line(M, y - 16, W - M, y - 16);
+  // left brand
+  pdf.setFont("Outfit","normal"); pdf.setFontSize(9); pdf.setTextColor(110);
+  pdf.text('Briko • briko.app • #brikobuild', M, y);
+  // right page numbers (steps only)
+  const label = `p. ${page} of ${total}`;
+  const tw = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : 0;
+  pdf.text(label, W - M - tw, y);
 }

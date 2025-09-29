@@ -119,7 +119,7 @@ export async function exportBuildGuideSteps(opts: {
     const isCoverPage = (doc as any).getCurrentPageInfo?.().pageNumber === 1
     if (!isCoverPage) {
       drawHeader(doc, { page: i+1, total: totalPages, project: opts.project, m })
-      drawFooter(doc)
+      drawFooter(doc, i+1, totalPages)
     }
   }
 
@@ -161,11 +161,16 @@ function drawHeader(doc: JsPdfType, ctx: {
   doc.text(pg, right - pgw, top + 10)
 }
 
-function drawFooter(doc: JsPdfType){
+function drawFooter(doc: JsPdfType, page: number, total: number){
   const y = LETTER.h - MARGIN + 6
-  doc.setFontSize(9); doc.setTextColor(110)
-  doc.text('Share your result — #brikobuild', MARGIN, y)
   // light separator
   doc.setDrawColor(230); doc.setLineWidth(0.5)
   doc.line(MARGIN, y - 16, LETTER.w - MARGIN, y - 16)
+  // left brand
+  doc.setFontSize(9); doc.setTextColor(110)
+  doc.text('Briko • briko.app • #brikobuild', MARGIN, y)
+  // right page numbers
+  const pg = `p. ${page} of ${total}`
+  const tw = doc.getTextWidth(pg)
+  doc.text(pg, LETTER.w - MARGIN - tw, y)
 }
