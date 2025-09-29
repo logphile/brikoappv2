@@ -21,6 +21,7 @@ export type StepPageCtx = {
   ink?: string;                           // default: "#111827"
   gridLight?: string;                     // default: "#E5E7EB"
   gridHeavy?: string;                     // default: "#9CA3AF"
+  inkSaver?: boolean;                     // if true, draw keylines only (no heavy fills)
 };
 
 export function renderStepPage(pdf: jsPDF, ctx: StepPageCtx) {
@@ -46,9 +47,10 @@ export function renderStepPage(pdf: jsPDF, ctx: StepPageCtx) {
   pdf.text(ctx.title ?? `Step ${stepN}`, Mx, topHeader);
 
   const newCount = ctx.placedThisStep.length;
+  const totalCount = ctx.placedBefore.length + ctx.placedThisStep.length;
   pdf.setFont("Outfit", "normal");
   pdf.setFontSize(10);
-  const rightText = `New bricks this step: ${newCount}`;
+  const rightText = `Place now: ${newCount}    •    Total so far: ${totalCount}`;
   pdf.text(rightText, W - Mx, topHeader, { align: "right" });
 
   // ---------- “Colors used in this step” strip ----------
@@ -80,13 +82,19 @@ export function renderStepPage(pdf: jsPDF, ctx: StepPageCtx) {
   drawCells(pdf, gx, gy, cell, ctx.placedBefore, {
     stroke: ink,
     alpha: 0.25,         // uses GState if available, falls back to lighten
+    inkSaver: !!ctx.inkSaver,
   });
 
   // Current step placements (full)
   drawCells(pdf, gx, gy, cell, ctx.placedThisStep, {
     stroke: ink,
     alpha: 1,
+    inkSaver: !!ctx.inkSaver,
   });
+
+  // ---------- Legend + compass (bottom area, consistent corner) ----------
+  const legendY = Math.min(H - bottomMargin + 10, gy + gridH + 18);
+  drawLegendCompass(pdf, Mx, legendY, ink);
 
   // (Footer with page number/site handled elsewhere)
 }
@@ -129,7 +137,7 @@ function drawGrid(
   }
 }
 
-type DrawOpts = { stroke: string; alpha: number };
+type DrawOpts = { stroke: string; alpha: number; inkSaver?: boolean };
 
 function drawCells(
   pdf: jsPDF,
@@ -151,6 +159,12 @@ function drawCells(
     const fx = x + cell.col * size;
     const fy = y + cell.row * size;
     const [r, g, b] = rgb(cell.colorHex);
+
+    if (opts.inkSaver) {
+      // Keylines only (no fill) for cheap home printing
+      pdf.rect(fx, fy, size, size, "S");
+      continue;
+    }
 
     if (hasG) (pdf as any).setGState(gstate);
     const [fr, fg, fb] = hasG ? [r, g, b] : lighten([r, g, b], 1 - opts.alpha);
@@ -236,4 +250,26 @@ function truncate(pdf: jsPDF, text: string, maxWidth: number): string {
   let s = text;
   while (s.length > 1 && (pdf as any).getTextWidth(s + "…") > maxWidth) s = s.slice(0, -1);
   return s + "…";
+}
+
+function drawLegendCompass(pdf: jsPDF, x: number, y: number, ink: string) {
+  // Legend: plate outline + filled cell
+  pdf.setFont("Outfit", "normal"); pdf.setFontSize(9); pdf.setTextColor(90);
+  const [ir, ig, ib] = rgb(ink);
+  // outline box
+  pdf.setDrawColor(ir, ig, ib); pdf.setLineWidth(0.6);
+  pdf.rect(x, y - 7, 8, 8, "S");
+  pdf.text("Plate outline", x + 12, y);
+  // filled sample
+  pdf.setFillColor(170, 170, 170); pdf.rect(x + 90, y - 7, 8, 8, "FD");
+  pdf.text("Filled cell", x + 104, y);
+
+  // Compass (N E S W) boxed
+  const compX = x + 200; const compY = y - 9; const cw = 36; const ch = 22;
+  pdf.setDrawColor(120); pdf.setLineWidth(0.7); pdf.rect(compX, compY, cw, ch);
+  pdf.setFontSize(8); pdf.setTextColor(80);
+  pdf.text("N", compX + cw/2 - 2, compY + 7);
+  pdf.text("W", compX + 5, compY + ch/2 + 2);
+  pdf.text("E", compX + cw - 9, compY + ch/2 + 2);
+  pdf.text("S", compX + cw/2 - 2, compY + ch - 4);
 }
