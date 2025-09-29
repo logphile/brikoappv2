@@ -17,6 +17,30 @@ export type BuildGuideOpts = {
   format?: 'a4' | 'letter'
 }
 
+// Tiny mosaic placeholder drawn from bricks and grid size
+function makeMosaicPlaceholder(
+  bricks: Array<{ x:number; y:number; w:number; h:number; colorId:number }>,
+  cols: number,
+  rows: number,
+  scale = 3
+): { dataUrl: string; w: number; h: number } {
+  const cvs = document.createElement('canvas');
+  cvs.width = Math.max(1, Math.floor(cols * scale));
+  cvs.height = Math.max(1, Math.floor(rows * scale));
+  const ctx = cvs.getContext('2d')!;
+  ctx.imageSmoothingEnabled = false;
+  // background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, cvs.width, cvs.height);
+  // paint bricks by color
+  for (const b of bricks) {
+    const hex = (legoPalette as any)[b.colorId]?.hex || '#cccccc';
+    ctx.fillStyle = hex;
+    ctx.fillRect(b.x * scale, b.y * scale, b.w * scale, b.h * scale);
+  }
+  return { dataUrl: cvs.toDataURL('image/png'), w: cvs.width, h: cvs.height };
+}
+
 // ----- helpers -----
 function hexToRgb(hex: string): [number, number, number] {
   const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex)
@@ -429,12 +453,12 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
       const image = new Image(); const loaded = new Promise<void>((res, rej)=>{ image.onload = ()=>res(); image.onerror = rej }); image.src = originalImg; await loaded
       originalImgW = image.width; originalImgH = image.height
     } else {
-      const ph = await generateOriginalPlaceholder(width, height)
-      originalImg = ph.dataUrl; originalType = ph.type; originalImgW = ph.w; originalImgH = ph.h
+      const ph = makeMosaicPlaceholder(bricks as any, width, height, 3)
+      originalImg = ph.dataUrl; originalType = 'PNG'; originalImgW = ph.w; originalImgH = ph.h
     }
   } catch {
-    const ph = await generateOriginalPlaceholder(width, height)
-    originalImg = ph.dataUrl; originalType = ph.type; originalImgW = ph.w; originalImgH = ph.h
+    const ph = makeMosaicPlaceholder(bricks as any, width, height, 3)
+    originalImg = ph.dataUrl; originalType = 'PNG'; originalImgW = ph.w; originalImgH = ph.h
   }
 
   const widthIn = width * 0.315
@@ -445,7 +469,13 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
   const distinctColorIds = Array.from(new Set(rows.map((r: any) => r.colorId))) as number[]
   const paletteItems = distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
 
-  // Always render new overview (originalImg is guaranteed)
+  // Final guard: ensure we have a usable image and dimensions
+  if (!originalImg || !originalImgW || !originalImgH) {
+    const ph = makeMosaicPlaceholder(bricks as any, width, height, 3)
+    originalImg = ph.dataUrl; originalType = 'PNG'; originalImgW = ph.w; originalImgH = ph.h
+  }
+
+  // Always render new overview
   renderProjectOverviewV2(doc as any, {
     cols: width,
     rows: height,
