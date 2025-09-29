@@ -7,17 +7,20 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   const H = pdf.internal.pageSize.getHeight();
 
   const M = 40, TITLE_Y = 56, GAP_L = 16, GAP_S = 8, FRAME_PAD = 12;
+  const CONTENT_MAX_W = 540; // ~7.5in box in points; safe for Letter/A4 after margins
+  const contentW = Math.min(W - 2 * M, CONTENT_MAX_W);
+  const CX = (W - contentW) / 2; // centered left X for content box
   const IMG_TOP_PAD = 12, IMG_BOTTOM_PAD = 24;
 
   // Title
   pdf.setFont("Outfit", "heavy"); pdf.setTextColor(17); pdf.setFontSize(22);
-  pdf.text("Project Overview", M, TITLE_Y);
+  pdf.text("Project Overview", CX, TITLE_Y);
 
   // Original image — centered with a light frame
-  const IMG_MAX_W = W - 2 * M - 2 * FRAME_PAD;
+  const IMG_MAX_W = contentW - 2 * FRAME_PAD;
   const IMG_MAX_H = Math.min(H * 0.33, 280);
   const fitted = fitRect(ctx.originalImgW, ctx.originalImgH, IMG_MAX_W, IMG_MAX_H);
-  const imgX = (W - fitted.w) / 2;
+  const imgX = CX + (contentW - fitted.w) / 2;
   const imgY = TITLE_Y + GAP_L + IMG_TOP_PAD;
 
   pdf.setDrawColor(229, 231, 235); pdf.setLineWidth(0.6);
@@ -26,17 +29,17 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
 
   let cursorY = imgY + fitted.h + IMG_BOTTOM_PAD;
 
-  // Stats
+  // Stats (constrained to centered content box)
   const stats = buildStats(ctx);
-  cursorY = drawStatsGrid(pdf, stats, M, cursorY, W - 2 * M);
+  cursorY = drawStatsGrid(pdf, stats, CX, cursorY, contentW);
 
   // Palette
   cursorY += GAP_L;
   pdf.setFont("Outfit", "bold"); pdf.setFontSize(11); pdf.setTextColor(17);
-  pdf.text("Colors used in this build", M, cursorY);
+  pdf.text("Colors used in this build", CX, cursorY);
 
   cursorY += GAP_S;
-  layoutPaletteGrid(pdf as any, M, cursorY, W - 2 * M, ctx.palette, 14, 12);
+  layoutPaletteGrid(pdf as any, CX, cursorY, contentW, ctx.palette, 14, 12);
 }
 
 function buildStats(ctx: ProjectOverviewCtx) {

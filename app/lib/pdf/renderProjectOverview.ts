@@ -30,7 +30,8 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   const H = pdf.internal.pageSize.getHeight();
 
   // --- Layout constants (Letter/A4 friendly) ---
-  const M = 40;                 // outer margin
+  const M = 40;                 // outer margin (page edge)
+  const CONTENT_MAX_W = 540;    // ≈ 7.5in (720px @ 96dpi); print-safe width inside margins
   const TITLE_Y = 56;           // title baseline
   const GAP_L = 16;             // large gap
   const GAP_M = 12;             // medium gap
@@ -39,13 +40,17 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   const SWATCH = 14;            // palette swatch size
   const SWATCH_GAP = 6;         // gap between swatches
 
+  // Centered content box (max width)
+  const contentW = Math.min(W - 2 * M, CONTENT_MAX_W);
+  const CX = (W - contentW) / 2; // centered left X
+
   // --- Hero strip ---
   const steps = ctx.rows;
   const timeLabel = formatTimeRange(steps);
   pdf.setFont("Outfit", "heavy");
   pdf.setTextColor(17); // ink
   pdf.setFontSize(22);
-  pdf.text("Your build at a glance", M, TITLE_Y);
+  pdf.text("Project Overview", CX, TITLE_Y);
 
   // badges row
   pdf.setFont("Outfit", "normal");
@@ -57,20 +62,20 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
     `${ctx.distinctColors} colors`,
     `~${ctx.totalBricks.toLocaleString()} plates`
   ].join(" · ");
-  pdf.text(badges, M, TITLE_Y + 16);
+  pdf.text(badges, CX, TITLE_Y + 16);
 
   // confidence chips
   pdf.setTextColor(17);
   pdf.setFont("Outfit", "bold");
-  pdf.text(`Skill: Beginner+ · Time: ${timeLabel}`, M, TITLE_Y + 32);
+  pdf.text(`Skill: Beginner+ · Time: ${timeLabel}`, CX, TITLE_Y + 32);
 
   // --- Original image (centered, large, neatly framed) ---
   // Reserve a good chunk of vertical space for the hero image
-  const IMG_MAX_W = W - 2 * M - 2 * FRAME_PAD;
+  const IMG_MAX_W = contentW - 2 * FRAME_PAD;
   const IMG_MAX_H = Math.min(H * 0.33, 280); // cap to avoid pushing stats too low
   const fitted = fitRect(ctx.originalImgW, ctx.originalImgH, IMG_MAX_W, IMG_MAX_H);
 
-  const imgX = (W - fitted.w) / 2;
+  const imgX = CX + (contentW - fitted.w) / 2;
   const imgY = TITLE_Y + GAP_L + 20; // make room for badges/chips
 
   // Frame
@@ -85,11 +90,11 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
 
   // --- Two-column area: left = Value box, right = Specs grid ---
   const colGap = 16;
-  const colW = (W - 2 * M - colGap);
+  const colW = (contentW - colGap);
   const leftW = Math.floor(colW * 0.44); // slightly narrower
   const rightW = colW - leftW;
-  const leftX = M;
-  const rightX = M + leftW + colGap;
+  const leftX = CX;
+  const rightX = CX + leftW + colGap;
   const yTop = cursorY;
 
   // Value box (left)
@@ -106,7 +111,7 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   pdf.setFont("Outfit", "bold");
   pdf.setFontSize(11);
   pdf.setTextColor(17);
-  pdf.text("Palette (top colors)", M, cursorY);
+  pdf.text("Colors used in this build", CX, cursorY);
 
   // Optional: top 5 color labels
   const top = getTopColors(ctx, 5);
@@ -115,29 +120,29 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
     pdf.setFontSize(10);
     pdf.setTextColor(75);
     const label = top.map(t => `${t.name} (${t.qty.toLocaleString()})`).join(" · ");
-    pdf.text(label, M, cursorY + 14);
+    pdf.text(label, CX, cursorY + 14);
   }
 
   cursorY += GAP_S + (top.length ? 18 : 0);
-  cursorY = layoutPaletteRows(pdf, M, cursorY, W - 2 * M, ctx.palette, SWATCH, SWATCH_GAP);
+  cursorY = layoutPaletteRows(pdf, CX, cursorY, contentW, ctx.palette, SWATCH, SWATCH_GAP);
 
   // Actions (right-aligned): Swap a color · Print palette
   pdf.setFont("Outfit", "normal"); pdf.setFontSize(10); pdf.setTextColor(60);
   const actions = "Swap a color   ·   Print palette";
   const tw = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(actions) : 0;
-  pdf.text(actions, W - M - tw, cursorY + 12);
+  pdf.text(actions, CX + contentW - tw, cursorY + 12);
 
   // --- Start right checklist (sticky bottom area approximation) ---
   const checkY = Math.min(cursorY + GAP_L, H - 110);
   pdf.setFont("Outfit", "bold"); pdf.setTextColor(17); pdf.setFontSize(11);
-  pdf.text("Start right", M, checkY);
+  pdf.text("Start right", CX, checkY);
   pdf.setFont("Outfit", "normal"); pdf.setTextColor(60); pdf.setFontSize(10);
-  drawCheckbox(pdf, M, checkY + 8, "Clear a 16\u2033 × 12\u2033 space");
-  drawCheckbox(pdf, M, checkY + 24, "Sort by color first (fastest)");
-  drawCheckbox(pdf, M, checkY + 40, "Start at row 1, bottom-left");
-  drawCheckbox(pdf, M, checkY + 56, "Use plate outlines if you get lost");
+  drawCheckbox(pdf, CX, checkY + 8, "Clear a 16\u2033 × 12\u2033 space");
+  drawCheckbox(pdf, CX, checkY + 24, "Sort by color first (fastest)");
+  drawCheckbox(pdf, CX, checkY + 40, "Start at row 1, bottom-left");
+  drawCheckbox(pdf, CX, checkY + 56, "Use plate outlines if you get lost");
   pdf.setFontSize(9); pdf.setTextColor(120);
-  pdf.text("You can build without sorting—sorting just feels faster.", M, checkY + 74);
+  pdf.text("You can build without sorting—sorting just feels faster.", CX, checkY + 74);
 
   // --- Social proof footer bar ---
   const barH = 40;
