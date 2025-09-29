@@ -19,7 +19,7 @@ defineProps<{
 </script>
 
 <template>
-  <section id="project-overview"
+  <section id="overview-root"
            class="mx-auto max-w-[720px] px-10 py-10 print:break-inside-avoid text-[13px] leading-[1.35] text-[#343434]">
     <!-- Title -->
     <h1 class="text-[26px] font-extrabold tracking-tight text-[#343434] mb-6">
