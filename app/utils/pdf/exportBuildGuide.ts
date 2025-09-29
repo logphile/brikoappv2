@@ -5,6 +5,38 @@ import { diffStep, type StepGrid, type PaletteEntry } from '@/utils/guide/metric
 
 const PT_PER_IN = 72
 const LETTER = { w: 8.5 * PT_PER_IN, h: 11 * PT_PER_IN }
+
+function drawLegendWrapped(
+  doc: JsPdfType,
+  colors: Array<{ name:string; hex:string; count:number }>,
+  x: number,
+  y: number,
+  maxW: number,
+  maxRows = 2
+){
+  const box = 12, gap = 6, pad = 10, lineH = 16
+  let cx = x, cy = y, rows = 1, overflow = 0
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(60)
+  for (let i = 0; i < colors.length; i++){
+    const c = colors[i]
+    const label = `${c.name} (${c.count})`
+    const tw = doc.getTextWidth(label)
+    const w = box + gap + Math.min(tw, 120) + pad
+    if (cx + w > x + maxW){
+      rows++; if (rows > maxRows){ overflow = colors.length - i; break }
+      cx = x; cy += lineH
+    }
+    const { r,g,b } = hexToRgb(c.hex)
+    doc.setFillColor(r,g,b); doc.setDrawColor(220); doc.rect(cx, cy - 10, box, box, 'FD')
+    doc.setTextColor(60); doc.text(label.length > 26 ? label.slice(0,25) + '…' : label, cx + box + gap, cy)
+    cx += w
+  }
+  if (overflow > 0){
+    const more = `+${overflow} more`
+    doc.setFontSize(9); doc.setTextColor(110)
+    doc.text(more, x + maxW - doc.getTextWidth(more), cy)
+  }
+}
 const MARGIN = 54 // 0.75in
 const HEADER_H = 36
 const FOOTER_H = 30
@@ -116,23 +148,10 @@ function drawHeader(doc: JsPdfType, ctx: {
   const tw = doc.getTextWidth(stats)
   doc.text(stats, right - tw, top + 20)
 
-  // active color dots (max 6)
-  const MAX_CHIPS = 6
-  const startX = right - MAX_CHIPS*22; let cx = startX; const cy = top + 30
-  const chips = m.activeColors.slice(0, MAX_CHIPS)
-  chips.forEach(ac => {
-    const rgb = hexToRgb(ac.hex)
-    doc.setFillColor(rgb.r, rgb.g, rgb.b); doc.setDrawColor(230); doc.rect(cx, cy, 12, 12, 'FD')
-    doc.setTextColor(60)
-    doc.text(String(ac.count), cx + 16, cy + 10)
-    cx += 22
-  })
-
-  if (m.activeColors.length > MAX_CHIPS) {
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110)
-    const more = `+${m.activeColors.length - MAX_CHIPS} more`
-    doc.text(more, right - 60, top + 46)
-  }
+  // legend (wrapped to rows, excludes stats column width)
+  const statsW = tw + 24
+  const colors = m.activeColors.map(ac => ({ name: ac.name || ac.hex, hex: ac.hex, count: ac.count }))
+  drawLegendWrapped(doc, colors, left, top + 34, (right - left - statsW), 2)
 
   // running header (project + date) and page count
   doc.setFontSize(9); doc.setTextColor(110)
