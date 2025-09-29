@@ -1,146 +1,105 @@
 import type jsPDF from "jspdf";
 import type { ProjectOverviewCtx, PaletteItem } from "./types";
-import { fitRect, hexToRgb, truncatePdf } from "./utils";
+import { hexToRgb } from "./utils";
+
+export const OVERVIEW_VERSION = 'overview-v2.3';
 
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
-  const W = pdf.internal.pageSize.getWidth();
-  const H = pdf.internal.pageSize.getHeight();
+  // page & slab
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const margin = 18; // outer page margin
+  const slabW = Math.min(pageW - margin * 2, 520); // fixed-ish content width
+  const slabX = (pageW - slabW) / 2; // centered slab
+  let y = 28;
 
-  const M = 40, TITLE_Y = 56, GAP_L = 16, GAP_S = 8, FRAME_PAD = 12;
-  const CONTENT_MAX_W = 540; // ~7.5in box in points; safe for Letter/A4 after margins
-  const contentW = Math.min(W - 2 * M, CONTENT_MAX_W);
-  const CX = (W - contentW) / 2; // centered left X for content box
-  const IMG_TOP_PAD = 12, IMG_BOTTOM_PAD = 24;
+  // Title (centered)
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(22); pdf.setTextColor(20);
+  pdf.text('Project Overview', pageW/2, y, { align:'center' });
+  y += 10;
 
-  // Title
-  pdf.setFont("Outfit", "heavy"); pdf.setTextColor(17); pdf.setFontSize(22);
-  pdf.text("Project Overview", CX, TITLE_Y);
+  // Hero (framed, centered inside slab)
+  const pad = 8;
+  const heroH = Math.min((pageH * 0.33), 170);
+  const heroW = slabW - pad*2;
+  pdf.setDrawColor(220); pdf.setLineWidth(0.6); pdf.setFillColor(255,255,255);
+  ;(pdf as any).roundedRect?.(slabX, y, slabW, heroH + pad*2, 6, 6, 'S') || pdf.rect(slabX, y, slabW, heroH + pad*2);
 
-  // Original image — centered with a light frame
-  const IMG_MAX_W = contentW - 2 * FRAME_PAD;
-  const IMG_MAX_H = Math.min(H * 0.33, 280);
-  const fitted = fitRect(ctx.originalImgW, ctx.originalImgH, IMG_MAX_W, IMG_MAX_H);
-  const imgX = CX + (contentW - fitted.w) / 2;
-  const imgY = TITLE_Y + GAP_L + IMG_TOP_PAD;
-
-  pdf.setDrawColor(229, 231, 235); pdf.setLineWidth(0.6);
-  ;(pdf as any).roundedRect?.(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD, 10, 10, "S") || pdf.rect(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD);
-  pdf.addImage(ctx.originalImg, ctx.originalType, imgX, imgY, fitted.w, fitted.h);
-
-  // TEMP: watermark to prove V2 is live; remove after validation
-  try { pdf.setFont("Outfit", "bold"); } catch {}
-  pdf.setTextColor(140);
-  pdf.setFontSize(8);
-  const buildId = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now().toString();
-  pdf.text(`OVERVIEW V2 • ${buildId}` , 40, pdf.internal.pageSize.getHeight() - 22);
-
-  let cursorY = imgY + fitted.h + IMG_BOTTOM_PAD;
-
-  // Stats (constrained to centered content box)
-  const stats = buildStats(ctx);
-  cursorY = drawStatsGrid(pdf, stats, CX, cursorY, contentW);
-
-  // Palette
-  cursorY += GAP_L;
-  pdf.setFont("Outfit", "bold"); pdf.setFontSize(11); pdf.setTextColor(17);
-  pdf.text("Colors used in this build", CX, cursorY);
-
-  cursorY += GAP_S;
-  layoutPaletteGrid(pdf as any, CX, cursorY, contentW, ctx.palette, 14, 12);
-}
-
-function buildStats(ctx: ProjectOverviewCtx) {
-  const studs = `${ctx.cols} × ${ctx.rows} studs`;
-  const inches = `${ctx.widthIn.toFixed(1)} × ${ctx.heightIn.toFixed(1)} in`;
-  const cm = `${ctx.widthCm.toFixed(1)} × ${ctx.heightCm.toFixed(1)} cm`;
-  const bricks = `${ctx.totalBricks.toLocaleString()} bricks`;
-  const colors = `${ctx.distinctColors} colors`;
-  const price = ctx.estimateUSD != null ? `Est. $${ctx.estimateUSD.toFixed(2)}` : undefined;
-
-  const arr = [
-    { label: "STUD DIMENSIONS", value: studs },
-    { label: "DIMENSIONS (INCHES)", value: inches },
-    { label: "DIMENSIONS (CENTIMETERS)", value: cm },
-    { label: "TOTAL BRICKS", value: bricks },
-    { label: "NUMBER OF COLORS", value: colors },
-  ] as Array<{label:string; value:string}>;
-  if (price) arr.push({ label: "ESTIMATED PRICE", value: price });
-  return arr;
-}
-
-function drawStatsGrid(pdf: any, items: Array<{label:string; value:string}>, x:number, y:number, maxW:number) {
-  const colGap = 24, labelSize = 9, valueSize = 12, rowGap = 8;
-  const colW = (maxW - colGap) / 2;
-  const useTwoCols = colW >= 200 && items.length >= 4;
-  const perCol = useTwoCols ? Math.ceil(items.length / 2) : items.length;
-
-  // Slightly larger line height for readability if supported
-  (pdf as any).setLineHeightFactor?.(1.2);
-
-  for (let i=0; i<items.length; i++) {
-    const colIndex = useTwoCols ? (i < perCol ? 0 : 1) : 0;
-    const rowIndex = useTwoCols ? (i % perCol) : i;
-    const ix = x + colIndex * (colW + colGap);
-    const iy = y + rowIndex * (valueSize + rowGap + 14);
-
-    pdf.setFont("Outfit","bold"); pdf.setTextColor(75); pdf.setFontSize(labelSize);
-    pdf.text(items[i].label, ix, iy);
-
-    pdf.setFont("Outfit","normal"); pdf.setTextColor(17); pdf.setFontSize(valueSize);
-    pdf.text(items[i].value, ix, iy + 12);
+  if (ctx.originalImg) {
+    const r = Math.min(heroW / Math.max(1, ctx.originalImgW), heroH / Math.max(1, ctx.originalImgH));
+    const dw = Math.floor(ctx.originalImgW * r), dh = Math.floor(ctx.originalImgH * r);
+    const dx = slabX + (slabW - dw)/2; // centered within slab
+    const dy = y + pad + (heroH - dh)/2;
+    pdf.addImage(ctx.originalImg, ctx.originalType, dx, dy, dw, dh, undefined, 'FAST');
   }
-  const rows = useTwoCols ? perCol : items.length;
-  return y + rows * (valueSize + rowGap + 14);
-}
 
-function layoutPaletteGrid(
-  pdf: any,
-  x: number,
-  y: number,
-  maxW: number,
-  items: PaletteItem[],
-  swatchSize = 14,
-  gutter = 12
-) {
-  // Fixed column width prevents label collisions; rows are centered
-  const CELL_W = 96; // reserved width per swatch+label
-  const LABEL_SIZE = 9;
-  const ROW_H = swatchSize + 6 + LABEL_SIZE + 4;
+  // Visible version tag (bottom-left)
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(8); pdf.setTextColor(120);
+  const W = pageW, H = pageH;
+  pdf.text(OVERVIEW_VERSION, 12, H - 14);
 
-  const perRow = Math.max(5, Math.floor((maxW + gutter) / (CELL_W + gutter)));
-  const totalRowW = perRow * CELL_W + (perRow - 1) * gutter;
-  const startX = x + Math.max(0, (maxW - totalRowW) / 2);
+  y += heroH + pad*2 + 12;
 
-  pdf.setFont('Outfit', 'normal');
-  pdf.setFontSize(LABEL_SIZE);
-  pdf.setTextColor(60);
+  // 2×3 spec grid (left/right within centered slab)
+  pdf.setFont('Outfit','normal'); pdf.setFontSize(9); pdf.setTextColor(90);
+  const gutter = 24;
+  const colW = (slabW - gutter)/2;
+  const leftX = slabX;
+  const rightX = slabX + colW + gutter;
 
-  let cx = startX, cy = y, col = 0;
-  items.forEach((c, i) => {
-    if (i > 0 && col === perRow) {
-      col = 0;
-      cx = startX;
-      cy += ROW_H;
-    }
+  const spec = (label:string, value:string, x:number) => {
+    pdf.setFont('Outfit','normal'); pdf.setFontSize(8); pdf.setTextColor(100);
+    pdf.text(label.toUpperCase(), x, y);
+    pdf.setFont('Outfit','bold'); pdf.setFontSize(11); pdf.setTextColor(20);
+    pdf.text(value, x, y + 5);
+  };
 
-    const [r, g, b] = hexToRgb(c.hex);
-    const swX = cx + (CELL_W - swatchSize) / 2;
-    const swY = cy;
+  const fmtIn = (n:number) => Number.isFinite(n) ? (n as number).toFixed(1) : '—';
+  const fmtCm = (n:number) => Number.isFinite(n) ? (n as number).toFixed(1) : '—';
+  const fmtEst = (n: number | undefined) => (typeof n === 'number') ? `Est. $${n.toFixed(2)}` : '—';
 
-    // Swatch
+  spec('Stud dimensions', `${ctx.cols} × ${ctx.rows} studs` , leftX);
+  spec('Total bricks', `${ctx.totalBricks.toLocaleString()} bricks` , rightX);
+  y += 14;
+  spec('Dimensions (inches)', `${fmtIn(ctx.widthIn)} × ${fmtIn(ctx.heightIn)} in` , leftX);
+  spec('Number of colors', `${ctx.distinctColors} colors` , rightX);
+  y += 14;
+  spec('Dimensions (centimeters)', `${fmtCm(ctx.widthCm)} × ${fmtCm(ctx.heightCm)} cm` , leftX);
+  spec('Estimated price', fmtEst(ctx.estimateUSD) , rightX);
+  y += 18;
+
+  // Colors header (centered)
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20);
+  pdf.text('Colors used in this build', W/2, y, { align:'center' });
+  y += 8;
+
+  // Wrapped color chips within centered slab
+  const chipH = 14, chipGap = 10;
+  let cx = slabX, cy = y;
+
+  for (const p of ctx.palette as PaletteItem[]) {
+    const sw = 22; // swatch width
+    const label = p.name || '';
+    pdf.setFont('Outfit','normal'); pdf.setFontSize(10); 
+    const labelW = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : 60;
+    const chipW = sw + 6 + labelW; // swatch + space + text
+
+    // wrap if exceeding slab
+    if (cx + chipW > slabX + slabW) { cx = slabX; cy += chipH + chipGap; }
+
+    // swatch
+    const [r, g, b] = hexToRgb(p.hex || '#cccccc');
     pdf.setFillColor(r, g, b);
-    pdf.rect(swX, swY, swatchSize, swatchSize, 'F');
+    pdf.setDrawColor(230);
+    ;(pdf as any).roundedRect?.(cx, cy - chipH + 10, sw, chipH, 3, 3, 'FD') || pdf.rect(cx, cy - chipH + 10, sw, chipH, 'FD');
 
-    // Centered label
-    const labelY = swY + swatchSize + 10;
-    const labelMax = CELL_W - 4;
-    const text = truncatePdf(pdf, c.name, labelMax);
-    const centerX = cx + CELL_W / 2;
-    pdf.text(text, centerX, labelY, { align: 'center' });
+    // label
+    pdf.setTextColor(30);
+    pdf.text(label, cx + sw + 6, cy + 2);
 
-    cx += CELL_W + gutter;
-    col += 1;
-  });
-
-  return cy + ROW_H;
+    cx += chipW + 16; // gap between chips
+  }
+  y = cy + chipH + 14;
 }
+
+// old helpers removed; using centered slab layout above
