@@ -6,6 +6,10 @@ import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
 
+// Legacy exporter guard: do not use this module.
+// If this file is imported anywhere, fail loudly so callers switch to the V2 adapter path.
+throw new Error('[Legacy] app/lib/pdfExport.ts imported. Use app/lib/pdf/buildGuideAdapter.ts (renderBuildGuideV2) instead.')
+
 function hexToRgb(hex: string): [number, number, number] {
   const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex)
   if (!m) return [204, 204, 204]

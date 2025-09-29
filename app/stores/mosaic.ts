@@ -54,7 +54,17 @@ export const useMosaicStore = defineStore('mosaic', {
     _saveTimer: null as any,
   }),
   getters: {
-    canExport: (s): boolean => !!s.tilingResult && s.status !== 'tiling' && s.status !== 'working'
+    canExport: (s): boolean => !!s.tilingResult && s.status !== 'tiling' && s.status !== 'working',
+    // Gating for Build Guide button — ready when we have dimensions, palette and bom
+    dims: (s): { cols:number; rows:number } | null => (s.width && s.height) ? { cols: s.width, rows: s.height } : null,
+    palette: (s): Array<{ name:string; hex:string }> | null => {
+      const rows = s.tilingResult?.bom as any[] | undefined
+      if (!rows || !rows.length) return null
+      const ids = Array.from(new Set(rows.map(r => r.colorId))) as number[]
+      return ids.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}` , hex: (legoPalette as any)[id]?.hex || '#cccccc' }))
+    },
+    bom: (s): any[] | null => (s.tilingResult?.bom as any[] | undefined) || null,
+    isReady(): boolean { return !!(this.dims && this.palette && this.bom) }
   },
 
   actions: {

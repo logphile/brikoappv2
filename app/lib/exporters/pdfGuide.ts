@@ -6,6 +6,10 @@ import type { WorkerOut, BomRow } from '@/types/mosaic'
 import { chunkSteps, bomTotal } from '@/lib/steps'
 import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
 
+// Legacy exporter guard: do not use this module.
+// If this file is imported anywhere, fail loudly so callers switch to the V2 adapter path.
+throw new Error('[Legacy] app/lib/exporters/pdfGuide.ts imported. Use app/lib/pdf/buildGuideAdapter.ts (renderBuildGuideV2) instead.')
+
 export async function exportMosaicPdf(rootEl: HTMLElement, data: WorkerOut, bom: BomRow[], maxPerStep=300) {
   const steps = chunkSteps(data.placements || [], maxPerStep)
 

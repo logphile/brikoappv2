@@ -27,6 +27,13 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   ;(pdf as any).roundedRect?.(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD, 10, 10, "S") || pdf.rect(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD);
   pdf.addImage(ctx.originalImg, ctx.originalType, imgX, imgY, fitted.w, fitted.h);
 
+  // TEMP: watermark to prove V2 is live; remove after validation
+  try { pdf.setFont("Outfit", "bold"); } catch {}
+  pdf.setTextColor(140);
+  pdf.setFontSize(8);
+  const buildId = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now().toString();
+  pdf.text(`OVERVIEW V2 • ${buildId}` , 40, pdf.internal.pageSize.getHeight() - 22);
+
   let cursorY = imgY + fitted.h + IMG_BOTTOM_PAD;
 
   // Stats (constrained to centered content box)

@@ -13,7 +13,12 @@ export default defineNuxtPlugin(() => {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Briko',
-    url: siteUrl
+    url: siteUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${siteUrl}/gallery?q={search_term_string}`,
+      'query-input': 'required name=search_term_string'
+    }
   }
 
   useHead({
