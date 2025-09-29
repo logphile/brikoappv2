@@ -1,5 +1,3 @@
-import { jsPDF } from 'jspdf'
-import html2canvas from 'html2canvas'
 import type { jsPDF as JsPdfType } from 'jspdf'
 import { diffStep, type StepGrid, type PaletteEntry } from '@/utils/guide/metrics'
 
@@ -10,6 +8,7 @@ const LETTER = { w: 8.5 * PT_PER_IN, h: 11 * PT_PER_IN }
 async function renderOverviewPage(doc: JsPdfType) {
   const el = document.getElementById('overview-root') as HTMLElement | null
   if (!el) { console.warn('[PDF Overview] overview-root not found in DOM; skipping overview page'); return }
+  const { default: html2canvas } = await import('html2canvas')
   const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#FFFFFF' })
   // add a fresh page for the overview
   doc.addPage('letter', 'portrait')
@@ -99,6 +98,7 @@ export async function exportBuildGuideSteps(opts: {
   inkSaver?: boolean
   fileName?: string
 }){
+  const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'pt', format: 'letter' })
   const totalPages = opts.steps.length
 
@@ -128,6 +128,7 @@ export async function exportBuildGuideSteps(opts: {
     // 1) Render the canvas region (DOM snapshot of the step container, not whole app)
     const el = opts.elForStep(i)
     if (opts.inkSaver) el.classList.add('print-ink-saver')
+    const { default: html2canvas } = await import('html2canvas')
     const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#FFFFFF' })
     if (opts.inkSaver) el.classList.remove('print-ink-saver')
 
