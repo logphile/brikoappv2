@@ -2,13 +2,11 @@
 import { onMounted, onBeforeUnmount, ref, watch, nextTick, computed, shallowRef } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { LEGO_PALETTE } from '@/lib/legoPalette'
+import { legoPalette as LEGO_PALETTE } from '@/lib/palette/lego'
 import type { BuildMode } from '@/types/voxel'
 import { createStudGeometry } from '@/lib/studGeometry'
 import { AxesGizmo } from '@/lib/AxesGizmo'
-import { paletteIndexToThreeColor } from '@/lib/legoPalette'
 import { VoxelViewer } from '@/components/three/VoxelViewer'
-import { exportBuildPdf } from '@/utils/exportBuildPdf'
 import { toast } from 'vue-sonner'
 
 const props = defineProps<{ vox: { w:number; h:number; depth:number; colors: Uint8Array }, mode?: BuildMode, exposure?: number, debug?: { useBasicMaterial?: boolean; paintRainbow12?: boolean; wireframe?: boolean; hideMesh?: boolean; showBounds?: boolean }, debug3d?: boolean }>()
@@ -51,6 +49,15 @@ function exposureToFactor(exp?: number): number {
   const bf = 1 + (e - 1) * BOOST
   // keep within a practical range
   return Math.min(3.0, Math.max(0.3, bf))
+}
+
+// Map palette index to linear THREE color components using our palette hex strings
+function paletteIndexToThreeColor(idx: number) {
+  const entry: any = (LEGO_PALETTE as any)[idx]
+  const hex = (entry?.hex && typeof entry.hex === 'string') ? entry.hex : '#999999'
+  const c = new THREE.Color(hex)
+  c.convertSRGBToLinear()
+  return { r: c.r, g: c.g, b: c.b }
 }
 
 // Layer clipping
@@ -371,13 +378,13 @@ function build () {
       for (let x=0; x<w; x++) {
         const ci = colors[(z*w*h) + (y*w + x)]
         if (ci === 255) continue // 255 sentinel = empty voxel
-        const hex = LEGO_PALETTE[ci]?.hex
-        if (hex === undefined) continue
+        const hex = (LEGO_PALETTE as any)[ci]?.hex as string | undefined
+        if (!hex) continue
         // Place 1 unit per stud, centered in each cell + center whole grid around origin
         // x∈[0.5-w/2..W-0.5-w/2], y∈[0.5-h/2..H-0.5-h/2], z∈[0.5..depth-0.5]
         m.compose(new THREE.Vector3(x + 0.5 - w/2, y + 0.5 - h/2, z + 0.5), q, s)
         ;(inst as any).setMatrixAt(j, m)
-        c.setHex(hex).convertSRGBToLinear()
+        c.set(hex).convertSRGBToLinear()
         // store base linear RGB
         base.push(c.r, c.g, c.b)
         // apply amplified brightness per-instance (not via lights)
