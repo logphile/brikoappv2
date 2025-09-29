@@ -32,7 +32,14 @@ export default defineNuxtConfig({
     '/sitemap': { redirect: '/sitemap.xml' },
     '/sitemap/': { redirect: '/sitemap.xml' },
     // HTML should not be cached
-    '/': { headers: { 'Cache-Control': 'no-store' } }
+    '/': { headers: { 'Cache-Control': 'no-store' } },
+    // Dynamic/auth pages should not be prerendered
+    '/settings/**': { prerender: false },
+    '/account/**': { prerender: false },
+    '/auth/**': { prerender: false },
+    '/projects/**': { prerender: false },
+    '/project/**': { prerender: false },
+    '/share/**': { prerender: false }
   },
   css: [
     '@/assets/css/fonts.css',
@@ -71,8 +78,23 @@ export default defineNuxtConfig({
       { dir: resolve(rootDir, 'public') }
     ],
     prerender: {
-      crawlLinks: true,
-      routes: ['/', '/mosaic', '/voxel', '/pricing', '/how-it-works', '/privacy', '/terms', '/login', '/studio', '/community-studio', '/studio/community', '/gallery']
+      // Be explicit to avoid crawling links into auth/user areas
+      crawlLinks: false,
+      routes: [
+        '/',
+        '/mosaic',
+        '/voxel',
+        '/pricing',
+        '/how-it-works',
+        '/privacy',
+        '/terms',
+        '/legal',
+        '/login',
+        '/studio',
+        '/community-studio',
+        '/studio/community',
+        '/gallery'
+      ]
     }
   },
   vite: {

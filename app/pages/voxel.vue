@@ -17,7 +17,7 @@ import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import ButtonOutline from '@/components/ui/ButtonOutline.vue'
 import UploadIcon from '@/components/ui/UploadIcon.vue'
 // (computed imported above)
-import { LEGO_PALETTE } from '@/lib/legoPalette'
+import { legoPalette as LEGO_PALETTE } from '@/lib/palette/lego'
 import { useProjects } from '@/composables/useProjects'
 
 const vox = ref<VoxelGrid | null>(null)
@@ -81,9 +81,9 @@ const paletteUsed = computed(() => {
   const out: Array<{ idx:number; name:string; hex:string; count:number }> = []
   for (let i=0; i<counts.length; i++) {
     if (counts[i] > 0) {
-      const entry = LEGO_PALETTE[i]
-      const hex = '#' + ((entry?.hex ?? 0x999999) & 0xFFFFFF).toString(16).padStart(6, '0')
-      out.push({ idx: i, name: entry?.name ?? `Color ${i}`, hex, count: counts[i] })
+      const entry = LEGO_PALETTE[i] as any
+      const hex = (entry?.hex && typeof entry.hex === 'string') ? entry.hex : '#999999'
+      out.push({ idx: i, name: (entry?.name ?? `Color ${i}`) as string, hex, count: counts[i] })
     }
   }
   out.sort((a,b) => b.count - a.count)
@@ -160,9 +160,9 @@ function exportCsv(){
   for (let i=0;i<arr.length;i++) { const ci = arr[i]; if (ci !== 255) counts.set(ci, (counts.get(ci) || 0) + 1) }
   const rows = [['ColorName','Hex','Qty']]
   counts.forEach((qty, idx) => {
-    const entry = LEGO_PALETTE[idx]
-    const name = entry?.name || `Color ${idx}`
-    const hex = '#' + ((entry?.hex ?? 0x999999) & 0xFFFFFF).toString(16).padStart(6, '0')
+    const entry = LEGO_PALETTE[idx] as any
+    const name = (entry?.name || `Color ${idx}`) as string
+    const hex = (entry?.hex && typeof entry.hex === 'string') ? entry.hex : '#999999'
     rows.push([name, hex, String(qty)])
   })
   const csv = rows.map(r => r.map(v => /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v).join(',')).join('\n')
