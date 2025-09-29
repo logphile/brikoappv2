@@ -16,7 +16,7 @@
       <p class="font-sans text-base leading-6">
         We use GA4 analytics (no ads, no selling data) to see what features click and which ones crumble.
         You can change your choice anytime in
-        <NuxtLink to="/settings" class="underline underline-offset-2 hover:text-pink">Settings</NuxtLink>
+        <NuxtLink to="/settings/profile" class="underline underline-offset-2 hover:text-pink">Settings</NuxtLink>
         or our
         <NuxtLink to="/privacy" class="underline underline-offset-2 hover:text-pink">Privacy Policy</NuxtLink>.
       </p>
