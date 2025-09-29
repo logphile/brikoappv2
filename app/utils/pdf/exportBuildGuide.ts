@@ -14,6 +14,30 @@ function hexToRgb(hex: string){
   return { r: parseInt(m[1],16), g: parseInt(m[2],16), b: parseInt(m[3],16) }
 }
 
+// --- helpers ---
+async function loadDataUrl(url: string): Promise<string> {
+  const ver = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now()
+  const res = await fetch(`${url}?v=${ver}`)
+  const blob = await res.blob()
+  return await new Promise(resolve => {
+    const r = new FileReader()
+    r.onload = () => resolve(r.result as string)
+    r.readAsDataURL(blob)
+  })
+}
+
+function drawCover(doc: JsPdfType, imgDataUrl: string, mode: 'bleed'|'safe' = 'bleed'){
+  const pageW = doc.internal.pageSize.getWidth()
+  const pageH = doc.internal.pageSize.getHeight()
+  if (mode === 'bleed'){
+    const overscan = 6
+    doc.addImage(imgDataUrl, 'PNG', -overscan, -overscan, pageW + overscan*2, pageH + overscan*2)
+  } else {
+    const margin = MARGIN
+    doc.addImage(imgDataUrl, 'PNG', margin, margin, pageW - margin*2, pageH - margin*2)
+  }
+}
+
 function emptyLike(g: StepGrid): StepGrid { return { w: g.w, h: g.h, cells: new Uint16Array(g.cells.length) } }
 
 export async function exportBuildGuideSteps(opts: {
@@ -27,8 +51,17 @@ export async function exportBuildGuideSteps(opts: {
   const doc = new jsPDF({ unit: 'pt', format: 'letter' })
   const totalPages = opts.steps.length
 
+  // 1) COVER — load and place (non-blocking if missing)
+  try {
+    const coverDataUrl = await loadDataUrl('/PDF-Cover-Mockup-v2.png')
+    drawCover(doc, coverDataUrl, 'bleed')
+  } catch (e) {
+    console.warn('[PDF Cover] missing or failed to load; exporting without cover', e)
+  }
+
+  // 2) STEP PAGES — always add a new page; cover consumed page 1
   for (let i = 0; i < opts.steps.length; i++) {
-    if (i > 0) doc.addPage('letter', 'portrait')
+    doc.addPage('letter', 'portrait')
     const prev = i === 0 ? emptyLike(opts.steps[0].grid) : opts.steps[i-1].grid
     const curr = opts.steps[i].grid
     const m = diffStep(prev, curr, opts.palette); m.step = i+1
@@ -50,9 +83,12 @@ export async function exportBuildGuideSteps(opts: {
 
     doc.addImage(canvas, 'PNG', x, y, drawW, drawH, undefined, 'FAST')
 
-    // 3) Vector header/footer overlays
-    drawHeader(doc, { page: i+1, total: totalPages, project: opts.project, m })
-    drawFooter(doc)
+    // 3) Vector header/footer overlays (skip on cover by design)
+    const isCoverPage = (doc as any).getCurrentPageInfo?.().pageNumber === 1
+    if (!isCoverPage) {
+      drawHeader(doc, { page: i+1, total: totalPages, project: opts.project, m })
+      drawFooter(doc)
+    }
   }
 
   doc.save(opts.fileName || 'briko-build-steps.pdf')
