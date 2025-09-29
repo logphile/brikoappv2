@@ -21,14 +21,17 @@ export async function renderBuildGuideV2(ctx: Ctx) {
   const pdf = new jsPDF({ unit: 'pt', format: 'letter' })
   registerOutfit(pdf as any)
 
-  // --- Page 1: Cover v2 (full-bleed) ---
+  // --- Page 1: Cover (full-bleed with tiny overscan) ---
   const W = pdf.internal.pageSize.getWidth()
   const H = pdf.internal.pageSize.getHeight()
-
-  // Use static public URL for cover (served from same origin)
-  // Load into an Image element to avoid dataURL conversions
-  const coverUrl = '/pdf-templates/cover-v2.png'
-  await addImageElement(pdf, coverUrl, 'PNG', 0, 0, W, H)
+  try {
+    const ver = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now()
+    const overscan = 6
+    const coverUrl = `/PDF-Cover-Mockup-v2.png?v=${ver}`
+    await addImageElement(pdf, coverUrl, 'PNG', -overscan, -overscan, W + overscan*2, H + overscan*2)
+  } catch (e) {
+    console.warn('[BuildGuide v1] Cover missing or failed to load; continuing without cover', e)
+  }
 
   // --- Page 2: Project Overview ---
   pdf.addPage()

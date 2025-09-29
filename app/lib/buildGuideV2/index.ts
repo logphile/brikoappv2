@@ -17,21 +17,16 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
     // Continue with default jsPDF font
   }
 
-  // Page 1 — cover v2 (full-bleed)
-  let coverDataUrl: string | null = null;
-  try {
-    coverDataUrl = await urlToDataURL("/pdf-templates/cover-v2.png");
-  } catch (e) {
-    throw new Error('Cover image "/pdf-templates/cover-v2.png" not found; place a 300-dpi PNG there.');
-  }
+  // Page 1 — cover (full-bleed, with tiny overscan to avoid hairline borders)
   const W = pdf.internal.pageSize.getWidth();
   const H = pdf.internal.pageSize.getHeight();
-  if (coverDataUrl) {
-    try {
-      pdf.addImage(coverDataUrl, "PNG", 0, 0, W, H);
-    } catch (e) {
-      throw new Error('Cover image is not a valid PNG (got HTML/404 instead).');
-    }
+  try {
+    const ver = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now();
+    const coverDataUrl = await urlToDataURL(`/PDF-Cover-Mockup-v2.png?v=${ver}`);
+    const overscan = 6; // pts
+    pdf.addImage(coverDataUrl, "PNG", -overscan, -overscan, W + overscan * 2, H + overscan * 2);
+  } catch (e) {
+    console.warn('[BuildGuide] Cover missing or invalid; continuing without cover', e);
   }
 
   // Page 2 — overview
