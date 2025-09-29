@@ -96,12 +96,39 @@ async function svgUrlToPngDataUrl(svgUrl: string, width = 96, height = 96): Prom
 
 async function captureMosaicPreview(): Promise<string | null> {
   try {
-    const targetEl = typeof document !== 'undefined' ? document.getElementById('mosaic-preview-capture') : null
+    const targetEl = (typeof document !== 'undefined')
+      ? (document.querySelector('#mosaic-preview-capture, [data-build-guide-hero]') as HTMLElement | null)
+      : null
     if (!targetEl) return null
     const { default: html2canvas } = await import('html2canvas')
     const canvas = await html2canvas(targetEl as HTMLElement, { backgroundColor: '#ffffff', scale: 2, useCORS: true })
     return canvas.toDataURL('image/png')
   } catch { return null }
+}
+
+async function generateOriginalPlaceholder(studsW: number, studsH: number): Promise<{ dataUrl: string; type: 'PNG'; w: number; h: number }>{
+  // Create a neutral placeholder with aspect matching studsW:studsH
+  const baseW = 960; // px
+  const ratio = Math.max(1, studsH) / Math.max(1, studsW);
+  const w = baseW;
+  const h = Math.round(baseW * ratio);
+  const cvs = document.createElement('canvas');
+  cvs.width = w; cvs.height = Math.max(480, h);
+  const ctx = cvs.getContext('2d')!;
+  // background
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, cvs.width, cvs.height);
+  // frame
+  ctx.strokeStyle = 'rgba(47,48,97,0.20)'; ctx.lineWidth = 2; ctx.strokeRect(6, 6, cvs.width - 12, cvs.height - 12);
+  // grid hint
+  ctx.strokeStyle = 'rgba(156,163,175,0.25)'; ctx.lineWidth = 1;
+  const cells = 12; for (let i=1;i<cells;i++){ const gx = Math.round((cvs.width*i)/cells); const gy = Math.round((cvs.height*i)/cells); ctx.beginPath(); ctx.moveTo(gx, 10); ctx.lineTo(gx, cvs.height-10); ctx.stroke(); ctx.beginPath(); ctx.moveTo(10, gy); ctx.lineTo(cvs.width-10, gy); ctx.stroke(); }
+  // label
+  ctx.fillStyle = '#1F2937';
+  ctx.font = '600 20px sans-serif';
+  const text = 'Original preview unavailable';
+  const tw = ctx.measureText(text).width;
+  ctx.fillText(text, Math.max(16, (cvs.width - tw)/2), Math.max(40, cvs.height*0.08));
+  return { dataUrl: cvs.toDataURL('image/png'), type: 'PNG', w: cvs.width, h: cvs.height };
 }
 
 function addFooter(doc: jsPDF) {
@@ -387,29 +414,28 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
   // Page 1: full-bleed cover image
   await renderCoverV2(doc)
 
-  // Page 2: Project Overview
+  // Page 2: Project Overview (always the new renderer)
   doc.addPage()
-  // Build context for drop-in renderProjectOverview
-  let originalImg: string | null = null
-  let originalType: 'PNG' | 'JPEG' = 'PNG'
-  let originalImgW = 0
-  let originalImgH = 0
+  // Build context for drop-in renderProjectOverviewV2
+  let originalImg: string | null = null;
+  let originalType: 'PNG' | 'JPEG' = 'PNG';
+  let originalImgW = 0; let originalImgH = 0;
   try {
     const anyWin: any = (typeof window !== 'undefined') ? window : null
     originalImg = anyWin?.__brikoOriginalDataUrl || null
     if (!originalImg) originalImg = await captureMosaicPreview()
     if (originalImg) {
-      // Detect type from data URL
-      if (originalImg.startsWith('data:image/jpeg') || originalImg.startsWith('data:image/jpg')) originalType = 'JPEG'
-      else originalType = 'PNG'
-      const image = new Image()
-      const loaded = new Promise<void>((res, rej) => { image.onload = () => res(); image.onerror = rej })
-      image.src = originalImg
-      await loaded
-      originalImgW = image.width
-      originalImgH = image.height
+      if (originalImg.startsWith('data:image/jpeg') || originalImg.startsWith('data:image/jpg')) originalType = 'JPEG'; else originalType = 'PNG'
+      const image = new Image(); const loaded = new Promise<void>((res, rej)=>{ image.onload = ()=>res(); image.onerror = rej }); image.src = originalImg; await loaded
+      originalImgW = image.width; originalImgH = image.height
+    } else {
+      const ph = await generateOriginalPlaceholder(width, height)
+      originalImg = ph.dataUrl; originalType = ph.type; originalImgW = ph.w; originalImgH = ph.h
     }
-  } catch {}
+  } catch {
+    const ph = await generateOriginalPlaceholder(width, height)
+    originalImg = ph.dataUrl; originalType = ph.type; originalImgW = ph.w; originalImgH = ph.h
+  }
 
   const widthIn = width * 0.315
   const heightIn = height * 0.315
@@ -419,27 +445,23 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
   const distinctColorIds = Array.from(new Set(rows.map((r: any) => r.colorId))) as number[]
   const paletteItems = distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
 
-  if (originalImg && originalImgW && originalImgH) {
-    renderProjectOverviewV2(doc as any, {
-      cols: width,
-      rows: height,
-      widthIn,
-      heightIn,
-      widthCm,
-      heightCm,
-      totalBricks,
-      distinctColors: distinctColorIds.length,
-      estimateUSD: estTotal,
-      palette: paletteItems,
-      originalImg,
-      originalType,
-      originalImgW,
-      originalImgH,
-    })
-  } else {
-    // Fallback to previous internal implementation if we failed to prepare the original image
-    await renderProjectOverviewOld(doc, { width, height, bricks, topSurface: opts.topSurface, bomRows: rows, estTotal })
-  }
+  // Always render new overview (originalImg is guaranteed)
+  renderProjectOverviewV2(doc as any, {
+    cols: width,
+    rows: height,
+    widthIn,
+    heightIn,
+    widthCm,
+    heightCm,
+    totalBricks,
+    distinctColors: distinctColorIds.length,
+    estimateUSD: estTotal,
+    palette: paletteItems,
+    originalImg: originalImg!,
+    originalType,
+    originalImgW,
+    originalImgH,
+  })
   addFooter(doc)
 
   // Build grid for step pages
