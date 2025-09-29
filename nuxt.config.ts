@@ -34,9 +34,12 @@ export default defineNuxtConfig({
     // HTML should not be cached
     '/': { headers: { 'Cache-Control': 'no-store' } },
     // Dynamic/auth pages should not be prerendered
-    '/settings/**': { prerender: false },
+    '/voxel': { prerender: false, ssr: false },
+    '/dev/**': { prerender: false, ssr: false },
+    '/auth/**': { prerender: false, ssr: false },
+    '/settings/**': { prerender: false, ssr: false },
+    '/projects/new': { prerender: false, ssr: false },
     '/account/**': { prerender: false },
-    '/auth/**': { prerender: false },
     '/projects/**': { prerender: false },
     '/project/**': { prerender: false },
     '/share/**': { prerender: false }
@@ -78,22 +81,17 @@ export default defineNuxtConfig({
       { dir: resolve(rootDir, 'public') }
     ],
     prerender: {
-      // Be explicit to avoid crawling links into auth/user areas
+      // whitelist only marketing/landing pages; do not crawl implicitly
       crawlLinks: false,
+      failOnError: false,
       routes: [
         '/',
-        '/mosaic',
-        '/voxel',
-        '/pricing',
-        '/how-it-works',
-        '/privacy',
-        '/terms',
-        '/legal',
-        '/login',
+        '/photo-to-bricks',
+        '/gallery',
         '/studio',
-        '/community-studio',
-        '/studio/community',
-        '/gallery'
+        '/pricing',
+        '/legal',
+        '/how-it-works'
       ]
     }
   },

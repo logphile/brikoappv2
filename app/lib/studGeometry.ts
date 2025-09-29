@@ -4,6 +4,7 @@
 // No external deps required; will use a tiny local merge util.
 
 import * as THREE from 'three'
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
 // ---------- Params & LEGO-ish proportions (normalized to 1 stud pitch) ----------
 export type StudKind = 'tile' | 'plate' | 'brick'
@@ -39,8 +40,8 @@ const DEFAULTS: Required<StudOptions> = {
 
 // ---------- Simple geometry merge utility (no external BufferGeometryUtils) ----------
 function mergeGeometries(geoms: any[]): any {
-  const merged = (THREE as any).BufferGeometryUtils
-    ? (THREE as any).BufferGeometryUtils.mergeGeometries(geoms, true)
+  const merged = (BufferGeometryUtils as any)?.mergeGeometries
+    ? (BufferGeometryUtils as any).mergeGeometries(geoms, true)
     : _mergeGeometriesLocal(geoms)
   return merged
 }

@@ -878,9 +878,9 @@ function computeBomFromVox(v: { colors: Uint8Array }) {
     counts.set(ci, (counts.get(ci) || 0) + 1)
   }
   const out = [...counts.entries()].map(([idx, count]) => {
-    const entry = LEGO_PALETTE[idx]
-    const hexStr = '#' + (((entry?.hex ?? 0x999999) & 0xFFFFFF).toString(16).padStart(6, '0'))
-    return { name: entry?.name ?? `Color #${idx}` , hex: hexStr, count }
+    const entry = LEGO_PALETTE[idx] as any
+    const hexStr = (entry?.hex && typeof entry.hex === 'string') ? entry.hex as string : '#999999'
+    return { name: (entry?.name ?? `Color #${idx}`) as string, hex: hexStr, count }
   }).sort((a,b) => b.count - a.count)
   return out
 }
@@ -897,9 +897,47 @@ async function exportPdf() {
   try {
     exportingPdf.value = true
     emit('exporting', true)
-    const bom = computeBomFromVox(props.vox)
+    // Dynamic import for SSR safety
+    const mod: any = await import('jspdf')
+    const JsPdfCtor: any = (mod?.jsPDF ?? mod?.default ?? mod)
+    const pdf = new JsPdfCtor({ unit: 'pt', format: 'a4', compress: true })
+    const pageW = pdf.internal.pageSize.getWidth()
+    const pageH = pdf.internal.pageSize.getHeight()
+    // Header
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(18)
+    pdf.text('Briko Build Guide (3D Preview)', 40, 40)
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(11)
     const meta = { mode: String(props.mode ?? 'Layered Mosaic'), size: `${props.vox.w}×${props.vox.h}×${props.vox.depth}` }
-    await exportBuildPdf({ canvas: canvasEl, bom, meta, filename: 'briko-build.pdf' })
+    pdf.text(`Mode: ${meta.mode}`, 40, 60)
+    pdf.text(`Size: ${meta.size}`, 40, 76)
+    // Preview image
+    const dataUrl = canvasEl.toDataURL('image/png')
+    const maxW = pageW - 80
+    const maxH = pageH * 0.45
+    const scale = Math.min(maxW / canvasEl.width, maxH / canvasEl.height)
+    const imgW = Math.max(50, canvasEl.width * scale)
+    const imgH = Math.max(50, canvasEl.height * scale)
+    try { pdf.addImage(dataUrl, 'PNG', 40, 100, imgW, imgH) } catch {}
+    // BOM
+    let y = 100 + imgH + 30
+    pdf.setFont('helvetica','bold'); pdf.setFontSize(12)
+    pdf.text('Parts (by color)', 40, y); y += 12
+    pdf.setDrawColor(200); pdf.line(40, y, pageW - 40, y); y += 8
+    pdf.setFont('helvetica','normal'); pdf.setFontSize(10)
+    const bom = computeBomFromVox(props.vox)
+    const colNameX = 90
+    const colCountX = pageW - 40
+    for (const row of bom) {
+      if (y > pageH - 40) { pdf.addPage(); y = 40 }
+      const c = new THREE.Color(row.hex)
+      pdf.setFillColor(Math.round(c.r*255), Math.round(c.g*255), Math.round(c.b*255))
+      pdf.rect(40, y - 9, 14, 14, 'F')
+      pdf.setTextColor(0,0,0)
+      pdf.text(row.name, colNameX, y)
+      pdf.text(String(row.count), colCountX, y, { align: 'right' })
+      y += 18
+    }
+    pdf.save('briko-build.pdf')
     toast.success('Your PDF is ready!', { id })
   } catch (e) {
     console.error('[PDF] export failed:', e)
@@ -915,7 +953,7 @@ async function exportPdf() {
 <template>
   <div>
     <div class="relative">
-      <div ref="host" class="w-full h-[480px] rounded-xl bg-black/20 animate-fade-in-up"></div>
+      <div ref="host" data-build-guide-hero class="w-full h-[480px] rounded-xl bg-black/20 animate-fade-in-up"></div>
       <!-- Debug overlay -->
       <div class="absolute left-2 top-2 text-xs px-2 py-1 rounded bg-black/55 text-white/95 ring-1 ring-white/10">
         <div><span class="opacity-70">Mode:</span>
