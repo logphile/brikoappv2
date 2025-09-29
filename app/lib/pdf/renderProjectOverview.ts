@@ -2,6 +2,8 @@ import type { jsPDF } from "jspdf";
 
 export type PaletteItem = { name: string; hex: string };
 
+export const OVERVIEW_VERSION = 'overview-v2.3';
+
 export type ProjectOverviewCtx = {
   // Mosaic/project stats
   cols: number;            // studs wide
@@ -26,154 +28,103 @@ export type ProjectOverviewCtx = {
 };
 
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
-  const W = pdf.internal.pageSize.getWidth();
-  const H = pdf.internal.pageSize.getHeight();
+  // page & slab
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const margin = 18;                       // outer page margin
+  const slabW = Math.min(pageW - margin*2, 520); // fixed-ish content width
+  const slabX = (pageW - slabW) / 2;       // centers the whole slab
+  let y = 28;
 
-  // --- Layout constants (Letter/A4 friendly) ---
-  const M = 40;                 // outer margin (page edge)
-  const CONTENT_MAX_W = 540;    // ≈ 7.5in (720px @ 96dpi); print-safe width inside margins
-  const TITLE_Y = 56;           // title baseline
-  const GAP_L = 16;             // large gap
-  const GAP_M = 12;             // medium gap
-  const GAP_S = 8;              // small gap
-  const FRAME_PAD = 12;         // image frame inset
-  const SWATCH = 14;            // palette swatch size
-  const SWATCH_GAP = 6;         // gap between swatches
+  // Title (centered)
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(22); pdf.setTextColor(20);
+  pdf.text('Project Overview', pageW/2, y, { align:'center' });
+  y += 10;
 
-  // Centered content box (max width)
-  const contentW = Math.min(W - 2 * M, CONTENT_MAX_W);
-  const CX = (W - contentW) / 2; // centered left X
+  // Hero (framed, centered inside slab)
+  const pad = 8; 
+  const heroH = Math.min( (pageH * 0.33), 170 );
+  const heroW = slabW - pad*2;
+  pdf.setDrawColor(220); pdf.setLineWidth(0.6); pdf.setFillColor(255,255,255);
+  ;(pdf as any).roundedRect?.(slabX, y, slabW, heroH + pad*2, 6, 6, 'S') || pdf.rect(slabX, y, slabW, heroH + pad*2);
 
-  // --- Hero strip ---
-  const steps = ctx.rows;
-  const timeLabel = formatTimeRange(steps);
-  pdf.setFont("Outfit", "heavy");
-  pdf.setTextColor(17); // ink
-  pdf.setFontSize(22);
-  pdf.text("Project Overview", CX, TITLE_Y);
-
-  // badges row
-  pdf.setFont("Outfit", "normal");
-  pdf.setTextColor(60);
-  pdf.setFontSize(11);
-  const badges = [
-    `${steps} steps`,
-    `${ctx.cols}×${ctx.rows} studs`,
-    `${ctx.distinctColors} colors`,
-    `~${ctx.totalBricks.toLocaleString()} plates`
-  ].join(" · ");
-  pdf.text(badges, CX, TITLE_Y + 16);
-
-  // confidence chips
-  pdf.setTextColor(17);
-  pdf.setFont("Outfit", "bold");
-  pdf.text(`Skill: Beginner+ · Time: ${timeLabel}`, CX, TITLE_Y + 32);
-
-  // --- Original image (centered, large, neatly framed) ---
-  // Reserve a good chunk of vertical space for the hero image
-  const IMG_MAX_W = contentW - 2 * FRAME_PAD;
-  const IMG_MAX_H = Math.min(H * 0.33, 280); // cap to avoid pushing stats too low
-  const fitted = fitRect(ctx.originalImgW, ctx.originalImgH, IMG_MAX_W, IMG_MAX_H);
-
-  const imgX = CX + (contentW - fitted.w) / 2;
-  const imgY = TITLE_Y + GAP_L + 20; // make room for badges/chips
-
-  // Frame
-  pdf.setDrawColor(229, 231, 235); // grid-light
-  pdf.setLineWidth(0.6);
-  ;(pdf as any).roundedRect?.(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD, 10, 10, "S") || pdf.rect(imgX - FRAME_PAD, imgY - FRAME_PAD, fitted.w + 2 * FRAME_PAD, fitted.h + 2 * FRAME_PAD);
-
-  // Image
-  pdf.addImage(ctx.originalImg, ctx.originalType, imgX, imgY, fitted.w, fitted.h);
-
-  // TEMP: watermark to prove V2 is live; remove after validation
-  pdf.setFont("Outfit", "bold");
-  pdf.setTextColor(140);
-  pdf.setFontSize(8);
-  const buildId = (import.meta as any)?.env?.VITE_BUILD_ID ?? Date.now().toString();
-  pdf.text(`OVERVIEW V2 • ${buildId}` , 40, pdf.internal.pageSize.getHeight() - 22);
-
-  let cursorY = imgY + fitted.h + GAP_L;
-
-  // --- Two-column area: left = Value box, right = Specs grid ---
-  const colGap = 16;
-  const colW = (contentW - colGap);
-  const leftW = Math.floor(colW * 0.44); // slightly narrower
-  const rightW = colW - leftW;
-  const leftX = CX;
-  const rightX = CX + leftW + colGap;
-  const yTop = cursorY;
-
-  // Value box (left)
-  const vbH = drawValueBox(pdf, leftX, yTop, leftW, ctx.estimateUSD);
-
-  // Specs grid (right)
-  const stats = buildSpecs(ctx);
-  const statsBottom = drawStatsGrid(pdf, stats, rightX, yTop, rightW);
-
-  cursorY = Math.max(yTop + vbH, statsBottom) + GAP_L;
-
-  // --- Palette rows (no overflow; wrap neatly) ---
-  cursorY += GAP_L;
-  pdf.setFont("Outfit", "bold");
-  pdf.setFontSize(11);
-  pdf.setTextColor(17);
-  pdf.text("Colors used in this build", CX, cursorY);
-
-  // Optional: top 5 color labels
-  const top = getTopColors(ctx, 5);
-  if (top.length) {
-    pdf.setFont("Outfit", "normal");
-    pdf.setFontSize(10);
-    pdf.setTextColor(75);
-    const label = top.map(t => `${t.name} (${t.qty.toLocaleString()})`).join(" · ");
-    pdf.text(label, CX, cursorY + 14);
+  if (ctx.originalImg) {
+    const r = Math.min(heroW / Math.max(1, ctx.originalImgW), heroH / Math.max(1, ctx.originalImgH));
+    const dw = Math.floor(ctx.originalImgW * r), dh = Math.floor(ctx.originalImgH * r);
+    const dx = slabX + (slabW - dw)/2;     // centered within slab
+    const dy = y + pad + (heroH - dh)/2;
+    pdf.addImage(ctx.originalImg, ctx.originalType, dx, dy, dw, dh, undefined, 'FAST');
   }
 
-  cursorY += GAP_S + (top.length ? 18 : 0);
-  cursorY = layoutPaletteRows(pdf, CX, cursorY, contentW, ctx.palette, SWATCH, SWATCH_GAP);
+  // Visible version tag (bottom-left)
+  pdf.setFont('Outfit','bold'); 
+  pdf.setFontSize(8); 
+  pdf.setTextColor(120);
+  const W = pageW; const H = pageH;
+  pdf.text(OVERVIEW_VERSION, 12, H - 14);
 
-  // Actions (right-aligned): Swap a color · Print palette
-  pdf.setFont("Outfit", "normal"); pdf.setFontSize(10); pdf.setTextColor(60);
-  const actions = "Swap a color   ·   Print palette";
-  const tw = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(actions) : 0;
-  pdf.text(actions, CX + contentW - tw, cursorY + 12);
+  y += heroH + pad*2 + 12;
 
-  // --- Start right checklist (sticky bottom area approximation) ---
-  const checkY = Math.min(cursorY + GAP_L, H - 110);
-  pdf.setFont("Outfit", "bold"); pdf.setTextColor(17); pdf.setFontSize(11);
-  pdf.text("Start right", CX, checkY);
-  pdf.setFont("Outfit", "normal"); pdf.setTextColor(60); pdf.setFontSize(10);
-  drawCheckbox(pdf, CX, checkY + 8, "Clear a 16\u2033 × 12\u2033 space");
-  drawCheckbox(pdf, CX, checkY + 24, "Sort by color first (fastest)");
-  drawCheckbox(pdf, CX, checkY + 40, "Start at row 1, bottom-left");
-  drawCheckbox(pdf, CX, checkY + 56, "Use plate outlines if you get lost");
-  pdf.setFontSize(9); pdf.setTextColor(120);
-  pdf.text("You can build without sorting—sorting just feels faster.", CX, checkY + 74);
+  // 2×3 spec grid (left/right within centered slab)
+  pdf.setFont('Outfit','normal'); pdf.setFontSize(9); pdf.setTextColor(90);
+  const gutter = 24;
+  const colW = (slabW - gutter)/2;
+  const leftX = slabX;
+  const rightX = slabX + colW + gutter;
 
-  // --- Social proof footer bar ---
-  const barH = 40;
-  const barY = H - barH - 28;
-  pdf.setFillColor(239, 240, 255); // light purple tint
-  pdf.rect(0, barY, W, barH, "F");
-  pdf.setFont("Outfit","bold"); pdf.setFontSize(11); pdf.setTextColor(47,48,97);
-  pdf.text("Join other builders—share your result with #brikobuild", M, barY + 24);
-  // CTA: View community builds (outline look)
-  const ctaW = 170, ctaH = 22; const ctaX = W - M - ctaW; const ctaY = barY + 10;
-  pdf.setDrawColor(47,48,97); pdf.setLineWidth(1);
-  pdf.rect(ctaX, ctaY, ctaW, ctaH);
-  pdf.setFont("Outfit","bold"); pdf.setTextColor(47,48,97); pdf.setFontSize(10);
-  pdf.text("View community builds", ctaX + 12, ctaY + 15);
-  try { (pdf as any).link?.(ctaX, ctaY, ctaW, ctaH, { url: 'https://briko.app/gallery' }) } catch {}
-  // printed URL next to button for accessibility in print
-  const urlText = 'briko.app/gallery'
-  pdf.setFont('Outfit','normal'); pdf.setTextColor(75); pdf.setFontSize(8)
-  const urlW = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(urlText) : 0
-  pdf.text(urlText, ctaX - 10 - urlW, ctaY + 15)
+  function spec(label:string, value:string, x:number) {
+    pdf.setFontSize(8); pdf.setTextColor(100);
+    pdf.text(label.toUpperCase(), x, y);
+    pdf.setFont('Outfit','bold'); pdf.setFontSize(11); pdf.setTextColor(20);
+    pdf.text(value, x, y + 5);
+  }
 
-  // --- Footer line (optional visual separator for long palettes) ---
-  // pdf.setDrawColor(229,231,235); pdf.setLineWidth(0.5);
-  // pdf.line(M, H - 28, W - M, H - 28);
+  const fmtIn = (n:number) => Number.isFinite(n) ? (n as number).toFixed(1) : '—';
+  const fmtCm = (n:number) => Number.isFinite(n) ? (n as number).toFixed(1) : '—';
+  const fmtEst = (n: number | undefined) => (typeof n === 'number') ? `Est. $${n.toFixed(2)}` : '—';
+
+  spec('Stud dimensions', `${ctx.cols} × ${ctx.rows} studs` , leftX);
+  spec('Total bricks', `${ctx.totalBricks.toLocaleString()} bricks` , rightX);
+  y += 14;
+  spec('Dimensions (inches)', `${fmtIn(ctx.widthIn)} × ${fmtIn(ctx.heightIn)} in` , leftX);
+  spec('Number of colors', `${ctx.distinctColors} colors` , rightX);
+  y += 14;
+  spec('Dimensions (centimeters)', `${fmtCm(ctx.widthCm)} × ${fmtCm(ctx.heightCm)} cm` , leftX);
+  spec('Estimated price', fmtEst(ctx.estimateUSD) , rightX);
+  y += 18;
+
+  // Colors header (centered)
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20);
+  pdf.text('Colors used in this build', pageW/2, y, { align:'center' });
+  y += 8;
+
+  // Wrapped color chips within centered slab
+  const chipH = 14, chipGap = 10;
+  let cx = slabX, cy = y;
+
+  for (const p of ctx.palette) {
+    const sw = 22; // swatch width
+    const label = p.name || '';
+    pdf.setFont('Outfit','normal'); pdf.setFontSize(10); 
+    const labelW = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : 60;
+    const chipW = sw + 6 + labelW; // swatch + space + text
+
+    // wrap if exceeding slab
+    if (cx + chipW > slabX + slabW) { cx = slabX; cy += chipH + chipGap; }
+
+    // swatch
+    const [r,g,b] = hexToRgb(p.hex || '#cccccc');
+    pdf.setFillColor(r, g, b);
+    pdf.setDrawColor(230);
+    ;(pdf as any).roundedRect?.(cx, cy - chipH + 10, sw, chipH, 3, 3, 'FD') || pdf.rect(cx, cy - chipH + 10, sw, chipH, 'FD');
+
+    // label
+    pdf.setTextColor(30);
+    pdf.text(label, cx + sw + 6, cy + 2);
+
+    cx += chipW + 16; // gap between chips
+  }
+  y = cy + chipH + 14;
 }
 
 /* ---------------------------- helpers ---------------------------- */

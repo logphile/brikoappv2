@@ -76,6 +76,7 @@ async function generateOriginalPlaceholder(studsW:number, studsH:number): Promis
 }
 
 export async function prepareBuildGuidePDF(opts: BuildGuideOpts){
+  try { console.info('[BuildGuide] Build ID', (import.meta as any)?.env?.VITE_BUILD_ID) } catch {}
   const { bricks, width, height } = opts
 
   // Compute BOM and totals (bucket-aware)
