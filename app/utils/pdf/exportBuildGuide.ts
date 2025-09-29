@@ -81,14 +81,22 @@ function drawHeader(doc: JsPdfType, ctx: {
   doc.text(stats, right - tw, top + 20)
 
   // active color dots (max 6)
-  const startX = right - 6*22; let cx = startX; const cy = top + 30
-  m.activeColors.slice(0,6).forEach(ac => {
+  const MAX_CHIPS = 6
+  const startX = right - MAX_CHIPS*22; let cx = startX; const cy = top + 30
+  const chips = m.activeColors.slice(0, MAX_CHIPS)
+  chips.forEach(ac => {
     const rgb = hexToRgb(ac.hex)
     doc.setFillColor(rgb.r, rgb.g, rgb.b); doc.setDrawColor(230); doc.rect(cx, cy, 12, 12, 'FD')
     doc.setTextColor(60)
     doc.text(String(ac.count), cx + 16, cy + 10)
     cx += 22
   })
+
+  if (m.activeColors.length > MAX_CHIPS) {
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(110)
+    const more = `+${m.activeColors.length - MAX_CHIPS} more`
+    doc.text(more, right - 60, top + 46)
+  }
 
   // running header (project + date) and page count
   doc.setFontSize(9); doc.setTextColor(110)
