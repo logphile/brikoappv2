@@ -399,7 +399,7 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
   }
 
   // Always render new overview
-  renderProjectOverviewV2(doc as any, {
+  await renderProjectOverviewV2(doc as any, {
     cols: width,
     rows: height,
     widthIn,
