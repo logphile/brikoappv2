@@ -22,4 +22,5 @@ export type BuildGuideCtx = ProjectOverviewCtx & {
   nameFromHex: (hex: string) => string;
   bom: Array<{ partLabel: string; colorName: string; qty: number; estimate?: number }>;
   pageFormat?: "letter" | "a4";
+  inkSaver?: boolean;
 };

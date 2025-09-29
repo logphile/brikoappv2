@@ -48,7 +48,8 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
       placedBefore,
       placedThisStep,
       nameFromHex: ctx.nameFromHex,
-      ink: "#111827", gridLight: "#E5E7EB", gridHeavy: "#9CA3AF"
+      ink: "#111827", gridLight: "#E5E7EB", gridHeavy: "#9CA3AF",
+      inkSaver: !!ctx.inkSaver
     });
     placedBefore = placedBefore.concat(placedThisStep);
   });

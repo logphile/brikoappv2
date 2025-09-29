@@ -10,6 +10,7 @@ export type BuildGuideOpts = {
   topSurface?: 'plates'|'tiles'
   fileName?: string
   format?: 'a4'|'letter'
+  inkSaver?: boolean
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -112,7 +113,8 @@ export async function prepareBuildGuidePDF(opts: BuildGuideOpts){
     originalImg: original.dataUrl, originalType: original.type, originalImgW: original.w, originalImgH: original.h,
     steps,
     nameFromHex,
-    bom
+    bom,
+    inkSaver: !!opts.inkSaver
   })
 
   return pdf

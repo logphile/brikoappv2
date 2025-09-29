@@ -22,6 +22,15 @@
   /* Hint browsers to render native controls in dark mode (affects <select> popup) */
   color-scheme: dark;
 }
+
+/* Print ink-saver mode: lighten backgrounds, keylines only in previews */
+@media print {
+  .print-ink-saver canvas { background: #fff !important; }
+  .print-ink-saver .rounded-2xl.border {
+    border-color: rgba(47,48,97,0.35) !important;
+    background: #fff !important;
+  }
+}
 html, body { background: var(--brand-bg); color: var(--brand-text); }
 
 /* Base font defaults */

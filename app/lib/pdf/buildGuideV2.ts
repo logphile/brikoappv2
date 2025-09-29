@@ -14,6 +14,7 @@ export type Ctx = {
   steps: StepCell[][]; // array of “this step” cells
   nameFromHex:(hex:string)=>string;
   bom: Array<{ partLabel:string; colorName:string; qty:number; estimate?:number }>;
+  inkSaver?: boolean;
 }
 
 export async function renderBuildGuideV2(ctx: Ctx) {
@@ -54,7 +55,8 @@ export async function renderBuildGuideV2(ctx: Ctx) {
       placedThisStep,
       nameFromHex: ctx.nameFromHex,
       ink: '#111827', gridLight: '#E5E7EB', gridHeavy: '#9CA3AF',
-      title: `STEP ${i + 1}`
+      title: `STEP ${i + 1}`,
+      inkSaver: !!ctx.inkSaver
     })
     placedBefore = placedBefore.concat(placedThisStep)
   })
