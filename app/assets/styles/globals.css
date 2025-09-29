@@ -251,6 +251,12 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
   /* Hide horizontal scrollbar when enabling small-screen scroll for nav */
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Force-wrapping list for step legends */
+  .step-legend { display: flex; flex-wrap: wrap; }
+  @media print {
+    .step-legend { display: flex !important; flex-wrap: wrap !important; }
+  }
 }
 
 /* Legal prose (readable copy on ivory) */
