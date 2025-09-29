@@ -6,6 +6,25 @@ import { diffStep, type StepGrid, type PaletteEntry } from '@/utils/guide/metric
 const PT_PER_IN = 72
 const LETTER = { w: 8.5 * PT_PER_IN, h: 11 * PT_PER_IN }
 
+// Snapshot the Overview DOM container if present and place it as page 2
+async function renderOverviewPage(doc: JsPdfType) {
+  const el = document.getElementById('overview-root') as HTMLElement | null
+  if (!el) { console.warn('[PDF Overview] overview-root not found in DOM; skipping overview page'); return }
+  const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#FFFFFF' })
+  // add a fresh page for the overview
+  doc.addPage('letter', 'portrait')
+  const pageW = doc.internal.pageSize.getWidth()
+  const pageH = doc.internal.pageSize.getHeight()
+  const maxW = pageW - MARGIN * 2
+  const maxH = pageH - MARGIN * 2
+  const ratio = Math.min(maxW / canvas.width, maxH / canvas.height)
+  const drawW = canvas.width * ratio
+  const drawH = canvas.height * ratio
+  const x = (pageW - drawW) / 2
+  const y = (pageH - drawH) / 2
+  doc.addImage(canvas, 'PNG', x, y, drawW, drawH, undefined, 'FAST')
+}
+
 function drawLegendWrapped(
   doc: JsPdfType,
   colors: Array<{ name:string; hex:string; count:number }>,
@@ -92,6 +111,14 @@ export async function exportBuildGuideSteps(opts: {
   }
 
   // 2) STEP PAGES — always add a new page; cover consumed page 1
+  // Optional Overview page — if present in DOM as #overview-root, snapshot it as page 2
+  try {
+    await renderOverviewPage(doc)
+  } catch (e) {
+    console.warn('[PDF Overview] Skipping overview snapshot:', e)
+  }
+
+  // 3) STEP PAGES — always add a new page per step
   for (let i = 0; i < opts.steps.length; i++) {
     doc.addPage('letter', 'portrait')
     const prev = i === 0 ? emptyLike(opts.steps[0].grid) : opts.steps[i-1].grid
