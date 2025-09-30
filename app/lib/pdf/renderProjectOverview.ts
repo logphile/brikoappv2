@@ -1,4 +1,10 @@
 import type { jsPDF } from "jspdf";
+// KILL LEGACY: expose a loud throw for any lingering imports expecting a V2 export
+export async function renderProjectOverviewV2(..._args: any[]) {
+  throw new Error('[KILL-LEGACY] renderProjectOverviewV2 called. Use overviewV4.');
+}
+// If someone imports default from this module, make it obviously unusable
+export default undefined as any;
 
 export type PaletteItem = { name: string; hex: string };
 
