@@ -90,73 +90,57 @@ export function renderOverviewV4(a: OverviewArgs){
     const dx = slabX + (slabW - dw)/2, dy = y + pad + (heroH - dh)/2
     pdf.addImage(a.originalImg, a.originalType, dx, dy, dw, dh, undefined, 'FAST')
   }
-  // ------------------- spacing after hero -------------------
-  y += heroH + pad * 2 + 28; // more breathing room
+  // --- generous space after hero ---
+  y += heroH + pad * 2;
+  y += 24;
 
-  // ------------------- Build size (clean 2x layout) -------------------
+  // --- Build size (simple, centered 2-col) ---
   pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary);
-  pdf.text('Build size', W/2, y, { align: 'center' });
-  y += 9;
+  pdf.text('Build size', W/2, y, { align:'center' }); y += 10;
 
-  const specGap = 44;                           // wider gap between columns
-  const specColW = (slabW - specGap) / 2;
-  const specLeft  = slabX;
-  const specRight = slabX + specColW + specGap;
+  const gap = 48;
+  const colW = (slabW - gap) / 2;
+  const L = slabX, R = slabX + colW + gap;
 
-  const specRow = (label: string, value: string, X: number, Y: number) => {
+  const spec = (label:string, value:string, X:number, Y:number)=>{
     pdf.setFont('Outfit','medium'); pdf.setFontSize(8);  pdf.setTextColor(THEME.text.secondary);
     pdf.text(label.toUpperCase(), X, Y);
     pdf.setFont('Outfit','bold');   pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary);
     pdf.text(value, X, Y + 8);
   };
+  spec('Dimensions (inches)',      `${a.widthIn} × ${a.heightIn} in` , L, y);
+  spec('Dimensions (centimeters)', `${a.widthCm} × ${a.heightCm} cm` , R, y);
+  y += 26;
 
-  // two rows only — inches & centimeters (the headline stats live in the badges)
-  specRow('Dimensions (inches)',      `${a.widthIn} × ${a.heightIn} in` , specLeft,  y);
-  specRow('Dimensions (centimeters)', `${a.widthCm} × ${a.heightCm} cm` , specRight, y);
-  y += 26; // row height
-
-  // Divider
-  pdf.setDrawColor(THEME.line); pdf.setLineWidth(0.4)
-  pdf.line(slabX, y, slabX + slabW, y); y += 12
-
-  // ------------------- Colors section -------------------
-  pdf.setFont('Outfit','bold'); pdf.setFontSize(13); pdf.setTextColor(THEME.text.primary);
-  pdf.text('Colors used in this build', W/2, y, { align: 'center' });
+  // --- divider ---
+  pdf.setDrawColor(THEME.line); pdf.setLineWidth(0.4);
+  pdf.line(slabX, y, slabX + slabW, y);
   y += 12;
 
-  // pre-measure chips to avoid crowding; break page if needed
-  const chipH = 18, swW = 22, gapX = 14, gapY = 10;
-  const chipsHeight = (() => {
-    let cx = slabX, lines = 1;
-    pdf.setFont('Outfit','normal'); pdf.setFontSize(10);
-    for (const p of a.palette) {
-      const name = p.name ?? String(p.colorId);
-      const chipW = swW + 8 + Math.ceil(pdf.getTextWidth(name));
-      if (cx + chipW > slabX + slabW) { lines++; cx = slabX; }
-      cx += chipW + gapX;
-    }
-    return lines * (chipH + gapY);
-  })();
-  y = ensureSpace(pdf, chipsHeight + 8, y, 40);
+  // --- Colors (wrapped, spacious) ---
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(13); pdf.setTextColor(THEME.text.primary);
+  pdf.text('Colors used in this build', W/2, y, { align:'center' }); y += 12;
 
-  // draw wrapped chips inside the centered slab
+  const chipH = 18, sw = 22, gx = 16, gy = 10;
   let cx = slabX, cy = y;
+
   pdf.setFont('Outfit','normal'); pdf.setFontSize(10);
+
   for (const p of a.palette) {
     const name = p.name ?? String(p.colorId);
-    const chipW = swW + 8 + Math.ceil(pdf.getTextWidth(name));
-    if (cx + chipW > slabX + slabW) { cx = slabX; cy += chipH + gapY; }
+    const chipW = sw + 8 + Math.ceil(pdf.getTextWidth(name));
 
-    const { r, g, b } = rgb(p.hex);
-    pdf.setDrawColor(224); pdf.setFillColor(r, g, b);
-    pdf.roundedRect(cx, cy - chipH + 12, swW, chipH, 3, 3, 'FD');
+    if (cx + chipW > slabX + slabW) { cx = slabX; cy += chipH + gy; }
+
+    const c = (()=>{ const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(p.hex||'')||['','cc','cc','cc']; return { r:parseInt(m[1],16), g:parseInt(m[2],16), b:parseInt(m[3],16) }})();
+    pdf.setDrawColor(224); pdf.setFillColor(c.r,c.g,c.b);
+    pdf.roundedRect(cx, cy - chipH + 12, sw, chipH, 3, 3, 'FD');
 
     pdf.setTextColor(THEME.text.primary);
-    pdf.text(name, cx + swW + 8, cy + 3);
+    pdf.text(name, cx + sw + 8, cy + 3);
 
-    cx += chipW + gapX;
+    cx += chipW + gx;
   }
-  y = cy + chipH + 10;
 
   // DEV tag — confirm this version ran
   pdf.setFont('Outfit','bold'); pdf.setFontSize(8); pdf.setTextColor(120)

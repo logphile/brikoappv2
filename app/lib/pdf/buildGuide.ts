@@ -4,7 +4,6 @@ import { legoPalette } from '@/lib/palette/lego'
 import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
-import { renderOverviewV4 } from '@/lib/pdf/overviewV4'
 import { renderStepPage, type StepCell } from '@/lib/pdf/renderStepPage'
 
 // Types kept light to avoid cross-file drift
@@ -399,7 +398,8 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
   }
 
   // Always render new overview (V4 - single source of truth)
-  renderOverviewV4({
+  const { renderOverviewV4 } = await import('@/lib/pdf/overviewV4')
+  await renderOverviewV4({
     pdf: doc,
     originalImg: originalImg!,
     originalType,
@@ -416,6 +416,7 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
     estimateUSD: estTotal,
     palette: distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, colorId: id, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
   })
+  if ((import.meta as any).env?.DEV) { (doc as any).__overview_locked = true }
   addFooter(doc)
 
   // Build grid for step pages

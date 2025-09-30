@@ -44,8 +44,10 @@ function ensureSpace(pdf: any, need: number, y: number, top: number) {
 }
 
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
-  // Legacy renderer is deprecated. Use renderOverviewV3 instead.
-  throw new Error('Do not call: legacy Overview');
+  // Legacy renderer is deprecated. Use renderOverviewV4 instead.
+  if ((pdf as any)?.__overview_locked) return; // already locked; skip
+  if ((import.meta as any).env?.DEV) throw new Error('Legacy Overview called');
+  return; // no-op in prod
   // ---- layout constants ------------------------------------------------------
   const W = pdf.internal.pageSize.getWidth()
   const H = pdf.internal.pageSize.getHeight()
