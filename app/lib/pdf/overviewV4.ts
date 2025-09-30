@@ -24,22 +24,22 @@ const THEME = {
 
 // Vertical rhythm (pts)
 const R = 6;                        // base unit
-const GAP_HERO_TO_TITLE   = 5 * R;  // 30
-const GAP_TITLE_TO_DIMS   = 2 * R;  // 12
-const GAP_DIMS_TO_RULE    = 3 * R;  // 18
-const GAP_RULE_TO_COLORS  = 3 * R;  // 18
-const GAP_COLORS_TO_GRID  = 2 * R;  // 12
+const GAP_HERO_TO_TITLE  = 32;      // hero → "Build size"
+const GAP_TITLE_TO_DIMS  = 16;      // title → numbers
+const GAP_DIMS_TO_RULE   = 24;      // numbers → divider
 
 // Dims layout
-const DIM_COL_W = 160;          // width per dim column
-const DIM_COL_GAP = 8 * R;      // 48 gap between left/right columns
-const DIM_VALUE_SIZE = 14;      // bold number line
+const DIM_COL_W = 170;          // width per dim column
+const DIM_COL_GAP = 56;         // space between the two columns
+const DIM_VALUE_SIZE = 16;      // bold number line
 const DIM_LABEL_SIZE = 9;       // tiny label line ("in" / "cm")
+const DIM_LABEL_GAP  = 3;
 
 // Colors grid
 const SWATCH = 14;              // square chip size
-const GRID_GAP_X = 1.5 * R;     // 9
-const GRID_GAP_Y = 1.25 * R;    // 7.5
+const CHIP_PAD = 12;
+const GRID_GAP_X = 10;
+const GRID_GAP_Y = 10;
 
 const mm = (n:number)=>Math.round(n*100)/100
 const fmtInt = (n:number)=>{ try { return new Intl.NumberFormat('en-US').format(n) } catch { return String(n) } }
@@ -121,7 +121,7 @@ export function renderOverviewV4(a: OverviewArgs){
   pdf.setDrawColor(255, 255, 255);
   pdf.rect(slabX, stripY, slabW, 28, 'F');
 
-  // 2b) "Build size" (centered)
+  // 2b) Title row and breathing room
   let y2 = heroBottomY + GAP_HERO_TO_TITLE;
   pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary);
   pdf.text('Build size', W/2, y2, { align:'center' });
@@ -133,59 +133,62 @@ export function renderOverviewV4(a: OverviewArgs){
   const rightX = midX + DIM_COL_GAP / 2;
 
   const drawDim = (colX: number, topY: number, value: string, unit: string) => {
-    // value line
     pdf.setFont('Outfit','bold'); pdf.setFontSize(DIM_VALUE_SIZE); pdf.setTextColor(THEME.text.primary);
     pdf.text(value, colX, topY, { align: 'left' });
-    // approximate heights (single-line)
     const vH = DIM_VALUE_SIZE;
-    // label line (unit)
     pdf.setFont('Outfit','medium'); pdf.setFontSize(DIM_LABEL_SIZE); pdf.setTextColor(THEME.text.secondary);
-    pdf.text(unit, colX, topY + vH + 2, { align: 'left' });
+    pdf.text(unit, colX, topY + vH + DIM_LABEL_GAP, { align: 'left' });
     const lH = DIM_LABEL_SIZE;
-    return topY + vH + 2 + lH;
+    return topY + vH + DIM_LABEL_GAP + lH;
   };
 
   const leftBottom  = drawDim(leftX,  y2, `${a.widthIn} × ${a.heightIn}`, 'in');
   const rightBottom = drawDim(rightX, y2, `${a.widthCm} × ${a.heightCm}`, 'cm');
   y2 = Math.max(leftBottom, rightBottom) + GAP_DIMS_TO_RULE;
 
-  // 2d) Divider rule
-  pdf.setDrawColor(THEME.line); pdf.setLineWidth(0.6);
+  // 2d) Divider with a lighter touch
+  pdf.setDrawColor(229,231,235); pdf.setLineWidth(0.5);
   pdf.line(slabX, y2, slabX + slabW, y2);
-  y2 += GAP_RULE_TO_COLORS;
+  y2 += 18;
 
-  // 2e) "Colors used in this build" (centered)
+  // 2e) Colors heading
   pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary);
   pdf.text('Colors used in this build', W/2, y2, { align:'center' });
-  y2 += GAP_COLORS_TO_GRID;
+  y2 += 12;
 
-  // 2f) Colors grid (wrap with consistent gaps)
-  const gridWidth = slabW;
-  let gx = slabX;
-  let gy = y2;
-  pdf.setFont('Outfit','normal'); pdf.setFontSize(10);
-
+  // 2f) Colors grid: center each row
+  const gridW = slabW;
+  const measureChip = (name: string) => {
+    const labelW = Math.ceil(pdf.getTextWidth(name));
+    return Math.min(Math.max(labelW + SWATCH + 10 + CHIP_PAD, 110), 170);
+  };
+  type Row = { items: Array<{ name: string; w: number; hex: string }>; rowW: number };
+  const rows: Row[] = [];
+  let cur: Row = { items: [], rowW: 0 };
   for (const p of a.palette) {
     const name = p.name ?? String(p.colorId);
-    const textW = Math.ceil(pdf.getTextWidth(name));
-    const itemW = textW + SWATCH + 10 + 12; // swatch + gap + name + padding
-    const w = Math.min(Math.max(itemW, 100), 160); // clamp for nice wrap
-
-    if (gx + w > slabX + gridWidth) {
-      gx = slabX;
-      gy += SWATCH + GRID_GAP_Y + 8; // chip row height + gap
+    const w = measureChip(name);
+    const nextW = cur.items.length ? cur.rowW + GRID_GAP_X + w : w;
+    if (nextW > gridW && cur.items.length) {
+      rows.push(cur); cur = { items: [{ name, w, hex: p.hex || '#ccc' }], rowW: w };
+    } else {
+      cur.items.push({ name, w, hex: p.hex || '#ccc' }); cur.rowW = nextW;
     }
+  }
+  if (cur.items.length) rows.push(cur);
 
-    // swatch
-    const c = (()=>{ const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(p.hex||'')||['','cc','cc','cc']; return { r:parseInt(m[1],16), g:parseInt(m[2],16), b:parseInt(m[3],16) }})();
-    pdf.setDrawColor(209,213,219); pdf.setFillColor(c.r,c.g,c.b);
-    pdf.rect(gx, gy, SWATCH, SWATCH, 'FD');
-
-    // label
-    pdf.setFont('Outfit','medium'); pdf.setFontSize(10); pdf.setTextColor(THEME.text.primary);
-    pdf.text(name, gx + SWATCH + 10, gy - 1, { align: 'left' });
-
-    gx += w + GRID_GAP_X;
+  for (const r of rows) {
+    let gx = slabX + (gridW - r.rowW) / 2;
+    for (const it of r.items) {
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(it.hex)||['','cc','cc','cc'];
+      const cr = parseInt(m[1],16), cg = parseInt(m[2],16), cb = parseInt(m[3],16);
+      pdf.setDrawColor(209,213,219); pdf.setFillColor(cr,cg,cb);
+      pdf.rect(gx, y2, SWATCH, SWATCH, 'FD');
+      pdf.setFont('Outfit','medium'); pdf.setFontSize(10); pdf.setTextColor(THEME.text.primary);
+      pdf.text(it.name, gx + SWATCH + 10, y2 - 1, { align: 'left' });
+      gx += it.w + GRID_GAP_X;
+    }
+    y2 += SWATCH + GRID_GAP_Y + 6;
   }
 
   // DEV tag — confirm this version ran
