@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { registerOutfit } from './fonts'
-import { renderProjectOverview } from './renderProjectOverview'
+import { renderOverviewV3 } from './overviewV3'
 import { renderStepPage, type StepCell } from './renderStepPage'
 
 export type Ctx = {
@@ -33,18 +33,24 @@ export async function renderBuildGuideV2(ctx: Ctx) {
     console.warn('[BuildGuide v1] Cover missing or failed to load; continuing without cover', e)
   }
 
-  // --- Page 2: Project Overview ---
+  // --- Page 2: Project Overview (V3 only) ---
   pdf.addPage()
-  renderProjectOverview(pdf as any, {
-    cols: ctx.cols, rows: ctx.rows,
-    widthIn: ctx.widthIn, heightIn: ctx.heightIn,
-    widthCm: ctx.widthCm, heightCm: ctx.heightCm,
-    totalBricks: ctx.totalBricks, distinctColors: ctx.distinctColors,
-    estimateUSD: ctx.estimateUSD,
-    palette: ctx.palette,
-    bom: Array.isArray(ctx.bom) ? ctx.bom.map(r => ({ colorName: r.colorName, qty: r.qty })) : undefined,
-    originalImg: ctx.originalImg, originalType: ctx.originalType,
-    originalImgW: ctx.originalImgW, originalImgH: ctx.originalImgH
+  renderOverviewV3({
+    pdf,
+    originalImg: ctx.originalImg,
+    originalType: ctx.originalType,
+    originalImgW: ctx.originalImgW,
+    originalImgH: ctx.originalImgH,
+    cols: ctx.cols,
+    rows: ctx.rows,
+    totalBricks: ctx.totalBricks,
+    widthIn: Number.isFinite(ctx.widthIn) ? ctx.widthIn.toFixed(1) : String(ctx.widthIn),
+    heightIn: Number.isFinite(ctx.heightIn) ? ctx.heightIn.toFixed(1) : String(ctx.heightIn),
+    widthCm: Number.isFinite(ctx.widthCm) ? ctx.widthCm.toFixed(1) : String(ctx.widthCm),
+    heightCm: Number.isFinite(ctx.heightCm) ? ctx.heightCm.toFixed(1) : String(ctx.heightCm),
+    distinctColors: ctx.distinctColors,
+    estimateUSD: typeof ctx.estimateUSD === 'number' ? ctx.estimateUSD : 0,
+    palette: ctx.palette.map((p, i) => ({ name: p.name, colorId: i, hex: p.hex }))
   })
 
   // --- Step pages ---

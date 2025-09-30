@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import type { BuildGuideCtx, StepCell } from "./types";
 import { registerOutfit } from "./fonts";
-import { renderProjectOverview } from "./renderProjectOverview";
+import { renderOverviewV3 } from "@/lib/pdf/overviewV3";
 import { renderStepPage } from "./renderStepPage";
 import { renderBOM } from "./renderBOM";
 import { urlToDataURL } from "./utils";
@@ -29,9 +29,25 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
     console.warn('[BuildGuide] Cover missing or invalid; continuing without cover', e);
   }
 
-  // Page 2 — overview
+  // Page 2 — overview (single source of truth: overviewV3)
   pdf.addPage();
-  renderProjectOverview(pdf, ctx);
+  renderOverviewV3({
+    pdf,
+    originalImg: ctx.originalImg || null,
+    originalType: ctx.originalType,
+    originalImgW: ctx.originalImgW,
+    originalImgH: ctx.originalImgH,
+    cols: ctx.cols,
+    rows: ctx.rows,
+    totalBricks: ctx.totalBricks,
+    widthIn: Number.isFinite(ctx.widthIn) ? ctx.widthIn.toFixed(1) : String(ctx.widthIn),
+    heightIn: Number.isFinite(ctx.heightIn) ? ctx.heightIn.toFixed(1) : String(ctx.heightIn),
+    widthCm: Number.isFinite(ctx.widthCm) ? ctx.widthCm.toFixed(1) : String(ctx.widthCm),
+    heightCm: Number.isFinite(ctx.heightCm) ? ctx.heightCm.toFixed(1) : String(ctx.heightCm),
+    distinctColors: ctx.distinctColors,
+    estimateUSD: typeof ctx.estimateUSD === 'number' ? ctx.estimateUSD : 0,
+    palette: ctx.palette.map((p, i) => ({ name: p.name, colorId: i, hex: p.hex }))
+  });
 
   // Steps
   let placedBefore: StepCell[] = [];

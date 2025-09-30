@@ -4,7 +4,7 @@ import { legoPalette } from '@/lib/palette/lego'
 import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
-import { renderProjectOverview as renderProjectOverviewV2 } from '@/lib/pdf/renderProjectOverview'
+import { renderOverviewV3 } from '@/lib/pdf/overviewV3'
 import { renderStepPage, type StepCell } from '@/lib/pdf/renderStepPage'
 
 // Types kept light to avoid cross-file drift
@@ -398,22 +398,23 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
     originalImg = ph.dataUrl; originalType = 'PNG'; originalImgW = ph.w; originalImgH = ph.h
   }
 
-  // Always render new overview
-  await renderProjectOverviewV2(doc as any, {
-    cols: width,
-    rows: height,
-    widthIn,
-    heightIn,
-    widthCm,
-    heightCm,
-    totalBricks,
-    distinctColors: distinctColorIds.length,
-    estimateUSD: estTotal,
-    palette: paletteItems,
+  // Always render new overview (V3 - single source of truth)
+  renderOverviewV3({
+    pdf: doc,
     originalImg: originalImg!,
     originalType,
     originalImgW,
     originalImgH,
+    cols: width,
+    rows: height,
+    totalBricks,
+    widthIn: widthIn.toFixed(1),
+    heightIn: heightIn.toFixed(1),
+    widthCm: widthCm.toFixed(1),
+    heightCm: heightCm.toFixed(1),
+    distinctColors: distinctColorIds.length,
+    estimateUSD: estTotal,
+    palette: distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, colorId: id, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
   })
   addFooter(doc)
 
