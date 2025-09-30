@@ -1,7 +1,6 @@
 import jsPDF from "jspdf";
 import type { BuildGuideCtx, StepCell } from "./types";
 import { registerOutfit } from "./fonts";
-import { renderOverviewV4 } from "@/lib/pdf/overviewV4";
 import { renderStepPage } from "./renderStepPage";
 import { renderBOM } from "./renderBOM";
 import { urlToDataURL } from "./utils";
@@ -31,7 +30,8 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
 
   // Page 2 — overview (single source of truth: overviewV4)
   pdf.addPage();
-  renderOverviewV4({
+  const { renderOverviewV4 } = await import("@/lib/pdf/overviewV4");
+  await renderOverviewV4({
     pdf,
     originalImg: ctx.originalImg || null,
     originalType: ctx.originalType,
@@ -48,6 +48,7 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
     estimateUSD: typeof ctx.estimateUSD === 'number' ? ctx.estimateUSD : 0,
     palette: ctx.palette.map((p, i) => ({ name: p.name, colorId: i, hex: p.hex }))
   });
+  if ((import.meta as any).env?.DEV) { (pdf as any).__overview_locked = true }
 
   // Steps
   let placedBefore: StepCell[] = [];
