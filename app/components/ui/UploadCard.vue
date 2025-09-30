@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-const props = defineProps<{ accept?: string; maxSizeMb?: number }>()
+const props = defineProps<{ accept?: string; maxSizeMb?: number; acceptLabel?: string }>()
+const acceptText = computed(() => props.acceptLabel ?? 'PNG, JPG, or WebP')
 const emit = defineEmits<{ (e:'files', files: FileList): void }>()
 
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -27,7 +28,7 @@ const onDragOver = (e: DragEvent) => e.preventDefault()
       <p class="text-[#343434]">Drag a photo here or</p>
       <button type="button" class="mt-2 inline-flex items-center rounded-lg border-2 border-[#FF0062] px-3 py-1 text-[#FF0062] font-medium hover:bg-[#FF0062]/5 transition" @click="onBrowse">Browse…</button>
       <p class="mt-2 text-sm text-black/60">
-        {{ props.accept || 'PNG, JPG, or WebP' }} • up to {{ props.maxSizeMb ?? 25 }} MB
+        {{ acceptText }} • up to {{ props.maxSizeMb ?? 25 }} MB
       </p>
       <input ref="inputRef" type="file" class="hidden" :accept="props.accept || 'image/png,image/jpeg,image/webp'" @change="onInput" />
     </div>
