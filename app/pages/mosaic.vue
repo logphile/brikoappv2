@@ -4,7 +4,8 @@ import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { useHead, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
 import { useRemixLoader } from '@/composables/useRemixLoader'
-import UploadBox from '@/components/ui/UploadBox.vue'
+import StepCard from '@/components/ui/StepCard.vue'
+import UploadCard from '@/components/ui/UploadCard.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
 import VoxelViewer from '@/components/VoxelViewer.client.vue'
@@ -505,6 +506,12 @@ async function onDownloadPng(){
   }
 }
 
+// Bridge for StepCard + UploadCard
+function onMosaicFiles(files: FileList){
+  const f = files?.[0]
+  if (f) onFile(f)
+}
+
 function openBLDialog(){ showBL.value = true }
 function closeBLDialog(){ showBL.value = false }
 function onDownloadBrickLink(){
@@ -703,43 +710,29 @@ watchDebounced(
             <Transition appear enter-active-class="transition ease-out duration-600"
                         enter-from-class="opacity-0 translate-y-2"
                         enter-to-class="opacity-100 translate-y-0">
-        <div class="z-0 bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6 space-y-6">
+        <div class="z-0 rounded-2xl bg-[#FFD808] p-3 sm:p-4 space-y-6">
           <!-- Step 1: Upload -->
           <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
-            <div class="flex items-center gap-3 mb-1">
-              <StepBadge :n="1" size="lg" :active="activeStepIndex >= 0" />
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">file_upload</span>
-              </div>
-              <!-- simple skeleton while preparing Build Guide inputs -->
-              <div v-if="!mosaic.isReady" class="px-4">
-                <div class="mt-4 h-40 rounded-xl bg-white/5 border border-white/10 animate-pulse"></div>
-              </div>
-              <h2 class="text-xl font-semibold text-[#343434]">Upload your photo</h2>
-            </div>
+            <StepCard :step="1" title="Upload your photo">
+              <template #actions>
+                <!-- Presets in header (desktop) -->
+                <div class="hidden md:flex items-center gap-2">
+                  <button class="px-3 py-1 rounded-full bg-[#2F3061] text-white text-sm font-medium shadow" @click="mode='auto'">Auto</button>
+                  <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='line-art'">Line Art</button>
+                  <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='photo'">Photo Pop</button>
+                </div>
+              </template>
 
-          <!-- Presets row: Auto / Line Art / Photo Pop -->
-          <div class="mt-3">
-            <label class="block text-sm font-medium text-[#2F3061] mb-1">Preset</label>
-            <div class="chip-group">
-              <button type="button" class="chip" :class="{ 'chip--active': mode==='auto' }" @click="mode='auto'">Auto</button>
-              <button type="button" class="chip" :class="{ 'chip--active': mode==='line-art' }" @click="mode='line-art'">Line Art</button>
-              <button type="button" class="chip" :class="{ 'chip--active': mode==='photo' }" @click="mode='photo'">Photo Pop</button>
-            </div>
-          </div>
+              <!-- Mobile: presets above dropzone -->
+              <div class="md:hidden mb-4 flex flex-wrap items-center gap-2">
+                <button class="px-3 py-1 rounded-full bg-[#2F3061] text-white text-sm font-medium shadow" @click="mode='auto'">Auto</button>
+                <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='line-art'">Line Art</button>
+                <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='photo'">Photo Pop</button>
+              </div>
+
+              <UploadCard accept="image/png,image/jpeg,image/webp" :maxSizeMb="25" @files="onMosaicFiles" />
+            </StepCard>
           </section>
-          <!-- Upload unified (matches 3D Builder) -->
-          <div>
-            <label class="block text-sm font-medium text-[#343434]/80 mb-2">Upload</label>
-            <UploadBox
-              :maxSizeMB="25"
-              accept="image/*"
-              :label="'Drag a photo here or'"
-              :buttonText="'Browse…'"
-              @file="onFile"
-              @error="(msg)=>{ try { showToast(msg, 'error', 1800) } catch {} }"
-            />
-          </div>
           
           <!-- Step 2: Tune mosaic -->
           <section :id="stepsGuide[1].id" class="scroll-mt-28 pt-6">
