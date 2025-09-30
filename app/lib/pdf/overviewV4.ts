@@ -22,6 +22,10 @@ const THEME = {
   pillStroke: 215
 }
 
+// Title rhythm (pts)
+const TITLE_TOP_PAD    = 28;  // space from page top -> "Project Overview"
+const TITLE_BOTTOM_GAP = 24;  // "Project Overview" -> badges row
+
 // Vertical rhythm (pts)
 const R = 6;                        // base unit
 const GAP_HERO_TO_TITLE  = 32;      // hero → "Build size"
@@ -66,14 +70,14 @@ export function renderOverviewV4(a: OverviewArgs){
   const outer = 28
   const slabW = Math.min(540, W - outer*2)
   const slabX = (W - slabW)/2
-  let y = 40
+  let y = outer + TITLE_TOP_PAD
 
   pdf.setLineHeightFactor(1.25)
 
   // Title
-  pdf.setFont('Outfit','bold'); pdf.setFontSize(24); pdf.setTextColor(THEME.text.primary)
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(28); pdf.setTextColor(THEME.text.primary)
   pdf.text('Project Overview', W/2, y, { align:'center' })
-  y += 16
+  y += TITLE_BOTTOM_GAP
 
   // ==== NEW: stacked badges (4 equal columns, centered)
   const stats = [
