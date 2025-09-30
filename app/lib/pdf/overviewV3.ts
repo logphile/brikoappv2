@@ -37,6 +37,7 @@ function ensureSpace(pdf:any, need:number, y:number, top:number){
 }
 
 export function renderOverviewV3(a: OverviewArgs){
+  throw new Error('[KILL-LEGACY] renderOverviewV3() was called. Use overviewV4.');
   const { pdf } = a
   const W = pdf.internal.pageSize.getWidth()
   const H = pdf.internal.pageSize.getHeight()
@@ -81,9 +82,9 @@ export function renderOverviewV3(a: OverviewArgs){
   }
   spec('Stud dimensions',            `${a.cols} × ${a.rows} studs` , leftX,  y)
   spec('Total bricks',               `${fmtInt(a.totalBricks)} bricks` , rightX, y); y += rowH
-  spec('Dimensions (inches)',        `${a.widthIn} × ${a.heightIn} in` , leftX,  y)
+  spec('Legacy (inches)',            `${a.widthIn} × ${a.heightIn} in` , leftX,  y)
   spec('Number of colors',           `${a.distinctColors} colors` , rightX, y); y += rowH
-  spec('Dimensions (centimeters)',   `${a.widthCm} × ${a.heightCm} cm` , leftX,  y)
+  spec('Legacy (centimeters)',       `${a.widthCm} × ${a.heightCm} cm` , leftX,  y)
   spec('Estimated price',            `Est. $${a.estimateUSD.toFixed(2)}` , rightX, y); y += rowH + 12
 
   // Divider

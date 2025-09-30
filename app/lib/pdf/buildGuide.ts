@@ -416,7 +416,7 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
     estimateUSD: estTotal,
     palette: distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, colorId: id, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
   })
-  if ((import.meta as any).env?.DEV) { (doc as any).__overview_locked = true }
+  ;(doc as any).__overview_locked = true
   addFooter(doc)
 
   // Build grid for step pages

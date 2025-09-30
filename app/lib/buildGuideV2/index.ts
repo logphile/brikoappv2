@@ -48,7 +48,7 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
     estimateUSD: typeof ctx.estimateUSD === 'number' ? ctx.estimateUSD : 0,
     palette: ctx.palette.map((p, i) => ({ name: p.name, colorId: i, hex: p.hex }))
   });
-  if ((import.meta as any).env?.DEV) { (pdf as any).__overview_locked = true }
+  ;(pdf as any).__overview_locked = true
 
   // Steps
   let placedBefore: StepCell[] = [];

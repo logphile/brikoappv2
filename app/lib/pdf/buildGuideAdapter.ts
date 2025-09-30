@@ -138,7 +138,8 @@ export async function prepareBuildGuidePDF(opts: BuildGuideOpts){
     bom,
     inkSaver: !!opts.inkSaver
   })
-
+  // Lock overview page to prevent any legacy drawers from rendering on this page
+  ;(pdf as any).__overview_locked = true
   return pdf
 }
 

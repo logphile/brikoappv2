@@ -1,17 +1,24 @@
-import type { jsPDF } from "jspdf";
-// KILL LEGACY: expose a loud throw for any lingering imports expecting a V2 export
-export async function renderProjectOverviewV2(..._args: any[]) {
-  throw new Error('[KILL-LEGACY] renderProjectOverviewV2 called. Use overviewV4.');
-}
-// If someone imports default from this module, make it obviously unusable
-export default undefined as any;
+// DEAD: V2 overview renderer. Do not import.
+// If you see this thrown, something still calls the legacy overview path.
 
+export type DeadParams = Record<string, unknown>;
+
+export function renderProjectOverview(/* _doc: any, _params: DeadParams */) {
+  throw new Error(
+    "DEAD_RENDER: renderProjectOverview (V2) was removed. Use renderOverviewV4 from app/lib/pdf/overviewV4.ts."
+  );
+}
+
+// Optional: keep type-only export to avoid ripple type errors in stale imports
+export default renderProjectOverview;
+/* [KILL-LEGACY] The remainder of this file is legacy and intentionally commented out.
 export type PaletteItem = { name: string; hex: string };
 
 export const OVERVIEW_VERSION = 'overview-v2.3';
 
 export type ProjectOverviewCtx = {
   // Mosaic/project stats
+{{ ... }}
   cols: number;            // studs wide
   rows: number;            // studs tall
   widthIn: number;         // inches
@@ -52,9 +59,7 @@ function ensureSpace(pdf: any, need: number, y: number, top: number) {
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   // Legacy renderer is deprecated. Use renderOverviewV4 instead.
   if ((pdf as any)?.__overview_locked) return; // already locked; skip
-  if ((import.meta as any).env?.DEV) throw new Error('Legacy Overview called');
-  return; // no-op in prod
-  // ---- layout constants ------------------------------------------------------
+  throw new Error('[KILL-LEGACY] renderProjectOverview() was called. Use overviewV4.');
   const W = pdf.internal.pageSize.getWidth()
   const H = pdf.internal.pageSize.getHeight()
   const outer = 24                         // page margin
@@ -106,9 +111,9 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
 
   spec('Stud dimensions',            `${ctx.cols} × ${ctx.rows} studs` , leftX,  y)
   spec('Total bricks',               `${ctx.totalBricks} bricks` ,   rightX, y); y += rowH
-  spec('Dimensions (inches)',        `${ctx.widthIn} × ${ctx.heightIn} in` , leftX,  y)
+  spec('Legacy (inches)',            `${ctx.widthIn} × ${ctx.heightIn} in` , leftX,  y)
   spec('Number of colors',           `${ctx.distinctColors} colors` ,    rightX, y); y += rowH
-  spec('Dimensions (centimeters)',   `${ctx.widthCm} × ${ctx.heightCm} cm` , leftX,  y)
+  spec('Legacy (centimeters)',       `${ctx.widthCm} × ${ctx.heightCm} cm` , leftX,  y)
   spec('Estimated price',            `Est. $${(ctx.estimateUSD ?? 0).toFixed(2)}` , rightX, y); y += rowH + 8
 
   // ---- Colors header ---------------------------------------------------------
@@ -155,7 +160,7 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   y = cy + chipH + 12
 }
 
-/* ---------------------------- helpers ---------------------------- */
+* ---------------------------- helpers (legacy, commented) ---------------------------- *
 
 function fitRect(srcW: number, srcH: number, maxW: number, maxH: number) {
   const r = Math.min(maxW / srcW, maxH / srcH);
@@ -276,7 +281,7 @@ function truncateToWidth(pdf: jsPDF, str: string, maxW: number) {
 
 // (hexToRgb defined near top for v2.4 layout)
 
-/* ---------------------------- extras ---------------------------- */
+* ---------------------------- extras (legacy, commented) ---------------------------- *
 function formatTimeRange(steps: number){
   const min = Math.ceil((steps * 2.2) / 5) * 5;
   const max = Math.ceil((steps * 3.0) / 5) * 5;
@@ -337,3 +342,4 @@ function getTopColors(ctx: ProjectOverviewCtx, n=5){
     .sort((a,b)=> b.qty - a.qty)
     .slice(0, n);
 }
+*/

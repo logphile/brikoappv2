@@ -94,6 +94,13 @@ export function renderOverviewV4(a: OverviewArgs){
   y += heroH + pad * 2;
   y += 24;
 
+  // 🔒 Bleach strip: wipe any stray text the old renderer might have drawn
+  const scrubY = y - 26;           // just below the hero frame
+  const scrubH = 46;               // tall enough to cover old spec labels
+  pdf.setFillColor(255, 255, 255);
+  pdf.setDrawColor(255, 255, 255);
+  pdf.rect(slabX, scrubY, slabW, scrubH, 'F');
+
   // --- Build size (simple, centered 2-col) ---
   pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary);
   pdf.text('Build size', W/2, y, { align:'center' }); y += 10;
