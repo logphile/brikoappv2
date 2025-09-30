@@ -4,7 +4,7 @@ import { legoPalette } from '@/lib/palette/lego'
 import { buildBOMWithBuckets } from '@/lib/bom'
 import priceTable from '@/data/brick_prices.json'
 import { PRICE_ESTIMATE_LONG } from '@/lib/disclaimer'
-import { renderOverviewV3 } from '@/lib/pdf/overviewV3'
+import { renderOverviewV4 } from '@/lib/pdf/overviewV4'
 import { renderStepPage, type StepCell } from '@/lib/pdf/renderStepPage'
 
 // Types kept light to avoid cross-file drift
@@ -398,8 +398,8 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
     originalImg = ph.dataUrl; originalType = 'PNG'; originalImgW = ph.w; originalImgH = ph.h
   }
 
-  // Always render new overview (V3 - single source of truth)
-  renderOverviewV3({
+  // Always render new overview (V4 - single source of truth)
+  renderOverviewV4({
     pdf: doc,
     originalImg: originalImg!,
     originalType,
