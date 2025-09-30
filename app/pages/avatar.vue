@@ -658,20 +658,28 @@ async function publishToGallery(){
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
-    const rec = await createProject({
-      title: 'Avatar',
-      kind: 'avatar',
-      width: widthStuds.value,
-      height: heightStuds.value,
-      palette_id: paletteName.value,
-      sourceFile: srcFileRef.value || undefined,
-      mode: preset.value === 'lineart' ? 'line-art' : (preset.value === 'pop' ? 'photo' : 'auto'),
-      makePublic: false,
-    })
-    galleryProjectId.value = rec.id
+    const { canvasToWebpBlob } = useProjects()
+    if (!outCanvas.value) throw new Error('No preview available to upload')
+    const blob = await canvasToWebpBlob(outCanvas.value)
+
+    // Upload preview to public storage
+    const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
+    const fname = `avatar-preview-${widthStuds.value}x${heightStuds.value}-${preset.value}.webp`
+    const storagePath = `projects/${user.id}/${projectId}/${fname}`
+    {
+      const { error: upErr } = await $supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
+      if (upErr) throw upErr
+    }
+
+    // Insert private project row
+    const payload: any = { id: projectId, user_id: user.id, title: 'Avatar', kind: 'avatar', status: 'private', preview_path: storagePath, tags: [] }
+    const ins = await $supabase.from('user_projects').insert(payload).select().single()
+    if (ins.error) throw ins.error
+    galleryProjectId.value = (ins.data as any)?.id || projectId
     try { show('Saved to your Gallery (private)', 'success') } catch {}
-  } catch (e) {
-    console.warn(e); try { show('Save failed', 'error') } catch {}
+  } catch (e: any) {
+    console.warn('[Avatar Publish] failed', e)
+    try { show(`Save failed: ${e?.code ?? ''} ${e?.message ?? 'Error'}`.trim(), 'error') } catch {}
   } finally { publishing.value = false }
 }
 
