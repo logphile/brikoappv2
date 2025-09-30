@@ -44,6 +44,8 @@ function ensureSpace(pdf: any, need: number, y: number, top: number) {
 }
 
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
+  // Legacy renderer is deprecated. Use renderOverviewV3 instead.
+  throw new Error('Do not call: legacy Overview');
   // ---- layout constants ------------------------------------------------------
   const W = pdf.internal.pageSize.getWidth()
   const H = pdf.internal.pageSize.getHeight()
@@ -99,7 +101,7 @@ export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
   spec('Dimensions (inches)',        `${ctx.widthIn} × ${ctx.heightIn} in` , leftX,  y)
   spec('Number of colors',           `${ctx.distinctColors} colors` ,    rightX, y); y += rowH
   spec('Dimensions (centimeters)',   `${ctx.widthCm} × ${ctx.heightCm} cm` , leftX,  y)
-  spec('Estimated price',            `${(typeof ctx.estimateUSD === 'number') ? `Est. $${ctx.estimateUSD.toFixed(2)}` : 'Est. $—'}` , rightX, y); y += rowH + 8
+  spec('Estimated price',            `Est. $${(ctx.estimateUSD ?? 0).toFixed(2)}` , rightX, y); y += rowH + 8
 
   // ---- Colors header ---------------------------------------------------------
   pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20)

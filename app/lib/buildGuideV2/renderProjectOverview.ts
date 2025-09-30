@@ -5,6 +5,8 @@ import { hexToRgb } from "./utils";
 export const OVERVIEW_VERSION = 'overview-v2.3';
 
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
+  // Legacy renderer is deprecated. Use renderOverviewV3 instead.
+  throw new Error('Do not call: legacy Overview');
   // page & slab
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
