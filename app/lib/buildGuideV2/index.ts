@@ -31,24 +31,28 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
   // Page 2 — overview (single source of truth: overviewV4)
   pdf.addPage();
   const { renderOverviewV4 } = await import("@/lib/pdf/overviewV4");
-  await renderOverviewV4({
-    pdf,
-    originalImg: ctx.originalImg || null,
-    originalType: ctx.originalType,
-    originalImgW: ctx.originalImgW,
-    originalImgH: ctx.originalImgH,
-    cols: ctx.cols,
-    rows: ctx.rows,
-    totalBricks: ctx.totalBricks,
-    widthIn: Number.isFinite(ctx.widthIn) ? ctx.widthIn.toFixed(1) : String(ctx.widthIn),
-    heightIn: Number.isFinite(ctx.heightIn) ? ctx.heightIn.toFixed(1) : String(ctx.heightIn),
-    widthCm: Number.isFinite(ctx.widthCm) ? ctx.widthCm.toFixed(1) : String(ctx.widthCm),
-    heightCm: Number.isFinite(ctx.heightCm) ? ctx.heightCm.toFixed(1) : String(ctx.heightCm),
-    distinctColors: ctx.distinctColors,
-    estimateUSD: typeof ctx.estimateUSD === 'number' ? ctx.estimateUSD : 0,
-    palette: ctx.palette.map((p, i) => ({ name: p.name, colorId: i, hex: p.hex }))
-  });
-  ;(pdf as any).__overview_locked = true
+  if ((pdf as any).__overview_locked) {
+    // already finalized elsewhere; skip drawing overview again
+  } else {
+    (pdf as any).__overview_locked = true; // lock-first
+    await renderOverviewV4({
+      pdf,
+      originalImg: ctx.originalImg || null,
+      originalType: ctx.originalType,
+      originalImgW: ctx.originalImgW,
+      originalImgH: ctx.originalImgH,
+      cols: ctx.cols,
+      rows: ctx.rows,
+      totalBricks: ctx.totalBricks,
+      widthIn: Number.isFinite(ctx.widthIn) ? ctx.widthIn.toFixed(1) : String(ctx.widthIn),
+      heightIn: Number.isFinite(ctx.heightIn) ? ctx.heightIn.toFixed(1) : String(ctx.heightIn),
+      widthCm: Number.isFinite(ctx.widthCm) ? ctx.widthCm.toFixed(1) : String(ctx.widthCm),
+      heightCm: Number.isFinite(ctx.heightCm) ? ctx.heightCm.toFixed(1) : String(ctx.heightCm),
+      distinctColors: ctx.distinctColors,
+      estimateUSD: typeof ctx.estimateUSD === 'number' ? ctx.estimateUSD : 0,
+      palette: ctx.palette.map((p, i) => ({ name: p.name, colorId: i, hex: p.hex }))
+    });
+  }
 
   // Steps
   let placedBefore: StepCell[] = [];
