@@ -25,9 +25,9 @@ const THEME = {
 // Vertical rhythm (pts)
 const R = 6;                        // base unit
 const GAP_HERO_TO_TITLE  = 32;      // hero → "Build size"
-const GAP_TITLE_TO_DIMS  = 22;      // title → numbers (more air)
+const GAP_TITLE_TO_DIMS  = 26;      // title → numbers (more air)
 const GAP_DIMS_TO_RULE   = 30;      // numbers → divider (more air)
-const GAP_RULE_TO_COLORS = 18;      // divider → heading
+const GAP_RULE_TO_COLORS = 22;      // divider → heading
 const GAP_COLORS_TO_GRID = 16;      // heading → chips (more air)
 
 // Dims layout
