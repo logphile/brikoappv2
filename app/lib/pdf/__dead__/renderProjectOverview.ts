@@ -5,9 +5,8 @@ export type DeadParams = Record<string, unknown>;
 
 export function renderProjectOverview(/* _doc: any, _params: DeadParams */) {
   throw new Error(
-    "DEAD_RENDER: renderProjectOverview (V2) was removed. Use renderOverviewV4 from app/lib/pdf/overviewV4.ts."
+    "DEAD_RENDER: renderProjectOverview(V2) removed. Use renderOverviewV4."
   );
 }
 
-// Optional: keep type-only export to avoid ripple type errors in stale imports
 export default renderProjectOverview;

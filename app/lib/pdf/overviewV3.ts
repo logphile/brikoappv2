@@ -13,6 +13,7 @@ export type OverviewArgs = {
   estimateUSD: number
   palette: Array<{ name?: string; colorId: number; hex?: string }>
 }
+export default renderOverviewV3
 
 const THEME = {
   text: { primary: 20, secondary: 90, muted: 130 },
