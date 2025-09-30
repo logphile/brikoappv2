@@ -27,103 +27,122 @@ export type ProjectOverviewCtx = {
   originalImgH: number;    // px
 };
 
+// ---- helpers (near top) ---------------------------------------
+function hexToRgb(hex: string) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex) || ['', 'cc', 'cc', 'cc']
+  return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) }
+}
+
+function ensureSpace(pdf: any, need: number, y: number, top: number) {
+  const H = pdf.internal.pageSize.getHeight()
+  const bottom = 24 // bottom margin
+  if (y + need > H - bottom) {
+    pdf.addPage()
+    return top
+  }
+  return y
+}
+
 export function renderProjectOverview(pdf: jsPDF, ctx: ProjectOverviewCtx) {
-  // page & slab
-  const pageW = pdf.internal.pageSize.getWidth();
-  const pageH = pdf.internal.pageSize.getHeight();
-  const M = 18;                         // outer page margin
-  const slabW = Math.min(pageW - M*2, 520);
-  const slabX = (pageW - slabW) / 2;    // CENTER the whole content slab
-  let y = 28;
+  // ---- layout constants ------------------------------------------------------
+  const W = pdf.internal.pageSize.getWidth()
+  const H = pdf.internal.pageSize.getHeight()
+  const outer = 24                         // page margin
+  const slabW = Math.min(540, W - outer*2) // centered content slab width
+  const slabX = (W - slabW)/2
+  let y = 36                               // top margin
+  pdf.setLineHeightFactor(1.25)
 
-  pdf.setLineHeightFactor(1.2);
+  // ---- title -----------------------------------------------------------------
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(22); pdf.setTextColor(20)
+  pdf.text('Project Overview', W/2, y, { align:'center' })
+  y += 14
 
-  // ========== Title ==========
-  pdf.setFont('Outfit','bold'); pdf.setFontSize(22); pdf.setTextColor(20);
-  pdf.text('Project Overview', pageW/2, y, { align:'center' });
-  y += 12;
-
-  // ========== Framed hero ==========
-  const pad = 8;
-  const heroH = Math.min(pageH * 0.32, 170);
-  pdf.setDrawColor(228); pdf.setLineWidth(0.6); pdf.setFillColor(255,255,255);
-  ;(pdf as any).roundedRect?.(slabX, y, slabW, heroH + pad*2, 8, 8, 'S') || pdf.rect(slabX, y, slabW, heroH + pad*2);
+  // ---- framed hero -----------------------------------------------------------
+  const heroPad = 10
+  const heroH = Math.min(170, H * 0.32)
+  pdf.setDrawColor(228); pdf.setLineWidth(0.6); pdf.setFillColor(255,255,255)
+  ;(pdf as any).roundedRect?.(slabX, y, slabW, heroH + heroPad*2, 8, 8, 'S') || pdf.rect(slabX, y, slabW, heroH + heroPad*2)
 
   if (ctx.originalImg) {
-    const r = Math.min((slabW - pad*2) / Math.max(1, ctx.originalImgW), heroH / Math.max(1, ctx.originalImgH));
-    const dw = Math.round(ctx.originalImgW * r), dh = Math.round(ctx.originalImgH * r);
-    const dx = slabX + (slabW - dw)/2;     // centered within slab
-    const dy = y + pad + (heroH - dh)/2;
-    pdf.addImage(ctx.originalImg, ctx.originalType, dx, dy, dw, dh, undefined, 'FAST');
+    const r = Math.min((slabW - heroPad*2) / Math.max(1, ctx.originalImgW), heroH / Math.max(1, ctx.originalImgH))
+    const dw = Math.round(ctx.originalImgW * r), dh = Math.round(ctx.originalImgH * r)
+    const dx = slabX + (slabW - dw)/2
+    const dy = y + heroPad + (heroH - dh)/2
+    pdf.addImage(ctx.originalImg, ctx.originalType, dx, dy, dw, dh, undefined, 'FAST')
   }
 
   // Visible version tag (bottom-left)
-  pdf.setFont('Outfit','bold'); 
-  pdf.setFontSize(8); 
+  pdf.setFont('Outfit','bold');
+  pdf.setFontSize(8);
   pdf.setTextColor(120);
-  const W = pageW; const H = pageH;
-  pdf.text(OVERVIEW_VERSION, 12, H - 14);
+  pdf.text(OVERVIEW_VERSION, 12, H - 14)
 
-  y += heroH + pad*2 + 14;
+  y += heroH + heroPad*2 + 20  // generous space so specs never collide with hero
 
-  // ========== 2×3 spec grid (draw ONCE) ==========
-  const gutter = 28;
-  const colW = (slabW - gutter) / 2;
-  const leftX  = slabX;
-  const rightX = slabX + colW + gutter;
+  // ---- 2×3 spec grid (draw ONCE) --------------------------------------------
+  const gutter = 28
+  const colW = (slabW - gutter)/2
+  const leftX  = slabX
+  const rightX = slabX + colW + gutter
+  const rowH = 22
 
-  function spec(label:string, value:string, x:number, yLine:number) {
-    pdf.setFont('Outfit','medium'); pdf.setFontSize(8); pdf.setTextColor(105);
-    pdf.text(label.toUpperCase(), x, yLine);
-    pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20);
-    pdf.text(value, x, yLine + 6);
+  function spec(label:string, value:string, x:number, yRow:number){
+    pdf.setFont('Outfit','medium'); pdf.setFontSize(8); pdf.setTextColor(105)
+    pdf.text(label.toUpperCase(), x, yRow)
+    pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20)
+    pdf.text(value, x, yRow + 7)
   }
 
-  // row 1
-  spec('Stud dimensions', `${ctx.cols} × ${ctx.rows} studs` , leftX,  y);
-  spec('Total bricks',    `${ctx.totalBricks} bricks` ,   rightX, y);
-  y += 18;
-  // row 2
-  spec('Dimensions (inches)',      `${ctx.widthIn} × ${ctx.heightIn} in` , leftX,  y);
-  spec('Number of colors',         `${ctx.distinctColors} colors` ,    rightX, y);
-  y += 18;
-  // row 3
-  spec('Dimensions (centimeters)', `${ctx.widthCm} × ${ctx.heightCm} cm` , leftX,  y);
-  spec('Estimated price',          `${(typeof ctx.estimateUSD === 'number') ? `Est. $${ctx.estimateUSD.toFixed(2)}` : 'Est. $—'}` , rightX, y);
-  y += 22;
+  spec('Stud dimensions',            `${ctx.cols} × ${ctx.rows} studs` , leftX,  y)
+  spec('Total bricks',               `${ctx.totalBricks} bricks` ,   rightX, y); y += rowH
+  spec('Dimensions (inches)',        `${ctx.widthIn} × ${ctx.heightIn} in` , leftX,  y)
+  spec('Number of colors',           `${ctx.distinctColors} colors` ,    rightX, y); y += rowH
+  spec('Dimensions (centimeters)',   `${ctx.widthCm} × ${ctx.heightCm} cm` , leftX,  y)
+  spec('Estimated price',            `${(typeof ctx.estimateUSD === 'number') ? `Est. $${ctx.estimateUSD.toFixed(2)}` : 'Est. $—'}` , rightX, y); y += rowH + 8
 
-  // ========== Colors (centered header + wrapped chips) ==========
-  pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20);
-  pdf.text('Colors used in this build', pageW/2, y, { align:'center' });
-  y += 10;
+  // ---- Colors header ---------------------------------------------------------
+  pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(20)
+  pdf.text('Colors used in this build', W/2, y, { align:'center' })
+  y += 12
 
-  // flow layout inside the centered slab
-  const chipH = 16;
-  const swW = 22;                      // swatch width
-  const gapX = 16, gapY = 10;
-  let cx = slabX, cy = y;
+  // ---- measure chips; break page if they won't fit --------------------------
+  const chipH = 16, swW = 22, gapX = 16, gapY = 10
+  const chipsNeededHeight = (() => {
+    let cx = slabX, lines = 1
+    for (const p of ctx.palette) {
+      const label = (p as any).name ?? String((p as any).colorId ?? '')
+      pdf.setFont('Outfit','normal'); pdf.setFontSize(10)
+      const labelW = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : (pdf as any).getTextWidth?.(label) ?? 60
+      const chipW = swW + 6 + labelW
+      if (cx + chipW > slabX + slabW) { lines++; cx = slabX }
+      cx += chipW + gapX
+    }
+    return lines * (chipH + gapY)
+  })()
 
+  y = ensureSpace(pdf, chipsNeededHeight + 16, y, 36)
+
+  // ---- draw chips (wrapped inside slab) -------------------------------------
+  let cx = slabX, cy = y
   for (const p of ctx.palette) {
-    const label = p.name ?? '';
-    pdf.setFont('Outfit','normal'); pdf.setFontSize(10);
-    const labelW = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : 60;
-    const chipW = swW + 6 + labelW;
+    const label = (p as any).name ?? String((p as any).colorId ?? '')
+    pdf.setFont('Outfit','normal'); pdf.setFontSize(10)
 
-    // wrap within the slab
-    if (cx + chipW > slabX + slabW) { cx = slabX; cy += chipH + gapY; }
+    const labelW = (pdf as any).getTextWidth ? (pdf as any).getTextWidth(label) : (pdf as any).getTextWidth?.(label) ?? 60
+    const chipW = swW + 6 + labelW
+    if (cx + chipW > slabX + slabW) { cx = slabX; cy += chipH + gapY }
 
-    // swatch
-    const [r,g,b] = hexToRgb(p.hex || '#cccccc');
-    pdf.setDrawColor(230); pdf.setFillColor(r, g, b);
-    ;(pdf as any).roundedRect?.(cx, cy - chipH + 10, swW, chipH, 3, 3, 'FD') || pdf.rect(cx, cy - chipH + 10, swW, chipH, 'FD');
+    const { r,g,b } = hexToRgb((p as any).hex || '#cccccc')
+    pdf.setDrawColor(230); pdf.setFillColor(r,g,b)
+    ;(pdf as any).roundedRect?.(cx, cy - chipH + 10, swW, chipH, 3, 3, 'FD') || pdf.rect(cx, cy - chipH + 10, swW, chipH, 'FD')
 
-    // label
-    pdf.setTextColor(30);
-    pdf.text(label, cx + swW + 6, cy + 2);
+    pdf.setTextColor(30)
+    pdf.text(label, cx + swW + 6, cy + 2)
 
-    cx += chipW + gapX;
+    cx += chipW + gapX
   }
-  y = cy + chipH + 14;
+  y = cy + chipH + 12
 }
 
 /* ---------------------------- helpers ---------------------------- */
@@ -220,7 +239,7 @@ export function layoutPaletteRows(
       cy += rowH + 8;
       cx = x;
     }
-    const [r, g, b] = hexToRgb(c.hex);
+    const { r, g, b } = hexToRgb(c.hex);
     pdf.setFillColor(r, g, b);
     pdf.rect(cx, cy, sw, sw, "F");
 
@@ -245,11 +264,7 @@ function truncateToWidth(pdf: jsPDF, str: string, maxW: number) {
   return s + "…";
 }
 
-function hexToRgb(hex: string): [number, number, number] {
-  const m = hex.replace("#", "");
-  const int = parseInt(m.length === 3 ? m.split("").map(ch => ch + ch).join("") : m, 16);
-  return [(int >> 16) & 255, (int >> 8) & 255, int & 255];
-}
+// (hexToRgb defined near top for v2.4 layout)
 
 /* ---------------------------- extras ---------------------------- */
 function formatTimeRange(steps: number){
