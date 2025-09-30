@@ -398,25 +398,29 @@ export async function exportBuildGuidePDF(opts: BuildGuideOpts) {
   }
 
   // Always render new overview (V4 - single source of truth)
-  const { renderOverviewV4 } = await import('@/lib/pdf/overviewV4')
-  await renderOverviewV4({
-    pdf: doc,
-    originalImg: originalImg!,
-    originalType,
-    originalImgW,
-    originalImgH,
-    cols: width,
-    rows: height,
-    totalBricks,
-    widthIn: widthIn.toFixed(1),
-    heightIn: heightIn.toFixed(1),
-    widthCm: widthCm.toFixed(1),
-    heightCm: heightCm.toFixed(1),
-    distinctColors: distinctColorIds.length,
-    estimateUSD: estTotal,
-    palette: distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, colorId: id, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
-  })
-  ;(doc as any).__overview_locked = true
+  if ((doc as any).__overview_locked) {
+    // already finalized elsewhere; skip drawing overview again
+  } else {
+    (doc as any).__overview_locked = true; // lock-first
+    const { renderOverviewV4 } = await import('@/lib/pdf/overviewV4')
+    await renderOverviewV4({
+      pdf: doc,
+      originalImg: originalImg!,
+      originalType,
+      originalImgW,
+      originalImgH,
+      cols: width,
+      rows: height,
+      totalBricks,
+      widthIn: widthIn.toFixed(1),
+      heightIn: heightIn.toFixed(1),
+      widthCm: widthCm.toFixed(1),
+      heightCm: heightCm.toFixed(1),
+      distinctColors: distinctColorIds.length,
+      estimateUSD: estTotal,
+      palette: distinctColorIds.map(id => ({ name: (legoPalette as any)[id]?.name || `Color ${id}`, colorId: id, hex: (legoPalette as any)[id]?.hex || '#ccc' }))
+    })
+  }
   addFooter(doc)
 
   // Build grid for step pages

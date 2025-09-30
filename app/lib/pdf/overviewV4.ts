@@ -1,4 +1,5 @@
 // app/lib/pdf/overviewV4.ts
+import { patchTextGuard } from './guards/overview'
 export type OverviewArgs = {
   pdf: any
   originalImg: string | null
@@ -37,6 +38,8 @@ function ensureSpace(pdf:any, need:number, y:number, top:number){
 
 export function renderOverviewV4(a: OverviewArgs){
   const pdf = a.pdf
+  // Install global text guard once per doc to swallow legacy DIMENSIONS labels while locked
+  try { patchTextGuard(pdf) } catch {}
   const W = pdf.internal.pageSize.getWidth()
   const H = pdf.internal.pageSize.getHeight()
   const outer = 28
@@ -111,7 +114,7 @@ export function renderOverviewV4(a: OverviewArgs){
 
   const spec = (label:string, value:string, X:number, Y:number)=>{
     pdf.setFont('Outfit','medium'); pdf.setFontSize(8);  pdf.setTextColor(THEME.text.secondary);
-    pdf.text(label.toUpperCase(), X, Y);
+    pdf.text(label, X, Y);
     pdf.setFont('Outfit','bold');   pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary);
     pdf.text(value, X, Y + 8);
   };
