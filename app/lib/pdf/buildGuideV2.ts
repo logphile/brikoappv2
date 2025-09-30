@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { registerOutfit } from './fonts'
-import { renderOverviewV3 } from './overviewV3'
+import { renderOverviewV4 } from './overviewV4'
 import { renderStepPage, type StepCell } from './renderStepPage'
 
 export type Ctx = {
@@ -33,9 +33,9 @@ export async function renderBuildGuideV2(ctx: Ctx) {
     console.warn('[BuildGuide v1] Cover missing or failed to load; continuing without cover', e)
   }
 
-  // --- Page 2: Project Overview (V3 only) ---
+  // --- Page 2: Project Overview (V4 only) ---
   pdf.addPage()
-  renderOverviewV3({
+  renderOverviewV4({
     pdf,
     originalImg: ctx.originalImg,
     originalType: ctx.originalType,

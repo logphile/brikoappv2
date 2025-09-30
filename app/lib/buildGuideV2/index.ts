@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import type { BuildGuideCtx, StepCell } from "./types";
 import { registerOutfit } from "./fonts";
-import { renderOverviewV3 } from "@/lib/pdf/overviewV3";
+import { renderOverviewV4 } from "@/lib/pdf/overviewV4";
 import { renderStepPage } from "./renderStepPage";
 import { renderBOM } from "./renderBOM";
 import { urlToDataURL } from "./utils";
@@ -29,9 +29,9 @@ export async function renderBuildGuideV2(ctx: BuildGuideCtx) {
     console.warn('[BuildGuide] Cover missing or invalid; continuing without cover', e);
   }
 
-  // Page 2 — overview (single source of truth: overviewV3)
+  // Page 2 — overview (single source of truth: overviewV4)
   pdf.addPage();
-  renderOverviewV3({
+  renderOverviewV4({
     pdf,
     originalImg: ctx.originalImg || null,
     originalType: ctx.originalType,
