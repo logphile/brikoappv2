@@ -37,25 +37,12 @@
       <div class="grid gap-6 lg:grid-cols-[460px,1fr] items-start">
         <!-- Controls column (yellow panel) -->
         <aside class="lg:col-span-1">
-          <div class="bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6">
+          <div class="rounded-2xl bg-[#FFD808] p-3 sm:p-4">
             <!-- Upload -->
             <section id="upload" class="scroll-mt-28 pt-2">
-              <div class="flex items-center gap-3 mb-1">
-                <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                  <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">file_upload</span>
-                </div>
-                <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
-              </div>
-              <div class="pt-2">
-              <UploadBox
-                :maxSizeMB="25"
-                accept="image/*"
-                :label="'Drag a photo here or'"
-                :buttonText="'Browse…'"
-                @file="handleSelfieFile"
-                @error="(msg)=>{ try{ show(msg,'error') }catch{} }"
-              />
-            </div>
+              <StepCard :step="1" title="Upload your photo">
+                <UploadCard accept="image/png,image/jpeg,image/webp" :maxSizeMb="25" @files="onAvatarFiles" />
+              </StepCard>
             </section>
 
             <div class="divide-y divide-[#343434]/10">
@@ -182,7 +169,8 @@ import PreviewQualitySelect from '@/components/controls/PreviewQualitySelect.vue
 import PresetChips from '@/components/controls/PresetChips.vue'
 import { useRemixLoader } from '@/composables/useRemixLoader'
 import { useProjects } from '@/composables/useProjects'
-import UploadBox from '@/components/ui/UploadBox.vue'
+import StepCard from '@/components/ui/StepCard.vue'
+import UploadCard from '@/components/ui/UploadCard.vue'
 
 const { show } = useToasts()
 
@@ -608,6 +596,12 @@ async function saveAvatar() {
   } finally {
     saving.value = false
   }
+}
+
+// Bridge for StepCard + UploadCard
+function onAvatarFiles(files: FileList){
+  const f = files?.[0]
+  if (f) handleSelfieFile(f)
 }
 
 async function onTogglePublic() {
