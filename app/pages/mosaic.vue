@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { useHead, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
 import { useRemixLoader } from '@/composables/useRemixLoader'
-import MosaicUploader from '@/components/MosaicUploader.client.vue'
+import UploadBox from '@/components/ui/UploadBox.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
 import StepCanvas from '@/components/StepCanvas.client.vue'
 import VoxelViewer from '@/components/VoxelViewer.client.vue'
@@ -728,10 +728,17 @@ watchDebounced(
             </div>
           </div>
           </section>
-          <!-- Upload embedded -->
+          <!-- Upload unified (matches 3D Builder) -->
           <div>
             <label class="block text-sm font-medium text-[#343434]/80 mb-2">Upload</label>
-            <MosaicUploader embedded @file="onFile" />
+            <UploadBox
+              :maxSizeMB="25"
+              accept="image/*"
+              :label="'Drag a photo here or'"
+              :buttonText="'Browse…'"
+              @file="onFile"
+              @error="(msg)=>{ try { showToast(msg, 'error', 1800) } catch {} }"
+            />
           </div>
           
           <!-- Step 2: Tune mosaic -->

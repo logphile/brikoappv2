@@ -47,8 +47,15 @@
                 <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
               </div>
               <div class="pt-2">
-                <UploadCard @loaded="onUploadLoaded" @error="(m)=>{ try{ show(m,'error') }catch{} }" />
-              </div>
+              <UploadBox
+                :maxSizeMB="25"
+                accept="image/*"
+                :label="'Drag a photo here or'"
+                :buttonText="'Browse…'"
+                @file="handleSelfieFile"
+                @error="(msg)=>{ try{ show(msg,'error') }catch{} }"
+              />
+            </div>
             </section>
 
             <div class="divide-y divide-[#343434]/10">
@@ -175,7 +182,7 @@ import PreviewQualitySelect from '@/components/controls/PreviewQualitySelect.vue
 import PresetChips from '@/components/controls/PresetChips.vue'
 import { useRemixLoader } from '@/composables/useRemixLoader'
 import { useProjects } from '@/composables/useProjects'
-import UploadCard from '@/components/UploadCard.vue'
+import UploadBox from '@/components/ui/UploadBox.vue'
 
 const { show } = useToasts()
 
