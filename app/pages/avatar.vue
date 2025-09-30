@@ -41,7 +41,16 @@
             <!-- Upload -->
             <section id="upload" class="scroll-mt-28 pt-2">
               <StepCard :step="1" title="Upload your photo">
-                <UploadCard accept="image/png,image/jpeg,image/webp" :maxSizeMb="25" @files="onAvatarFiles" />
+                <template #actions>
+                  <div class="hidden md:flex items-center gap-2">
+                    <span class="text-xs text-[#2F3061]/80">Preset</span>
+                    <PresetChips v-model:preset="preset" />
+                  </div>
+                </template>
+                <div class="md:hidden mb-4">
+                  <PresetChips v-model:preset="preset" />
+                </div>
+                <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
               </StepCard>
             </section>
 

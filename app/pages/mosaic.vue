@@ -171,6 +171,37 @@ const inchesH = computed(()=> fmt1(target.value.h * 0.315))
 const cmW = computed(()=> fmt1(target.value.w * 0.8))
 const cmH = computed(()=> fmt1(target.value.h * 0.8))
 
+// Preset chips: local wiring (store optional)
+const presetLocal = ref<'auto'|'line'|'pop'>('auto')
+const currentPreset = computed<'auto'|'line'|'pop'>({
+  get(){
+    // derive from mode when possible
+    if (mode.value === 'line-art') return 'line'
+    if (mode.value === 'photo') return 'pop'
+    return presetLocal.value
+  },
+  set(v){
+    // if store had setPreset, call it; otherwise apply locally
+    try { (mosaic as any)?.setPreset?.(v) } catch {}
+    presetLocal.value = v
+    applyPreset(v)
+  }
+})
+
+function applyPreset(v: 'auto'|'line'|'pop'){
+  // map to existing pipeline knobs
+  mode.value = (v === 'line') ? 'line-art' : (v === 'pop' ? 'photo' : 'auto')
+  // trigger re-run if we already have an image loaded
+  try { if (srcBitmap.value) scheduleRegen() } catch {}
+}
+
+function chipCls(active: boolean){
+  return [
+    'px-3 py-1 rounded-full text-sm font-medium transition',
+    active ? 'bg-[#2F3061] text-white shadow' : 'bg-[#FFD808] text-[#2F3061] hover:bg-[#F6E38A]'
+  ]
+}
+
 // Community Gallery publishing state
 const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
@@ -717,20 +748,20 @@ watchDebounced(
               <template #actions>
                 <!-- Presets in header (desktop) -->
                 <div class="hidden md:flex items-center gap-2">
-                  <button class="px-3 py-1 rounded-full bg-[#2F3061] text-white text-sm font-medium shadow" @click="mode='auto'">Auto</button>
-                  <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='line-art'">Line Art</button>
-                  <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='photo'">Photo Pop</button>
+                  <button type="button" :class="chipCls(currentPreset==='auto')" @click="currentPreset='auto'" :aria-pressed="currentPreset==='auto'">Auto</button>
+                  <button type="button" :class="chipCls(currentPreset==='line')" @click="currentPreset='line'" :aria-pressed="currentPreset==='line'">Line Art</button>
+                  <button type="button" :class="chipCls(currentPreset==='pop')"  @click="currentPreset='pop'"  :aria-pressed="currentPreset==='pop'">Photo Pop</button>
                 </div>
               </template>
 
               <!-- Mobile: presets above dropzone -->
               <div class="md:hidden mb-4 flex flex-wrap items-center gap-2">
-                <button class="px-3 py-1 rounded-full bg-[#2F3061] text-white text-sm font-medium shadow" @click="mode='auto'">Auto</button>
-                <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='line-art'">Line Art</button>
-                <button class="px-3 py-1 rounded-full bg-[#FFD808] text-[#2F3061] text-sm font-medium" @click="mode='photo'">Photo Pop</button>
+                <button type="button" :class="chipCls(currentPreset==='auto')" @click="currentPreset='auto'">Auto</button>
+                <button type="button" :class="chipCls(currentPreset==='line')" @click="currentPreset='line'">Line Art</button>
+                <button type="button" :class="chipCls(currentPreset==='pop')"  @click="currentPreset='pop'">Photo Pop</button>
               </div>
 
-              <UploadCard accept="image/png,image/jpeg,image/webp" :maxSizeMb="25" @files="onMosaicFiles" />
+              <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onMosaicFiles" />
             </StepCard>
           </section>
           
