@@ -42,38 +42,35 @@ export function renderOverviewV4(a: OverviewArgs){
   // Title
   pdf.setFont('Outfit','bold'); pdf.setFontSize(24); pdf.setTextColor(THEME.text.primary)
   pdf.text('Project Overview', W/2, y, { align:'center' })
-  y += 14
+  y += 16
 
-  // === Header badges (modern, centered) ===
-  const pills = [
-    { label: 'Studs',    value: `${a.cols} × ${a.rows}`  },
-    { label: 'Bricks',   value: fmtInt(a.totalBricks) },
-    { label: 'Colors',   value: String(a.distinctColors) },
+  // ==== NEW: stacked badges (4 equal columns, centered)
+  const stats = [
+    { label: 'Studs',      value: `${a.cols} × ${a.rows}`  },
+    { label: 'Bricks',     value: fmtInt(a.totalBricks) },
+    { label: 'Colors',     value: String(a.distinctColors) },
     { label: 'Est. Price', value: `$${a.estimateUSD.toFixed(2)}`  },
   ]
+  const cols = 4, pillGap = 12, pillH = 32
+  const pillW = (slabW - pillGap*(cols-1)) / cols
+  let px = slabX
+  for (const p of stats) {
+    pdf.setDrawColor(THEME.pillStroke)
+    pdf.setFillColor(THEME.pillBg.r, THEME.pillBg.g, THEME.pillBg.b)
+    pdf.setLineWidth(0.5)
+    pdf.roundedRect(px, y, pillW, pillH, 10, 10, 'FD')
 
-  const pillPadX = 10, pillPadY = 6, pillR = 10, gap = 10
-  pdf.setFont('Outfit','bold'); pdf.setFontSize(11)
-  const widths = pills.map(p => {
-    const w = pdf.getTextWidth(`${p.value}` ) + pdf.getTextWidth('  ') + pdf.getTextWidth(p.label) + pillPadX*2
-    return Math.max(80, mm(w))
-  })
-  const total = widths.reduce((s,w)=>s+w,0) + gap*(pills.length-1)
-  let x = slabX + (slabW - total)/2
-  for (let i=0;i<pills.length;i++){
-    const w = widths[i], h = 24
-    pdf.setDrawColor(THEME.pillStroke); pdf.setFillColor(THEME.pillBg.r,THEME.pillBg.g,THEME.pillBg.b); pdf.setLineWidth(0.5)
-    pdf.roundedRect(x, y, w, h, pillR, pillR, 'FD')
-    // value • label (value bold, label muted)
-    pdf.setTextColor(THEME.text.primary); pdf.setFont('Outfit','bold'); pdf.setFontSize(11)
-    const vx = x + pillPadX, vy = y + 15
-    pdf.text(pills[i].value, vx, vy)
-    pdf.setTextColor(THEME.text.muted); pdf.setFont('Outfit','medium'); pdf.setFontSize(9)
-    const lx = vx + pdf.getTextWidth(pills[i].value + '  ')
-    pdf.text(pills[i].label, lx, vy)
-    x += w + gap
+    // value (big, centered)
+    pdf.setFont('Outfit','bold'); pdf.setFontSize(12); pdf.setTextColor(THEME.text.primary)
+    pdf.text(p.value, px + pillW/2, y + 13, { align: 'center' })
+
+    // label (muted, centered, below)
+    pdf.setFont('Outfit','medium'); pdf.setFontSize(9); pdf.setTextColor(THEME.text.muted)
+    pdf.text(p.label, px + pillW/2, y + 23, { align: 'center' })
+
+    px += pillW + pillGap
   }
-  y += 24 + 14
+  y += pillH + 16
 
   // === Framed hero (centered) ===
   const pad = 10
@@ -86,7 +83,7 @@ export function renderOverviewV4(a: OverviewArgs){
     const dx = slabX + (slabW - dw)/2, dy = y + pad + (heroH - dh)/2
     pdf.addImage(a.originalImg, a.originalType, dx, dy, dw, dh, undefined, 'FAST')
   }
-  y += heroH + pad*2 + 18
+  y += heroH + pad*2 + 22
 
   // === Specs (tidy 2×2; the badges covered the headline stats) ===
   const gutter = 40
@@ -100,7 +97,8 @@ export function renderOverviewV4(a: OverviewArgs){
     pdf.text(value, X, Y + 7.5)
   }
   spec('Dimensions (inches)',      `${a.widthIn} × ${a.heightIn} in` , leftX,  y)
-  spec('Dimensions (centimeters)', `${a.widthCm} × ${a.heightCm} cm` , rightX, y); y += rowH + 6
+  spec('Dimensions (centimeters)', `${a.widthCm} × ${a.heightCm} cm` , rightX, y);
+  y += rowH + 10
 
   // Divider
   pdf.setDrawColor(THEME.line); pdf.setLineWidth(0.4)
@@ -124,7 +122,7 @@ export function renderOverviewV4(a: OverviewArgs){
     cx += chipW + gapX
   }
 
-  // DEV tag—remove later
+  // DEV tag — confirm this version ran
   pdf.setFont('Outfit','bold'); pdf.setFontSize(8); pdf.setTextColor(120)
-  pdf.text('overview-v4', 12, H - 14)
+  pdf.text('overview-v4.1', 12, H - 14)
 }
