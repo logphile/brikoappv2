@@ -9,6 +9,10 @@ const sentinel = ref<HTMLElement | null>(null)
 useIntersectionObserver(sentinel, ([entry]) => {
   if (entry.isIntersecting) inView.value = true
 }, { threshold: 0.15 })
+
+// Use public/ hero images with versioned query; these exist under /public
+const heroOriginal = '/home-1-original.jpg?v=2'
+const heroMosaic = '/home-1-mosaic.png?v=2'
 </script>
 
 <template>
@@ -49,19 +53,16 @@ useIntersectionObserver(sentinel, ([entry]) => {
 
             <!-- Hero reassurance microcopy -->
             <p class="mt-2 text-sm text-[#2F3061]">Free to try -- no signup required.</p>
-          </div>
-
           <!-- Right side: before/after slider -->
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
             <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
               <ClientOnly>
-                <HeroDemo :original-src="'/home-1-original.jpg?v=2'" :mosaic-src="'/home-1-mosaic.png?v=2'" :fixed-height="true" />
+                <HeroDemo :original-src="heroOriginal" :mosaic-src="heroMosaic" :fixed-height="true" />
                 <template #fallback>
                   <div class="h-full w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
               </ClientOnly>
               <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-[#343434]/20"></div>
-            </div>
           </div>
         </div>
       </div>
