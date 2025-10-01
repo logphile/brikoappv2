@@ -1,4 +1,4 @@
-name: Deploy — Azure Static Web Apps
+name: build-and-deploy
 
 on:
   push:
@@ -9,13 +9,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: swa-${{ github.ref }}
+  group: briko-deploy-main
   cancel-in-progress: true
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 60
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
@@ -76,6 +76,8 @@ jobs:
         env:
           NUXT_PUBLIC_CF_ANALYTICS_TOKEN: ${{ secrets.CF_WEB_ANALYTICS_TOKEN }}
           NUXT_PUBLIC_SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          NUXT_TELEMETRY_DISABLED: 1
+          NODE_OPTIONS: --max-old-space-size=4096
         run: |
           pnpm exec nuxi generate
           test -d .output/public

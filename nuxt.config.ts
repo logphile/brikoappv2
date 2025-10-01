@@ -7,9 +7,11 @@ const rootDir = dirname(fileURLToPath(import.meta.url))
 export default defineNuxtConfig({
   ssr: true,
   srcDir: 'app',
-  // Enable path-based prefixes so nested components avoid name collisions, e.g.
-  // components/gallery/ProjectCard.vue -> <GalleryProjectCard />
-  components: [{ path: '~/components' }],
+  // Only auto-register from explicit folders to avoid duplicate names
+  components: [
+    { path: '~/components/ui', pathPrefix: false },
+    { path: '~/components/gallery', pathPrefix: true }
+  ],
   devtools: { enabled: true },
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   plugins: [
