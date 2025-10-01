@@ -83,6 +83,8 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'static',
+    // Emit gzip/br assets alongside public output for SWA
+    compressPublicAssets: true,
     publicAssets: [
       { dir: resolve(rootDir, 'public') }
     ],
@@ -102,8 +104,28 @@ export default defineNuxtConfig({
     }
   },
   vite: {
-    worker: { format: 'es' }
+    worker: { format: 'es' },
+    build: {
+      sourcemap: false,
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            three: ['three'],
+            opencv: ['opencv.js'],
+          }
+        }
+      },
+      // keep default esbuild minifier; use esbuild.drop below
+      minify: 'esbuild'
+      // If you prefer terser, also set minify: 'terser' and enable terserOptions
+      // terserOptions: { compress: { drop_console: true, drop_debugger: true } }
+    },
+    // Drop console/debugger from prod bundles
+    esbuild: { drop: ['console', 'debugger'] }
   },
+  // optional: reduce CSS inlining into HTML (uncomment if needed)
+  // experimental: { inlineSSRStyles: false },
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
