@@ -1,7 +1,7 @@
 import { useNuxtApp } from 'nuxt/app'
 import { useProjects } from '@/composables/useProjects'
 
-export type SaveParams = {
+export type PublishOpts = {
   file: Blob
   projectId: string
   title: string
@@ -9,14 +9,46 @@ export type SaveParams = {
   kind?: 'mosaic'|'voxel'|'avatar' // optional, defaults to 'mosaic'
 }
 
+// Upload to Storage at projects bucket under gallery/<uid>/... with an RLS-safe guard
+export async function uploadGalleryImage(file: Blob, projectId: string) {
+  const { $supabase } = useNuxtApp() as any
+  if (!$supabase) throw new Error('Supabase unavailable')
+  const { data: auth } = await $supabase.auth.getUser()
+  const user = auth?.user
+  if (!user) throw new Error('Please sign in to publish.')
+
+  const bucket = 'projects'
+  const isWebp = (file as any)?.type === 'image/webp'
+  const isPng = String((file as any)?.type || '').includes('png')
+  const ext = isWebp ? 'webp' : (isPng ? 'png' : 'png')
+  const key = `gallery/${user.id}/${projectId}-${Date.now()}.${ext}`.replace(/^\/+/, '')
+
+  // Sanity + RLS guard (avoid fighting bucket policy)
+  // MUST be gallery/<uid>/...
+  console.log('[publish:path]', { bucket, key, uid: user.id })
+  if (!new RegExp(`^gallery/${user.id}/`).test(key)) {
+    throw new Error('Bad path (expected gallery/<uid>/...)')
+  }
+
+  const { error: upErr } = await $supabase.storage.from(bucket).upload(key, file, {
+    upsert: true,
+    contentType: (file as any)?.type || 'image/png',
+    cacheControl: '31536000',
+  })
+  if (upErr) throw new Error(`Upload: ${upErr.message}`)
+
+  const { data: pub } = $supabase.storage.from(bucket).getPublicUrl(key)
+  return { key, image_url: pub?.publicUrl as string }
+}
+
 /**
  * Save an image to the public Storage bucket and persist a DB row for the Gallery.
  *
- * Primary target (if exists): gallery_posts with columns { title, project_id, image_url, is_public }.
- * Fallback (current schema in this repo): user_projects with { id, user_id, title, kind, status, preview_path }.
- * If isPublic is true on fallback, we will also call publishProject() to set slug/cover when supported.
+ * Primary target (if exists): gallery_posts { title, project_id, image_url, is_public }.
+ * Fallback (repo schema): user_projects { id, user_id, title, kind, status, preview_path }.
+ * If isPublic is true on fallback, also call publishProject() to set slug/cover when supported.
  */
-export async function saveToGallery({ file, projectId, title, isPublic = false, kind = 'mosaic' }: SaveParams) {
+export async function saveToGallery({ file, projectId, title, isPublic = false, kind = 'mosaic' }: PublishOpts) {
   const { $supabase } = useNuxtApp() as any
   if (!$supabase) throw new Error('Supabase unavailable')
 
@@ -25,25 +57,8 @@ export async function saveToGallery({ file, projectId, title, isPublic = false, 
   const user = auth?.user
   if (!user) throw new Error('Not signed in')
 
-  // key must match your Storage policy. Keep no leading slash.
-  const ext = (file as any)?.type === 'image/webp' ? 'webp' : ((file as any)?.type?.includes('png') ? 'png' : 'png')
-  const key = `gallery/${user.id}/${projectId}-${Date.now()}.${ext}`
-
-  // upload image
-  {
-    const { error: upErr } = await $supabase.storage
-      .from('projects')
-      .upload(key, file, {
-        upsert: true,
-        contentType: (file as any)?.type || 'image/png',
-        cacheControl: '31536000'
-      })
-    if (upErr) throw new Error(`Upload: ${upErr.message}`)
-  }
-
-  // public URL (even for private DB rows)
-  const { data: pub } = $supabase.storage.from('projects').getPublicUrl(key)
-  const image_url = pub?.publicUrl || ''
+  // Upload image first (RLS-safe)
+  const { key, image_url } = await uploadGalleryImage(file, projectId)
 
   // Try gallery_posts first
   try {
@@ -80,7 +95,6 @@ export async function saveToGallery({ file, projectId, title, isPublic = false, 
       await publishProject(projectId, { title })
     } catch (e) {
       // non-fatal if slug/cover columns don't exist
-      // console.warn('[saveToGallery] publish fallback failed', e)
     }
   }
 
