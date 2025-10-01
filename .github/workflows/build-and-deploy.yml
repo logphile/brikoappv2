@@ -42,9 +42,10 @@ jobs:
 
       - name: Install deps (offline if cache hit)
         run: |
+          set -euxo pipefail
           pnpm config set store-dir ~/.pnpm-store
-          pnpm fetch --frozen-lockfile
-          pnpm install --frozen-lockfile --offline
+          pnpm fetch --frozen-lockfile || true
+          pnpm install --frozen-lockfile --offline || pnpm install --frozen-lockfile
 
       # ---- BUILD ----
       - name: Build (Nuxt static)
@@ -54,23 +55,15 @@ jobs:
           set -euxo pipefail
           time pnpm exec nuxi generate
 
-      - name: Verify output
+      - name: Verify output exists
         run: |
-          pwd
-          test -d .output/public || (echo "Missing .output/public" && exit 1)
-          du -h -d1 .output | sort -h
+          test -f .output/public/index.html || (echo "index.html missing" && exit 1)
+          du -h -d1 .output | sort -h | tail -n 20
 
       # ---- MEASURE ----
-      - name: Inspect output size
+      - name: Inspect output size (top files)
         run: |
-          echo "---- .output ----"
-          du -h -d1 .output || true
-          echo "---- .output/public (top 30 dirs) ----"
-          du -h -d2 .output/public | sort -h | tail -n 30 || true
-          echo "---- Largest 50 files ----"
-          find .output/public -type f -printf '%s %p\n' \
-            | sort -nr | head -n 50 \
-            | awk '{ printf "%8.1f MB  %s\n", $1/1024/1024, $2 }'
+          find .output/public -type f -printf '%s %p\n' | sort -nr | head -n 40 | awk '{printf "%8.1f MB  %s\n", $1/1024/1024, $2}'
 
       # ---- GUARDRAILS ----
       - name: Artifact size guard
@@ -80,22 +73,15 @@ jobs:
       - name: Verify output exists
         run: test -d .output/public && ls -la .output/public | head -n 50
 
-      # ---- DEPLOY (skip internal build; upload only static output) ----
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: upload
-          skip_app_build: true
-          app_location: "."
-          app_artifact_location: ".output/public"
-          production_branch: "main"
-          is_static_export: true
+      # -------------------------
+      # SWA CLI uploader (fast)
+      # -------------------------
+      - name: Deploy via SWA CLI
+        run: |
+          set -euxo pipefail
+          npm i -g @azure/static-web-apps-cli
+          swa deploy .output/public --env production --verbose
+        env:
+          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
 
-      # ---- fallback: CLI uploader (uncomment if action still stalls) ----
-      # - name: Deploy via SWA CLI
-      #   run: |
-      #     npm i -g @azure/static-web-apps-cli
-      #     swa deploy .output/public --env production --verbose
-      #   env:
-      #     SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+      # (Removed Azure action deploy step in favor of SWA CLI)
