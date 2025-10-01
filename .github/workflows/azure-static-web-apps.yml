@@ -1,8 +1,7 @@
 name: build-and-deploy
 
 on:
-  push:
-    branches: ['main']           # only deploy prod from main
+  # Disable auto-deploy to prevent double deployment. Manual runs only.
   workflow_dispatch:
 
 permissions:
