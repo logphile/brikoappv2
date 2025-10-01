@@ -207,22 +207,36 @@ function chipCls(active: boolean){
 const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
 
+// Produce a PNG blob for Gallery save; prefer live canvas, fall back to DOM capture
+async function getMosaicPngBlob(): Promise<Blob> {
+  const { canvasToBlob } = useProjects()
+  // Preferred: live output canvas provided by the preview
+  const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
+  if (cvs) {
+    return await canvasToBlob(cvs)
+  }
+  // Fallback: capture the preview element to PNG via html2canvas
+  const host = document.getElementById('mosaic-preview-capture') as HTMLElement | null
+  if (!host) throw new Error('Preview not found to capture PNG.')
+  const html2canvas = (await import('html2canvas')).default
+  const c = await html2canvas(host, { backgroundColor: null, scale: 2 })
+  const blob = await new Promise<Blob>((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('PNG encode failed')), 'image/png'))
+  return blob
+}
+
 async function onSavePrivate(){
   if (!mosaic.tilingResult) return
   const { $supabase } = useNuxtApp() as any
-  const { canvasToWebpBlob } = useProjects()
   if (!$supabase) return
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
     const title = `Mosaic ${mosaic.width}×${mosaic.height}`
-    // Build preview from canvas
-    const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
-    if (!cvs) throw new Error('No preview available to upload')
-    const blob = await canvasToWebpBlob(cvs)
+    // Build preview PNG
+    const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    await saveToGallery({ file: blob, projectId, title, isPublic: false, kind: 'mosaic' })
+    await saveToGallery({ file: blob, projectId, title, isPublic: false })
     galleryProjectId.value = projectId
     try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
   } catch (e: any) {
@@ -444,17 +458,14 @@ async function onSavePublic(){
   if (!target.value.w || !target.value.h) { try { showToast('Pick mosaic size first.', 'error', 2200) } catch {}; return }
   if (!mosaic.tilingResult) { try { showToast('Generate a preview first.', 'error', 2200) } catch {}; return }
   const { $supabase } = useNuxtApp() as any
-  const { canvasToWebpBlob } = useProjects()
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
     const title = `Mosaic ${target.value.w}×${target.value.h}`
-    const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
-    if (!cvs) throw new Error('No preview available to upload')
-    const blob = await canvasToWebpBlob(cvs)
+    const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    await saveToGallery({ file: blob, projectId, title, isPublic: true, kind: 'mosaic' })
+    await saveToGallery({ file: blob, projectId, title, isPublic: true })
     galleryProjectId.value = projectId
     try { showToast('Published!', 'success', 2200) } catch {}
   } catch (e:any) {
