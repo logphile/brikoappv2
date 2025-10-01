@@ -7,7 +7,9 @@ const rootDir = dirname(fileURLToPath(import.meta.url))
 export default defineNuxtConfig({
   ssr: true,
   srcDir: 'app',
-  components: [{ path: '~/components', pathPrefix: false }],
+  // Enable path-based prefixes so nested components avoid name collisions, e.g.
+  // components/gallery/ProjectCard.vue -> <GalleryProjectCard />
+  components: [{ path: '~/components' }],
   devtools: { enabled: true },
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   plugins: [
@@ -28,6 +30,8 @@ export default defineNuxtConfig({
     '/community-studio': { redirect: '/gallery' },
     '/community-studio/**': { redirect: '/gallery' },
     '/studio/new': { redirect: '/projects/new' },
+    // Historic URL label ("Photo to Bricks") now routes to /mosaic
+    '/photo-to-bricks': { redirect: '/mosaic' },
     // Robustness: if any link points to /sitemap, redirect to the static sitemap.xml
     '/sitemap': { redirect: '/sitemap.xml' },
     '/sitemap/': { redirect: '/sitemap.xml' },
@@ -86,7 +90,7 @@ export default defineNuxtConfig({
       failOnError: false,
       routes: [
         '/',
-        '/photo-to-bricks',
+        '/mosaic',
         '/gallery',
         '/studio',
         '/pricing',
