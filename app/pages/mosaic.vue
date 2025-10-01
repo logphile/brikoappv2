@@ -31,6 +31,7 @@ import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/w
 import { useProjects } from '@/composables/useProjects'
 import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
+import { saveToGallery } from '@/composables/useGallery'
 import MosaicActions from '@/components/MosaicActions.vue'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 
@@ -205,7 +206,8 @@ function chipCls(active: boolean){
 // Community Gallery publishing state
 const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
-async function publishToGallery(){
+
+async function onSavePrivate(){
   if (!mosaic.tilingResult) return
   const { $supabase } = useNuxtApp() as any
   const { canvasToWebpBlob } = useProjects()
@@ -215,28 +217,13 @@ async function publishToGallery(){
   publishing.value = true
   try {
     const title = `Mosaic ${mosaic.width}×${mosaic.height}`
-    const bricks = mosaic.tilingResult.bricks?.length || (mosaic.width * mosaic.height)
-    const cost_est = Number(mosaic.tilingResult.estTotalCost || 0)
-
     // Build preview from canvas
     const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
     if (!cvs) throw new Error('No preview available to upload')
     const blob = await canvasToWebpBlob(cvs)
-
-    // Upload to public storage bucket "projects"
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const fname = `preview-${mosaic.width}x${mosaic.height}-${(resolvedMode.value as any) || mode.value}.webp`
-    const storagePath = `projects/${user.id}/${projectId}/${fname}`
-    {
-      const { error: upErr } = await $supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
-      if (upErr) throw upErr
-    }
-
-    // Insert row into user_projects as private
-    const payload: any = { id: projectId, user_id: user.id, title, kind: 'mosaic', status: 'private', preview_path: storagePath, bricks, cost_est, tags: [] }
-    const { data, error } = await $supabase.from('user_projects').insert(payload).select().single()
-    if (error) throw error
-    galleryProjectId.value = (data as any)?.id || projectId
+    await saveToGallery({ file: blob, projectId, title, isPublic: false, kind: 'mosaic' })
+    galleryProjectId.value = projectId
     try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
   } catch (e: any) {
     console.error('[Publish failed]', e)
@@ -252,10 +239,33 @@ async function makePublic(){
   const { data: { user } } = await $supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
   try {
-    const { publishProject } = useProjects()
     const title = `Mosaic ${mosaic.width || target.value.w}×${mosaic.height || target.value.h}`
     const id = galleryProjectId.value as string
-    await publishProject(id, { title })
+    // 1) Prefer gallery_posts if present (new schema)
+    let published = false
+    try {
+      const upd = await $supabase
+        .from('gallery_posts')
+        .update({ is_public: true, title })
+        .eq('project_id', id)
+        .select('project_id')
+        .maybeSingle()
+      if (!upd.error && upd.data) {
+        published = true
+      }
+    } catch (e: any) {
+      // Swallow missing relation; will fall back to user_projects
+      const msg = String(e?.message || '')
+      if (!(/relation\s+"?gallery_posts"?\s+does not exist/i.test(msg) || /42P01/.test(String(e?.code || '')))) {
+        // Real error updating gallery_posts; rethrow to surface message
+        throw e
+      }
+    }
+    // 2) Fallback: user_projects publish flow
+    if (!published) {
+      const { publishProject } = useProjects()
+      await publishProject(id, { title })
+    }
     try { showToast('Published!', 'success', 2200) } catch {}
   } catch (e:any) {
     console.error('[Make Public] error:', e)
@@ -429,41 +439,23 @@ function choosePreset(w: number, h: number){
   mosaic.setTargetSize(w, h)
 }
 
-// Save & Publish using direct insert + then publish
-async function saveAndPublish(){
-  // Preconditions
+// Save & Publish via composable (creates row and public state)
+async function onSavePublic(){
   if (!target.value.w || !target.value.h) { try { showToast('Pick mosaic size first.', 'error', 2200) } catch {}; return }
   if (!mosaic.tilingResult) { try { showToast('Generate a preview first.', 'error', 2200) } catch {}; return }
+  const { $supabase } = useNuxtApp() as any
+  const { canvasToWebpBlob } = useProjects()
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) { location.href = '/login'; return }
+  publishing.value = true
   try {
-    const { $supabase } = useNuxtApp() as any
-    const { canvasToWebpBlob, publishProject } = useProjects()
-    const { data: { user } } = await $supabase.auth.getUser()
-    if (!user) { location.href = '/login'; return }
-
     const title = `Mosaic ${target.value.w}×${target.value.h}`
-    const bricks = mosaic.tilingResult?.bricks?.length || (target.value.w * target.value.h)
-    const cost_est = Number(mosaic.tilingResult?.estTotalCost || 0)
-
-    // Build preview from canvas
     const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
     if (!cvs) throw new Error('No preview available to upload')
     const blob = await canvasToWebpBlob(cvs)
-
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const fname = `preview-${target.value.w}x${target.value.h}-${(resolvedMode.value as any) || mode.value}.webp`
-    const storagePath = `projects/${user.id}/${projectId}/${fname}`
-    {
-      const { error: upErr } = await $supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
-      if (upErr) throw upErr
-    }
-
-    const payload: any = { id: projectId, user_id: user.id, title, kind: 'mosaic', status: 'private', preview_path: storagePath, bricks, cost_est, tags: [] }
-    const ins = await $supabase.from('user_projects').insert(payload).select().single()
-    if (ins.error) throw ins.error
-    const savedId = ((ins.data as any)?.id as string) || projectId
-    galleryProjectId.value = savedId
-
-    await publishProject(savedId, { title })
+    await saveToGallery({ file: blob, projectId, title, isPublic: true, kind: 'mosaic' })
+    galleryProjectId.value = projectId
     try { showToast('Published!', 'success', 2200) } catch {}
   } catch (e:any) {
     console.error('[Save & Publish] error:', e)
@@ -472,7 +464,7 @@ async function saveAndPublish(){
       ? 'That title/slug already exists—try another name.'
       : raw
     try { showToast(`Publish failed: ${friendly}`, 'error', 3000) } catch {}
-  }
+  } finally { publishing.value = false }
 }
 
 // Snap sliders to nearest allowed value on commit and surface a subtle toast
@@ -925,8 +917,8 @@ watchDebounced(
               :can-publish="projectSaved"
               :busy="isWorking"
               @generate="onGenerate"
-              @savePrivate="publishToGallery"
-              @saveAndPublish="saveAndPublish"
+              @savePrivate="onSavePrivate"
+              @saveAndPublish="onSavePublic"
               @publish="makePublic"
               @uploadPreview="uploadPrev"
               @saveProjectLegacy="saveNow"
