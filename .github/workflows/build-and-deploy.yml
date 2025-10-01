@@ -50,6 +50,8 @@ jobs:
       - name: Build (Nuxt static)
         env:
           NUXT_TELEMETRY_DISABLED: 1
+          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
+          NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           set -euxo pipefail
           time pnpm exec nuxi generate

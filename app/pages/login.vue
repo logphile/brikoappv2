@@ -2,31 +2,31 @@
   <Transition appear enter-active-class="transition ease-out duration-600"
               enter-from-class="opacity-0 translate-y-2"
               enter-to-class="opacity-100 translate-y-0">
-  <main class="mx-auto max-w-md px-6 py-12 text-white">
-    <h1 class="text-2xl font-semibold mb-2">Login</h1>
-    <p class="opacity-80 mb-6">Enter your email and we’ll send a one-time login link.</p>
+  <main class="mx-auto max-w-md px-6 py-12">
+    <h1 class="text-4xl font-extrabold text-[#2F3061] mb-4">Login</h1>
+    <p class="text-lg text-[#2F3061]/90 mb-8">Enter your email and we’ll send a one-time login link.</p>
 
-    <form class="space-y-3" @submit.prevent="submit">
-      <label class="block text-sm">
-        <span>Email</span>
-        <input v-model="email" type="email" required class="mt-1 w-full rounded-xl bg-white/10 border border-white/10 px-3 py-2" placeholder="you@example.com"/>
-      </label>
+    <form class="space-y-6" @submit.prevent="submit">
+      <label class="block text-sm font-medium text-[#2F3061]" for="email">Email</label>
+      <input id="email" v-model="email" type="email" required
+             class="w-full rounded-xl border border-[#2F3061]/20 bg-white/70 text-[#2F3061] placeholder-[#2F3061]/50 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
+             placeholder="you@example.com"/>
       <button class="btn-pink focus-cyber w-full" :disabled="sent || loading">
         {{ sent ? 'Link sent — check email' : (loading ? 'Sending…' : 'Send magic link') }}
       </button>
     </form>
 
-    <div class="my-4 flex items-center gap-3 text-white/60">
-      <div class="h-px flex-1 bg-white/10"></div>
+    <div class="my-6 flex items-center gap-3 text-[#2F3061]/70">
+      <div class="h-px flex-1 bg-[#2F3061]/15"></div>
       <span class="text-xs">or</span>
-      <div class="h-px flex-1 bg-white/10"></div>
+      <div class="h-px flex-1 bg-[#2F3061]/15"></div>
     </div>
 
     <button class="btn-pink focus-cyber w-full" @click="loginWithGoogle">
       Continue with Google
     </button>
 
-    <p v-if="error" class="mt-4 text-sm text-red-300">{{ error }}</p>
+    <p v-if="error" class="mt-4 text-sm text-red-700">{{ error }}</p>
   </main>
   </Transition>
   </template>

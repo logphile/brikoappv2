@@ -67,8 +67,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      supabaseUrl: process.env.SUPABASE_URL || '',
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
+      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',
       cloudflareAnalyticsToken: process.env.NUXT_PUBLIC_CF_ANALYTICS_TOKEN || '',
       sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN || '',
       siteName: process.env.NUXT_PUBLIC_SITE_NAME || 'Briko',
