@@ -105,19 +105,23 @@ export default defineNuxtConfig({
   },
   vite: {
     worker: { format: 'es' },
+    assetsInclude: ['**/*.wasm'],
+    optimizeDeps: { exclude: ['@techstark/opencv-js'] },
     build: {
       sourcemap: false,
       chunkSizeWarningLimit: 2000,
       rollupOptions: {
         output: {
           manualChunks: {
+            // keep Three.js split; OpenCV should be client-only via plugin
             three: ['three'],
-            opencv: ['opencv.js'],
           }
         }
       },
       // keep default esbuild minifier; use esbuild.drop below
-      minify: 'esbuild'
+      minify: 'esbuild',
+      // also provide terserOptions for flexibility if minifier is switched
+      terserOptions: { compress: { drop_console: true, drop_debugger: true } }
       // If you prefer terser, also set minify: 'terser' and enable terserOptions
       // terserOptions: { compress: { drop_console: true, drop_debugger: true } }
     },
