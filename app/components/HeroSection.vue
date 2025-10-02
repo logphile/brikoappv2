@@ -53,6 +53,7 @@ const heroMosaic = '/home-1-mosaic.png?v=2'
 
             <!-- Hero reassurance microcopy -->
             <p class="mt-2 text-sm text-[#2F3061]">Free to try -- no signup required.</p>
+          </div>
           <!-- Right side: before/after slider -->
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
             <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
@@ -63,6 +64,7 @@ const heroMosaic = '/home-1-mosaic.png?v=2'
                 </template>
               </ClientOnly>
               <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-[#343434]/20"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -72,7 +74,6 @@ const heroMosaic = '/home-1-mosaic.png?v=2'
 
 <style scoped>
 /* If you don't have icon fonts, remove i-lucide-* spans above and keep the labels only. */
-
 /* Demo cards sized by grid; make each fill its column */
 .demo-card { @apply w-full rounded-2xl bg-white/5 border border-white/10 shadow-soft overflow-hidden; }
 .demo-card .media { aspect-ratio: 4 / 3; @apply overflow-hidden; }
