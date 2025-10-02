@@ -81,6 +81,12 @@ jobs:
           echo "File count:"
           find .output/public -type f | wc -l
 
+      - name: Summarize artifact
+        run: |
+          echo "Files:" $(find .output/public -type f | wc -l)
+          echo "Dirs: " $(find .output/public -type d | wc -l)
+          du -h -d1 .output | sort -h | tail -n 20
+
       # -------------------------
       # SWA CLI uploader (fast)
       # -------------------------
@@ -90,7 +96,7 @@ jobs:
           set -euxo pipefail
           START=$(date +%s)
           echo "::group::Install SWA CLI"
-          npm i -g @azure/static-web-apps-cli
+          npm i -g @azure/static-web-apps-cli@1.1.8
           echo "::endgroup::"
 
           echo "::group::SWA deploy (.output/public)"
