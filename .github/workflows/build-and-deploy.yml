@@ -88,29 +88,9 @@ jobs:
           du -h -d1 .output | sort -h | tail -n 20
 
       # -------------------------
-      # SWA CLI uploader (fast)
+      # Action uploader (primary)
       # -------------------------
-      - name: Deploy via SWA CLI
-        timeout-minutes: 6
-        run: |
-          set -euxo pipefail
-          START=$(date +%s)
-          echo "::group::Install SWA CLI"
-          npm i -g @azure/static-web-apps-cli@1.1.8
-          echo "::endgroup::"
-
-          echo "::group::SWA deploy (.output/public)"
-          swa deploy .output/public --env production --verbose
-          echo "::endgroup::"
-
-          END=$(date +%s)
-          echo "Deploy took $((END-START))s"
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-
-      # ---- Fallback only if the CLI step failed or timed out ----
-      - name: Fallback deploy via GitHub Action
-        if: failure()
+      - name: Deploy via Azure Static Web Apps Action
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
@@ -119,6 +99,16 @@ jobs:
           app_location: "."
           output_location: ".output/public"
           production_branch: "main"
+
+      # ---- Fallback only if the Action step failed ----
+      - name: Fallback deploy via SWA CLI
+        if: failure()
+        run: |
+          set -euxo pipefail
+          npm i -g @azure/static-web-apps-cli@1.1.8
+          swa deploy .output/public --env production --verbose
+        env:
+          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
 
       # ---- Keep installs fast: prune store before saving cache ----
       - name: Prune pnpm store (speed up cache save)
