@@ -7,29 +7,29 @@ on:
 
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
+  # ensure Nuxt bakes these at build time
+  NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
+  NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
 
 concurrency:
   group: briko-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
 
       - name: Prep pnpm store cache
         uses: actions/cache@v4
@@ -46,56 +46,57 @@ jobs:
           pnpm fetch --frozen-lockfile || true
           pnpm install --frozen-lockfile --offline || pnpm install --frozen-lockfile
 
-      # ---- BUILD ----
       - name: Build (Nuxt static)
-        env:
-          NUXT_TELEMETRY_DISABLED: 1
-          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
-          NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           set -euxo pipefail
           time pnpm exec nuxi generate
 
-      
-
-      # ---- MEASURE ----
-      - name: Inspect output size (top files)
-        run: |
-          find .output/public -type f -printf '%s %p\n' | sort -nr | head -n 40 | awk '{printf "%8.1f MB  %s\n", $1/1024/1024, $2}'
-
-      # ---- GUARDRAILS ----
-      - name: Artifact size guard
-        run: bash scripts/guard-artifacts.sh
-
-      # ---- VERIFY (right before deploy) ----
       - name: Verify output exists
         run: |
           test -f .output/public/index.html || (echo "index.html missing" && exit 1)
-          echo "Files to upload:"
-          find .output/public -maxdepth 1 -type f -printf "%9s  %p\n" | sort -nr | head -n 30
-          echo "Dir count:"
-          find .output/public -type d | wc -l
-          echo "File count:"
-          find .output/public -type f | wc -l
-
-      - name: Summarize artifact
-        run: |
           echo "Files:" $(find .output/public -type f | wc -l)
-          echo "Dirs: " $(find .output/public -type d | wc -l)
+          echo "Dirs: "  $(find .output/public -type d | wc -l)
           du -h -d1 .output | sort -h | tail -n 20
 
-      # -------------------------
-      # Deploy via SWA CLI (telemetry off)
-      # -------------------------
-      - name: Deploy via SWA CLI (telemetry off)
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          SWA_CLI_TELEMETRY_OPTOUT: "1"    # <- avoids statisticsclient spawn bug
-        run: |
-          set -euxo pipefail
-          npm i -g @azure/static-web-apps-cli@1.1.8
-          swa deploy .output/public --env production --verbose
+      - name: Artifact size guard (200 MB cap)
+        run: bash scripts/guard-artifacts.sh
 
-      # ---- Keep installs fast: prune store before saving cache ----
       - name: Prune pnpm store (speed up cache save)
         run: pnpm store prune || true
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: .output/public
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: windows-latest         # <- different runner family avoids the Linux oddities
+    timeout-minutes: 10
+
+    steps:
+      - name: Download site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site                 # files are extracted to ./site
+
+      - name: Sanity check artifact
+        shell: bash
+        run: |
+          test -f site/index.html || (echo "artifact missing index.html" && exit 1)
+          echo "Files:" $(find site -type f | wc -l)
+          du -h -d1 site | sort -h
+
+      - name: Deploy to Azure Static Web Apps (Action uploader)
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: "."          # irrelevant when skip_app_build=true
+          output_location: "site"    # <- the artifact we just downloaded
+          production_branch: "main"
