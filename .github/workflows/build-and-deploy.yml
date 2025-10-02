@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -72,17 +72,48 @@ jobs:
 
       # ---- VERIFY ----
       - name: Verify output exists
-        run: test -d .output/public && ls -la .output/public | head -n 50
+        run: |
+          test -f .output/public/index.html || (echo "index.html missing" && exit 1)
+          echo "Files to upload:"
+          find .output/public -maxdepth 1 -type f -printf "%9s  %p\n" | sort -nr | head -n 30
+          echo "Dir count:"
+          find .output/public -type d | wc -l
+          echo "File count:"
+          find .output/public -type f | wc -l
 
       # -------------------------
       # SWA CLI uploader (fast)
       # -------------------------
       - name: Deploy via SWA CLI
+        timeout-minutes: 6
         run: |
           set -euxo pipefail
+          START=$(date +%s)
+          echo "::group::Install SWA CLI"
           npm i -g @azure/static-web-apps-cli
+          echo "::endgroup::"
+
+          echo "::group::SWA deploy (.output/public)"
           swa deploy .output/public --env production --verbose
+          echo "::endgroup::"
+
+          END=$(date +%s)
+          echo "Deploy took $((END-START))s"
         env:
           SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
 
-      # (Removed Azure action deploy step in favor of SWA CLI)
+      # ---- Fallback only if the CLI step failed or timed out ----
+      - name: Fallback deploy via GitHub Action
+        if: failure()
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: "."
+          output_location: ".output/public"
+          production_branch: "main"
+
+      # ---- Keep installs fast: prune store before saving cache ----
+      - name: Prune pnpm store (speed up cache save)
+        run: pnpm store prune || true
