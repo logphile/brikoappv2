@@ -72,7 +72,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  deploy:
+  deploy-azure-prod:
     needs: build
     runs-on: windows-latest         # <- different runner family avoids the Linux oddities
     timeout-minutes: 10
@@ -87,11 +87,11 @@ jobs:
       - name: Sanity check artifact
         shell: bash
         run: |
-          test -f site/index.html || (echo "artifact missing index.html" && exit 1)
-          echo "Files:" $(find site -type f | wc -l)
-          du -h -d1 site | sort -h
+          test -f site/index.html || (echo "index missing" && exit 1)
+          echo "files:" $(find site -type f | wc -l)
+          du -h -d1 site | sort -h | tail -n 20
 
-      - name: Deploy to Azure Static Web Apps (Action uploader)
+      - name: Deploy to Azure Static Web Apps (prod)
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
@@ -100,3 +100,34 @@ jobs:
           app_location: "."          # irrelevant when skip_app_build=true
           output_location: "site"    # <- the artifact we just downloaded
           production_branch: "main"
+
+  deploy-azure-canary:
+    needs: build
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Download site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
+
+      - name: Deploy to Azure Static Web Apps (canary)
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_CANARY_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: "."
+          output_location: "site"
+          production_branch: "main"
+
+  result:
+    needs: [deploy-azure-prod, deploy-azure-canary]
+    runs-on: ubuntu-latest
+    if: |
+      always() &&
+      (needs.deploy-azure-prod.result == 'success' || needs.deploy-azure-canary.result == 'success')
+    steps:
+      - run: echo "At least one deploy succeeded."
