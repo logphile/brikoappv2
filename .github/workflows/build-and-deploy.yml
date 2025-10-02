@@ -13,7 +13,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  deploy-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Make tiny site
+        run: |
+          mkdir -p smoke
+          cat > smoke/index.html <<'HTML'
+          <!doctype html><meta charset=utf-8>
+          <title>smoke</title><h1>ok</h1>
+          HTML
+      - name: Deploy smoke via SWA CLI
+        run: |
+          npm i -g @azure/static-web-apps-cli@1.1.8
+          swa deploy smoke --env production --verbose
+        env:
+          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+
   build-and-deploy:
+    needs: deploy-smoke
+    if: ${{ success() }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
