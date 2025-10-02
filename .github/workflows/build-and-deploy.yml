@@ -13,27 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy-smoke:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Make tiny site
-        run: |
-          mkdir -p smoke
-          cat > smoke/index.html <<'HTML'
-          <!doctype html><meta charset=utf-8>
-          <title>smoke</title><h1>ok</h1>
-          HTML
-      - name: Deploy smoke via SWA CLI
-        run: |
-          npm i -g @azure/static-web-apps-cli@1.1.8
-          swa deploy smoke --env production --verbose
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-
   build-and-deploy:
-    needs: deploy-smoke
-    if: ${{ success() }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -76,10 +56,7 @@ jobs:
           set -euxo pipefail
           time pnpm exec nuxi generate
 
-      - name: Verify output exists
-        run: |
-          test -f .output/public/index.html || (echo "index.html missing" && exit 1)
-          du -h -d1 .output | sort -h | tail -n 20
+      
 
       # ---- MEASURE ----
       - name: Inspect output size (top files)
@@ -90,7 +67,7 @@ jobs:
       - name: Artifact size guard
         run: bash scripts/guard-artifacts.sh
 
-      # ---- VERIFY ----
+      # ---- VERIFY (right before deploy) ----
       - name: Verify output exists
         run: |
           test -f .output/public/index.html || (echo "index.html missing" && exit 1)
@@ -108,9 +85,9 @@ jobs:
           du -h -d1 .output | sort -h | tail -n 20
 
       # -------------------------
-      # Action uploader (primary)
+      # Deploy via Azure Static Web Apps Action
       # -------------------------
-      - name: Deploy via Azure Static Web Apps Action
+      - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
@@ -119,16 +96,6 @@ jobs:
           app_location: "."
           output_location: ".output/public"
           production_branch: "main"
-
-      # ---- Fallback only if the Action step failed ----
-      - name: Fallback deploy via SWA CLI
-        if: failure()
-        run: |
-          set -euxo pipefail
-          npm i -g @azure/static-web-apps-cli@1.1.8
-          swa deploy .output/public --env production --verbose
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
 
       # ---- Keep installs fast: prune store before saving cache ----
       - name: Prune pnpm store (speed up cache save)
