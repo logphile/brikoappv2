@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ARTIFACT_DIR=".output/public"
-MAX_MB=350  # adjust if needed
+MAX_MB=200  # adjust if needed
 
 if [ ! -d "$ARTIFACT_DIR" ]; then
   echo "Artifact dir not found: $ARTIFACT_DIR"
