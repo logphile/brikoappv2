@@ -5,16 +5,16 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+concurrency:
+  group: briko-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
   # ensure Nuxt bakes these at build time
   NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
   NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-concurrency:
-  group: briko-${{ github.ref }}
-  cancel-in-progress: true
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
