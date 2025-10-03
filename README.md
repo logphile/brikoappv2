@@ -97,6 +97,7 @@ To populate `/gallery` with sample public projects for demos/dev:
 SUPABASE_URL=your-project-url
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+## SEEDING!
 
 Important:
 - The service role key must be the “service_role” from Supabase → Settings → API. It is a JWT-looking string containing two dots (`header.payload.signature`).
