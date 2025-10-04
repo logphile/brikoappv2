@@ -1,10 +1,9 @@
 <script setup lang="ts">
-// Safe slider refs using existing public assets (no 404s on case-sensitive hosts)
-// If you later add app/assets/hero/*.webp, you can switch to Vite imports for hashing.
+// Safe slider refs from public/slider (absolute paths; no bundler transforms)
 const slides = [
-  { src: '/home-1-mosaic.png?v=2', alt: 'LEGO-style example 1' },
-  { src: '/home-1-original.jpg?v=2', alt: 'LEGO-style example 2' },
-  { src: '/home-2-mosaic.png?v=1', alt: 'LEGO-style example 3' }
+  { src: '/slider/slide-1.jpg', alt: 'slide 1' },
+  { src: '/slider/slide-2.jpg', alt: 'slide 2' },
+  { src: '/slider/slide-3.jpg', alt: 'slide 3' }
 ]
 </script>
 
