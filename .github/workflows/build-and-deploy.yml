@@ -14,10 +14,10 @@ env:
   NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
   NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-# --- 1) Prove the NEW SWA accepts uploads ---
+# 1) prove the NEW SWA + token accept uploads
 jobs:
   deploy-smoke:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest            # <— container action needs Linux
     timeout-minutes: 5
     steps:
       - name: Tiny site
@@ -36,7 +36,7 @@ jobs:
           output_location: "smoke"
           production_branch: "main"
 
-  # --- 2) Build real site only if smoke passed ---
+  # 2) build the site only if smoke succeeded
   build:
     needs: deploy-smoke
     if: ${{ needs.deploy-smoke.result == 'success' }}
@@ -90,10 +90,10 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # --- 3) Deploy artifact to NEW SWA (Windows, official Action) ---
+  # 3) deploy the built artifact to the NEW SWA (Linux runner)
   deploy-azure-prod:
     needs: build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest            # <— container action needs Linux
     timeout-minutes: 8
     steps:
       - uses: actions/download-artifact@v4
