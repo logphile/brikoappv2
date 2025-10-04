@@ -102,6 +102,18 @@ jobs:
           }
           date +"generate end   %T"
 
+      - name: Copy Nuxt builds meta into public (guard)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          if [ -d ".nuxt/builds/meta" ]; then
+            mkdir -p .output/public/_nuxt/builds
+            cp -r .nuxt/builds/meta .output/public/_nuxt/builds/
+            echo "Copied .nuxt/builds/meta -> .output/public/_nuxt/builds/meta"
+          else
+            echo "No .nuxt/builds/meta found (nothing to copy)."
+          fi
+
       - name: Verify output exists
         shell: bash
         run: |
@@ -131,9 +143,18 @@ jobs:
       - name: Sanity before deploy
         shell: bash
         run: |
+          set -euxo pipefail
           test -f site/index.html || (echo "artifact missing index.html" && exit 1)
           echo "files:" $(find site -type f | wc -l)
-          [ -f site/staticwebapp.config.json ] && jq -r '.navigationFallback' site/staticwebapp.config.json || echo "no staticwebapp.config.json"
+          if [ -f site/staticwebapp.config.json ]; then
+            if command -v jq >/dev/null 2>&1; then
+              jq -r '.navigationFallback' site/staticwebapp.config.json || true
+            else
+              echo "config present (jq not available)"
+            fi
+          else
+            echo "no staticwebapp.config.json"
+          fi
 
       - name: Deploy to Azure Static Web Apps (prod)
         uses: Azure/static-web-apps-deploy@v1
