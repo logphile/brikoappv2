@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
-import DissolvePair from '~/components/home/DissolvePair.vue'
+import BeforeAfterSlider from '~/components/ui/BeforeAfterSlider.vue'
 // No props needed yet
 
 // Animate hero only when it comes into view
@@ -12,9 +12,9 @@ useIntersectionObserver(sentinel, ([entry]) => {
 }, { threshold: 0.15 })
 
 // Use absolute /public hero images (top slider = home-1 pair) with cache-bust
-const v = '20251004c'
-const topA = { src: `/home-1-original.jpg?v=${v}`, alt: 'Original 1' }
-const topB = { src: `/home-1-mosaic.png?v=${v}`,   alt: 'Mosaic 1' }
+const v = '20251004e'
+const topBefore = `/home-1-original.jpg?v=${v}`
+const topAfter  = `/home-1-mosaic.png?v=${v}`
 </script>
 
 <template>
@@ -60,7 +60,7 @@ const topB = { src: `/home-1-mosaic.png?v=${v}`,   alt: 'Mosaic 1' }
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
             <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10">
               <ClientOnly>
-                <DissolvePair :a="topA" :b="topB" :interval-sec="2.5" aspect="16/9" />
+                <BeforeAfterSlider :before-src="topBefore" :after-src="topAfter" aspect="16/9" :initial="0.5" />
                 <template #fallback>
                   <div class="h-[360px] md:h-[460px] w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
