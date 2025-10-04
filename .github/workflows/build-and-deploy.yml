@@ -38,6 +38,7 @@ jobs:
 
   # 2) build the site only if smoke succeeded
   build:
+    if: ${{ false }}  # disabled while Oryx deploy builds & deploys
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -96,31 +97,18 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # 3) deploy the built artifact to the NEW SWA (Linux runner)
-  deploy-azure-prod:
-    needs: build
-    runs-on: ubuntu-latest            # <— container action needs Linux
-    timeout-minutes: 6
+  # 3) deploy via SWA Action (Oryx build)
+  deploy-swa-oryx:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/download-artifact@v4
-        with: { name: site, path: site }
+      - uses: actions/checkout@v4
 
-      - name: Sanity before deploy
-        shell: bash
-        run: |
-          date +"deploy start %T"
-          test -f site/index.html || (echo "artifact missing index.html" && exit 1)
-          echo "files:" $(find site -type f | wc -l)
-
-      - name: Deploy to Azure Static Web Apps (prod)
+      - name: Deploy via SWA Action (Oryx build)
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: upload
-          skip_app_build: true
-          app_location: "site"
+          action: "upload"
+          app_location: "."
+          output_location: ".output/public"
           production_branch: "main"
-
-      - name: Stamp deploy end
-        if: always()
-        run: date +"deploy end %T"
