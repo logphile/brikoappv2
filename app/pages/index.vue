@@ -76,7 +76,7 @@ const slides = [
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] h-[340px] md:h-[420px]">
-            <HeroDemo :original-src="slides[0].before" :mosaic-src="slides[0].after" :fixed-height="true" />
+            <HeroDemo :original-src="slides[1].before" :mosaic-src="slides[1].after" :fixed-height="true" />
             <!-- embedded look: no extra ring overlay -->
           </div>
           <div class="my-auto">
@@ -93,7 +93,7 @@ const slides = [
     </main>
 
     <section class="mt-12 sm:mt-16 bg-[#FFD808]">
-      <BottomBeforeAfter :original-src="slides[1].before" :mosaic-src="slides[1].after" />
+      <BottomBeforeAfter :original-src="slides[2].before" :mosaic-src="slides[2].after" />
     </section>
   </div>
 </template>
