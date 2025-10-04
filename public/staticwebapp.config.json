@@ -42,5 +42,8 @@
     ".svg": "image/svg+xml",
     ".jpg": "image/jpeg",
     ".jpeg": "image/jpeg"
+  },
+  "responseOverrides": {
+    "404": { "rewrite": "/index.html" }
   }
 }
