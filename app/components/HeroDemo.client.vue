@@ -63,6 +63,11 @@ onMounted(() => {
              fixedHeight ? 'relative h-full' : 'relative aspect-[3/4] sm:aspect-[4/3]',
              'bg-gradient-to-br from-neutral-100/60 to-neutral-800/40'
            ]">
+        <!-- TEMP debug overlay: shows the exact URLs currently in use -->
+        <div class="absolute bottom-2 right-3 z-20 text-[10px] md:text-xs px-2 py-1 rounded bg-black/60 text-white/90 font-mono">
+          <div>orig: {{ originalUrl }}</div>
+          <div>mosaic: {{ mosaicUrl }}</div>
+        </div>
         <template v-if="useWC">
           <img-comparison-slider
             class="compare-purple block w-full h-full"
