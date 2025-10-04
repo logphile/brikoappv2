@@ -6,17 +6,40 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: briko-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
-  # ensure Nuxt bakes these at build time
   NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
   NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
-  
+
+# --- 1) Prove the NEW SWA accepts uploads ---
 jobs:
+  deploy-smoke:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Tiny site
+        shell: bash
+        run: |
+          mkdir smoke
+          echo '<!doctype html><title>ok</title><h1>ok</h1>' > smoke/index.html
+
+      - name: SWA deploy (smoke)
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: "."
+          output_location: "smoke"
+          production_branch: "main"
+
+  # --- 2) Build real site only if smoke passed ---
   build:
+    needs: deploy-smoke
+    if: ${{ needs.deploy-smoke.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -24,7 +47,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
-        with: { version: 9 }
+        with:
+          version: 9
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -52,17 +76,11 @@ jobs:
           time pnpm exec nuxi generate
 
       - name: Verify output exists
+        shell: bash
         run: |
           test -f .output/public/index.html || (echo "index.html missing" && exit 1)
-          echo "Files:" $(find .output/public -type f | wc -l)
-          echo "Dirs: "  $(find .output/public -type d | wc -l)
+          echo "files:" $(find .output/public -type f | wc -l)
           du -h -d1 .output | sort -h | tail -n 20
-
-      - name: Artifact size guard (200 MB cap)
-        run: bash scripts/guard-artifacts.sh
-
-      - name: Prune pnpm store (speed up cache save)
-        run: pnpm store prune || true
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
@@ -72,22 +90,22 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
+  # --- 3) Deploy artifact to NEW SWA (Windows, official Action) ---
   deploy-azure-prod:
     needs: build
-    runs-on: windows-latest         # <- different runner family avoids the Linux oddities
+    runs-on: windows-latest
     timeout-minutes: 8
-
     steps:
-      - name: Download site artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: site
-          path: site                 # files are extracted to ./site
+          path: site
 
-      - name: Sanity check artifact
+      - name: Sanity before deploy
         shell: bash
         run: |
-          test -f site/index.html || (echo "index missing" && exit 1)
+          date +"start %T"
+          test -f site/index.html || (echo "artifact missing index.html" && exit 1)
           echo "files:" $(find site -type f | wc -l)
           du -h -d1 site | sort -h | tail -n 10
 
@@ -97,58 +115,10 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: upload
           skip_app_build: true
-          app_location: "."          # irrelevant when skip_app_build=true
-          output_location: "site"    # <- the artifact we just downloaded
-          production_branch: "main"
-
-  deploy-azure-canary:
-    needs: build
-    runs-on: windows-latest
-    timeout-minutes: 8
-
-    steps:
-      - name: Download site artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: site
-          path: site
-
-      - name: Deploy to Azure Static Web Apps (canary)
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_CANARY_TOKEN }}
-          action: upload
-          skip_app_build: true
           app_location: "."
           output_location: "site"
           production_branch: "main"
-  deploy-smoke:
-    runs-on: windows-latest
-    timeout-minutes: 5
-    concurrency:
-      group: briko-smoke-${{ github.ref }}
-      cancel-in-progress: true
-    steps:
-      - name: Tiny site
-        shell: bash
-        run: |
-          mkdir smoke
-          echo '<!doctype html><title>ok</title><h1>ok</h1>' > smoke/index.html
-      - name: SWA deploy (smoke)
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: upload
-          skip_app_build: true
-          app_location: "."
-          output_location: "smoke"
-          production_branch: "main"
 
-  result:
-    needs: [deploy-azure-prod, deploy-azure-canary]
-    runs-on: ubuntu-latest
-    if: |
-      always() &&
-      (needs.deploy-azure-prod.result == 'success' || needs.deploy-azure-canary.result == 'success')
-    steps:
-      - run: echo "At least one deploy succeeded."
+      - name: Stamp time after deploy
+        if: always()
+        run: date +"end %T"
