@@ -65,7 +65,7 @@ jobs:
           retention-days: 1
 
   # 3A) Deploy via SWA Action (upload-only)
-  deploy-swa-action:
+  deploy-azure-prod:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 6
@@ -73,28 +73,19 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: site, path: site }
 
-      - name: Deploy via SWA Action (upload-only)
+      - name: Sanity before deploy
+        shell: bash
+        run: |
+          test -f site/index.html || (echo "artifact missing index.html" && exit 1)
+          echo "files:" $(find site -type f | wc -l)
+          [ -f site/staticwebapp.config.json ] && jq -r '.navigationFallback' site/staticwebapp.config.json || echo "no staticwebapp.config.json"
+
+      - name: Deploy to Azure Static Web Apps (prod)
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: upload
           skip_app_build: true
-          app_location: "site"         # IMPORTANT: folder with index.html
+          app_location: "site"     # folder that contains index.html
+          output_location: ""      # MUST be empty string when skip_app_build is true
           production_branch: "main"
-
-  # 3B) Deploy via SWA CLI (alternate upload path)
-  deploy-swa-cli:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 6
-    steps:
-      - uses: actions/download-artifact@v4
-        with: { name: site, path: site }
-
-      - name: SWA CLI deploy
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          SWA_CLI_TELEMETRY_OPTOUT: "1"
-        run: |
-          npm i -g @azure/static-web-apps-cli@1.1.8
-          swa deploy site --env production --verbose
