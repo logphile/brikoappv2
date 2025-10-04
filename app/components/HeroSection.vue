@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useIntersectionObserver } from '@vueuse/core'
+import DissolvePair from '~/components/home/DissolvePair.vue'
 // No props needed yet
 
 // Animate hero only when it comes into view
@@ -11,8 +12,9 @@ useIntersectionObserver(sentinel, ([entry]) => {
 }, { threshold: 0.15 })
 
 // Use absolute /public hero images (top slider = home-1 pair) with cache-bust
-const heroOriginal = '/home-1-original.jpg?v=20251004b'
-const heroMosaic = '/home-1-mosaic.png?v=20251004b'
+const v = '20251004c'
+const topA = { src: `/home-1-original.jpg?v=${v}`, alt: 'Original 1' }
+const topB = { src: `/home-1-mosaic.png?v=${v}`,   alt: 'Mosaic 1' }
 </script>
 
 <template>
@@ -56,11 +58,11 @@ const heroMosaic = '/home-1-mosaic.png?v=20251004b'
           </div>
           <!-- Right side: before/after slider -->
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
-            <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10 h-[360px] md:h-[460px]">
+            <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10">
               <ClientOnly>
-                <HeroDemo :original-src="heroOriginal" :mosaic-src="heroMosaic" :fixed-height="true" />
+                <DissolvePair :a="topA" :b="topB" :interval-sec="2.5" aspect="16/9" />
                 <template #fallback>
-                  <div class="h-full w-full bg-white/5 border border-white/10 rounded-2xl" />
+                  <div class="h-[360px] md:h-[460px] w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
               </ClientOnly>
               <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-[#343434]/20"></div>

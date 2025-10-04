@@ -4,7 +4,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import HeroSection from '~/components/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
 import FeatureBites from '~/components/FeatureBites.vue'
-import TransitionSlider from '~/components/home/TransitionSlider.vue'
+import DissolvePair from '~/components/home/DissolvePair.vue'
 import HowItWorksSection from '~/components/HowItWorksSection.vue'
 
 const siteUrl = 'https://briko.app'
@@ -25,8 +25,8 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery (absolute public URLs)
-    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png?v=20251004b' },
-    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004b' }
+    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png?v=20251004c' },
+    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004c' }
   ]
 })
 
@@ -50,19 +50,12 @@ useHead({
   ]
 })
 
-// Three distinct groups (independent instances), cache-busted
-const group1 = [
-  { src: '/home-1-original.jpg?v=20251004b', alt: 'Original 1' },
-  { src: '/home-1-mosaic.png?v=20251004b',   alt: 'Mosaic 1' }
-]
-const group2 = [
-  { src: '/home-2-original.jpg?v=20251004b', alt: 'Original 2' },
-  { src: '/home-2-mosaic.png?v=20251004b',   alt: 'Mosaic 2' }
-]
-const group3 = [
-  { src: '/home-3-original.jpg?v=20251004b', alt: 'Original 3' },
-  { src: '/home-3-mosaic.png?v=20251004b',   alt: 'Mosaic 3' }
-]
+// Deterministic pairs for middle and bottom boxes
+const v = '20251004c'
+const midA = { src: `/home-2-original.jpg?v=${v}`, alt: 'Original 2' }
+const midB = { src: `/home-2-mosaic.png?v=${v}`,   alt: 'Mosaic 2' }
+const botA = { src: `/home-3-original.jpg?v=${v}`, alt: 'Original 3' }
+const botB = { src: `/home-3-mosaic.png?v=${v}`,   alt: 'Mosaic 3' }
 
 </script>
 
@@ -83,7 +76,7 @@ const group3 = [
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061]">
-            <TransitionSlider :images="group2" />
+            <DissolvePair :a="midA" :b="midB" :interval-sec="2.5" aspect="16/9" />
             <!-- embedded look: no extra ring overlay -->
           </div>
           <div class="my-auto">
@@ -101,7 +94,7 @@ const group3 = [
 
     <section class="mt-12 sm:mt-16 bg-[#FFD808]">
       <div class="mx-auto max-w-6xl px-6 py-8">
-        <TransitionSlider :images="group3" />
+        <DissolvePair :a="botA" :b="botB" :interval-sec="2.5" aspect="16/9" />
       </div>
     </section>
   </div>
