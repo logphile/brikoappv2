@@ -38,7 +38,6 @@ jobs:
 
   # 2) build the site only if smoke succeeded
   build:
-    if: ${{ false }}  # disabled while Oryx deploy builds & deploys
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -46,48 +45,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
+        with: { version: 9 }
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: 'pnpm' }
 
-      - name: Prep pnpm store cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpmstore-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpmstore-
-
-      - name: Install deps (offline if cache hit)
-        run: |
-          set -euxo pipefail
-          pnpm config set store-dir ~/.pnpm-store
-          pnpm fetch --frozen-lockfile || true
-          pnpm install --frozen-lockfile --offline || pnpm install --frozen-lockfile
-
-      - name: Stamp build start
-        run: date +"build start %T"
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
 
       - name: Build (Nuxt static)
-        run: |
-          set -euxo pipefail
-          time pnpm exec nuxi generate
-
-      - name: Stamp build end
-        if: always()
-        run: date +"build end %T"
-
-      - name: Verify output exists
-        shell: bash
-        run: |
-          test -f .output/public/index.html || (echo "index.html missing" && exit 1)
-          echo "files:" $(find .output/public -type f | wc -l)
-          du -h -d1 .output | sort -h | tail -n 20
+        run: pnpm exec nuxi generate
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
@@ -97,18 +64,37 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # 3) deploy via SWA Action (Oryx build)
-  deploy-swa-oryx:
+  # 3A) Deploy via SWA Action (upload-only)
+  deploy-swa-action:
+    needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 6
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: site, path: site }
 
-      - name: Deploy via SWA Action (Oryx build)
+      - name: Deploy via SWA Action (upload-only)
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: "upload"
-          app_location: "."
-          output_location: ".output/public"
+          action: upload
+          skip_app_build: true
+          app_location: "site"         # IMPORTANT: folder with index.html
           production_branch: "main"
+
+  # 3B) Deploy via SWA CLI (alternate upload path)
+  deploy-swa-cli:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: site, path: site }
+
+      - name: SWA CLI deploy
+        env:
+          SWA_CLI_DEPLOYMENT_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          SWA_CLI_TELEMETRY_OPTOUT: "1"
+        run: |
+          npm i -g @azure/static-web-apps-cli@1.1.8
+          swa deploy site --env production --verbose
