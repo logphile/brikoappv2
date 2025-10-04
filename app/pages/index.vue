@@ -25,8 +25,8 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery (absolute public URLs)
-    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png' },
-    { rel: 'preload', as: 'image', href: '/home-1-original.jpg' }
+    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png?v=20251004a' },
+    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004a' }
   ]
 })
 
@@ -52,9 +52,9 @@ useHead({
 
 // Absolute public URLs for compare sliders (works on any static host)
 const slides = [
-  { before: '/home-1-original.jpg', after: '/home-1-mosaic.png' },
-  { before: '/home-2-original.jpg', after: '/home-2-mosaic.png' },
-  { before: '/home-3-original.jpg', after: '/home-3-mosaic.png' }
+  { before: '/home-1-original.jpg?v=20251004a', after: '/home-1-mosaic.png?v=20251004a' },
+  { before: '/home-2-original.jpg?v=20251004a', after: '/home-2-mosaic.png?v=20251004a' },
+  { before: '/home-3-original.jpg?v=20251004a', after: '/home-3-mosaic.png?v=20251004a' }
 ]
 
 </script>
