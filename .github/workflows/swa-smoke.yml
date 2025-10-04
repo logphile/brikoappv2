@@ -1,0 +1,32 @@
+name: swa-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - ".github/workflows/swa-smoke.yml"
+
+concurrency:
+  group: swa-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Tiny site
+        shell: bash
+        run: |
+          mkdir -p smoke
+          echo '<!doctype html><title>ok</title><h1>ok</h1>' > smoke/index.html
+
+      - name: SWA deploy (smoke)
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          skip_app_build: true
+          app_location: "smoke"        # must point to folder with index.html
+          production_branch: "main"
