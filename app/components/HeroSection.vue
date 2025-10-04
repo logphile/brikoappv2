@@ -60,7 +60,7 @@ const topAfter  = `/home-1-mosaic.png?v=${v}`
           <div class="relative w-full max-w-[48rem] lg:max-w-[52rem] mx-auto">
             <div class="relative overflow-hidden rounded-[22px] border border-[rgba(52,52,52,0.2)] shadow-lg ring-1 ring-[#343434]/20 bg-[#F5F4F1]/10">
               <ClientOnly>
-                <BeforeAfterSlider :before-src="topBefore" :after-src="topAfter" aspect="16/9" :initial="0.5" />
+                <BeforeAfterSlider :before-src="topBefore" :after-src="topAfter" :initial="0.5" />
                 <template #fallback>
                   <div class="h-[360px] md:h-[460px] w-full bg-white/5 border border-white/10 rounded-2xl" />
                 </template>
