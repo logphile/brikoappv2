@@ -5,7 +5,8 @@ import { dirname, resolve } from 'node:path'
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
-  ssr: true,
+  // TEMP: isolate CI. If this makes builds fast, prerender is the culprit.
+  ssr: false,
   srcDir: 'app',
   // Only auto-register from explicit folders to avoid duplicate names
   components: [
@@ -89,18 +90,10 @@ export default defineNuxtConfig({
       { dir: resolve(rootDir, 'public') }
     ],
     prerender: {
-      // whitelist only marketing/landing pages; do not crawl implicitly
+      // TEMP: keep only root route during CI probe
       crawlLinks: false,
       failOnError: false,
-      routes: [
-        '/',
-        '/mosaic',
-        '/gallery',
-        '/studio',
-        '/pricing',
-        '/legal',
-        '/how-it-works'
-      ]
+      routes: ['/']
     }
   },
   vite: {
