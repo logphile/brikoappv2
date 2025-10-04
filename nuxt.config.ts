@@ -5,15 +5,15 @@ import { dirname, resolve } from 'node:path'
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
-  // TEMP: isolate CI. If this makes builds fast, prerender is the culprit.
-  ssr: false,
+  // Production: SSR on; DevTools disabled
+  ssr: true,
   srcDir: 'app',
   // Only auto-register from explicit folders to avoid duplicate names
   components: [
     { path: '~/components/ui', pathPrefix: false },
     { path: '~/components/gallery', pathPrefix: true }
   ],
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   modules: ['@pinia/nuxt', '@vueuse/nuxt'],
   plugins: [
     { src: '~/plugins/img-comparison-slider.client', mode: 'client' },
@@ -90,10 +90,10 @@ export default defineNuxtConfig({
       { dir: resolve(rootDir, 'public') }
     ],
     prerender: {
-      // TEMP: keep only root route during CI probe
+      // predictable, bounded prerender (no crawling)
       crawlLinks: false,
       failOnError: false,
-      routes: ['/']
+      routes: ['/', '/how-it-works', '/pricing', '/legal', '/gallery']
     }
   },
   vite: {
