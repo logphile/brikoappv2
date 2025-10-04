@@ -11,8 +11,8 @@ useIntersectionObserver(sentinel, ([entry]) => {
 }, { threshold: 0.15 })
 
 // Use absolute /public hero images (top slider = home-1 pair) with cache-bust
-const heroOriginal = '/home-1-original.jpg?v=20251004a'
-const heroMosaic = '/home-1-mosaic.png?v=20251004a'
+const heroOriginal = '/home-1-original.jpg?v=20251004b'
+const heroMosaic = '/home-1-mosaic.png?v=20251004b'
 </script>
 
 <template>
