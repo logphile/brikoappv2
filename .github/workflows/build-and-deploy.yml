@@ -17,6 +17,7 @@ env:
 # 1) prove the NEW SWA + token accept uploads
 jobs:
   deploy-smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' }}  # manual only
     runs-on: ubuntu-latest            # <— container action needs Linux
     timeout-minutes: 5
     steps:
@@ -37,8 +38,6 @@ jobs:
 
   # 2) build the site only if smoke succeeded
   build:
-    needs: deploy-smoke
-    if: ${{ needs.deploy-smoke.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
