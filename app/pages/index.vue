@@ -24,9 +24,9 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
-    // Preload LCP image for faster discovery
-    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png?v=2' },
-    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=2' }
+    // Preload LCP image for faster discovery (absolute public URLs)
+    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png' },
+    { rel: 'preload', as: 'image', href: '/home-1-original.jpg' }
   ]
 })
 
@@ -50,6 +50,13 @@ useHead({
   ]
 })
 
+// Absolute public URLs for compare sliders (works on any static host)
+const slides = [
+  { before: '/home-1-original.jpg', after: '/home-1-mosaic.png' },
+  { before: '/home-2-original.jpg', after: '/home-2-mosaic.png' },
+  { before: '/home-3-original.jpg', after: '/home-3-mosaic.png' }
+]
+
 </script>
 
 <template>
@@ -64,13 +71,12 @@ useHead({
         <SectionHeader
           title="From Photo to Parts—Fast"
           subtitle="Color mapping, greedy tiling, BOM, and exports—done in under two seconds."
-          align="center"
           class="mb-8 md:mb-10"
           tone="sun"
         />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] h-[340px] md:h-[420px]">
-            <HeroDemo :original-src="'/home-2-original.jpg?v=1'" :mosaic-src="'/home-2-mosaic.png?v=1'" :fixed-height="true" />
+            <HeroDemo :original-src="slides[0].before" :mosaic-src="slides[0].after" :fixed-height="true" />
             <!-- embedded look: no extra ring overlay -->
           </div>
           <div class="my-auto">
@@ -87,7 +93,7 @@ useHead({
     </main>
 
     <section class="mt-12 sm:mt-16 bg-[#FFD808]">
-      <BottomBeforeAfter />
+      <BottomBeforeAfter :original-src="slides[1].before" :mosaic-src="slides[1].after" />
     </section>
   </div>
 </template>

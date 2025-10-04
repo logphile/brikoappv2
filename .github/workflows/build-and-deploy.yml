@@ -121,6 +121,18 @@ jobs:
           echo "files:" $(find .output/public -type f | wc -l)
           du -h -d1 .output | sort -h | tail -n 20
 
+      - name: Assert homepage images exist
+        shell: bash
+        run: |
+          set -euxo pipefail
+          for f in \
+            .output/public/home-1-original.jpg .output/public/home-1-mosaic.png \
+            .output/public/home-2-original.jpg .output/public/home-2-mosaic.png \
+            .output/public/home-3-original.jpg .output/public/home-3-mosaic.png
+          do
+            [ -f "$f" ] || { echo "❌ Missing $f in build output"; exit 1; }
+          done
+
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
         with:

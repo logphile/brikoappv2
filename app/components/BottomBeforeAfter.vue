@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+
+const props = defineProps<{ originalSrc?: string; mosaicSrc?: string }>()
 import { useIntersectionObserver } from '@vueuse/core'
 import HeroDemo from '~/components/HeroDemo.client.vue'
 
@@ -29,7 +31,11 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
       <ClientOnly>
         <div class="relative mx-auto w-full framed-img bg-white/5 p-3 shadow-lg transition hover:-translate-y-0.5 hover:shadow-mint-glow/30">
           <div class="rounded-xl overflow-hidden ring-1 ring-[#343434]/20 h-[420px] md:h-[560px]">
-            <HeroDemo :original-src="'/briko-alley.jpg?v=1'" :mosaic-src="'/briko-alley-2.jpg?v=1'" :fixed-height="true" />
+            <HeroDemo
+              :original-src="props.originalSrc || '/home-3-original.jpg'"
+              :mosaic-src="props.mosaicSrc || '/home-3-mosaic.png'"
+              :fixed-height="true"
+            />
           </div>
         </div>
         <template #fallback>
