@@ -10,9 +10,9 @@ useIntersectionObserver(sentinel, ([entry]) => {
   if (entry.isIntersecting) inView.value = true
 }, { threshold: 0.15 })
 
-// Use public/ hero images with versioned query; these exist under /public
-const heroOriginal = '/home-1-original.jpg?v=2'
-const heroMosaic = '/home-1-mosaic.png?v=2'
+// Use absolute /public hero images (top slider = home-1 pair)
+const heroOriginal = '/home-1-original.jpg'
+const heroMosaic = '/home-1-mosaic.png'
 </script>
 
 <template>
