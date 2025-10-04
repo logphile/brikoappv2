@@ -23,7 +23,7 @@ jobs:
       - name: Tiny site
         shell: bash
         run: |
-          mkdir smoke
+          mkdir -p smoke
           echo '<!doctype html><title>ok</title><h1>ok</h1>' > smoke/index.html
 
       - name: SWA deploy (smoke)
@@ -32,8 +32,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: upload
           skip_app_build: true
-          app_location: "."
-          output_location: "smoke"
+          app_location: "smoke"
           production_branch: "main"
 
   # 2) build the site only if smoke succeeded
@@ -115,8 +114,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: upload
           skip_app_build: true
-          app_location: "."
-          output_location: "site"
+          app_location: "site"
           production_branch: "main"
 
       - name: Stamp time after deploy
