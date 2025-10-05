@@ -225,6 +225,7 @@ async function getMosaicPngBlob(): Promise<Blob> {
 }
 
 async function onSavePrivate(){
+  if (import.meta.server) return
   if (!mosaic.tilingResult) return
   const { $supabase } = useNuxtApp() as any
   if (!$supabase) return
