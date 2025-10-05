@@ -80,10 +80,20 @@ useIntersectionObserver(sentinel, ([entry]) => {
           Try Photo to Bricks
         </NuxtLink>
 
-        <!-- Secondary: outline pink -->
-        <ButtonOutline as="NuxtLink" to="/how-it-works" variant="pink">
+        <!-- Secondary: outline pink as direct NuxtLink -->
+        <NuxtLink
+          to="/how-it-works"
+          aria-label="See Full Guide"
+          class="relative inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold
+                 transition-all duration-200 will-change-transform
+                 hover:translate-y-[-1px] active:translate-y-0
+                 focus-visible:outline-none disabled:opacity-50 disabled:pointer-events-none
+                 text-pink border border-pink/60 bg-transparent
+                 hover:bg-pink/10 hover:shadow-[0_10px_30px_-6px_rgba(255,0,98,0.35)]
+                 focus-visible:ring-2 focus-visible:ring-pink/60 cursor-pointer"
+        >
           See Full Guide →
-        </ButtonOutline>
+        </NuxtLink>
       </div>
       </div>
     </section>
