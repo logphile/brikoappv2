@@ -1,5 +1,5 @@
+import { ref, computed, watch, onMounted } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
-import { ref, computed, watch } from 'vue'
 import { useProjects } from '@/composables/useProjects'
 
 export type GalleryItem = {
@@ -12,31 +12,36 @@ export type GalleryItem = {
 
 export async function fetchMyGalleryPosts(): Promise<GalleryItem[]> {
   const { $supabase } = useNuxtApp() as any
-  if (!$supabase) return []
   const { buildPreviewUrl } = useProjects()
-
+  if (!$supabase) return []
   const { data: auth } = await $supabase.auth.getUser()
   const user = auth?.user
-  if (!user) return []
+  if (!user?.id) return []
 
-  // Query base table `projects` by owner
-  // Select minimum columns to be schema-tolerant
-  const { data, error } = await $supabase
+  // Try modern schema (user_id/name/thumbnail_path)
+  let res = await $supabase
     .from('projects')
-    .select('id, title, preview_path, is_public, created_at, owner')
-    .eq('owner', user.id)
+    .select('*')
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
-
-  if (error) {
-    console.error('[My Gallery fetch projects]', error)
+  if (res.error) {
+    // Fallback to legacy schema (owner/title/preview_path)
+    res = await $supabase
+      .from('projects')
+      .select('*')
+      .eq('owner', user.id)
+      .order('created_at', { ascending: false })
+  }
+  if (res.error) {
+    if (process.dev) console.error('[My Gallery fetch projects]', res.error)
     return []
   }
-  const rows = (data || []) as Array<{ id:string; title:string; preview_path:string|null; is_public?:boolean; created_at:string }>
-  return rows.map(r => ({
+  const rows = (res.data || []) as any[]
+  return rows.map((r:any) => ({
     id: r.id,
-    title: r.title || 'Untitled',
-    image_url: r.preview_path ? buildPreviewUrl(r.preview_path) : '',
-    is_public: !!(r as any).is_public,
+    title: r.title || r.name || 'Untitled',
+    image_url: (r.preview_path || r.thumbnail_path) ? buildPreviewUrl(r.preview_path || r.thumbnail_path) : '',
+    is_public: !!r.is_public,
     created_at: r.created_at,
   }))
 }
@@ -50,32 +55,30 @@ export function useMyGallery() {
   const userId = ref<string | null>(null)
   const ready = computed(() => !!userId.value)
 
-  async function resolveUser() {
-    try {
-      if (!$supabase) return
-      const { data } = await $supabase.auth.getUser()
-      userId.value = data?.user?.id || null
-    } catch {
-      userId.value = null
-    }
-  }
-
   async function load() {
     if (!$supabase || !ready.value) return
     loading.value = true
     try {
-      const { data, error } = await $supabase
+      // Try modern then legacy
+      let q = await $supabase
         .from('projects')
-        .select('id, title, preview_path, is_public, created_at, owner')
-        .eq('owner', userId.value!)
+        .select('*')
+        .eq('user_id', userId.value!)
         .order('created_at', { ascending: false })
-      if (error) throw error
-      const rows = (data || []) as Array<{ id:string; title:string; preview_path:string|null; is_public?:boolean; created_at:string }>
-      items.value = rows.map(r => ({
+      if (q.error) {
+        q = await $supabase
+          .from('projects')
+          .select('*')
+          .eq('owner', userId.value!)
+          .order('created_at', { ascending: false })
+      }
+      if (q.error) throw q.error
+      const rows = (q.data || []) as any[]
+      items.value = rows.map((r:any) => ({
         id: r.id,
-        title: r.title || 'Untitled',
-        image_url: r.preview_path ? buildPreviewUrl(r.preview_path) : '',
-        is_public: !!(r as any).is_public,
+        title: r.title || r.name || 'Untitled',
+        image_url: (r.preview_path || r.thumbnail_path) ? buildPreviewUrl(r.preview_path || r.thumbnail_path) : '',
+        is_public: !!r.is_public,
         created_at: r.created_at,
       }))
     } catch (e) {
@@ -86,9 +89,14 @@ export function useMyGallery() {
       loading.value = false
     }
   }
-
-  // Resolve user once on client mount
-  if (process.client) resolveUser()
+  async function resolveUser(){
+    try {
+      if (!$supabase) return
+      const { data } = await $supabase.auth.getUser()
+      userId.value = data?.user?.id || null
+    } catch { userId.value = null }
+  }
+  if (process.client) onMounted(() => { resolveUser() })
   // Load when auth becomes ready
   watch(ready, (ok) => { if (ok) load() }, { immediate: true })
 
