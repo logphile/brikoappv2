@@ -76,7 +76,7 @@ const botAfter  = `/home-3-mosaic.png?v=${v}`
           />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061]">
-            <BeforeAfterSlider :before-src="midBefore" :after-src="midAfter" :initial="0.5" debug label="Middle" />
+            <BeforeAfterSlider :before-src="midBefore" :after-src="midAfter" :initial="0.5" />
             <!-- embedded look: no extra ring overlay -->
           </div>
           <div class="my-auto">
@@ -94,7 +94,7 @@ const botAfter  = `/home-3-mosaic.png?v=${v}`
 
     <section class="mt-12 sm:mt-16 bg-[#FFD808]">
       <div class="mx-auto max-w-6xl px-6 py-8">
-        <BeforeAfterSlider :before-src="botBefore" :after-src="botAfter" :initial="0.5" debug label="Bottom" />
+        <BeforeAfterSlider :before-src="botBefore" :after-src="botAfter" :initial="0.5" />
       </div>
     </section>
   </div>
