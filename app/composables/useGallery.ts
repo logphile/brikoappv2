@@ -51,18 +51,35 @@ export async function saveToGallery({ file, projectId, title, isPublic = false }
   // Upload image first (RLS-safe)
   const { image_url } = await uploadGalleryImage(file, projectId)
 
-  const { error } = await supabase
+  // Determine current user to set user_id explicitly (avoid relying on triggers)
+  const { data: auth } = await supabase.auth.getUser()
+  const user = auth?.user
+  if (!user?.id) throw new Error('Not signed in')
+
+  // Insert row and request id back
+  const ins = await supabase
     .from('gallery_posts')
     .insert({
+      user_id: user.id,
       title: title || 'Untitled',
       project_id: projectId,
       image_url,
       is_public: !!isPublic,
-      // user_id set by trigger if present
     })
-    .select()
+    .select('id, user_id, is_public')
     .single()
-  if (error) throw new Error(`DB: ${error.code ?? ''} ${error.message}`)
+  if (ins.error) throw new Error(`DB: ${ins.error.code ?? ''} ${ins.error.message}`)
+  const row = ins.data as { id: string }
+  if (!row?.id) throw new Error('Save returned no id')
 
-  return { image_url }
+  // Sanity: immediately read back by id to surface RLS issues early
+  const echo = await supabase
+    .from('gallery_posts')
+    .select('id')
+    .eq('id', row.id)
+    .single()
+  if (echo.error) throw new Error(`RLS: ${echo.error.code ?? ''} ${echo.error.message}`)
+  if (!echo.data?.id) throw new Error('Saved row not visible after insert')
+
+  return { id: row.id, image_url }
 }
