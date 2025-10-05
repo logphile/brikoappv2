@@ -85,6 +85,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'static',
+    sourceMap: false,
     // Emit gzip/br assets alongside public output for SWA
     compressPublicAssets: true,
     publicAssets: [

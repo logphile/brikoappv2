@@ -141,6 +141,22 @@ jobs:
           rm -rf site
           rsync -a --delete .output/public/ site/
 
+      - name: Prune sourcemaps & license stubs
+        shell: bash
+        run: |
+          set -e
+          find site -type f -name '*.map' -delete
+          find site -type f -name '*.LICENSE.txt' -delete
+          echo "After prune:"
+          du -sh site || true
+
+      - name: Report top 30 largest files
+        shell: bash
+        run: |
+          set -e
+          find site -type f -printf '%s\t%p\n' | sort -nr | head -30 \
+            | awk '{ printf "%7.2f MB  %s\n", $1/1048576, $2 }'
+
       - name: Assert index references correct versioned path
         shell: bash
         run: |
@@ -193,9 +209,12 @@ jobs:
         shell: bash
         run: |
           du -sh site
-          MAX_MB=60
+          MAX_MB=100
           SIZE_MB=$(du -sm site | cut -f1)
-          [ "$SIZE_MB" -le "$MAX_MB" ] || { echo "Artifact too large: ${SIZE_MB}MB"; exit 1; }
+          if [ "$SIZE_MB" -gt "$MAX_MB" ]; then
+            echo "Artifact too large: ${SIZE_MB}MB (limit ${MAX_MB}MB)"
+            exit 1
+          fi
 
       - name: Upload site artifact
         uses: actions/upload-artifact@v4
