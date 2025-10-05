@@ -206,6 +206,8 @@ function chipCls(active: boolean){
 // Community Gallery publishing state
 const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
+// Optional project title entered by user
+const projectName = ref('')
 
 // Produce a PNG blob for Gallery save; prefer live canvas, fall back to DOM capture
 async function getMosaicPngBlob(): Promise<Blob> {
@@ -247,7 +249,7 @@ async function onSavePrivate(){
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
-    const title = `Mosaic ${mosaic.width}×${mosaic.height}`
+    const title = (projectName.value || '').trim() || `Mosaic ${mosaic.width}×${mosaic.height}`
     // Build preview PNG and upload to Storage under projects/<uid>/<id>/preview.png
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
@@ -286,7 +288,7 @@ async function makePublic(){
     try {
       const upd = await $supabase
         .from('projects')
-        .update({ is_public: true, title })
+        .update({ is_public: true, name: title })
         .eq('id', id)
         .eq('owner', user.id)
         .select('id')
@@ -485,7 +487,7 @@ async function onSavePublic(){
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
-    const title = `Mosaic ${target.value.w}×${target.value.h}`
+    const title = (projectName.value || '').trim() || `Mosaic ${target.value.w}×${target.value.h}`
     // Build preview and upload
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
@@ -494,7 +496,7 @@ async function onSavePublic(){
     // Insert then publish
     const id = await saveToGalleryPrivate({ name: title, original_path: null, thumbnail_path: storagePath, mosaic_path: null, width: target.value.w, height: target.value.h, data: { kind: 'mosaic' } })
     // Make public
-    const upd = await $supabase.from('projects').update({ is_public: true, title }).eq('id', id).eq('owner', user.id).select('id').single()
+    const upd = await $supabase.from('projects').update({ is_public: true, name: title }).eq('id', id).eq('owner', user.id).select('id').single()
     if (upd.error) throw upd.error
     galleryProjectId.value = id
     try { showToast('Published!', 'success', 2200) } catch {}
@@ -952,6 +954,17 @@ watchDebounced(
           </div>
           <div class="h-px bg-white/5 my-3"></div>
           <div class="mt-4">
+            <!-- Optional Title (used when saving/publishing) -->
+            <div class="mt-3">
+              <label class="block text-sm font-medium mb-1 text-[#2F3061]">Title</label>
+              <input
+                v-model="projectName"
+                type="text"
+                placeholder="Untitled"
+                maxlength="80"
+                class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF0062]"
+              />
+            </div>
             <MosaicActions
               :can-generate="previewReady"
               :can-save="mosaicReady"
