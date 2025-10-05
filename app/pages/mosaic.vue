@@ -31,7 +31,7 @@ import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/w
 import { useProjects } from '@/composables/useProjects'
 import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
-import { saveToGallery } from '@/composables/useGallery'
+import { saveToGalleryPrivate } from '@/lib/gallery'
 import MosaicActions from '@/components/MosaicActions.vue'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 
@@ -233,11 +233,26 @@ async function onSavePrivate(){
   publishing.value = true
   try {
     const title = `Mosaic ${mosaic.width}×${mosaic.height}`
-    // Build preview PNG
+    // Build preview PNG and upload to Storage under projects/<uid>/<id>/preview.png
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const saved = await saveToGallery({ file: blob, projectId, title, isPublic: false })
-    galleryProjectId.value = projectId
+    const storagePath = `projects/${user.id}/${projectId}/preview.png`
+    {
+      const up = await $supabase.storage.from('projects')
+        .upload(storagePath, blob, { upsert: true, contentType: 'image/png', cacheControl: 'public, max-age=86400' })
+      if ((up as any)?.error) throw (up as any).error
+    }
+    // Insert private row in base projects table
+    const id = await saveToGalleryPrivate({
+      name: title,
+      original_path: null,
+      thumbnail_path: storagePath,
+      mosaic_path: null,
+      width: mosaic.width || null,
+      height: mosaic.height || null,
+      data: { kind: 'mosaic' }
+    })
+    galleryProjectId.value = id
     try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
   } catch (e: any) {
     console.error('[Save private failed]', e)
@@ -255,27 +270,24 @@ async function makePublic(){
   try {
     const title = `Mosaic ${mosaic.width || target.value.w}×${mosaic.height || target.value.h}`
     const id = galleryProjectId.value as string
-    // 1) Prefer gallery_posts if present (new schema)
+    // Primary: projects table
     let published = false
     try {
       const upd = await $supabase
-        .from('gallery_posts')
+        .from('projects')
         .update({ is_public: true, title })
-        .eq('project_id', id)
-        .select('project_id')
-        .maybeSingle()
-      if (!upd.error && upd.data) {
-        published = true
-      }
-    } catch (e: any) {
-      // Swallow missing relation; will fall back to user_projects
+        .eq('id', id)
+        .eq('owner', user.id)
+        .select('id')
+        .single()
+      if (!upd.error && upd.data) published = true
+    } catch (e:any) {
       const msg = String(e?.message || '')
-      if (!(/relation\s+"?gallery_posts"?\s+does not exist/i.test(msg) || /42P01/.test(String(e?.code || '')))) {
-        // Real error updating gallery_posts; rethrow to surface message
+      if (!(/relation\s+"?projects"?\s+does not exist/i.test(msg) || /42P01/.test(String(e?.code || '')))) {
         throw e
       }
     }
-    // 2) Fallback: user_projects publish flow
+    // Fallback: user_projects publish flow
     if (!published) {
       const { publishProject } = useProjects()
       await publishProject(id, { title })
@@ -453,7 +465,7 @@ function choosePreset(w: number, h: number){
   mosaic.setTargetSize(w, h)
 }
 
-// Save & Publish via composable (creates row and public state)
+// Save & Publish
 async function onSavePublic(){
   if (!target.value.w || !target.value.h) { try { showToast('Pick mosaic size first.', 'error', 2200) } catch {}; return }
   if (!mosaic.tilingResult) { try { showToast('Generate a preview first.', 'error', 2200) } catch {}; return }
@@ -463,10 +475,20 @@ async function onSavePublic(){
   publishing.value = true
   try {
     const title = `Mosaic ${target.value.w}×${target.value.h}`
+    // Build preview and upload
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    await saveToGallery({ file: blob, projectId, title, isPublic: true })
-    galleryProjectId.value = projectId
+    const storagePath = `projects/${user.id}/${projectId}/preview.png`
+    {
+      const up = await $supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/png', cacheControl: 'public, max-age=86400' })
+      if ((up as any)?.error) throw (up as any).error
+    }
+    // Insert then publish
+    const id = await saveToGalleryPrivate({ name: title, original_path: null, thumbnail_path: storagePath, mosaic_path: null, width: target.value.w, height: target.value.h, data: { kind: 'mosaic' } })
+    // Make public
+    const upd = await $supabase.from('projects').update({ is_public: true, title }).eq('id', id).eq('owner', user.id).select('id').single()
+    if (upd.error) throw upd.error
+    galleryProjectId.value = id
     try { showToast('Published!', 'success', 2200) } catch {}
   } catch (e:any) {
     console.error('[Save & Publish] error:', e)
