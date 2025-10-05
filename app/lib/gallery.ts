@@ -50,6 +50,8 @@ export async function saveToGalleryPrivate(p: SavePayload) {
 
   // Debug breadcrumb (temporary)
   try { console.table([{ user: session.user.id, to: 'projects', row_data_keys: Object.keys(modern) }]) } catch {}
+  // Explicit payload log (do not print token)
+  try { console.log('[SAVE payload]', { user_id: modern.user_id, hasData: !!modern.data, table: 'projects' }) } catch {}
 
   // Try modern insert first, fall back to legacy if columns are missing
   let rec: any
@@ -59,18 +61,34 @@ export async function saveToGalleryPrivate(p: SavePayload) {
     .select('id')
     .single()
   if (ins.error) {
-    console.error('[insert projects] error', ins.error)
+    // Detailed error log
+    try {
+      console.error('[SAVE error]', {
+        code: (ins.error as any)?.code,
+        message: ins.error.message,
+        details: (ins.error as any)?.details,
+        hint: (ins.error as any)?.hint,
+      })
+    } catch {}
     const msg = String(ins.error.message || '')
     if (/column .* does not exist/i.test(msg)) {
       // Retry with legacy mapping
       try { console.table([{ user: session.user.id, to: 'projects', row_data_keys: Object.keys(legacy) }]) } catch {}
+      try { console.log('[SAVE payload]', { user_id: legacy.owner, hasData: !!legacy.data, table: 'projects' }) } catch {}
       ins = await $supabase
         .from('projects')
         .insert(legacy)
         .select('id')
         .single()
       if (ins.error) {
-        console.error('[insert projects legacy] error', ins.error)
+        try {
+          console.error('[SAVE error]', {
+            code: (ins.error as any)?.code,
+            message: ins.error.message,
+            details: (ins.error as any)?.details,
+            hint: (ins.error as any)?.hint,
+          })
+        } catch {}
         throw ins.error
       }
       rec = ins.data
