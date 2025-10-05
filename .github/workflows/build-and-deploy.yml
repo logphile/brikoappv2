@@ -148,15 +148,46 @@ jobs:
           grep -q "/_nuxt/${ASSETS_VERSION}/" site/index.html || \
             (echo "index.html does not reference versioned _nuxt path" && exit 1)
 
-      - name: Verify referenced chunks exist
+      - name: Verify referenced chunks exist (JS only)
         shell: bash
         run: |
-          set -euxo pipefail
-          refs=$(grep -hoE "/_nuxt/${ASSETS_VERSION}/[A-Za-z0-9_./-]+\\.js" site/index.html | sort -u || true)
-          for p in $refs; do
+          set -euo pipefail
+          ver="${ASSETS_VERSION}"
+          html="site/index.html"
+
+          # Pull only src/href attributes that end in .js under the versioned _nuxt folder.
+          refs=$(grep -oE '(src|href)="/_nuxt/'"$ver"'/[^"]+\.js"' "$html" \
+                 | sed -E 's/.*"(\/_nuxt\/[^"]+\.js)".*/\1/' \
+                 | grep -v '/builds/' \
+                 | sort -u)
+
+          echo "JS refs found:"
+          echo "$refs"
+
+          missing=0
+          while IFS= read -r p; do
+            [ -z "$p" ] && continue
             f="site${p}"
-            [ -f "$f" ] || { echo "Missing chunk: $f"; exit 1; }
-          done
+            if [[ ! -f "$f" ]]; then
+              echo "Missing chunk: $f"
+              missing=1
+            fi
+          done <<< "$refs"
+          exit $missing
+
+      - name: Verify meta JSON exists (Nuxt builds/meta)
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir="site/_nuxt/${ASSETS_VERSION}/builds/meta"
+          if [[ ! -d "$dir" ]]; then
+            echo "Missing meta dir: $dir"; exit 1
+          fi
+          count=$(ls -1 "$dir"/*.json 2>/dev/null | wc -l | tr -d ' ')
+          if [[ "$count" -lt 1 ]]; then
+            echo "No meta JSON files present in $dir"; exit 1
+          fi
+          echo "Meta JSON OK ($count file(s))"
 
       - name: Check artifact size
         shell: bash
