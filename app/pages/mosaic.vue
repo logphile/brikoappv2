@@ -236,13 +236,13 @@ async function onSavePrivate(){
     // Build preview PNG
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    await saveToGallery({ file: blob, projectId, title, isPublic: false })
+    const saved = await saveToGallery({ file: blob, projectId, title, isPublic: false })
     galleryProjectId.value = projectId
     try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
   } catch (e: any) {
-    console.error('[Publish failed]', e)
+    console.error('[Save private failed]', e)
     const msg = `${e?.code ?? ''} ${e?.message ?? 'Error'}`.trim()
-    try { showToast(`Publish failed: ${msg}`, 'error', 3000) } catch {}
+    try { showToast(`Save failed: ${msg}`, 'error', 3000) } catch {}
   } finally { publishing.value = false }
 }
 
