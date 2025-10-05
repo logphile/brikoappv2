@@ -224,6 +224,20 @@ async function getMosaicPngBlob(): Promise<Blob> {
   return blob
 }
 
+// upload helpers (client-side)
+async function uploadPreview(file: Blob | File, path: string) {
+  if (import.meta.server) throw new Error('uploadPreview must run client-side')
+  const { $supabase } = useNuxtApp() as any
+  if (!$supabase) throw new Error('Supabase unavailable')
+  const { data, error } = await $supabase.storage.from('projects').upload(path, file, {
+    upsert: true,
+    contentType: (file as any)?.type || 'image/png',
+    cacheControl: 'public, max-age=86400'
+  })
+  if (error) throw new Error(`storage upload failed: ${error.message}`)
+  return (data as any)?.path || path
+}
+
 async function onSavePrivate(){
   if (import.meta.server) return
   if (!mosaic.tilingResult) return
@@ -237,12 +251,8 @@ async function onSavePrivate(){
     // Build preview PNG and upload to Storage under projects/<uid>/<id>/preview.png
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const storagePath = `projects/${user.id}/${projectId}/preview.png`
-    {
-      const up = await $supabase.storage.from('projects')
-        .upload(storagePath, blob, { upsert: true, contentType: 'image/png', cacheControl: 'public, max-age=86400' })
-      if ((up as any)?.error) throw (up as any).error
-    }
+    const key = `projects/${user.id}/previews/${projectId}.png`
+    const storagePath = await uploadPreview(blob, key)
     // Insert private row in base projects table
     const id = await saveToGalleryPrivate({
       name: title,
@@ -479,11 +489,8 @@ async function onSavePublic(){
     // Build preview and upload
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const storagePath = `projects/${user.id}/${projectId}/preview.png`
-    {
-      const up = await $supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/png', cacheControl: 'public, max-age=86400' })
-      if ((up as any)?.error) throw (up as any).error
-    }
+    const key = `projects/${user.id}/previews/${projectId}.png`
+    const storagePath = await uploadPreview(blob, key)
     // Insert then publish
     const id = await saveToGalleryPrivate({ name: title, original_path: null, thumbnail_path: storagePath, mosaic_path: null, width: target.value.w, height: target.value.h, data: { kind: 'mosaic' } })
     // Make public
