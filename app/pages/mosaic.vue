@@ -253,7 +253,7 @@ async function onSavePrivate(){
     // Build preview PNG and upload to Storage under projects/<uid>/<id>/preview.png
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const key = `projects/${user.id}/previews/${projectId}.png`
+    const key = `${user.id}/thumbs/${projectId}.png`
     const storagePath = await uploadPreview(blob, key)
     // Insert private row in base projects table
     const id = await saveToGalleryPrivate({
@@ -491,7 +491,7 @@ async function onSavePublic(){
     // Build preview and upload
     const blob = await getMosaicPngBlob()
     const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const key = `projects/${user.id}/previews/${projectId}.png`
+    const key = `${user.id}/thumbs/${projectId}.png`
     const storagePath = await uploadPreview(blob, key)
     // Insert then publish
     const id = await saveToGalleryPrivate({ name: title, original_path: null, thumbnail_path: storagePath, mosaic_path: null, width: target.value.w, height: target.value.h, data: { kind: 'mosaic' } })
