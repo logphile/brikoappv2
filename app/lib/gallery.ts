@@ -19,28 +19,58 @@ export async function saveToGalleryPrivate(p: SavePayload) {
   const user = auth?.user
   if (!user?.id) throw new Error('Not signed in')
 
+  // Extended row (newer schema): includes optional paths, dimensions, and JSONB data
   const row: any = {
     owner: user.id,
     title: p.name ?? null,
     preview_path: p.thumbnail_path ?? null,
+    // optional fields (may not exist in older schemas)
+    original_path: p.original_path ?? null,
+    mosaic_path: p.mosaic_path ?? null,
     width: p.width ?? null,
     height: p.height ?? null,
+    data: p.data ?? {},
+    is_public: false,
+  }
+  // Minimal fallback row for older schemas
+  const minimal: any = {
+    owner: user.id,
+    title: p.name ?? null,
+    preview_path: p.thumbnail_path ?? null,
     is_public: false,
   }
 
-  const { data, error } = await $supabase
+  // Try extended insert first, fall back if columns are missing
+  let rec: any
+  let ins = await $supabase
     .from('projects')
     .insert(row)
     .select('id')
     .single()
-  if (error) throw error
+  if (ins.error) {
+    const msg = String(ins.error.message || '')
+    if (/column .* does not exist/i.test(msg)) {
+      ins = await $supabase
+        .from('projects')
+        .insert(minimal)
+        .select('id')
+        .single()
+      if (ins.error) throw ins.error
+      rec = ins.data
+    } else {
+      throw ins.error
+    }
+  } else {
+    rec = ins.data
+  }
 
-  const { error: e2 } = await $supabase
+  // Read-back guard so we only show success if RLS allows viewing our row
+  const echo = await $supabase
     .from('projects')
     .select('id')
-    .eq('id', data.id)
+    .eq('id', rec.id)
     .single()
-  if (e2) throw e2
+  if (echo.error) throw echo.error
 
-  return data.id as string
+  return rec.id as string
 }
