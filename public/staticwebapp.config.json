@@ -1,12 +1,29 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": [
-      "/_nuxt/*",
-      "/assets/*",
-      "/favicon.*",
-      "/robots.txt",
-      "/sitemap*.xml"
-    ]
-  }
+    "exclude": ["/_nuxt/*", "/slider/*"]
+  },
+  "mimeTypes": {
+    ".webp": "image/webp"
+  },
+  "routes": [
+    {
+      "route": "/_nuxt/*",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/slider/*",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "route": "/index.html",
+      "headers": {
+        "cache-control": "no-cache"
+      }
+    }
+  ]
 }
