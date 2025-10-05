@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
+const ASSETS_VERSION = process.env.ASSETS_VERSION || 'v-local'
 
 export default defineNuxtConfig({
   // Production: SSR on; DevTools disabled
@@ -124,6 +125,8 @@ export default defineNuxtConfig({
   // optional: reduce CSS inlining into HTML (uncomment if needed)
   // experimental: { inlineSSRStyles: false },
   app: {
+    // Put every deploy’s assets under its own folder to avoid stale edge caches
+    buildAssetsDir: `/_nuxt/${ASSETS_VERSION}/`,
     head: {
       htmlAttrs: { lang: 'en' },
       title: process.env.NUXT_PUBLIC_SITE_NAME || 'Briko',
