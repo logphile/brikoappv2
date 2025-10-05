@@ -8,12 +8,16 @@ const props = defineProps<{
   afterAlt?: string
   initial?: number       // 0..1
   keyboardStep?: number  // default 0.04
+  debug?: boolean
+  label?: string
 }>()
 
 const pct = ref(Math.min(1, Math.max(0, props.initial ?? 0.5)))
 const root = ref<HTMLElement | null>(null)
 const dragging = ref(false)
 const ratio = ref<number | null>(null) // dynamic aspect-ratio (w/h)
+const errBefore = ref(false)
+const errAfter  = ref(false)
 
 // Measure the BEFORE image to set the true aspect ratio
 function measureAspect(url: string) {
@@ -62,7 +66,13 @@ onBeforeUnmount(() => {
   root.value?.removeEventListener('pointermove', onPointerMove)
   window.removeEventListener('pointerup', onPointerUp)
 })
-watch(() => props.beforeSrc, (n) => measureAspect(n))
+watch(() => props.beforeSrc, (n) => {
+  errBefore.value = false
+  measureAspect(n)
+})
+watch(() => props.afterSrc, () => {
+  errAfter.value = false
+})
 </script>
 
 <template>
@@ -83,6 +93,7 @@ watch(() => props.beforeSrc, (n) => measureAspect(n))
       loading="eager"
       decoding="async"
       draggable="false"
+      @error="errBefore = true"
     />
 
     <!-- AFTER on top, clipped by pct -->
@@ -94,7 +105,15 @@ watch(() => props.beforeSrc, (n) => measureAspect(n))
         loading="eager"
         decoding="async"
         draggable="false"
+        @error="errAfter = true"
       />
+    </div>
+
+    <!-- DEBUG BADGE (remove when verified) -->
+    <div v-if="props.debug" class="absolute left-3 bottom-3 z-20 text-[11px] leading-4 px-2 py-1 rounded bg-black/65 text-white">
+      <div class="opacity-80">{{ props.label || 'Slider' }}</div>
+      <div>B: {{ beforeSrc.split('/').pop() }} <span v-if="errBefore" class="text-red-300">(err)</span></div>
+      <div>A: {{ afterSrc.split('/').pop() }} <span v-if="errAfter" class="text-red-300">(err)</span></div>
     </div>
 
     <!-- Handle -->
