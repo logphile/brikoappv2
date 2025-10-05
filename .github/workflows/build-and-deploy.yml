@@ -139,7 +139,9 @@ jobs:
         run: |
           set -euxo pipefail
           rm -rf site
-          rsync -a --delete .output/public/ site/
+          rsync -a --delete \
+            --exclude='*.gz' --exclude='*.br' \
+            .output/public/ site/
 
       - name: Prune sourcemaps & license stubs
         shell: bash
@@ -150,12 +152,23 @@ jobs:
           echo "After prune:"
           du -sh site || true
 
-      - name: Report top 30 largest files
+      - name: Prune demo/sample assets from artifact
         shell: bash
         run: |
           set -e
-          find site -type f -printf '%s\t%p\n' | sort -nr | head -30 \
-            | awk '{ printf "%7.2f MB  %s\n", $1/1048576, $2 }'
+          rm -rf site/samples || true
+          rm -rf site/demo || true
+          du -sh site || true
+
+      - name: Report top 30 largest files (non-fatal)
+        shell: bash
+        run: |
+          # no -e here on purpose; Broken pipe from sort/head shouldn’t fail the job
+          find site -type f -printf '%s\t%p\n' \
+            | LC_ALL=C sort -nr \
+            | head -n 30 \
+            | awk '{ printf "%7.2f MB  %s\n", $1/1048576, $2 }' \
+            || true
 
       - name: Assert index references correct versioned path
         shell: bash
