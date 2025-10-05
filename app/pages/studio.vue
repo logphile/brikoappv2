@@ -201,14 +201,14 @@ onMounted(async () => {
   fetchCommPage()
 })
 
-// Realtime: refresh My Gallery on any change to gallery_posts (server-side RLS limits to my rows)
+// Realtime: refresh My Gallery on any change to projects (server-side RLS limits to my rows)
 let galleryChannel: any = null
 watchEffect(() => {
   if (!$supabase) return
   if (galleryChannel) return
   galleryChannel = $supabase
-    .channel('gallery_posts_my')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'gallery_posts' }, async () => {
+    .channel('projects_my')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
       myGallery.value = await fetchMyGalleryPosts()
     })
     .subscribe()
