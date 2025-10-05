@@ -2,7 +2,7 @@
   <main class="mx-auto max-w-5xl px-6 py-10 text-white">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-semibold">{{ project?.title || 'Project' }}</h1>
+        <h1 class="text-2xl font-semibold">{{ project?.name || 'Project' }}</h1>
         <div v-if="project" class="text-sm opacity-80">{{ project.width }}×{{ project.height }} studs</div>
       </div>
       <NuxtLink to="/mosaic" class="px-4 py-2 rounded-xl bg-cta-grad">Open Editor</NuxtLink>
@@ -55,7 +55,7 @@ function rand(n=8){ return Math.random().toString(36).slice(2, 2+n) }
 
 async function fetchProject(){
   if(!$supabase) return
-  const { data, error } = await $supabase.from('projects').select('id, title, width, height, is_public, share_token, created_at, updated_at').eq('id', pid).single()
+  const { data, error } = await $supabase.from('projects').select('id, name, width, height, is_public, share_token, created_at, updated_at').eq('id', pid).single()
   if(error){ err.value = error.message; try{ useToasts().show('Failed to load project', 'error') }catch{}; return }
   project.value = data
   projectPublic.value = !!data.is_public

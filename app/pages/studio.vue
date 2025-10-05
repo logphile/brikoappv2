@@ -41,17 +41,7 @@
               Nothing here yet. Use <em>Save to Gallery</em> on your builds.
             </div>
             <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              <article v-for="g in myGalleryItems" :key="g.id" class="rounded-2xl overflow-hidden border border-[color:var(--ivory-border)] bg-white shadow-soft-card">
-                <img :src="g.image_url" alt="" class="aspect-square object-cover w-full" />
-                <div class="p-3 flex items-center justify-between">
-                  <div class="truncate font-medium text-[var(--dark)]" :title="g.title">{{ g.title }}</div>
-                  <span
-                    class="ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
-                    :class="g.is_public ? 'bg-[#FF0062]/10 text-[#FF0062]' : 'bg-black/10 text-black/70'"
-                  >{{ g.is_public ? 'Public' : 'Private' }}</span>
-                </div>
-                <div class="px-3 pb-3 text-xs text-black/50">{{ new Date(g.created_at).toLocaleString() }}</div>
-              </article>
+              <OwnerProjectCard v-for="p in myGalleryItems" :key="p.id" :p="p" />
             </div>
           </template>
         </ClientOnly>
@@ -82,6 +72,7 @@ import { useProjects } from '@/composables/useProjects'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useMyGallery } from '@/composables/useMyGallery'
+import OwnerProjectCard from '@/components/gallery/OwnerProjectCard.vue'
 
 // SEO
 useHead({
@@ -146,7 +137,7 @@ async function fetchMy(){
   } catch (e) {
     // Fallback to legacy table
     const { data } = await $supabase.from('projects')
-      .select('id, title, preview_path, created_at, updated_at, owner')
+      .select('id, name as title, preview_path, created_at, updated_at, owner')
       .eq('owner', user.value.id)
       .order('updated_at', { ascending: false })
       .limit(100)
