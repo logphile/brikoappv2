@@ -26,32 +26,35 @@
         </div>
       </section>
 
-      <!-- My Gallery (gallery_posts) -->
+      <!-- My Gallery (projects; client-only, owner-scoped) -->
       <section class="card-ivory p-4 sm:p-6 mb-8">
         <div class="mb-3 flex items-center justify-between">
           <h2 class="text-lg font-semibold text-[var(--dark)]">My Gallery</h2>
-          <span class="text-sm text-[color:var(--dark)/.7]">{{ myGallery.length }} item(s)</span>
+          <span class="text-sm text-[color:var(--dark)/.7]">{{ (myGalleryReady ? myGalleryItems.length : 0) }} item(s)</span>
         </div>
 
-        <div v-if="isLoadingGallery" class="text-[color:var(--dark)/.7]">Loading…</div>
-
-        <div v-else-if="!myGallery.length" class="text-[color:var(--dark)/.7]">
-          Nothing here yet. Use <em>Save to Gallery</em> on your builds.
-        </div>
-
-        <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          <article v-for="g in myGallery" :key="g.id" class="rounded-2xl overflow-hidden border border-[color:var(--ivory-border)] bg-white shadow-soft-card">
-            <img :src="g.image_url" alt="" class="aspect-square object-cover w-full" />
-            <div class="p-3 flex items-center justify-between">
-              <div class="truncate font-medium text-[var(--dark)]" :title="g.title">{{ g.title }}</div>
-              <span
-                class="ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
-                :class="g.is_public ? 'bg-[#FF0062]/10 text-[#FF0062]' : 'bg-black/10 text-black/70'"
-              >{{ g.is_public ? 'Public' : 'Private' }}</span>
+        <ClientOnly>
+          <template #default>
+            <div v-if="!myGalleryReady" class="text-[color:var(--dark)/.7]">Sign in to view your gallery.</div>
+            <div v-else-if="myGalleryLoading" class="text-[color:var(--dark)/.7]">Loading…</div>
+            <div v-else-if="!myGalleryItems.length" class="text-[color:var(--dark)/.7]">
+              Nothing here yet. Use <em>Save to Gallery</em> on your builds.
             </div>
-            <div class="px-3 pb-3 text-xs text-black/50">{{ new Date(g.created_at).toLocaleString() }}</div>
-          </article>
-        </div>
+            <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              <article v-for="g in myGalleryItems" :key="g.id" class="rounded-2xl overflow-hidden border border-[color:var(--ivory-border)] bg-white shadow-soft-card">
+                <img :src="g.image_url" alt="" class="aspect-square object-cover w-full" />
+                <div class="p-3 flex items-center justify-between">
+                  <div class="truncate font-medium text-[var(--dark)]" :title="g.title">{{ g.title }}</div>
+                  <span
+                    class="ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
+                    :class="g.is_public ? 'bg-[#FF0062]/10 text-[#FF0062]' : 'bg-black/10 text-black/70'"
+                  >{{ g.is_public ? 'Public' : 'Private' }}</span>
+                </div>
+                <div class="px-3 pb-3 text-xs text-black/50">{{ new Date(g.created_at).toLocaleString() }}</div>
+              </article>
+            </div>
+          </template>
+        </ClientOnly>
       </section>
 
       <!-- Community Projects -->
@@ -78,7 +81,7 @@ import { useNuxtApp, useHead } from 'nuxt/app'
 import { useProjects } from '@/composables/useProjects'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
-import { fetchMyGalleryPosts } from '@/composables/useMyGallery'
+import { useMyGallery } from '@/composables/useMyGallery'
 
 // SEO
 useHead({
@@ -109,9 +112,8 @@ const user = ref<any>(null)
 const myItems = ref<any[]>([])
 const loadingMy = ref(false)
 
-// My Gallery (gallery_posts)
-const isLoadingGallery = ref(true)
-const myGallery = ref<Awaited<ReturnType<typeof fetchMyGalleryPosts>>>([])
+// My Gallery (projects, owner-scoped)
+const { items: myGalleryItems, loading: myGalleryLoading, ready: myGalleryReady, refresh: refreshMyGallery } = useMyGallery()
 
 // Community
 const commItems = ref<any[]>([])
@@ -195,9 +197,6 @@ function loadMoreComm(){ if(hasMoreComm.value && !loadingComm.value) fetchCommPa
 onMounted(async () => {
   await fetchUser()
   if (user.value) fetchMy()
-  // Load My Gallery
-  myGallery.value = await fetchMyGalleryPosts()
-  isLoadingGallery.value = false
   fetchCommPage()
 })
 
@@ -209,7 +208,7 @@ watchEffect(() => {
   galleryChannel = $supabase
     .channel('projects_my')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
-      myGallery.value = await fetchMyGalleryPosts()
+      try { await refreshMyGallery() } catch {}
     })
     .subscribe()
 })
