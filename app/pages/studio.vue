@@ -26,25 +26,12 @@
         </div>
       </section>
 
-      <!-- My Gallery (projects; client-only, owner-scoped) -->
+      <!-- My Gallery (owner-scoped) -->
       <section class="card-ivory p-4 sm:p-6 mb-8">
         <div class="mb-3 flex items-center justify-between">
           <h2 class="text-lg font-semibold text-[var(--dark)]">My Gallery</h2>
-          <span class="text-sm text-[color:var(--dark)/.7]">{{ (myGalleryReady ? myGalleryItems.length : 0) }} item(s)</span>
         </div>
-
-        <ClientOnly>
-          <template #default>
-            <div v-if="!myGalleryReady" class="text-[color:var(--dark)/.7]">Sign in to view your gallery.</div>
-            <div v-else-if="myGalleryLoading" class="text-[color:var(--dark)/.7]">Loading…</div>
-            <div v-else-if="!myGalleryItems.length" class="text-[color:var(--dark)/.7]">
-              Nothing here yet. Use <em>Save to Gallery</em> on your builds.
-            </div>
-            <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              <MyProjectCard v-for="p in myGalleryItems" :key="p.id" :p="p" />
-            </div>
-          </template>
-        </ClientOnly>
+        <MyGalleryGrid />
       </section>
 
       <!-- Community Projects -->
@@ -66,13 +53,12 @@
   </main>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watchEffect } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
 import { useProjects } from '@/composables/useProjects'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
-import { useMyGallery } from '@/composables/useMyGallery'
-import MyProjectCard from '@/components/gallery/MyProjectCard.vue'
+import MyGalleryGrid from '@/components/gallery/MyGalleryGrid.vue'
 
 // SEO
 useHead({
@@ -103,8 +89,7 @@ const user = ref<any>(null)
 const myItems = ref<any[]>([])
 const loadingMy = ref(false)
 
-// My Gallery (projects, owner-scoped)
-const { items: myGalleryItems, loading: myGalleryLoading, ready: myGalleryReady, refresh: refreshMyGallery } = useMyGallery()
+// My Gallery is rendered via <MyGalleryGrid />
 
 // Community
 const commItems = ref<any[]>([])
@@ -189,27 +174,8 @@ onMounted(async () => {
   await fetchUser()
   if (user.value) fetchMy()
   fetchCommPage()
-  // Refresh My Gallery after deletes triggered from cards
-  try { window.addEventListener('project:deleted', refreshMyGallery as any, { passive: true }) } catch {}
 })
 
-// Realtime: refresh My Gallery on any change to projects (server-side RLS limits to my rows)
-let galleryChannel: any = null
-watchEffect(() => {
-  if (!$supabase) return
-  if (galleryChannel) return
-  galleryChannel = $supabase
-    .channel('projects_my')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, async () => {
-      try { await refreshMyGallery() } catch {}
-    })
-    .subscribe()
-})
-
-onBeforeUnmount(() => {
-  try { if (galleryChannel) $supabase.removeChannel?.(galleryChannel) } catch {}
-  try { window.removeEventListener('project:deleted', refreshMyGallery as any) } catch {}
-})
 </script>
 
 <style scoped>
