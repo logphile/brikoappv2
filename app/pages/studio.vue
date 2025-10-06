@@ -114,10 +114,10 @@ async function fetchMy(){
     if (error) throw error
     rows = data || []
   } catch (e) {
-    // Fallback to legacy table
+    // Fallback to base projects table using modern column names
     const { data } = await $supabase.from('projects')
-      .select('id, name as title, preview_path, created_at, updated_at, owner')
-      .eq('owner', user.value.id)
+      .select('id, name as title, preview_path, created_at, updated_at')
+      .eq('user_id', user.value.id)
       .order('updated_at', { ascending: false })
       .limit(100)
     rows = data || []

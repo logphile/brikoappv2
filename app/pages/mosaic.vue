@@ -291,7 +291,7 @@ async function makePublic(){
         .from('projects')
         .update({ is_public: true, name: title })
         .eq('id', id)
-        .eq('owner', user.id)
+        .eq('user_id', user.id)
         .select('id')
         .single()
       if (!upd.error && upd.data) published = true
@@ -532,7 +532,7 @@ async function onSavePublic(){
     // Insert then publish
     const id = await saveToGalleryPrivate({ name: title, original_path: null, thumbnail_path: storagePath, mosaic_path: null, width: target.value.w, height: target.value.h, data: { kind: 'mosaic' } })
     // Make public
-    const upd = await $supabase.from('projects').update({ is_public: true, name: title }).eq('id', id).eq('owner', user.id).select('id').single()
+    const upd = await $supabase.from('projects').update({ is_public: true, name: title }).eq('id', id).eq('user_id', user.id).select('id').single()
     if (upd.error) throw upd.error
     galleryProjectId.value = id
     try { showToast('Published!', 'success', 2200) } catch {}

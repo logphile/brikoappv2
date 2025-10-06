@@ -62,22 +62,71 @@ alter table public.assets enable row level security;
 create policy if not exists profiles_self_rw on public.profiles
   for all using (auth.uid() = id) with check (auth.uid() = id);
 
--- Projects: owner-only R/W
-create policy if not exists projects_owner_rw on public.projects
-  for all using (owner = auth.uid()) with check (owner = auth.uid());
+-- Projects: user_id owner-only R/W (discrete policies)
+drop policy if exists projects_select_owner on public.projects;
+drop policy if exists projects_insert_owner on public.projects;
+drop policy if exists projects_update_owner on public.projects;
+drop policy if exists projects_delete_owner on public.projects;
+
+create policy projects_select_owner
+  on public.projects for select
+  using (user_id = auth.uid());
+
+create policy projects_insert_owner
+  on public.projects for insert
+  with check (user_id = auth.uid());
+
+create policy projects_update_owner
+  on public.projects for update
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+create policy projects_delete_owner
+  on public.projects for delete
+  using (user_id = auth.uid());
 
 -- Mosaics/Tilings/Assets: follow parent project ownership
 create policy if not exists mosaics_owner_rw on public.mosaics
-  for all using (exists(select 1 from public.projects p where p.id=project_id and p.owner=auth.uid()))
-  with check (exists(select 1 from public.projects p where p.id=project_id and p.owner=auth.uid()));
+  for all using (
+    exists(
+      select 1 from public.projects p
+      where p.id = project_id and p.user_id = auth.uid()
+    )
+  )
+  with check (
+    exists(
+      select 1 from public.projects p
+      where p.id = project_id and p.user_id = auth.uid()
+    )
+  );
 
 create policy if not exists tilings_owner_rw on public.tilings
-  for all using (exists(select 1 from public.projects p where p.id=project_id and p.owner=auth.uid()))
-  with check (exists(select 1 from public.projects p where p.id=project_id and p.owner=auth.uid()));
+  for all using (
+    exists(
+      select 1 from public.projects p
+      where p.id = project_id and p.user_id = auth.uid()
+    )
+  )
+  with check (
+    exists(
+      select 1 from public.projects p
+      where p.id = project_id and p.user_id = auth.uid()
+    )
+  );
 
 create policy if not exists assets_owner_rw on public.assets
-  for all using (exists(select 1 from public.projects p where p.id=project_id and p.owner=auth.uid()))
-  with check (exists(select 1 from public.projects p where p.id=project_id and p.owner=auth.uid()));
+  for all using (
+    exists(
+      select 1 from public.projects p
+      where p.id = project_id and p.user_id = auth.uid()
+    )
+  )
+  with check (
+    exists(
+      select 1 from public.projects p
+      where p.id = project_id and p.user_id = auth.uid()
+    )
+  );
 
 -- Public RPC for shared view (no auth)
 create or replace function public.project_public_view(p_share_token text)

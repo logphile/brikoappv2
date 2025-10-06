@@ -574,7 +574,7 @@ async function saveAvatar() {
     // Create project if needed
     if (!projectId.value) {
       const slug = `avatar-${rand(8)}`
-      const insert = { owner: uid, title: 'Avatar', slug, width: widthStuds.value, height: heightStuds.value }
+      const insert = { user_id: uid, title: 'Avatar', slug, width: widthStuds.value, height: heightStuds.value }
       const { data, error } = await $supabase.from('projects').insert(insert).select('*').single()
       if (error) throw error
       projectId.value = data.id
