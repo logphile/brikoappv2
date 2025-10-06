@@ -26,13 +26,7 @@
         </div>
       </section>
 
-      <!-- My Gallery (owner-scoped) -->
-      <section class="card-ivory p-4 sm:p-6 mb-8">
-        <div class="mb-3 flex items-center justify-between">
-          <h2 class="text-lg font-semibold text-[var(--dark)]">My Gallery</h2>
-        </div>
-        <MyGalleryGrid />
-      </section>
+      
 
       <!-- Community Projects -->
       <section class="card-ivory p-4 sm:p-6">
@@ -58,7 +52,7 @@ import { useNuxtApp, useHead } from 'nuxt/app'
 import { useProjects } from '@/composables/useProjects'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
-import MyGalleryGrid from '@/components/gallery/MyGalleryGrid.vue'
+// Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // SEO
 useHead({
