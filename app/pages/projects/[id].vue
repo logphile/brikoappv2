@@ -44,9 +44,7 @@ const { $supabase } = useNuxtApp() as any
 const mosaic = useMosaicStore()
 
 const pid = String(route.params.id || '')
-
-// Redirect legacy route to the new styled detail page
-onMounted(async () => { await navigateTo(`/studio/${pid}`) })
+await navigateTo(`/studio/${pid}`)
 const project = ref<any | null>(null)
 const projectPublic = ref(false)
 const err = ref('')
