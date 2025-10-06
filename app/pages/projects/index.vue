@@ -60,6 +60,7 @@ import { useNuxtApp } from 'nuxt/app'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useProjects } from '@/composables/useProjects'
+import { signedUrl } from '@/lib/signed-url'
 
 const { $supabase } = useNuxtApp() as any
 const { buildPreviewUrl } = useProjects()
@@ -77,23 +78,29 @@ onMounted(async () => {
   // Auth
   const u = await $supabase.auth.getUser(); user.value = u.data.user
 
-  // Fetch user's projects
+  // Fetch user's projects (base projects table)
   if(user.value){
     loading.value = true
     const { data, error } = await $supabase
       .from('projects')
-      .select('*')
+      .select('id, name, thumbnail_path, created_at, updated_at')
+      .eq('user_id', user.value.id)
       .order('updated_at', { ascending: false })
     loading.value = false
     if(error) console.error(error)
     const list = (data || []) as any[]
-    // Map into ProjectCard shape
-    myProjects.value = list.map(p => ({
-      id: p.id,
-      title: p.title || 'Untitled',
-      created_at: p.updated_at || p.created_at,
-      cover_url: p.preview_path ? `${buildPreviewUrl(p.preview_path)}?v=${Date.now()}` : null,
-    }))
+    // Map into ProjectCard shape (sign private thumbnails)
+    const items: any[] = []
+    for (const p of list) {
+      const url = p.thumbnail_path ? await signedUrl(p.thumbnail_path) : null
+      items.push({
+        id: p.id,
+        title: p.name || 'Untitled',
+        created_at: p.updated_at || p.created_at,
+        cover_url: url,
+      })
+    }
+    myProjects.value = items
   }
 
   // Fetch a page of community projects
