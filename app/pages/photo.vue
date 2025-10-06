@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
+import BricklinkExportDialog from '@/components/export/BricklinkExportDialog.vue'
 
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any
@@ -11,6 +12,14 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const img = ref<string | null>(null)
 const projectName = ref<string | null>(null)
+
+// BrickLink Export dialog state
+const showBricklink = ref(false)
+async function exportXml(){
+  // TODO: hook up to actual XML exporter when available
+  try { console.log('[photo] Export BrickLink XML requested') } catch {}
+  showBricklink.value = false
+}
 
 onMounted(async () => {
   loading.value = true
@@ -49,7 +58,10 @@ onMounted(async () => {
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <header class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold">Photo</h1>
-        <NuxtLink to="/studio" class="btn-purple-outline focus-cyber">Back to Studio</NuxtLink>
+        <div class="flex items-center gap-2">
+          <button class="btn-purple-outline focus-cyber" @click="showBricklink = true">Export for BrickLink (.xml)</button>
+          <NuxtLink to="/studio" class="btn-purple-outline focus-cyber">Back to Studio</NuxtLink>
+        </div>
       </header>
 
       <div v-if="loading" class="text-[color:var(--dark)/.7]">Loading…</div>
@@ -61,6 +73,7 @@ onMounted(async () => {
           <div v-else class="p-8 text-[color:var(--dark)/.7]">No image to display.</div>
         </figure>
       </div>
+      <BricklinkExportDialog v-model:open="showBricklink" @export="exportXml" />
     </div>
   </main>
 </template>

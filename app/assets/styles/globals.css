@@ -259,8 +259,20 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
   }
 }
 
+/* Ensure app modals sit above any local z layers */
+.modal, .teleported { z-index: 2000; }
+
 /* Legal prose (readable copy on ivory) */
 @layer components {
+  /* Optional: nudge default readability on dark/purple cards */
+  .form-dark label { color: rgba(255,255,255,.95); }
+  .form-dark p, .form-dark .hint { color: rgba(255,255,255,.75); }
+  .form-dark input[type="text"],
+  .form-dark select {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    color: #fff;
+  }
   .legal-prose p{ margin-top:1rem; line-height:1.7; color:var(--dark); }
   .legal-prose h2{ margin-top:1.5rem; font-weight:700; font-size:1.125rem; color:var(--dark); }
   .legal-prose ul{ margin-top:.75rem; padding-left:1.25rem; list-style:disc; }
