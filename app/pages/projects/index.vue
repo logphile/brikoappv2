@@ -26,7 +26,7 @@
 
         <div v-if="loading" class="text-[color:var(--dark)/.7]">Loading…</div>
         <template v-else>
-          <ProjectGrid v-if="myProjects.length" :items="myProjects" view-prefix="/projects" />
+          <ProjectGrid v-if="myProjects.length" :items="myProjects" view-prefix="/studio" />
           <div v-else class="card-ivory p-6 rounded-2xl text-center">
             <p class="text-[color:var(--dark)/.7]">No projects yet.</p>
             <NuxtLink to="/studio/new" class="btn-pink mt-4 focus-cyber">Create your first project</NuxtLink>
