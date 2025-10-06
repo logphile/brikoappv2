@@ -80,7 +80,7 @@ async function create(){
   const { data: { user } } = await $supabase.auth.getUser()
   if(!user){ error.value = 'Login required'; loading.value=false; return }
   const payload = {
-    owner: user.id,
+    user_id: user.id,
     title: title.value,
     width: width.value,
     height: height.value,

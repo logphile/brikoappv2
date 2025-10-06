@@ -24,20 +24,12 @@ export function useMyGallery() {
     if (!$supabase || !ready.value) return
     loading.value = true
     try {
-      // Prefer modern schema: user_id/name/thumbnail_path
-      let q = await $supabase
+      // Modern schema: user_id/name/thumbnail_path
+      const q = await $supabase
         .from('projects')
         .select('id, user_id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at')
         .eq('user_id', userId.value!)
         .order('created_at', { ascending: false })
-      if (q.error) {
-        // Legacy fallback: owner/title/preview_path
-        q = await $supabase
-          .from('projects')
-          .select('id, owner as user_id, title as name, preview_path as thumbnail_path, is_public, created_at')
-          .eq('owner', userId.value!)
-          .order('created_at', { ascending: false })
-      }
       if (q.error) throw q.error
       items.value = (q.data || []) as MyProjectRow[]
     } catch (e) {
