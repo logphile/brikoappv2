@@ -19,7 +19,7 @@
         <div v-if="loadingMy" class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
         </div>
-        <ProjectGrid v-else-if="myItems.length" :items="myItems" />
+        <ProjectGrid v-else-if="myItems.length" :items="myItems" view-prefix="/studio" />
         <div v-else class="text-center py-10">
           <p class="text-dim">No projects yet.</p>
           <NuxtLink to="/studio/new" class="btn-pink mt-4 focus-cyber">Create your first project</NuxtLink>
