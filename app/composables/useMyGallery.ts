@@ -3,6 +3,7 @@ import { useNuxtApp } from 'nuxt/app'
 
 export type MyProjectRow = {
   id: string
+  user_id: string
   name: string | null
   is_public: boolean
   created_at: string
@@ -26,14 +27,14 @@ export function useMyGallery() {
       // Prefer modern schema: user_id/name/thumbnail_path
       let q = await $supabase
         .from('projects')
-        .select('id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at')
+        .select('id, user_id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at')
         .eq('user_id', userId.value!)
         .order('created_at', { ascending: false })
       if (q.error) {
         // Legacy fallback: owner/title/preview_path
         q = await $supabase
           .from('projects')
-          .select('id, title as name, preview_path as thumbnail_path, is_public, created_at')
+          .select('id, owner as user_id, title as name, preview_path as thumbnail_path, is_public, created_at')
           .eq('owner', userId.value!)
           .order('created_at', { ascending: false })
       }
