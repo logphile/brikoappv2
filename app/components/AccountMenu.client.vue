@@ -24,7 +24,7 @@
           >
             <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
             <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">folder_special</span>
-            <span>Your Projects</span>
+            <span>My Gallery</span>
           </NuxtLink>
         </li>
 
