@@ -15,14 +15,13 @@
         </div>
       </header>
 
-      <!-- Login prompt -->
       <div v-if="!user" class="mb-10 text-sm">
         Please <NuxtLink to="/login" class="underline">login</NuxtLink> to manage projects, or explore the <NuxtLink to="/studio" class="underline">Community Studio</NuxtLink>.
       </div>
 
       <!-- Your Projects -->
-      <section v-else class="mb-10">
-        <SectionHeader title="Your Projects" />
+    <section v-else class="mb-10">
+      <SectionHeader title="Your Projects" />
 
         <div v-if="loading" class="text-[color:var(--dark)/.7]">Loading…</div>
         <template v-else>
@@ -33,6 +32,14 @@
           </div>
         </template>
       </section>
+
+    <!-- My Gallery (owner-scoped) -->
+    <section class="card-ivory p-4 sm:p-6 mb-10">
+      <div class="mb-3 flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-[var(--dark)]">My Gallery</h2>
+      </div>
+      <MyGalleryGrid />
+    </section>
 
       <!-- Community Projects (See All on right) -->
       <section class="mb-6">
@@ -61,6 +68,7 @@ import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useProjects } from '@/composables/useProjects'
 import { signedUrl } from '@/lib/signed-url'
+import MyGalleryGrid from '@/components/gallery/MyGalleryGrid.vue'
 
 const { $supabase } = useNuxtApp() as any
 const { buildPreviewUrl } = useProjects()

@@ -37,7 +37,12 @@ onMounted(async () => {
 
 async function onView() {
   // Open the Mosaic editor pre-loaded with this project
-  await router.push({ path: '/mosaic', query: { remix: props.p.id } })
+  await router.push({ path: '/photo', query: { remix: props.p.id } })
+}
+
+async function onRemix() {
+  // Same destination for now; separate flow can be added later
+  await router.push({ path: '/photo', query: { remix: props.p.id } })
 }
 
 async function onDelete() {
@@ -67,9 +72,21 @@ async function onDelete() {
 
     <div class="px-3 pb-3 flex items-center gap-2">
       <button type="button" @click="onView"
-        class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">View</button>
+        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
+        <span class="material-symbols-rounded text-base">visibility</span>
+        View
+      </button>
+
+      <button type="button" @click="onRemix"
+        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
+        <span class="material-symbols-rounded text-base">auto_fix_high</span>
+        Remix
+      </button>
+
       <button v-if="isOwner" type="button" @click="onDelete" title="Delete"
-        class="ml-auto px-2 py-1.5 rounded-md border border-white/20 hover:bg-white/10 cursor-pointer">🗑️</button>
+        class="ml-auto inline-flex items-center gap-1 px-2 py-1.5 rounded-md border border-white/20 hover:bg-white/10 cursor-pointer">
+        <span class="material-symbols-rounded text-base">delete</span>
+      </button>
     </div>
   </article>
 </template>
