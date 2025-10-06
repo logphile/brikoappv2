@@ -17,25 +17,47 @@
       <div class="text-xs opacity-70">{{ dateLocal }}</div>
     </div>
 
-    <div class="px-3 pb-3">
-      <NuxtLink
-        :to="`/studio/${p.id}`"
-        class="inline-flex items-center text-sm rounded-md px-3 py-1.5 bg-white/90 text-black hover:bg-white cursor-pointer"
-      >
+    <div class="px-3 pb-3 flex items-center gap-2">
+      <button type="button" @click="onView" class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
         View
-      </NuxtLink>
+      </button>
+      <button type="button" @click="onRemix" class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
+        Remix
+      </button>
+
+      <button
+        v-if="isOwner"
+        type="button"
+        @click="onDelete"
+        title="Delete project"
+        aria-label="Delete project"
+        class="ml-auto px-2 py-1.5 rounded-md border border-white/20 hover:bg-white/10 cursor-pointer"
+      >
+        🗑️
+      </button>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
+import { deleteProject } from '@/lib/gallery'
 
 const props = defineProps<{ p: any }>()
 const url = ref<string | null>(null)
+const userId = ref<string | null>(null)
+const router = useRouter()
+const { $supabase } = useNuxtApp() as any
 
 onMounted(async () => {
+  // resolve current user id for owner checks
+  try {
+    const u = await $supabase?.auth?.getUser?.()
+    userId.value = u?.data?.user?.id || null
+  } catch {}
   // priority: thumbnail → mosaic → original
   url.value =
     (await signedUrl(props.p.thumbnail_path)) ||
@@ -47,4 +69,29 @@ onMounted(async () => {
 const dateLocal = computed(() => {
   try { return new Date(props.p?.created_at).toLocaleDateString() } catch { return '' }
 })
+
+const isOwner = computed(() => {
+  const owner = props.p?.user_id || props.p?.owner
+  return owner ? owner === userId.value : true
+})
+
+async function onView(){
+  await router.push(`/studio/${props.p.id}`)
+}
+async function onRemix(){
+  await router.push({ path: '/mosaic', query: { remix: props.p.id } })
+}
+async function onDelete(){
+  if (!isOwner.value) return
+  const ok = window.confirm('Delete this project permanently? This cannot be undone.')
+  if (!ok) return
+  try {
+    await deleteProject(props.p)
+    // notify parent lists to refresh if listening
+    window.dispatchEvent(new CustomEvent('project:deleted', { detail: props.p.id }))
+  } catch (e:any) {
+    console.error('Delete failed', e?.message || e)
+    alert('Could not delete this project.')
+  }
+}
 </script>

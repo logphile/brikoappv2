@@ -34,7 +34,7 @@
       <div class="absolute inset-0 bg-[rgba(47,48,97,.35)] opacity-0 group-hover:opacity-100 transition"></div>
       <div class="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
         <NuxtLink :to="`${viewPrefix}/${project.id}`" class="btn-ivory-outline focus-cyber">View</NuxtLink>
-        <NuxtLink :to="`/project/${project.id}?remix=1`" class="btn-pink focus-cyber">Remix</NuxtLink>
+        <NuxtLink :to="`/mosaic?remix=${project.id}`" class="btn-pink focus-cyber">Remix</NuxtLink>
       </div>
     </div>
     <!-- meta -->

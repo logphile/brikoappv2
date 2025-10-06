@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { useHead, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
 import { useRemixLoader } from '@/composables/useRemixLoader'
+import { signedUrl } from '@/lib/signed-url'
 import StepCard from '@/components/ui/StepCard.vue'
 import UploadCard from '@/components/ui/UploadCard.vue'
 import MosaicCanvas from '@/components/MosaicCanvas.client.vue'
@@ -456,12 +457,47 @@ async function onFile(file: File) {
 }
 
 // Kick off remix load from URL query at mount and on changes (shared loader)
+async function loadRemixIfAny(){
+  const remixId = route.query.remix as string | undefined
+  if (!remixId) return
+  try {
+    const { $supabase } = useNuxtApp() as any
+    if (!$supabase) return
+    const { data, error } = await $supabase
+      .from('projects')
+      .select('id, original_path, thumbnail_path, mosaic_path, name, width, height')
+      .eq('id', remixId)
+      .single()
+    if (error || !data) return
+    const path = data.original_path || data.mosaic_path || data.thumbnail_path
+    if (path) {
+      const url = await signedUrl(path)
+      if (url) {
+        await loadInto(onFile, url)
+        // Optional: prefill title/size if desired
+        try { projectName.value = (data.name || projectName.value) } catch {}
+        try {
+          if (data.width && data.height && !mosaic.width && !mosaic.height) {
+            target.value = { w: data.width, h: data.height }
+            mosaic.setTargetSize(data.width, data.height)
+          }
+        } catch {}
+      }
+    }
+  } catch (e) { console.warn('[remix] load failed', e) }
+}
+
 onMounted(() => {
   const src = route.query.src as string | undefined
   if (src) loadInto(onFile, decodeURIComponent(src))
+  // Also support remix=ID
+  loadRemixIfAny()
 })
 watch(() => route.query.src, (src) => {
   if (typeof src === 'string' && src) loadInto(onFile, decodeURIComponent(src))
+})
+watch(() => route.query.remix, (id) => {
+  if (typeof id === 'string' && id) loadRemixIfAny()
 })
 
 async function onGenerate(){

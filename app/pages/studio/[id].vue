@@ -16,6 +16,9 @@
 
     <div class="flex gap-3">
       <NuxtLink to="/studio" class="px-4 py-2 rounded-md bg-white/90 text-black">Back</NuxtLink>
+      <NuxtLink v-if="project" :to="{ path: '/mosaic', query: { remix: project.id } }" class="px-4 py-2 rounded-md bg-white/90 text-black hover:bg-white">
+        Remix in Editor
+      </NuxtLink>
     </div>
   </section>
 </template>

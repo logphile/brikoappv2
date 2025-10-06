@@ -112,3 +112,25 @@ export async function saveToGalleryPrivate(p: SavePayload) {
 
   return rec.id as string
 }
+
+export async function deleteProject(p: {
+  id: string
+  thumbnail_path?: string | null
+  original_path?: string | null
+  mosaic_path?: string | null
+}) {
+  const { $supabase } = useNuxtApp() as any
+  if (!$supabase) throw new Error('Supabase unavailable')
+  const { data: { user } } = await $supabase.auth.getUser()
+  if (!user) throw new Error('Not signed in')
+
+  // DB delete (RLS should enforce owner-only access)
+  const del = await $supabase.from('projects').delete().eq('id', p.id)
+  if (del.error) throw del.error
+
+  // Best-effort Storage cleanup (ignore errors)
+  const paths = [p.thumbnail_path, p.original_path, p.mosaic_path].filter(Boolean) as string[]
+  if (paths.length) {
+    try { await $supabase.storage.from('projects').remove(paths) } catch {}
+  }
+}
