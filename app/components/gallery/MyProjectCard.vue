@@ -36,11 +36,7 @@ onMounted(async () => {
 })
 
 async function onView() {
-  await router.push(`/studio/${props.p.id}`)
-}
-
-async function onRemix() {
-  // Use our Mosaic page for Photo-to-Bricks
+  // Open the Mosaic editor pre-loaded with this project
   await router.push({ path: '/mosaic', query: { remix: props.p.id } })
 }
 
@@ -72,8 +68,6 @@ async function onDelete() {
     <div class="px-3 pb-3 flex items-center gap-2">
       <button type="button" @click="onView"
         class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">View</button>
-      <button type="button" @click="onRemix"
-        class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">Remix</button>
       <button v-if="isOwner" type="button" @click="onDelete" title="Delete"
         class="ml-auto px-2 py-1.5 rounded-md border border-white/20 hover:bg-white/10 cursor-pointer">🗑️</button>
     </div>
