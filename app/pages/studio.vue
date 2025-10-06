@@ -41,7 +41,7 @@
               Nothing here yet. Use <em>Save to Gallery</em> on your builds.
             </div>
             <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              <OwnerProjectCard v-for="p in myGalleryItems" :key="p.id" :p="p" />
+              <MyProjectCard v-for="p in myGalleryItems" :key="p.id" :p="p" />
             </div>
           </template>
         </ClientOnly>
@@ -72,7 +72,7 @@ import { useProjects } from '@/composables/useProjects'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useMyGallery } from '@/composables/useMyGallery'
-import OwnerProjectCard from '@/components/gallery/OwnerProjectCard.vue'
+import MyProjectCard from '@/components/gallery/MyProjectCard.vue'
 
 // SEO
 useHead({
@@ -189,6 +189,8 @@ onMounted(async () => {
   await fetchUser()
   if (user.value) fetchMy()
   fetchCommPage()
+  // Refresh My Gallery after deletes triggered from cards
+  try { window.addEventListener('project:deleted', refreshMyGallery as any, { passive: true }) } catch {}
 })
 
 // Realtime: refresh My Gallery on any change to projects (server-side RLS limits to my rows)
@@ -206,6 +208,7 @@ watchEffect(() => {
 
 onBeforeUnmount(() => {
   try { if (galleryChannel) $supabase.removeChannel?.(galleryChannel) } catch {}
+  try { window.removeEventListener('project:deleted', refreshMyGallery as any) } catch {}
 })
 </script>
 
