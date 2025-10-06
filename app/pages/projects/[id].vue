@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useNuxtApp } from 'nuxt/app'
+import { useRoute, useNuxtApp, navigateTo } from 'nuxt/app'
 import { useMosaicStore } from '@/stores/mosaic'
 import { useToasts } from '@/composables/useToasts'
 
@@ -44,6 +44,9 @@ const { $supabase } = useNuxtApp() as any
 const mosaic = useMosaicStore()
 
 const pid = String(route.params.id || '')
+
+// Redirect legacy route to the new styled detail page
+onMounted(async () => { await navigateTo(`/studio/${pid}`) })
 const project = ref<any | null>(null)
 const projectPublic = ref(false)
 const err = ref('')
