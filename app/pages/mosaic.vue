@@ -1250,3 +1250,4 @@ watchDebounced(
       <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
     </section>
   </main>
+</template>

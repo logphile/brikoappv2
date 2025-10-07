@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useNuxtApp } from 'nuxt/app'
+import { useSupabaseClient, useSupabaseUser } from '#imports'
 
 // Minimal draft structure used by the editor
 type ProjectDraft = {
@@ -18,7 +18,8 @@ const props = defineProps<{
   onAfterSave?: (id: string) => void
 }>()
 
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 const saving = ref(false)
 const menuOpen = ref(false)
 const savedAt = ref<string | null>(null)
@@ -28,13 +29,11 @@ async function save() {
   if (saving.value) return
   saving.value = true
   try {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { data: { user } } = await $supabase.auth.getUser()
-    if (!user) { location.href = '/login'; return }
+    if (!user.value) { location.href = '/login'; return }
 
     const row = {
       id: props.draft.id ?? undefined,
-      user_id: user.id,
+      user_id: user.value.id,
       name: props.draft.title ?? null,
       thumbnail_path: props.draft.thumbnail_path,
       mosaic_path: props.draft.mosaic_path,
@@ -45,13 +44,13 @@ async function save() {
     let data: any = null
     let error: any = null
     if (row.id) {
-      ;({ data, error } = await $supabase
+      ;({ data, error } = await supabase
         .from('projects')
         .upsert(row, { onConflict: 'id' })
         .select('id')
         .single())
     } else {
-      ;({ data, error } = await $supabase
+      ;({ data, error } = await supabase
         .from('projects')
         .insert(row)
         .select('id')
