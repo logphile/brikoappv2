@@ -1,4 +1,5 @@
-import { useNuxtApp } from 'nuxt/app'
+// Use official Nuxt Supabase composable
+declare const useSupabaseClient: <T = any>() => T
 
 export type SavePayload = {
   name: string
@@ -14,10 +15,10 @@ export type SavePayload = {
 // Uses our actual columns: owner, title, preview_path, is_public.
 export async function saveToGalleryPrivate(p: SavePayload) {
   if (import.meta.server) throw new Error('saveToGalleryPrivate must run client-side')
-  const { $supabase } = useNuxtApp() as any
-  if (!$supabase) throw new Error('Supabase unavailable')
+  const supabase = useSupabaseClient<any>()
+  if (!supabase) throw new Error('Supabase unavailable')
   // Hard guard: require an authenticated session before touching DB
-  const { data: sessionRes } = await $supabase.auth.getSession()
+  const { data: sessionRes } = await supabase.auth.getSession()
   const session = sessionRes?.session
   if (!session?.user?.id) throw new Error('Not signed in')
 
@@ -55,7 +56,7 @@ export async function saveToGalleryPrivate(p: SavePayload) {
 
   // Try modern insert first, fall back to legacy if columns are missing
   let rec: any
-  let ins = await $supabase
+  let ins = await supabase
     .from('projects')
     .insert(modern)
     .select('id')
@@ -75,7 +76,7 @@ export async function saveToGalleryPrivate(p: SavePayload) {
       // Retry with legacy mapping
       try { console.table([{ user: session.user.id, to: 'projects', row_data_keys: Object.keys(legacy) }]) } catch {}
       try { console.log('[SAVE payload]', { user_id: legacy.owner, hasData: !!legacy.data, table: 'projects' }) } catch {}
-      ins = await $supabase
+      ins = await supabase
         .from('projects')
         .insert(legacy)
         .select('id')
@@ -100,7 +101,7 @@ export async function saveToGalleryPrivate(p: SavePayload) {
   }
 
   // Read-back guard so we only show success if RLS allows viewing our row
-  const echo = await $supabase
+  const echo = await supabase
     .from('projects')
     .select('id')
     .eq('id', rec.id)
@@ -119,18 +120,18 @@ export async function deleteProject(p: {
   original_path?: string | null
   mosaic_path?: string | null
 }) {
-  const { $supabase } = useNuxtApp() as any
-  if (!$supabase) throw new Error('Supabase unavailable')
-  const { data: { user } } = await $supabase.auth.getUser()
+  const supabase = useSupabaseClient<any>()
+  if (!supabase) throw new Error('Supabase unavailable')
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not signed in')
 
   // DB delete (RLS should enforce owner-only access)
-  const del = await $supabase.from('projects').delete().eq('id', p.id)
+  const del = await supabase.from('projects').delete().eq('id', p.id)
   if (del.error) throw del.error
 
   // Best-effort Storage cleanup (ignore errors)
   const paths = [p.thumbnail_path, p.original_path, p.mosaic_path].filter(Boolean) as string[]
   if (paths.length) {
-    try { await $supabase.storage.from('projects').remove(paths) } catch {}
+    try { await supabase.storage.from('projects').remove(paths) } catch {}
   }
 }

@@ -45,8 +45,10 @@ import { ref, onMounted } from 'vue'
 import { useNuxtApp, navigateTo } from 'nuxt/app'
 import { useProfile } from '@/composables/useProfile'
 import { useToasts } from '@/composables/useToasts'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 const { updateProfile } = useProfile()
 
 const loading = ref(true)
@@ -55,12 +57,12 @@ const handle = ref<string>('')
 const displayName = ref<string>('')
 
 onMounted(async () => {
-  if(!$supabase){ loading.value = false; return }
-  const u = (await $supabase.auth.getUser()).data.user
+  if(!supabase){ loading.value = false; return }
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ return navigateTo('/login') }
 
   try {
-    const { data, error } = await $supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('handle, display_name')
       .eq('user_id', u.id)
@@ -76,13 +78,13 @@ onMounted(async () => {
 })
 
 async function save(){
-  if(!$supabase) return
+  if(!supabase) return
   saving.value = true
   try {
     const payload: any = { handle: handle.value || null, display_name: displayName.value || null }
     await updateProfile(payload)
     // Nice-to-have: mirror to auth metadata for instant header/menu display
-    try { await $supabase.auth.updateUser({ data: { handle: payload.handle, display_name: payload.display_name } }) } catch {}
+    try { await supabase.auth.updateUser({ data: { handle: payload.handle, display_name: payload.display_name } }) } catch {}
     try { useToasts().show('Profile updated', 'success') } catch {}
     navigateTo('/projects')
   } catch (e:any) {

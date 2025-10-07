@@ -1,43 +1,45 @@
-import { useNuxtApp, useState } from 'nuxt/app'
+import { useState } from 'nuxt/app'
+// Nuxt auto-imported composable from @nuxtjs/supabase
+declare const useSupabaseClient: <T = any>() => T
 
 export type AuthUser = { id: string; email?: string }
 
 export const useAuth = () => {
-  const { $supabase } = useNuxtApp() as any
+  const supabase = useSupabaseClient<any>()
   const user = useState<AuthUser | null>('user', () => null)
   const loading = useState<boolean>('authLoading', () => true)
 
   const refreshUser = async () => {
-    if (!$supabase) {
+    if (!supabase) {
       user.value = null
       loading.value = false
       return
     }
-    const { data } = await $supabase.auth.getUser()
+    const { data } = await supabase.auth.getUser()
     user.value = data.user ? { id: data.user.id, email: data.user.email ?? undefined } : null
     loading.value = false
   }
 
   const loginWithMagicLink = async (email: string, redirectTo?: string) => {
-    if (!$supabase) throw new Error('Auth unavailable')
+    if (!supabase) throw new Error('Auth unavailable')
     const redirect = redirectTo || (process.client ? `${window.location.origin}/login` : '/login')
-    await $supabase.auth.signInWithOtp({
+    await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: redirect }
     })
   }
 
   const logout = async () => {
-    if (!$supabase) return
-    await $supabase.auth.signOut()
+    if (!supabase) return
+    await supabase.auth.signOut()
     user.value = null
   }
 
   if (process.client) {
     // initialize once
     if (loading.value) refreshUser()
-    if ($supabase) {
-      $supabase.auth.onAuthStateChange((_evt: any, session: any) => {
+    if (supabase) {
+      supabase.auth.onAuthStateChange((_evt: any, session: any) => {
         user.value = session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null
       })
     }

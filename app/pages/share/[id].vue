@@ -57,13 +57,15 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useNuxtApp, useHead } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 import { useToasts } from '@/composables/useToasts'
 
 type ProjectRow = { id: string; public_id: string; user_id: string; name: string; data?: any; is_public: boolean; created_at: string; updated_at: string }
 
 const route = useRoute()
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 
 const loading = ref(true)
 const error = ref('')
@@ -100,7 +102,7 @@ onMounted(async () => {
   loading.value = true
   try{
     const pid = String(route.params.id || '')
-    const { data: proj, error: pErr } = await $supabase.from('projects').select('id, public_id, user_id, name, data, is_public, created_at, updated_at').eq('public_id', pid).single()
+    const { data: proj, error: pErr } = await supabase.from('projects').select('id, public_id, user_id, name, data, is_public, created_at, updated_at').eq('public_id', pid).single()
     if(pErr) throw pErr
     if(!proj || !proj.is_public){ throw new Error('Project not found or not public.') }
     project.value = proj as ProjectRow
@@ -117,7 +119,7 @@ onMounted(async () => {
 })
 
 async function resolveOwnership(){
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   isOwner.value = !!(u && project.value && u.id === project.value.user_id)
 }
 
@@ -125,8 +127,8 @@ async function fetchLikes(){
   if(!project.value) return
   const p = project.value as ProjectRow
   const pid = p.id
-  const countReq = $supabase.from('likes').select('id', { count: 'exact', head: true }).eq('project_id', pid)
-  const meReq = (async ()=>{ const u = (await $supabase.auth.getUser()).data.user; if(!u) return { data: null } as any; return $supabase.from('likes').select('*').eq('project_id', pid).eq('user_id', u.id).maybeSingle() })()
+  const countReq = supabase.from('likes').select('id', { count: 'exact', head: true }).eq('project_id', pid)
+  const meReq = (async ()=>{ const u = (await supabase.auth.getUser()).data.user; if(!u) return { data: null } as any; return supabase.from('likes').select('*').eq('project_id', pid).eq('user_id', u.id).maybeSingle() })()
   const [{ count }, { data: me }] = await Promise.all([countReq, meReq])
   likes.value = count || 0
   likedByMe.value = !!me
@@ -134,23 +136,23 @@ async function fetchLikes(){
 
 async function toggleLike(){
   if(!project.value) return
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   if(likedByMe.value){
     likedByMe.value = false; likes.value = Math.max(0, likes.value - 1)
-    await $supabase.from('likes').delete().eq('project_id', project.value.id).eq('user_id', u.id)
+    await supabase.from('likes').delete().eq('project_id', project.value.id).eq('user_id', u.id)
   } else {
     likedByMe.value = true; likes.value = likes.value + 1
-    await $supabase.from('likes').insert({ project_id: project.value.id, user_id: u.id })
+    await supabase.from('likes').insert({ project_id: project.value.id, user_id: u.id })
   }
 }
 
 async function remix(){
   if(!project.value) return
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   try{
-    const { data: parent, error: pErr } = await $supabase.from('projects').select('id, public_id, name, data').eq('public_id', project.value.public_id).single()
+    const { data: parent, error: pErr } = await supabase.from('projects').select('id, public_id, name, data').eq('public_id', project.value.public_id).single()
     if(pErr) throw pErr
     const child = {
       user_id: u.id,
@@ -158,7 +160,7 @@ async function remix(){
       is_public: false,
       data: { ...(parent?.data || {}), parent_id: parent?.id, parent_public_id: parent?.public_id }
     }
-    const { error: iErr } = await $supabase.from('projects').insert(child).select().single()
+    const { error: iErr } = await supabase.from('projects').insert(child).select().single()
     if(iErr) throw iErr
     try{ useToasts().show('Remixed! Opening Projects…', 'success') }catch{}
     window.setTimeout(()=>{ location.href = '/projects' }, 300)
@@ -172,7 +174,7 @@ function copyLink(){
 
 async function fetchTags(){
   if(!project.value) return
-  const { data, error: err } = await $supabase.from('project_tags').select('project_id, tags:tag_id ( id, name, slug )').eq('project_id', project.value.id)
+  const { data, error: err } = await supabase.from('project_tags').select('project_id, tags:tag_id ( id, name, slug )').eq('project_id', project.value.id)
   if(err){ console.warn(err); return }
   const list: TagItem[] = []
   for(const row of (data||[])){
@@ -184,7 +186,7 @@ async function fetchTags(){
 
 async function searchTags(q: string){
   if(!q){ tagSuggestions.value = []; return }
-  const { data } = await $supabase.from('tags').select('*').ilike('name', `%${q}%`).limit(10)
+  const { data } = await supabase.from('tags').select('*').ilike('name', `%${q}%`).limit(10)
   tagSuggestions.value = (data||[])
 }
 
@@ -192,26 +194,26 @@ function slugify(name: string){ return name.toLowerCase().trim().replace(/[^a-z0
 
 async function createTag(name: string){
   const slug = slugify(name)
-  const { data, error } = await $supabase.from('tags').insert({ name, slug }).select().single()
+  const { data, error } = await supabase.from('tags').insert({ name, slug }).select().single()
   if(error){ console.warn(error); return }
   await attachTag({ id: data.id, name: data.name, slug: data.slug })
 }
 
 async function attachTag(tag: TagItem){
   if(!project.value) return
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   if(tags.value.some(t => (t.id||t.slug) === (tag.id||tag.slug))) return
-  const { error } = await $supabase.from('project_tags').insert({ project_id: project.value.id, tag_id: tag.id, user_id: u.id })
+  const { error } = await supabase.from('project_tags').insert({ project_id: project.value.id, tag_id: tag.id, user_id: u.id })
   if(error){ console.warn(error); return }
   tags.value = [...tags.value, tag]
 }
 
 async function detachTag(tag: TagItem){
   if(!project.value) return
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
-  const { error } = await $supabase.from('project_tags').delete().eq('project_id', project.value.id).eq('tag_id', tag.id!)
+  const { error } = await supabase.from('project_tags').delete().eq('project_id', project.value.id).eq('tag_id', tag.id!)
   if(error){ console.warn(error); return }
   tags.value = tags.value.filter(t => (t.id||t.slug) !== (tag.id||tag.slug))
 }
@@ -219,9 +221,9 @@ async function detachTag(tag: TagItem){
 async function submitReport(){
   const text = reportText.value.trim()
   if(!text || !project.value) return
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
-  const { error } = await $supabase.from('reports').insert({ project_id: project.value.id, user_id: u.id, reason: text })
+  const { error } = await supabase.from('reports').insert({ project_id: project.value.id, user_id: u.id, reason: text })
   if(error){ console.warn(error); try{ useToasts().show('Report failed', 'error') }catch{}; return }
   reportText.value = ''
   try{ useToasts().show('Thanks — we\'ll review.', 'success') }catch{}

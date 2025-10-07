@@ -168,12 +168,14 @@ export const useMosaicStore = defineStore('mosaic', {
 
     async saveProject() {
       if (!this.currentProjectId) return
-      const { $supabase } = useNuxtApp() as any
-      if (!$supabase) { try { useToasts().show('Auth unavailable — cannot save', 'error') } catch {} ; return }
+      // Nuxt auto-imported composable
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supabase = (globalThis as any).useSupabaseClient?.() || (useNuxtApp() as any)?.$supabase
+      if (!supabase) { try { useToasts().show('Auth unavailable — cannot save', 'error') } catch {} ; return }
       if (!this.grid || !this.width || !this.height) return
       try {
         // Save mosaic grid (JSON array of numbers)
-        const { error: mErr } = await $supabase.from('mosaics').insert({
+        const { error: mErr } = await supabase.from('mosaics').insert({
           project_id: this.currentProjectId,
           grid: Array.from(this.grid),
           palette_version: 'mvp'
@@ -182,7 +184,7 @@ export const useMosaicStore = defineStore('mosaic', {
         try { useToasts().show('Mosaic saved', 'success') } catch {}
         // Save tiling if present
         if (this.tilingResult) {
-          const { error: tErr } = await $supabase.from('tilings').insert({
+          const { error: tErr } = await supabase.from('tilings').insert({
             project_id: this.currentProjectId,
             bricks: this.tilingResult.bricks,
             bom: this.tilingResult.bom,
@@ -203,16 +205,18 @@ export const useMosaicStore = defineStore('mosaic', {
     },
 
     async loadProject(id: string) {
-      const { $supabase } = useNuxtApp() as any
-      if (!$supabase) return null
+      // Nuxt auto-imported composable
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supabase = (globalThis as any).useSupabaseClient?.() || (useNuxtApp() as any)?.$supabase
+      if (!supabase) return null
       this.currentProjectId = id
       // latest mosaic
-      const { data: m } = await $supabase.from('mosaics').select('*').eq('project_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle()
+      const { data: m } = await supabase.from('mosaics').select('*').eq('project_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle()
       if (m && Array.isArray(m.grid)) {
         const idx = new Uint16Array(m.grid as number[])
         this.setGrid(idx, this.settings.width, this.settings.height)
       }
-      const { data: t } = await $supabase.from('tilings').select('*').eq('project_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle()
+      const { data: t } = await supabase.from('tilings').select('*').eq('project_id', id).order('created_at', { ascending: false }).limit(1).maybeSingle()
       if (t && t.bom && t.bricks) {
         const est = typeof t.est_total === 'number' ? t.est_total : 0
         this.tilingResult = { bricks: t.bricks, bom: t.bom, estTotalCost: est }
@@ -223,8 +227,10 @@ export const useMosaicStore = defineStore('mosaic', {
 
     async uploadPreview() {
       if (!this.currentProjectId) return
-      const { $supabase } = useNuxtApp() as any
-      if (!$supabase) { try { useToasts().show('Auth unavailable — cannot upload', 'error') } catch {} ; return }
+      // Nuxt auto-imported composable
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const supabase = (globalThis as any).useSupabaseClient?.() || (useNuxtApp() as any)?.$supabase
+      if (!supabase) { try { useToasts().show('Auth unavailable — cannot upload', 'error') } catch {} ; return }
       const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
       if (!cvs) return
       let blob: Blob | null = null
@@ -238,9 +244,9 @@ export const useMosaicStore = defineStore('mosaic', {
       }
       if (!blob) return
       const storage_path = `previews/${this.currentProjectId}.png`
-      const { error: upErr } = await $supabase.storage.from('public').upload(storage_path, blob, { upsert: true, contentType: 'image/png' })
+      const { error: upErr } = await supabase.storage.from('public').upload(storage_path, blob, { upsert: true, contentType: 'image/png' })
       if (upErr) { console.error(upErr); try { useToasts().show('Upload failed', 'error') } catch {} ; return }
-      const { error: insErr } = await $supabase.from('assets').insert({ project_id: this.currentProjectId, kind: 'preview_png', storage_path })
+      const { error: insErr } = await supabase.from('assets').insert({ project_id: this.currentProjectId, kind: 'preview_png', storage_path })
       if (insErr) { console.error(insErr); try { useToasts().show('Upload recorded with warnings', 'error') } catch {} ; return }
       try { useToasts().show('Preview uploaded', 'success') } catch {}
     }

@@ -50,6 +50,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useNuxtApp, useHead, useRuntimeConfig } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 import { useToasts } from '@/composables/useToasts'
 import GalleryGrid from '@/components/gallery/GalleryGrid.vue'
 import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
@@ -79,7 +81,7 @@ useHead({
 // Data types from gallery view
 interface GalleryRow { id: string; public_id: string; name: string; kind: string; thumb_url?: string | null; likes: number; created_at: string; updated_at: string }
 
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 
 const sorts = ['Trending', 'New', 'Top'] as const
 const kinds = ['all', 'mosaic', 'voxel', 'avatar'] as const
@@ -228,8 +230,8 @@ async function fetchGallery(){
 }
 
 async function fetchReactionsByMe(){
-  if(!$supabase) return
-  const u = (await $supabase.auth.getUser()).data.user
+  if(!supabase) return
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ likedByMeMap.value = {}; savedByMeMap.value = {}; return }
   const ids = items.value.map(i => i.id)
   if(ids.length === 0) return
@@ -240,11 +242,11 @@ async function fetchReactionsByMe(){
 }
 
 async function fetchProjectTags(){
-  if(!$supabase) return
+  if(!supabase) return
   const ids = items.value.map(i => i.id)
   if(ids.length === 0) return
   // Join tags for the listed projects
-  const { data, error } = await $supabase.from('project_tags').select('project_id, tags:tag_id ( id, name, slug )').in('project_id', ids)
+  const { data, error } = await supabase.from('project_tags').select('project_id, tags:tag_id ( id, name, slug )').in('project_id', ids)
   if(error){ console.warn(error); return }
   const map: Record<string, TagItem[]> = {}
   for(const row of (data||[])){
@@ -264,8 +266,8 @@ function shareItem(it: any){
 
 async function likeItem(it: any){
   if(it?.isSeed){ return }
-  if(!$supabase){ return }
-  const u = (await $supabase.auth.getUser()).data.user
+  if(!supabase){ return }
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   likedByMeMap.value = { ...likedByMeMap.value, [it.id]: true }
   it.likes++
@@ -274,8 +276,8 @@ async function likeItem(it: any){
 
 async function unlikeItem(it: any){
   if(it?.isSeed){ return }
-  if(!$supabase){ return }
-  const u = (await $supabase.auth.getUser()).data.user
+  if(!supabase){ return }
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   likedByMeMap.value = { ...likedByMeMap.value, [it.id]: false }
   it.likes = Math.max(0, (it.likes||0) - 1)
@@ -284,8 +286,8 @@ async function unlikeItem(it: any){
 
 async function saveItem(it: any){
   if(it?.isSeed){ return }
-  if(!$supabase){ return }
-  const u = (await $supabase.auth.getUser()).data.user
+  if(!supabase){ return }
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   savedByMeMap.value = { ...savedByMeMap.value, [it.id]: true }
   it.saves = (it.saves || 0) + 1
@@ -294,8 +296,8 @@ async function saveItem(it: any){
 
 async function unsaveItem(it: any){
   if(it?.isSeed){ return }
-  if(!$supabase){ return }
-  const u = (await $supabase.auth.getUser()).data.user
+  if(!supabase){ return }
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   savedByMeMap.value = { ...savedByMeMap.value, [it.id]: false }
   it.saves = Math.max(0, (it.saves||0) - 1)
@@ -310,17 +312,17 @@ async function remixItem(_it: any){
 function slugify(name: string){ return name.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,32) }
 
 async function searchTags(q: string){
-  if(!$supabase) return
+  if(!supabase) return
   if(!q){ tagSuggestions.value = []; return }
-  const { data, error } = await $supabase.from('tags').select('*').ilike('name', `%${q}%`).limit(10)
+  const { data, error } = await supabase.from('tags').select('*').ilike('name', `%${q}%`).limit(10)
   if(error){ console.warn(error); return }
   tagSuggestions.value = (data || [])
 }
 
 async function createTag(name: string){
-  if(!$supabase) return
+  if(!supabase) return
   const slug = slugify(name)
-  const { data, error } = await $supabase.from('tags').insert({ name, slug }).select().single()
+  const { data, error } = await supabase.from('tags').insert({ name, slug }).select().single()
   if(error){ console.warn(error); return }
   selectedTags.value = [...selectedTags.value, { id: data.id, name: data.name, slug: data.slug }]
 }

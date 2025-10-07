@@ -1,5 +1,6 @@
 import { ref, computed, watch, onMounted } from 'vue'
-import { useNuxtApp } from 'nuxt/app'
+// Use official Nuxt Supabase composable
+declare const useSupabaseClient: <T = any>() => T
 
 export type MyProjectRow = {
   id: string
@@ -14,18 +15,18 @@ export type MyProjectRow = {
 
 // Reactive variant for client pages: waits for auth to be ready and exposes refresh()
 export function useMyGallery() {
-  const { $supabase } = useNuxtApp() as any
+  const supabase = useSupabaseClient<any>()
   const items = ref<MyProjectRow[]>([])
   const loading = ref(false)
   const userId = ref<string | null>(null)
   const ready = computed(() => !!userId.value)
 
   async function load() {
-    if (!$supabase || !ready.value) return
+    if (!supabase || !ready.value) return
     loading.value = true
     try {
       // Modern schema: user_id/name/thumbnail_path
-      const q = await $supabase
+      const q = await supabase
         .from('projects')
         .select('id, user_id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at')
         .eq('user_id', userId.value!)
@@ -41,8 +42,8 @@ export function useMyGallery() {
   }
   async function resolveUser(){
     try {
-      if (!$supabase) return
-      const { data } = await $supabase.auth.getUser()
+      if (!supabase) return
+      const { data } = await supabase.auth.getUser()
       userId.value = data?.user?.id || null
     } catch { userId.value = null }
   }

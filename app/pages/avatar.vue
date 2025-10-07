@@ -23,7 +23,7 @@
         <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
                        :disabled="!outReady" @click="doExportPng">Export PNG</ButtonOutline>
         <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
-                       :disabled="saving || !$supabase || !outReady" @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</ButtonOutline>
+                       :disabled="saving || !canShare || !outReady" @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</ButtonOutline>
         <label class="rounded-lg px-4 py-2 border border-[#FF0062] text-[#FF0062] bg-transparent text-sm cursor-pointer select-none hover:bg-[#343434] hover:text-white transition"
                :class="(!projectId || !canShare) ? 'opacity-50 pointer-events-none' : ''">
           <input type="checkbox" class="sr-only" v-model="isPublic" :disabled="!projectId || !canShare" @change="onTogglePublic" />
@@ -163,6 +163,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 import { useRoute } from 'vue-router'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import ButtonOutline from '@/components/ui/ButtonOutline.vue'
@@ -237,12 +239,12 @@ const bgSolid = ref('#111827')
 // Preview overlay now uses inline pink upload icon to match 3D Builder
 
 // Supabase and persistence
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 const saving = ref(false)
 const projectId = ref<string>('')
 const isPublic = ref(false)
 const shareToken = ref('')
-const canShare = computed(() => !!$supabase)
+const canShare = computed(() => !!supabase)
 const sharePath = computed(() => shareToken.value ? `/s/${shareToken.value}` : '')
 const { loadingFromSrc, loadInto } = useRemixLoader()
 const { createProject, makePublic: makePublicProject } = useProjects()
@@ -563,8 +565,8 @@ async function canvasToBlob(cvs: HTMLCanvasElement, type = 'image/png', quality?
 
 async function saveAvatar() {
   try {
-    if (!$supabase) { try { show('Saving unavailable (Supabase disabled)', 'error') } catch {}; return }
-    const u = await $supabase.auth.getUser()
+    if (!supabase) { try { show('Saving unavailable (Supabase disabled)', 'error') } catch {}; return }
+    const u = await supabase.auth.getUser()
     const uid = u?.data?.user?.id
     if (!uid) { try { show('Please login to save', 'error') } catch {}; return }
     if (!outCanvas.value) { try { await process() } catch {} }
@@ -575,7 +577,7 @@ async function saveAvatar() {
     if (!projectId.value) {
       const slug = `avatar-${rand(8)}`
       const insert = { user_id: uid, title: 'Avatar', slug, width: widthStuds.value, height: heightStuds.value }
-      const { data, error } = await $supabase.from('projects').insert(insert).select('*').single()
+      const { data, error } = await supabase.from('projects').insert(insert).select('*').single()
       if (error) throw error
       projectId.value = data.id
       isPublic.value = !!data.is_public
@@ -591,11 +593,11 @@ async function saveAvatar() {
     tctx.drawImage(outCanvas.value, 0, 0, 256, 256)
     const blob = await canvasToBlob(thumb, 'image/png')
     const path = `projects/${projectId.value}/avatar_${Date.now()}.png`
-    const up = await $supabase.storage.from('public').upload(path, blob, { upsert: true, contentType: 'image/png' })
+    const up = await supabase.storage.from('public').upload(path, blob, { upsert: true, contentType: 'image/png' })
     if (up.error) throw up.error
 
     // Record asset row
-    const { error: aerr } = await $supabase.from('assets').insert({ project_id: projectId.value, kind: 'avatar_png', storage_path: path })
+    const { error: aerr } = await supabase.from('assets').insert({ project_id: projectId.value, kind: 'avatar_png', storage_path: path })
     if (aerr) throw aerr
 
     try { show('Avatar saved', 'success') } catch {}
@@ -615,10 +617,10 @@ function onAvatarFiles(files: FileList){
 
 async function onTogglePublic() {
   try {
-    if (!$supabase || !projectId.value) return
+    if (!supabase || !projectId.value) return
     const updates: any = { is_public: isPublic.value }
     if (isPublic.value && !shareToken.value) updates.share_token = rand(12)
-    const { data, error } = await $supabase.from('projects').update(updates).eq('id', projectId.value).select('*').single()
+    const { data, error } = await supabase.from('projects').update(updates).eq('id', projectId.value).select('*').single()
     if (error) throw error
     shareToken.value = data.share_token || ''
     try { show(isPublic.value ? 'Project is public' : 'Project is private', 'success') } catch {}
@@ -653,8 +655,8 @@ const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
 async function publishToGallery(){
   if (!outReady.value) return
-  if (!$supabase) return
-  const { data: { user } } = await $supabase.auth.getUser()
+  if (!supabase) return
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
   publishing.value = true
   try {
@@ -667,13 +669,13 @@ async function publishToGallery(){
     const fname = `avatar-preview-${widthStuds.value}x${heightStuds.value}-${preset.value}.webp`
     const storagePath = `projects/${user.id}/${projectId}/${fname}`
     {
-      const { error: upErr } = await $supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
+      const { error: upErr } = await supabase.storage.from('projects').upload(storagePath, blob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
       if (upErr) throw upErr
     }
 
     // Insert private project row
     const payload: any = { id: projectId, user_id: user.id, title: 'Avatar', kind: 'avatar', status: 'private', preview_path: storagePath, tags: [] }
-    const ins = await $supabase.from('user_projects').insert(payload).select().single()
+    const ins = await supabase.from('user_projects').insert(payload).select().single()
     if (ins.error) throw ins.error
     galleryProjectId.value = (ins.data as any)?.id || projectId
     try { show('Saved to your Gallery (private)', 'success') } catch {}
@@ -685,8 +687,8 @@ async function publishToGallery(){
 
 async function makePublic(){
   if (!galleryProjectId.value) return
-  if (!$supabase) return
-  const { data: { user } } = await $supabase.auth.getUser()
+  if (!supabase) return
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) { location.href = '/login'; return }
   // Preconditions
   if (!widthStuds.value || !heightStuds.value) { try { show('Pick size first.', 'error') } catch {}; return }
