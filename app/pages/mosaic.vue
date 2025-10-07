@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { watchDebounced } from '@vueuse/core'
 import { useHead, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
@@ -32,9 +32,9 @@ import { generateBrickLinkWantedXML, downloadWantedXml } from '@/lib/bricklink/w
 import { useProjects } from '@/composables/useProjects'
 import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
-import { saveToGalleryPrivate } from '@/lib/gallery'
-import MosaicActions from '@/components/MosaicActions.vue'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
+import SaveRow from '@/components/editor/SaveRow.vue'
+import VisibilityPill from '@/components/editor/VisibilityPill.vue'
 
 const mosaic = useMosaicStore()
 const { public: cfg } = useRuntimeConfig() as any
@@ -204,11 +204,54 @@ function chipCls(active: boolean){
   ]
 }
 
-// Community Gallery publishing state
+// Community Gallery publishing state (legacy; kept for compatibility)
 const galleryProjectId = ref<string | null>(null)
 const publishing = ref(false)
-// Optional project title entered by user
+// Legacy optional project title (kept for compatibility with old flows)
 const projectName = ref('')
+
+// Unified draft state for SaveRow controls
+const draft = reactive({
+  id: null as string | null,
+  title: '' as string | null,
+  is_public: false,
+  thumbnail_path: null as string | null,
+  mosaic_path: null as string | null,
+  original_path: null as string | null,
+})
+
+// Dirty tracking via JSON snapshot
+const snapshot = ref<string>('')
+const isDirty = computed(() => JSON.stringify({
+  id: draft.id,
+  title: draft.title,
+  is_public: draft.is_public,
+  thumbnail_path: draft.thumbnail_path,
+  mosaic_path: draft.mosaic_path,
+  original_path: draft.original_path,
+}) !== snapshot.value)
+function markSaved(){
+  snapshot.value = JSON.stringify({
+    id: draft.id,
+    title: draft.title,
+    is_public: draft.is_public,
+    thumbnail_path: draft.thumbnail_path,
+    mosaic_path: draft.mosaic_path,
+    original_path: draft.original_path,
+  })
+}
+
+// Cmd/Ctrl+S shortcut to save when dirty
+const saveRowRef = ref<{ save: () => Promise<void> } | null>(null)
+function onKey(e: KeyboardEvent){
+  const isMod = e.ctrlKey || e.metaKey
+  if (isMod && e.key.toLowerCase() === 's') {
+    e.preventDefault()
+    if (isDirty.value) saveRowRef.value?.save?.()
+  }
+}
+onMounted(() => window.addEventListener('keydown', onKey))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 // Produce a PNG blob for Gallery save; prefer live canvas, fall back to DOM capture
 async function getMosaicPngBlob(): Promise<Blob> {
@@ -241,81 +284,7 @@ async function uploadPreview(file: Blob | File, path: string) {
   return (data as any)?.path || path
 }
 
-async function onSavePrivate(){
-  if (import.meta.server) return
-  if (!mosaic.tilingResult) return
-  const { $supabase } = useNuxtApp() as any
-  if (!$supabase) return
-  const { data: { user } } = await $supabase.auth.getUser()
-  if (!user) { location.href = '/login'; return }
-  publishing.value = true
-  try {
-    const title = (projectName.value || '').trim() || `Mosaic ${mosaic.width}×${mosaic.height}`
-    // Build preview PNG and upload to Storage under projects/<uid>/<id>/preview.png
-    const blob = await getMosaicPngBlob()
-    const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const key = `${user.id}/thumbs/${projectId}.png`
-    const storagePath = await uploadPreview(blob, key)
-    // Insert private row in base projects table
-    const id = await saveToGalleryPrivate({
-      name: title,
-      original_path: null,
-      thumbnail_path: storagePath,
-      mosaic_path: null,
-      width: mosaic.width || null,
-      height: mosaic.height || null,
-      data: { kind: 'mosaic' }
-    })
-    galleryProjectId.value = id
-    try { showToast('Saved to your Gallery (private)', 'success', 2200) } catch {}
-  } catch (e: any) {
-    console.error('[Save private failed]', e)
-    const msg = `${e?.code ?? ''} ${e?.message ?? 'Error'}`.trim()
-    try { showToast(`Save failed: ${msg}`, 'error', 3000) } catch {}
-  } finally { publishing.value = false }
-}
-
-async function makePublic(){
-  if (!galleryProjectId.value) { try { showToast('Save the project before publishing.', 'error', 2200) } catch {}; return }
-  const { $supabase } = useNuxtApp() as any
-  if (!$supabase) return
-  const { data: { user } } = await $supabase.auth.getUser()
-  if (!user) { location.href = '/login'; return }
-  try {
-    const title = `Mosaic ${mosaic.width || target.value.w}×${mosaic.height || target.value.h}`
-    const id = galleryProjectId.value as string
-    // Primary: projects table
-    let published = false
-    try {
-      const upd = await $supabase
-        .from('projects')
-        .update({ is_public: true, name: title })
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select('id')
-        .single()
-      if (!upd.error && upd.data) published = true
-    } catch (e:any) {
-      const msg = String(e?.message || '')
-      if (!(/relation\s+"?projects"?\s+does not exist/i.test(msg) || /42P01/.test(String(e?.code || '')))) {
-        throw e
-      }
-    }
-    // Fallback: user_projects publish flow
-    if (!published) {
-      const { publishProject } = useProjects()
-      await publishProject(id, { title })
-    }
-    try { showToast('Published!', 'success', 2200) } catch {}
-  } catch (e:any) {
-    console.error('[Make Public] error:', e)
-    const raw = e?.message ? String(e.message) : String(e)
-    const friendly = /duplicate key|unique constraint/i.test(raw)
-      ? 'That title/slug already exists—try another name.'
-      : raw
-    try { showToast(`Publish failed: ${friendly}`, 'error', 3000) } catch {}
-  }
-}
+// Legacy save/publish flows removed; handled by SaveRow
 
 // React to top surface for preview defaults
 watch(() => mosaic.settings.topSurface, (mode) => {
@@ -465,10 +434,20 @@ async function loadRemixIfAny(){
     if (!$supabase) return
     const { data, error } = await $supabase
       .from('projects')
-      .select('id, original_path, thumbnail_path, mosaic_path, name, width, height')
+      .select('id, original_path, thumbnail_path, mosaic_path, name, width, height, is_public')
       .eq('id', remixId)
       .single()
     if (error || !data) return
+    // Prefill draft from existing project
+    try {
+      draft.id = (data as any).id || null
+      draft.title = (data as any).name || ''
+      draft.is_public = !!(data as any).is_public
+      draft.original_path = (data as any).original_path || null
+      draft.mosaic_path = (data as any).mosaic_path || null
+      draft.thumbnail_path = (data as any).thumbnail_path || null
+      markSaved()
+    } catch {}
     const path = data.original_path || data.mosaic_path || data.thumbnail_path
     if (path) {
       const url = await signedUrl(path)
@@ -492,6 +471,8 @@ onMounted(() => {
   if (src) loadInto(onFile, decodeURIComponent(src))
   // Also support remix=ID
   loadRemixIfAny()
+  // Initialize dirty snapshot for a fresh draft
+  try { markSaved() } catch {}
 })
 watch(() => route.query.src, (src) => {
   if (typeof src === 'string' && src) loadInto(onFile, decodeURIComponent(src))
@@ -514,38 +495,6 @@ function choosePreset(w: number, h: number){
   mosaic.setTargetSize(w, h)
 }
 
-// Save & Publish
-async function onSavePublic(){
-  if (!target.value.w || !target.value.h) { try { showToast('Pick mosaic size first.', 'error', 2200) } catch {}; return }
-  if (!mosaic.tilingResult) { try { showToast('Generate a preview first.', 'error', 2200) } catch {}; return }
-  const { $supabase } = useNuxtApp() as any
-  const { data: { user } } = await $supabase.auth.getUser()
-  if (!user) { location.href = '/login'; return }
-  publishing.value = true
-  try {
-    const title = (projectName.value || '').trim() || `Mosaic ${target.value.w}×${target.value.h}`
-    // Build preview and upload
-    const blob = await getMosaicPngBlob()
-    const projectId = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
-    const key = `${user.id}/thumbs/${projectId}.png`
-    const storagePath = await uploadPreview(blob, key)
-    // Insert then publish
-    const id = await saveToGalleryPrivate({ name: title, original_path: null, thumbnail_path: storagePath, mosaic_path: null, width: target.value.w, height: target.value.h, data: { kind: 'mosaic' } })
-    // Make public
-    const upd = await $supabase.from('projects').update({ is_public: true, name: title }).eq('id', id).eq('user_id', user.id).select('id').single()
-    if (upd.error) throw upd.error
-    galleryProjectId.value = id
-    try { showToast('Published!', 'success', 2200) } catch {}
-  } catch (e:any) {
-    console.error('[Save & Publish] error:', e)
-    const raw = e?.message ? String(e.message) : String(e)
-    const friendly = /duplicate key|unique constraint/i.test(raw)
-      ? 'That title/slug already exists—try another name.'
-      : raw
-    try { showToast(`Publish failed: ${friendly}`, 'error', 3000) } catch {}
-  } finally { publishing.value = false }
-}
-
 // Snap sliders to nearest allowed value on commit and surface a subtle toast
 function snapDim(which: 'w'|'h'){
   const cur = target.value[which]
@@ -560,8 +509,7 @@ function snapDim(which: 'w'|'h'){
   }
 }
 
-async function saveNow(){ await mosaic.saveProject() }
-async function uploadPrev(){ await mosaic.uploadPreview() }
+// Legacy gallery save helpers removed; SaveRow handles saving
 
 // Exports under preview
 async function onDownloadPdf(){
@@ -870,9 +818,17 @@ watchDebounced(
             <InfoTip label="About output size">
               Bigger sizes use more bricks and show more detail.
             </InfoTip>
-            <div class="ml-auto text-xs bg-white/10 rounded-md overflow-hidden">
-              <button :class="['px-2 py-1', !showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=false">Simple</button>
-              <button :class="['px-2 py-1', showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=true">Advanced</button>
+            <div class="ml-auto flex items-center gap-2">
+              <div class="text-xs bg-white/10 rounded-md overflow-hidden">
+                <button :class="['px-2 py-1', !showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=false">Simple</button>
+                <button :class="['px-2 py-1', showAdvanced ? 'bg-white/20' : '']" @click="showAdvanced=true">Advanced</button>
+              </div>
+              <ButtonPrimary type="button" variant="pink" class="h-9 px-3 rounded-lg"
+                             :disabled="!previewReady || isWorking"
+                             :title="!previewReady ? 'Upload an image first' : ''"
+                             @click="onGenerate">
+                {{ mosaic.tilingResult ? 'Regenerate Mosaic' : 'Generate Mosaic' }}
+              </ButtonPrimary>
             </div>
           </div>
           <!-- Optional preset size chips -->
@@ -989,31 +945,6 @@ watchDebounced(
             </select>
           </div>
           <div class="h-px bg-white/5 my-3"></div>
-          <div class="mt-4">
-            <!-- Optional Title (used when saving/publishing) -->
-            <div class="mt-3">
-              <label class="block text-sm font-medium mb-1 text-[#2F3061]">Title</label>
-              <input
-                v-model="projectName"
-                type="text"
-                placeholder="Untitled"
-                maxlength="80"
-                class="w-full rounded-lg border border-[#343434]/20 bg-white text-[#2F3061] px-3 py-2 outline-none focus:ring-2 focus:ring-[#FF0062]"
-              />
-            </div>
-            <MosaicActions
-              :can-generate="previewReady"
-              :can-save="mosaicReady"
-              :can-publish="projectSaved"
-              :busy="isWorking"
-              @generate="onGenerate"
-              @savePrivate="onSavePrivate"
-              @saveAndPublish="onSavePublic"
-              @publish="makePublic"
-              @uploadPreview="uploadPrev"
-              @saveProjectLegacy="saveNow"
-            />
-          </div>
         </div>
             </Transition>
             </div>
@@ -1295,11 +1226,27 @@ watchDebounced(
           <EmptyMosaicPlaceholder v-else />
           </div>
         </div>
-        </div>
         </ClientOnly>
       </section>
       </Transition>
     </div>
-  </main>
-</template>
+    <!-- Bottom controls: Title + Visibility + Save -->
+    <section class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 space-y-3">
+      <!-- Row 1: Title + Visibility -->
+      <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
+        <div class="flex-1">
+          <label class="block text-sm text-white/70 mb-1">Title</label>
+          <input v-model="draft.title" type="text" placeholder="Give it a name (optional)"
+                 class="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-white
+                        placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500/70" />
+        </div>
+        <div class="sm:w-auto">
+          <label class="block text-sm text-white/70 mb-1">Visibility</label>
+          <VisibilityPill v-model="draft.is_public" />
+        </div>
+      </div>
 
+      <!-- Row 2: Save -->
+      <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
+    </section>
+  </main>
