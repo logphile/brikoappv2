@@ -238,6 +238,8 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 
 @layer utilities {
   /* Section heading 52px (responsive clamp) */
+  /* Ensure custom font family utility exists for @apply usage */
+  .font-brand { font-family: 'Bespoke Slab', Georgia, serif; }
   .h-section-52 { @apply font-brand font-bold leading-tight text-[clamp(32px,5.8vw,52px)]; }
   /* Section heading 46px (responsive clamp) */
   .h-section-46 { @apply font-brand font-bold leading-tight text-[clamp(30px,5.2vw,46px)]; }
