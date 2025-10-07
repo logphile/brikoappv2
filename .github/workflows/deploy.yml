@@ -53,7 +53,9 @@ jobs:
         run: pnpm run -s generate
 
       - name: Verify build output (must exist)
-        run: test -d app/.output/public
+        run: |
+          test -f app/.output/public/index.html
+          ls -la app/.output/public | head -50
 
       - name: List build output (debug)
         run: ls -la app/.output/public || true
@@ -63,7 +65,5 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOYMENT_TOKEN }}
           action: upload
-          app_location: app
-          output_location: app/.output/public
+          app_location: app/.output/public
           skip_app_build: true
-          skip_deploy_on_missing_secrets: true
