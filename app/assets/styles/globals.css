@@ -260,7 +260,7 @@ html, body { background: var(--brand-bg); color: var(--brand-text); }
 }
 
 /* Ensure app modals sit above any local z layers */
-.modal, .teleported { z-index: 2000; }
+.modal, .teleported { z-index: 9999; }
 
 /* Legal prose (readable copy on ivory) */
 @layer components {

@@ -31,7 +31,7 @@ onBeforeUnmount(() => {
 <template>
   <Teleport to="body">
     <Transition name="fade">
-      <div v-if="open" class="modal fixed inset-0 z-[2000]">
+      <div v-if="open" class="modal fixed inset-0 z-[9999]">
         <!-- backdrop -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="emit('close')" />
         <!-- container -->
