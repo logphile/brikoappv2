@@ -52,7 +52,7 @@
           </NuxtLink>
         </li>
 
-        <li><div class="my-1 h-px bg-white/15" /></li>
+        <li><div class="my-1 h-px bg-white/15"></div></li>
 
         <li class="relative group">
           <NuxtLink

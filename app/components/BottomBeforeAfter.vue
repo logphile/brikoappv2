@@ -39,7 +39,7 @@ useIntersectionObserver(sentinel, ([entry]) => { if (entry.isIntersecting) inVie
           </div>
         </div>
         <template #fallback>
-          <div class="mx-auto h-[420px] md:h-[560px] max-w-6xl rounded-2xl border border-white/10 bg-white/5" />
+          <div class="mx-auto h-[420px] md:h-[560px] max-w-6xl rounded-2xl border border-white/10 bg-white/5"></div>
         </template>
       </ClientOnly>
 

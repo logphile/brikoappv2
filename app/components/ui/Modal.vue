@@ -33,7 +33,7 @@ onBeforeUnmount(() => {
     <Transition name="fade">
       <div v-if="open" class="modal fixed inset-0 z-[9999]">
         <!-- backdrop -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="emit('close')" />
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="emit('close')"></div>
         <!-- container -->
         <div class="absolute inset-0 grid place-items-center p-4">
           <div
