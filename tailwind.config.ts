@@ -1,9 +1,12 @@
 import type { Config } from 'tailwindcss'
-export default <Partial<Config>>{
+export default {
   content: [
-    './app/**/*.{vue,ts,js}',
-    './components/**/*.{vue,ts,js}',
-    './pages/**/*.{vue,ts,js}'
+    './app/app.vue',
+    './app/components/**/*.{vue,js,ts}',
+    './app/layouts/**/*.vue',
+    './app/pages/**/*.vue',
+    './app/composables/**/*.{js,ts}',
+    './app/plugins/**/*.{js,ts}',
   ],
   theme: {
     extend: {
@@ -40,9 +43,12 @@ export default <Partial<Config>>{
           800: '#9D1961',
           900: '#7A144B'
         },
-        // Unified Briko palette
-        // Windsurf tokens (updated)
-        ink: '#111827',
+        // Briko UI v1 tokens
+        yellow: '#FFD808',
+        purple: '#2F3061',
+        ink: '#343434',
+        ivory: '#F5F4F1',
+        // legacy/existing extras kept
         mint: '#00E5A0',
         mintLight: '#2CF0B7',
         mintRing: '#1ad5a6',
@@ -67,17 +73,22 @@ export default <Partial<Config>>{
       },
       borderRadius: {
         '2xl': '1rem',
-        // Windsurf tokens: outer:inner = 2:1
+        // Briko UI v1 radii
+        card: '1rem',
+        pill: '9999px',
+        // legacy tokens retained
         'brk-outer': '16px',
         'brk-inner': '8px'
       },
       boxShadow: {
         'soft-card': '0 10px 30px -12px rgba(0,0,0,.35)',
-        // Windsurf soft
-        'soft': '0 6px 24px rgba(0,0,0,.25)',
-        // Mint glow surrounds with a subtle ring + drop shadow
+        // Briko UI v1 shadows
+        soft: '0 6px 30px rgba(0,0,0,.08)',
+        lift: '0 8px 24px rgba(0,0,0,.14)',
+        // Mint glow surrounds with a subtle ring + drop shadow (keep)
         'mint-glow': '0 0 0 3px rgba(58,229,159,0.25), 0 8px 24px rgba(58,229,159,0.15)'
       }
     }
-  }
-}
+  },
+  plugins: []
+} satisfies Config

@@ -29,4 +29,47 @@
   /* Optional: info “i” icon tint on yellow */
   .on-yellow .hint,
   .on-yellow .icon { @apply text-[#2F3061]/70; }
+
+  /* Briko UI v1 — global components */
+  /* Cards */
+  .soft-card { @apply rounded-card border border-white/50 bg-white/80 backdrop-blur shadow-soft; }
+  .soft-card-dark { @apply rounded-card border border-white/10 bg-white/[.06] shadow-soft; }
+
+  /* Section headers */
+  .section-title { @apply text-2xl font-extrabold text-purple tracking-tight; }
+  .section-kicker { @apply text-sm uppercase tracking-wide text-purple/70; }
+
+  /* Buttons (rounded rectangles only) */
+  .btn { @apply inline-flex items-center justify-center rounded-[14px] px-4 py-2 font-semibold transition shadow-soft active:translate-y-[1px]; }
+  .btn-primary   { @apply btn bg-pink text-ivory hover:brightness-110 disabled:opacity-50 disabled:pointer-events-none; }
+  .btn-secondary { @apply btn bg-purple text-yellow hover:brightness-110; }
+  .btn-ghost     { @apply btn bg-white/30 text-purple border border-white/70 hover:bg-white/50; }
+  .btn-outline   { @apply btn border-2 border-purple text-purple bg-transparent hover:bg-purple hover:text-yellow; }
+
+  /* Tabs (underlined pill) */
+  .tabbar { @apply flex gap-6 border-b border-white/20; }
+  .tab    { @apply pb-2 -mb-px text-purple/70 hover:text-purple; }
+  .tab-active { @apply border-b-4 border-pink text-purple font-bold; }
+
+  /* Segmented toggles (generic) */
+  .segmented { @apply inline-flex items-center rounded-pill p-1 bg-white/60 border border-white/80 backdrop-blur; }
+  .seg-btn   { @apply rounded-pill px-3 py-1.5 text-sm font-medium transition; }
+  .seg-on    { @apply bg-purple text-yellow shadow-sm; }
+  .seg-off   { @apply text-purple; }
+  .seg-btn:focus-visible { @apply outline-none ring-2 ring-pink; }
+
+  /* Form inputs */
+  .input-yellow { @apply w-full rounded-[14px] bg-white/80 text-purple placeholder-purple/60 border border-white/80 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink; }
+  .input-dark   { @apply w-full rounded-[14px] bg-white/5 text-white placeholder-white/50 border border-white/10 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink; }
+  .label-dark   { @apply text-white; }
+  .label-yellow { @apply text-purple; }
+
+  /* Chips (preset pills) */
+  .chip         { @apply rounded-pill px-3 py-1.5 border text-sm; }
+  .chip-on      { @apply bg-purple text-yellow border-purple; }
+  .chip-off     { @apply bg-white/50 text-purple border-white/70; }
+
+  /* Sliders on yellow */
+  .slider-track { @apply h-1.5 bg-white/50 rounded-full; }
+  .slider-fill  { @apply h-1.5 bg-pink rounded-full; }
 }
