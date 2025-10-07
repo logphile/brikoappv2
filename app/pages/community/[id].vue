@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useHead, useNuxtApp } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
 import { useToasts } from '@/composables/useToasts'
 
 const route = useRoute()
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 const { buildPreviewUrl, upsertReaction, deleteReaction } = useProjects()
 
 const project = ref<any | null>(null)
@@ -54,15 +56,15 @@ async function fetchDetail(){
   const id = String(route.params.id || '')
   try {
     loading.value = true
-    const { data, error: err } = await $supabase.from('user_projects_public').select('*').eq('id', id).maybeSingle()
+    const { data, error: err } = await supabase.from('user_projects_public').select('*').eq('id', id).maybeSingle()
     if (err) throw err
     project.value = data
     likes.value = data?.likes ?? 0
     saves.value = data?.saves ?? 0
     // reactions by current user
-    const u = (await $supabase.auth.getUser()).data.user
+    const u = (await supabase.auth.getUser()).data.user
     if (u) {
-      const { data: reacts } = await $supabase.from('reactions').select('*').eq('project_id', id).eq('user_id', u.id)
+      const { data: reacts } = await supabase.from('reactions').select('*').eq('project_id', id).eq('user_id', u.id)
       likedByMe.value = !!reacts?.find((r:any)=> r.rtype==='like')
       savedByMe.value = !!reacts?.find((r:any)=> r.rtype==='save')
     }
@@ -80,7 +82,7 @@ function share(){
 
 async function like(){
   const id = String(route.params.id || '')
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   if(likedByMe.value){ await deleteReaction(id, u.id, 'like'); likes.value = Math.max(0, likes.value - 1) }
   else { await upsertReaction(id, u.id, 'like'); likes.value = likes.value + 1 }
@@ -88,7 +90,7 @@ async function like(){
 }
 async function save(){
   const id = String(route.params.id || '')
-  const u = (await $supabase.auth.getUser()).data.user
+  const u = (await supabase.auth.getUser()).data.user
   if(!u){ location.href = '/login'; return }
   if(savedByMe.value){ await deleteReaction(id, u.id, 'save'); saves.value = Math.max(0, saves.value - 1) }
   else { await upsertReaction(id, u.id, 'save'); saves.value = saves.value + 1 }

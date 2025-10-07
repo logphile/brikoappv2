@@ -37,13 +37,14 @@ import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
-import { useBrikoSupabase } from '@/composables/useBrikoSupabase'
+// Nuxt auto-imported composables from @nuxtjs/supabase
+declare const useSupabaseClient: <T = any>() => T
 
 const router = useRouter()
 const route = useRoute()
 const { loginWithMagicLink } = useAuth()
 const { $supabase } = useNuxtApp() as any
-const supabase = useBrikoSupabase()
+const supabase = useSupabaseClient<any>()
 
 // SEO
 useHead({
@@ -124,11 +125,11 @@ const signInWithGoogle = async () => {
 }
 
 onMounted(async () => {
-  if(!$supabase) return
+  if(!supabase) return
   // Handle magic-link callback if present
-  try { await $supabase.auth.exchangeCodeForSession(window.location.href) } catch {}
+  try { await supabase.auth.exchangeCodeForSession(window.location.href) } catch {}
   // If already logged in, redirect to projects
-  const { data } = await $supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
   if(data.user) router.push(nextPath.value)
 })
 </script>

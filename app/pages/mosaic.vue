@@ -35,6 +35,9 @@ import { suggestStuds } from '@/composables/useAutoSize'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import SaveRow from '@/components/editor/SaveRow.vue'
 
+// Nuxt auto-imported composable from @nuxtjs/supabase
+declare const useSupabaseClient: <T = any>() => T
+
 const mosaic = useMosaicStore()
 const { public: cfg } = useRuntimeConfig() as any
 const route = useRoute()
@@ -301,9 +304,9 @@ async function getMosaicPngBlob(): Promise<Blob> {
 // upload helpers (client-side)
 async function uploadPreview(file: Blob | File, path: string) {
   if (import.meta.server) throw new Error('uploadPreview must run client-side')
-  const { $supabase } = useNuxtApp() as any
-  if (!$supabase) throw new Error('Supabase unavailable')
-  const { data, error } = await $supabase.storage.from('projects').upload(path, file, {
+  const supabase = useSupabaseClient<any>()
+  if (!supabase) throw new Error('Supabase unavailable')
+  const { data, error } = await supabase.storage.from('projects').upload(path, file, {
     upsert: true,
     contentType: (file as any)?.type || 'image/png',
     cacheControl: 'public, max-age=86400',
@@ -561,9 +564,9 @@ async function loadRemixIfAny() {
   const remixId = route.query.remix as string | undefined
   if (!remixId) return
   try {
-    const { $supabase } = useNuxtApp() as any
-    if (!$supabase) return
-    const { data, error } = await $supabase
+    const supabase = useSupabaseClient<any>()
+    if (!supabase) return
+    const { data, error } = await supabase
       .from('projects')
       .select('id, original_path, thumbnail_path, mosaic_path, name, width, height, is_public')
       .eq('id', remixId)

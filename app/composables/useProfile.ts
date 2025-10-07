@@ -1,4 +1,5 @@
-import { useNuxtApp } from 'nuxt/app'
+// Use official Nuxt Supabase composable
+declare const useSupabaseClient: <T = any>() => T
 
 export type ProfileRow = {
   user_id: string
@@ -7,13 +8,13 @@ export type ProfileRow = {
 }
 
 export const useProfile = () => {
-  const { $supabase } = useNuxtApp() as any
+  const supabase = useSupabaseClient<any>()
 
   async function getMyProfile(): Promise<ProfileRow | null> {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { data: { user } } = await $supabase.auth.getUser()
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
-    const { data, error } = await $supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('user_id, handle, display_name')
       .eq('user_id', user.id)
@@ -23,10 +24,10 @@ export const useProfile = () => {
   }
 
   async function updateMyProfile(payload: { handle?: string; display_name?: string }): Promise<void> {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { data: { user } } = await $supabase.auth.getUser()
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
-    const { error } = await $supabase
+    const { error } = await supabase
       .from('profiles')
       .update(payload)
       .eq('user_id', user.id)

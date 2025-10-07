@@ -30,11 +30,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useNuxtApp } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 import ProjectCard from '@/components/ProjectCard.vue'
 import { copy } from '@/lib/copy'
 import { useProjects } from '@/composables/useProjects'
 
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 const { buildPreviewUrl } = useProjects()
 
 const pageSize = 15 // 3 rows of 5 on xl
@@ -50,13 +52,13 @@ const displayItems = computed(() => items.value.filter(i => !broken.value.has(St
 
 
 async function fetchPage() {
-  if (!$supabase) { hasMore.value = false; return }
+  if (!supabase) { hasMore.value = false; return }
   loading.value = true
   const from = page * pageSize
   const to = from + pageSize - 1
 
   // Pull straight from the public view the gallery uses
-  const { data, error } = await $supabase
+  const { data, error } = await supabase
     .from('user_projects_public')
     .select('id, title, kind, preview_path, created_at, updated_at, likes, saves, handle, display_name')
     .order('created_at', { ascending: false })

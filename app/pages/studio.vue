@@ -49,6 +49,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
 import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
@@ -74,7 +76,7 @@ useHead({
   ]
 })
 
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient<any>()
 const { buildPreviewUrl } = useProjects()
 
 const user = ref<any>(null)
@@ -95,18 +97,18 @@ const hasMoreComm = ref(true)
 function bust(ts?: any){ try{ return new Date(ts || Date.now()).getTime() }catch{ return Date.now() } }
 
 async function fetchUser(){
-  if(!$supabase) return
-  const { data } = await $supabase.auth.getUser()
+  if(!supabase) return
+  const { data } = await supabase.auth.getUser()
   user.value = data?.user || null
 }
 
 async function fetchMy(){
-  if(!$supabase || !user.value) return
+  if(!supabase || !user.value) return
   loadingMy.value = true
   // Prefer new schema 'user_projects', fallback to 'projects'
   let rows: any[] = []
   try {
-    const { data, error } = await $supabase.from('user_projects')
+    const { data, error } = await supabase.from('user_projects')
       .select('id, title, preview_path, created_at, updated_at')
       .eq('user_id', user.value.id)
       .order('updated_at', { ascending: false })
@@ -115,7 +117,7 @@ async function fetchMy(){
     rows = data || []
   } catch (e) {
     // Fallback to base projects table using modern column names
-    const { data } = await $supabase.from('projects')
+    const { data } = await supabase.from('projects')
       .select('id, name as title, preview_path, created_at, updated_at')
       .eq('user_id', user.value.id)
       .order('updated_at', { ascending: false })
@@ -134,11 +136,11 @@ async function fetchMy(){
 function onCommImgError(_id?: string | number){ /* handled by ProjectCard visuals */ }
 
 async function fetchCommPage(){
-  if(!$supabase) { hasMoreComm.value = false; return }
+  if(!supabase) { hasMoreComm.value = false; return }
   loadingComm.value = true
   const from = commPage * pageSize
   const to = from + pageSize - 1
-  const { data, error } = await $supabase
+  const { data, error } = await supabase
     .from('user_projects_public')
     .select('id, title, kind, preview_path, created_at, updated_at')
     .order('created_at', { ascending: false })

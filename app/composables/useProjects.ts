@@ -1,10 +1,13 @@
-import { useNuxtApp, useRuntimeConfig } from 'nuxt/app'
+import { useRuntimeConfig } from 'nuxt/app'
+import type { SupabaseClient } from '@supabase/supabase-js'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 
 export type ProjectKind = 'mosaic' | 'voxel' | 'avatar'
 export type ReactionType = 'like' | 'save'
 
 export const useProjects = () => {
-  const { $supabase } = useNuxtApp() as any
+  const supabase = useSupabaseClient<SupabaseClient>()
   const { public: pub } = useRuntimeConfig()
 
   function buildPreviewUrl(previewPath: string) {
@@ -74,10 +77,10 @@ export const useProjects = () => {
   }
 
   async function uploadPreviewPNG(userId: string, projectId: string, canvas: HTMLCanvasElement | OffscreenCanvas) {
-    if (!$supabase) throw new Error('Supabase unavailable')
+    if (!supabase) throw new Error('Supabase unavailable')
     const blob = await canvasToBlob(canvas)
     const path = `projects/${userId}/${projectId}/preview.png`
-    const { error } = await $supabase.storage.from('projects').upload(path, blob, { upsert: true, contentType: 'image/png' })
+    const { error } = await supabase.storage.from('projects').upload(path, blob, { upsert: true, contentType: 'image/png' })
     if (error) throw error
     return path as string
   }
@@ -93,35 +96,35 @@ export const useProjects = () => {
     tags?: string[]
     status?: 'private' | 'public'
   }) {
-    if (!$supabase) throw new Error('Supabase unavailable')
+    if (!supabase) throw new Error('Supabase unavailable')
     const payload = { ...input, status: input.status || 'private' }
-    const { data, error } = await $supabase.from('user_projects').insert(payload).select().single()
+    const { data, error } = await supabase.from('user_projects').insert(payload).select().single()
     if (error) throw error
     return data
   }
 
   async function makePublic(projectId: string, userId: string) {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { error } = await $supabase.from('user_projects').update({ status: 'public' }).eq('id', projectId).eq('user_id', userId)
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { error } = await supabase.from('user_projects').update({ status: 'public' }).eq('id', projectId).eq('user_id', userId)
     if (error) throw error
     return true
   }
 
   async function queryPublicProjects(sort: 'Trending'|'New'|'Top', limit = 60) {
-    if (!$supabase) throw new Error('Supabase unavailable')
+    if (!supabase) throw new Error('Supabase unavailable')
     let orderKey = 'created_at'
     if (sort === 'Trending') orderKey = 'trend_score'
     if (sort === 'Top') orderKey = 'popularity'
     // Attempt extended select with ordering; if it fails (missing columns), fall back to a minimal schema without ordering
     const extended = 'id, title, kind, preview_path, created_at, updated_at, likes, saves, bricks, cost_est, tags, handle, display_name, original_preview_path, original_path, status, is_public'
-    const first = await $supabase
+    const first = await supabase
       .from('user_projects_public')
       .select(extended)
       .order(orderKey as any, { ascending: false })
       .limit(limit)
     if (first.error) {
       const minimal = 'id, title, kind, preview_path, created_at, updated_at'
-      const second = await $supabase
+      const second = await supabase
         .from('user_projects_public')
         .select(minimal)
         .limit(limit)
@@ -131,8 +134,8 @@ export const useProjects = () => {
   }
 
   async function getReactionsByMe(projectIds: string[], userId: string) {
-    if (!$supabase || !projectIds.length) return { likes: {}, saves: {} } as { likes: Record<string, boolean>, saves: Record<string, boolean> }
-    const { data, error } = await $supabase.from('reactions').select('project_id, rtype').in('project_id', projectIds).eq('user_id', userId)
+    if (!supabase || !projectIds.length) return { likes: {}, saves: {} } as { likes: Record<string, boolean>, saves: Record<string, boolean> }
+    const { data, error } = await supabase.from('reactions').select('project_id, rtype').in('project_id', projectIds).eq('user_id', userId)
     if (error) return { likes: {}, saves: {} }
     const likes: Record<string, boolean> = {}
     const saves: Record<string, boolean> = {}
@@ -146,14 +149,14 @@ export const useProjects = () => {
   }
 
   async function upsertReaction(projectId: string, userId: string, rtype: ReactionType) {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { error } = await $supabase.from('reactions').upsert({ project_id: projectId, user_id: userId, rtype })
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { error } = await supabase.from('reactions').upsert({ project_id: projectId, user_id: userId, rtype })
     if (error) throw error
   }
 
   async function deleteReaction(projectId: string, userId: string, rtype: ReactionType) {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { error } = await $supabase.from('reactions').delete().eq('project_id', projectId).eq('user_id', userId).eq('rtype', rtype)
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { error } = await supabase.from('reactions').delete().eq('project_id', projectId).eq('user_id', userId).eq('rtype', rtype)
     if (error) throw error
   }
 
@@ -168,13 +171,13 @@ export const useProjects = () => {
   }
 
   async function ensureUniqueSlug(title: string) {
-    if (!$supabase) return slugify(title)
+    if (!supabase) return slugify(title)
     const base = slugify(title || 'untitled')
     let slug = base, n = 2
     // If slug column doesn't exist, this select will error — we fail open
     while (true) {
       try {
-        const { count, error } = await $supabase
+        const { count, error } = await supabase
           .from('user_projects')
           .select('id', { count: 'exact', head: true })
           .eq('slug', slug)
@@ -189,9 +192,9 @@ export const useProjects = () => {
   }
 
   async function ensurePublicCover(projectId: string, _userId?: string) {
-    if (!$supabase) throw new Error('Supabase unavailable')
+    if (!supabase) throw new Error('Supabase unavailable')
     // Fetch preview_path for this project
-    const { data, error } = await $supabase
+    const { data, error } = await supabase
       .from('user_projects')
       .select('preview_path')
       .eq('id', projectId)
@@ -201,13 +204,13 @@ export const useProjects = () => {
     if (!previewPath) return null
     const publicUrl = buildPreviewUrl(previewPath)
     // Best-effort: set cover_url if the column exists
-    try { await $supabase.from('user_projects').update({ cover_url: publicUrl }).eq('id', projectId) } catch {}
+    try { await supabase.from('user_projects').update({ cover_url: publicUrl }).eq('id', projectId) } catch {}
     return publicUrl
   }
 
   async function publishProject(projectId: string, opts?: { title?: string }) {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { data: { user } } = await $supabase.auth.getUser()
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user?.id) throw new Error('Not authenticated')
     if (!projectId) throw new Error('Missing projectId')
 
@@ -219,7 +222,7 @@ export const useProjects = () => {
 
     // 1) Minimal update: set status public (should exist in new schema)
     {
-      const { error } = await $supabase
+      const { error } = await supabase
         .from('user_projects')
         .update({ status: 'public' })
         .eq('id', projectId)
@@ -228,7 +231,7 @@ export const useProjects = () => {
     }
     // 2) Optional: set slug if column exists (propagate unique constraint errors)
     if (slug) {
-      const { error } = await $supabase
+      const { error } = await supabase
         .from('user_projects')
         .update({ slug })
         .eq('id', projectId)
@@ -242,7 +245,7 @@ export const useProjects = () => {
     // 3) Optional: set published_at if column exists; swallow missing-column errors
     {
       const ts = new Date().toISOString()
-      const { error } = await $supabase
+      const { error } = await supabase
         .from('user_projects')
         .update({ published_at: ts })
         .eq('id', projectId)
@@ -274,8 +277,8 @@ export const useProjects = () => {
     cost_est_usd?: number
     makePublic?: boolean
   }) {
-    if (!$supabase) throw new Error('Supabase unavailable')
-    const { data: { user } } = await $supabase.auth.getUser()
+    if (!supabase) throw new Error('Supabase unavailable')
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
 
     const id: string = (globalThis.crypto as any)?.randomUUID?.() || Math.random().toString(36).slice(2)
@@ -293,7 +296,7 @@ export const useProjects = () => {
 
     // Upload preview first to satisfy NOT NULL preview_path schemas
     {
-      const { error } = await $supabase.storage.from('projects').upload(storagePath, blob!, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
+      const { error } = await supabase.storage.from('projects').upload(storagePath, blob!, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
       if (error) throw error
     }
 
@@ -304,7 +307,7 @@ export const useProjects = () => {
         const origBlob = await fileToScaledWebP(input.sourceFile, 800)
         const origName = `original-preview-800w-v1.webp`
         origPath = `projects/${user.id}/${id}/${origName}`
-        const { error: origErr } = await $supabase.storage.from('projects').upload(origPath, origBlob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
+        const { error: origErr } = await supabase.storage.from('projects').upload(origPath, origBlob, { upsert: true, contentType: 'image/webp', cacheControl: 'public, max-age=86400' })
         if (origErr) { console.warn('[createProject] original preview upload failed', origErr) }
       } catch (e) {
         console.warn('[createProject] original preview generation failed', e)
@@ -325,7 +328,7 @@ export const useProjects = () => {
       tags: []
     }
     let rec: any
-    let { data, error } = await $supabase.from('user_projects').insert(payload1).select().single()
+    let { data, error } = await supabase.from('user_projects').insert(payload1).select().single()
     if (error) {
       // Fallback: older schema with is_public/published_at
       const payload2: any = {
@@ -337,12 +340,12 @@ export const useProjects = () => {
         published_at: new Date().toISOString(),
         preview_path: storagePath
       }
-      const res2 = await $supabase.from('user_projects').insert(payload2).select().single()
+      const res2 = await supabase.from('user_projects').insert(payload2).select().single()
       if (res2.error) throw res2.error
       rec = res2.data
       // Best-effort: set original_preview_path if the column exists
       if (origPath) {
-        try { await $supabase.from('user_projects').update({ original_preview_path: origPath }).eq('id', id).eq('user_id', user.id) } catch {}
+        try { await supabase.from('user_projects').update({ original_preview_path: origPath }).eq('id', id).eq('user_id', user.id) } catch {}
       }
     } else {
       rec = data
