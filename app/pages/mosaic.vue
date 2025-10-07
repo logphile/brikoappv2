@@ -116,6 +116,7 @@ useHead({
 // UI button enable/disable states (for MosaicActions)
 const previewReady = computed(() => !!grid.value && mosaic.status !== 'tiling')
 const mosaicReady = computed(() => !!mosaic.tilingResult)
+const isSaving = ref(false)
 const projectSaved = computed(() => !!galleryProjectId.value)
 const isWorking = computed(
   () =>
@@ -280,6 +281,12 @@ function onKey(e: KeyboardEvent) {
   }
 }
 onMounted(() => window.addEventListener('keydown', onKey))
+
+async function onSave(){
+  if (!isDirty.value) { return }
+  isSaving.value = true
+  try { await saveRowRef.value?.save?.() } finally { isSaving.value = false }
+}
 onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 // Produce a PNG blob for Gallery save; prefer live canvas, fall back to DOM capture
@@ -1202,6 +1209,23 @@ watchDebounced(
 
                   <!-- Precise inputs -->
                   <div class="h-px bg-white/5 my-3"></div>
+                  <!-- Step 2 footer row -->
+                  <div class="mt-6 flex items-center justify-end gap-3 on-yellow">
+                    <button
+                      class="btn-primary rounded-full px-5 py-2"
+                      :disabled="isSaving || !mosaicReady"
+                      @click="onSave"
+                      aria-label="Save mosaic to My Gallery"
+                      title="Save to My Gallery"
+                    >
+                      <span v-if="!isSaving">Save</span>
+                      <span v-else>Saving…</span>
+                    </button>
+                  </div>
+                  <!-- Hidden SaveRow to reuse save() logic without showing bottom bar -->
+                  <div class="hidden" aria-hidden="true">
+                    <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
+                  </div>
                   <!-- Step 2: Title + Visibility (on yellow) -->
                   <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] on-yellow">
                     <label class="block">
@@ -1930,9 +1954,6 @@ watchDebounced(
         </section>
       </Transition>
     </div>
-    <!-- Bottom controls: Save only (Title + Visibility moved to Step 2) -->
-    <section class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
-      <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
-    </section>
+    
   </main>
 </template>
