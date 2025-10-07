@@ -10,5 +10,10 @@ export default defineNuxtConfig({
   nitro: {
     ...(rootConfig as any)?.nitro,
     preset: 'static'
+  },
+  app: {
+    ...(rootConfig as any)?.app,
+    baseURL: '/',
+    buildAssetsDir: '/_nuxt/',
   }
-})
+} as any)
