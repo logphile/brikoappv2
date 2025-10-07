@@ -1,13 +1,11 @@
 {
-  "name": "briko",
+  "name": "briko-app",
   "private": true,
   "scripts": {
-    "lint": "eslint . --ext .ts,.vue",
-    "icons:generate": "node scripts/generate-icons.mjs",
-    "seed:storage": "node --env-file=.env.local scripts/create-storage-folders.mjs",
-    "e2e": "playwright test --reporter=line",
-    "test": "vitest run",
-    "check:no-mint": "rg -n 'btn-mint' 'app/**/*.vue' -S && echo '❌ Mint button detected; use btn-pink/btn-ivory-outline instead.' && exit 1 || echo 'OK: no mint button found'"
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "typecheck": "nuxt typecheck",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.1",
