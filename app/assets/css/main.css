@@ -32,8 +32,8 @@
 
   /* Briko UI v1 — global components */
   /* Cards */
-  .soft-card { @apply rounded-card border border-white/50 bg-white/80 backdrop-blur shadow-soft; }
-  .soft-card-dark { @apply rounded-card border border-white/10 bg-white/[.06] shadow-soft; }
+  .soft-card { @apply rounded-2xl border border-white/50 bg-white/80 backdrop-blur shadow-soft; }
+  .soft-card-dark { @apply rounded-2xl border border-white/10 bg-white/[.06] shadow-soft; }
 
   /* Section headers */
   .section-title { @apply text-2xl font-extrabold text-purple tracking-tight; }
@@ -52,8 +52,8 @@
   .tab-active { @apply border-b-4 border-pink text-purple font-bold; }
 
   /* Segmented toggles (generic) */
-  .segmented { @apply inline-flex items-center rounded-pill p-1 bg-white/60 border border-white/80 backdrop-blur; }
-  .seg-btn   { @apply rounded-pill px-3 py-1.5 text-sm font-medium transition; }
+  .segmented { @apply inline-flex items-center rounded-full p-1 bg-white/60 border border-white/80 backdrop-blur; }
+  .seg-btn   { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
   .seg-on    { @apply bg-purple text-yellow shadow-sm; }
   .seg-off   { @apply text-purple; }
   .seg-btn:focus-visible { @apply outline-none ring-2 ring-pink; }
