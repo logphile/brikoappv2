@@ -62,7 +62,7 @@ const topAfter  = `/home-1-mosaic.png?v=${v}`
               <ClientOnly>
                 <BeforeAfterSlider :before-src="topBefore" :after-src="topAfter" :initial="0.5" />
                 <template #fallback>
-                  <div class="h-[360px] md:h-[460px] w-full bg-white/5 border border-white/10 rounded-2xl" />
+                  <div class="h-[360px] md:h-[460px] w-full bg-white/5 border border-white/10 rounded-2xl"></div>
                 </template>
               </ClientOnly>
               <div class="pointer-events-none absolute inset-0 rounded-[22px] ring-1 ring-[#343434]/20"></div>
