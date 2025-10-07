@@ -3,7 +3,14 @@ name: build and deploy
 on:
   push:
     branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -55,6 +62,14 @@ jobs:
           # ensure lockfile is available inside /app for frozen install
           cp ../pnpm-lock.yaml pnpm-lock.yaml
           pnpm install --frozen-lockfile
+
+      - name: Tailwind probe
+        run: |
+          node -e "console.log('tailwind config exists:', require('fs').existsSync('tailwind.config.ts') || require('fs').existsSync('tailwind.config.js'))"
+          rg -n "text-ink|@apply" assets/css assets/styles || true
+
+      - name: Lint (non-blocking)
+        run: pnpm run lint || true
 
       - name: Typecheck (non-blocking)
         run: pnpm run typecheck
