@@ -20,6 +20,9 @@ export default <Partial<Config>>{
         sans: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
       },
       colors: {
+        brand: {
+          purple: '#2F3061'
+        },
         // Base ink text color (used via @apply text-ink)
         ink: '#343434',
         mint: '#00E5A0',
