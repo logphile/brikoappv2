@@ -32,7 +32,8 @@
     "to-ico": "^1.1.5",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
-    "vue-eslint-parser": "^10.2.0"
+    "vue-eslint-parser": "^10.2.0",
+    "@nuxtjs/supabase": "^1.0.0"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

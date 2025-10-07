@@ -22,7 +22,7 @@
       <div class="h-px flex-1 bg-[#2F3061]/15"></div>
     </div>
 
-    <button class="btn-pink focus-cyber w-full" @click="loginWithGoogle">
+    <button class="btn-pink focus-cyber w-full" @click="signInWithGoogle">
       Continue with Google
     </button>
 
@@ -37,11 +37,13 @@ import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
+import { useBrikoSupabase } from '@/composables/useBrikoSupabase'
 
 const router = useRouter()
 const route = useRoute()
 const { loginWithMagicLink } = useAuth()
 const { $supabase } = useNuxtApp() as any
+const supabase = useBrikoSupabase()
 
 // SEO
 useHead({
@@ -107,13 +109,15 @@ async function submit(){
   }
 }
 
-async function loginWithGoogle(){
+const signInWithGoogle = async () => {
   try {
-    const rt = redirectTo.value
-    await $supabase.auth.signInWithOAuth({
+    if (process.server) return
+    const redirectTo = `${window.location.origin}/auth/callback`
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: rt, queryParams: { prompt: 'consent' } }
+      options: { redirectTo, queryParams: { prompt: 'consent', access_type: 'offline' } }
     })
+    if (oauthError) throw oauthError
   } catch (e: any) {
     error.value = e?.message || 'Google login failed'
   }

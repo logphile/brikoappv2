@@ -7,10 +7,24 @@ export default defineNuxtConfig({
   ...rootConfig,
   ssr: false,
   srcDir: '.',
+  modules: [
+    ...(((rootConfig as any)?.modules) || []),
+    '@nuxtjs/supabase'
+  ],
   css: [
     ...(((rootConfig as any)?.css) || []),
     '~/assets/css/main.css'
   ],
+  runtimeConfig: {
+    ...((rootConfig as any)?.runtimeConfig || {}),
+    public: {
+      ...(((rootConfig as any)?.runtimeConfig?.public) || {}),
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
+      // keep both keys for compatibility with custom plugins and the module
+      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
+      supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
+    }
+  },
   nitro: {
     ...(rootConfig as any)?.nitro,
     preset: 'static'
