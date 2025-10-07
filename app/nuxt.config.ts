@@ -1,9 +1,14 @@
 import { defineNuxtConfig } from 'nuxt/config'
 import rootConfig from '../nuxt.config'
 
-// Reuse root config but run Nuxt with app/ as the project root
+// Reuse root config but run Nuxt with app/ as the project root.
+// Force SPA for SWA static hosting and ensure Nitro static preset.
 export default defineNuxtConfig({
   ...rootConfig,
-  // When running inside /app, the source root is the current directory
+  ssr: false,
   srcDir: '.',
+  nitro: {
+    ...(rootConfig as any)?.nitro,
+    preset: 'static'
+  }
 })
