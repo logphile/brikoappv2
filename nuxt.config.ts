@@ -59,7 +59,8 @@ export default defineNuxtConfig({
     '@/assets/css/buttons.css',
     '@/assets/css/forms.css',
     '@/assets/css/components.css',
-    '@/assets/css/compare-slider.css'
+    '@/assets/css/compare-slider.css',
+    '@/assets/css/main.css'
   ],
   postcss: {
     plugins: {
