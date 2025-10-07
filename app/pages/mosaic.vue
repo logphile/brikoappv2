@@ -1927,25 +1927,8 @@ watchDebounced(
         </section>
       </Transition>
     </div>
-    <!-- Bottom controls: Title + Visibility + Save -->
-    <section class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 space-y-3">
-      <!-- Row 1: Title + Visibility -->
-      <div class="flex flex-col sm:flex-row gap-3 sm:items-center">
-        <div class="flex-1">
-          <label class="block text-sm text-white/70 mb-1">Title</label>
-          <input
-            v-model="draft.title"
-            type="text"
-            placeholder="Give it a name (optional)"
-            class="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500/70"
-          />
-        </div>
-        <div class="sm:w-auto">
-          <label class="block text-sm text-white/70 mb-1">Visibility</label>
-          <VisibilityPill v-model="draft.is_public" />
-        </div>
-      </div>
-      <!-- Row 2: Save -->
+    <!-- Bottom controls: Save only (Title + Visibility moved to Step 2) -->
+    <section class="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4">
       <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
     </section>
   </main>

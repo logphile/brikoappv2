@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   srcDir: '.',
   css: [
     ...(((rootConfig as any)?.css) || []),
-    '@/assets/css/main.css'
+    '~/assets/css/main.css'
   ],
   nitro: {
     ...(rootConfig as any)?.nitro,
