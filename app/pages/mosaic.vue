@@ -900,7 +900,7 @@ watchDebounced(
               <label class="block text-sm">Top surface</label>
               <InfoTip label="About top surface">
                 <div>
-                  Studded = plates (classic LEGO look).<br/>
+                  Studded = plates (classic LEGO look).<br>
                   Smooth = tiles (poster finish).
                 </div>
               </InfoTip>
@@ -922,7 +922,7 @@ watchDebounced(
                 </select>
               </div>
               <label class="ml-3 flex items-center gap-1 select-none">
-                <input type="checkbox" v-model="showGrid" />
+                <input type="checkbox" v-model="showGrid">
                 <span>Show stud grid</span>
               </label>
             </div>
@@ -979,7 +979,7 @@ watchDebounced(
               </a>
             </div>
 
-            <hr class="my-3 border-t border-[color:var(--ivory-border)]" />
+            <hr class="my-3 border-t border-[color:var(--ivory-border)]">
 
             <!-- BOM list + mobile sticky CTA wrapper -->
             <div class="relative -mx-4 mt-3 px-4">
@@ -1032,7 +1032,7 @@ watchDebounced(
             </div>
             <div class="ml-auto flex items-center gap-3">
               <label v-if="tab==='2D'" class="inline-flex items-center gap-2 text-xs text-white/80" :title="copy.mosaic.controls.showPlateOutlinesHelp">
-                <input type="checkbox" v-model="showPlates" />
+                <input type="checkbox" v-model="showPlates">
                 <span>{{ copy.mosaic.controls.showPlateOutlines }}</span>
               </label>
               <div v-if="mosaic.status==='error'" class="text-xs text-red-300 bg-red-500/10 px-3 py-1.5 rounded-full">
@@ -1220,7 +1220,7 @@ watchDebounced(
           </div>
 
           <!-- Fallback 1: show uploaded image before mosaic is ready (decorative) -->
-          <img v-else-if="sourceImgUrl" :src="sourceImgUrl" alt="" role="presentation" class="max-w-full max-h-full object-contain pointer-events-none select-none" />
+          <img v-else-if="sourceImgUrl" :src="sourceImgUrl" alt="" role="presentation" class="max-w-full max-h-full object-contain pointer-events-none select-none">
 
           <!-- Fallback 2: empty state before any upload -->
           <EmptyMosaicPlaceholder v-else />
@@ -1238,14 +1238,14 @@ watchDebounced(
           <label class="block text-sm text-white/70 mb-1">Title</label>
           <input v-model="draft.title" type="text" placeholder="Give it a name (optional)"
                  class="w-full rounded-xl bg-white/10 border border-white/20 px-3 py-2 text-white
-                        placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500/70" />
+                        placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-pink-500/70">
         </div>
         <div class="sm:w-auto">
           <label class="block text-sm text-white/70 mb-1">Visibility</label>
           <VisibilityPill v-model="draft.is_public" />
         </div>
-      </div>
 
+      </div>
       <!-- Row 2: Save -->
       <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
     </section>
