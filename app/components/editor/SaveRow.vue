@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useSupabaseClient, useSupabaseUser } from '#imports'
+import { useSupabaseClient } from '~/composables/useSupabaseClient'
+import { useSupabaseUser } from '~/composables/useSupabaseUser'
 
 // Minimal draft structure used by the editor
 type ProjectDraft = {
