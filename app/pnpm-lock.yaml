@@ -39,6 +39,9 @@ importers:
       '@lhci/cli':
         specifier: ^0.15.1
         version: 0.15.1
+      '@nuxtjs/supabase':
+        specifier: ^1.0.0
+        version: 1.6.2
       '@pinia/nuxt':
         specifier: ^0.5.1
         version: 0.5.5(magicast@0.3.5)(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
@@ -667,6 +670,9 @@ packages:
     peerDependenciesMeta:
       rolldown:
         optional: true
+
+  '@nuxtjs/supabase@1.6.2':
+    resolution: {integrity: sha512-/ugHRSWfPncCc2F6z5haa/L0hISrPNpfzciOlvSaCKi9079c+75ghf/TbFbjNn2YLu6396f5HTJlROypYyczeA==}
 
   '@opentelemetry/api-logs@0.57.2':
     resolution: {integrity: sha512-uIX52NnTM0iBh84MShlpouI7UKqkZ7MrUszTmaypHBu4r7NofznSnQRfJ+uUeDtQDj6w8eFGg5KBLDAwAPz1+A==}
@@ -1529,6 +1535,11 @@ packages:
 
   '@supabase/realtime-js@2.74.0':
     resolution: {integrity: sha512-K5VqpA4/7RO1u1nyD5ICFKzWKu58bIDcPxHY0aFA7MyWkFd0pzi/XYXeoSsAifnD9p72gPIpgxVXCQZKJg1ktQ==}
+
+  '@supabase/ssr@0.7.0':
+    resolution: {integrity: sha512-G65t5EhLSJ5c8hTCcXifSL9Q/ZRXvqgXeNo+d3P56f4U1IxwTqjB64UfmfixvmMcjuxnq2yGqEWVJqUcO+AzAg==}
+    peerDependencies:
+      '@supabase/supabase-js': ^2.43.4
 
   '@supabase/storage-js@2.74.0':
     resolution: {integrity: sha512-o0cTQdMqHh4ERDLtjUp1/KGPbQoNwKRxUh6f8+KQyjC5DSmiw/r+jgFe/WHh067aW+WU8nA9Ytw9ag7OhzxEkQ==}
@@ -6415,6 +6426,16 @@ snapshots:
       - vue-tsc
       - yaml
 
+  '@nuxtjs/supabase@1.6.2':
+    dependencies:
+      '@supabase/ssr': 0.7.0(@supabase/supabase-js@2.74.0)
+      '@supabase/supabase-js': 2.74.0
+      defu: 6.1.4
+      pathe: 2.0.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@opentelemetry/api-logs@0.57.2':
     dependencies:
       '@opentelemetry/api': 1.9.0
@@ -7191,6 +7212,11 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  '@supabase/ssr@0.7.0(@supabase/supabase-js@2.74.0)':
+    dependencies:
+      '@supabase/supabase-js': 2.74.0
+      cookie: 1.0.2
 
   '@supabase/storage-js@2.74.0':
     dependencies:
