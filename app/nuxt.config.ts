@@ -15,6 +15,15 @@ export default defineNuxtConfig({
     ...(((rootConfig as any)?.css) || []),
     '~/assets/css/main.css'
   ],
+  supabase: {
+    url: process.env.NUXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
+    redirectOptions: {
+      login: '/login',
+      callback: '/auth/callback',
+      exclude: []
+    }
+  },
   runtimeConfig: {
     ...((rootConfig as any)?.runtimeConfig || {}),
     public: {
