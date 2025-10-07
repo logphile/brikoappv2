@@ -50,6 +50,9 @@ jobs:
 
       - name: Generate static site
         working-directory: app
+        env:
+          NUXT_PUBLIC_SUPABASE_URL: ${{ secrets.NUXT_PUBLIC_SUPABASE_URL }}
+          NUXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NUXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: pnpm run -s generate
 
       - name: Verify build output (must exist)
