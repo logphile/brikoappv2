@@ -34,7 +34,6 @@ import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import SaveRow from '@/components/editor/SaveRow.vue'
-import VisibilityPill from '@/components/editor/VisibilityPill.vue'
 
 const mosaic = useMosaicStore()
 const { public: cfg } = useRuntimeConfig() as any
@@ -1200,6 +1199,45 @@ watchDebounced(
 
                   <!-- Precise inputs -->
                   <div class="h-px bg-white/5 my-3"></div>
+                  <!-- Step 2: Title + Visibility (on yellow) -->
+                  <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] on-yellow">
+                    <label class="block">
+                      <span class="label block text-sm font-semibold">Title</span>
+                      <input
+                        v-model="draft.title"
+                        type="text"
+                        placeholder="Give it a name (optional)"
+                        class="w-full rounded-full px-4 py-2.5
+                               bg-white/70 text-[#2F3061] placeholder-[#2F3061]/60
+                               border border-white/80
+                               focus:outline-none focus:ring-2 focus:ring-[#FF0062] focus:border-transparent"
+                      />
+                    </label>
+
+                    <div class="flex flex-col">
+                      <span class="label text-sm font-semibold mb-2">Visibility</span>
+                      <div class="segmented" role="group" aria-label="Visibility">
+                        <button
+                          type="button"
+                          :aria-pressed="!draft.is_public"
+                          @click="draft.is_public = false"
+                          class="seg-btn"
+                          :class="!draft.is_public ? 'seg-on' : 'seg-off'"
+                        >
+                          Private
+                        </button>
+                        <button
+                          type="button"
+                          :aria-pressed="draft.is_public"
+                          @click="draft.is_public = true"
+                          class="seg-btn"
+                          :class="draft.is_public ? 'seg-on' : 'seg-off'"
+                        >
+                          Public
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                   <div>
                     <div class="flex items-center gap-2">
                       <h4 class="text-sm font-medium text-[#343434]/80">
@@ -1290,9 +1328,9 @@ watchDebounced(
                       </label>
                     </div>
                   </div>
-                  <div class="mt-3" v-if="showAdvanced">
+                  <div class="mt-3 on-yellow" v-if="showAdvanced">
                     <div class="flex items-center gap-2">
-                      <label class="block text-sm">Top surface</label>
+                      <label class="label block text-sm font-semibold">Top surface</label>
                       <InfoTip label="About top surface">
                         <div>
                           Studded = plates (classic LEGO look).<br />
@@ -1301,25 +1339,21 @@ watchDebounced(
                       </InfoTip>
                       <div class="grow"></div>
                     </div>
-                    <div class="mt-2 inline-flex rounded-lg overflow-hidden border border-white/10">
+                    <div class="mt-2 segmented" role="group" aria-label="Top surface">
                       <button
-                        :class="[
-                          'px-3 py-1.5 text-sm',
-                          mosaic.settings.topSurface === 'plates'
-                            ? 'bg-white/15 text-white'
-                            : 'text-white/70 hover:text-white',
-                        ]"
+                        type="button"
+                        class="seg-btn"
+                        :class="(mosaic.settings.topSurface || 'plates') === 'plates' ? 'seg-on' : 'seg-off'"
+                        :aria-pressed="(mosaic.settings.topSurface || 'plates') === 'plates'"
                         @click="mosaic.setTopSurface('plates')"
                       >
                         Studded (plates)
                       </button>
                       <button
-                        :class="[
-                          'px-3 py-1.5 text-sm',
-                          mosaic.settings.topSurface === 'tiles'
-                            ? 'bg-white/15 text-white'
-                            : 'text-white/70 hover:text-white',
-                        ]"
+                        type="button"
+                        class="seg-btn"
+                        :class="(mosaic.settings.topSurface || 'plates') === 'tiles' ? 'seg-on' : 'seg-off'"
+                        :aria-pressed="(mosaic.settings.topSurface || 'plates') === 'tiles'"
                         @click="mosaic.setTopSurface('tiles')"
                       >
                         Smooth (tiles)

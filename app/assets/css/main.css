@@ -1,0 +1,28 @@
+@layer components {
+  /* Any controls shown over the yellow panel */
+  .on-yellow .label { @apply text-[#2F3061]; }
+
+  /* Segmented control: accessible on yellow */
+  .segmented {
+    @apply inline-flex items-center rounded-full p-1
+           bg-white/50 border border-white/70 backdrop-blur;
+  }
+  .seg-btn { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
+  .seg-on  { @apply bg-[#2F3061] text-[#FFD808] shadow-sm; }
+  .seg-off { @apply text-[#2F3061]; }
+  .seg-btn:focus-visible { @apply outline-none ring-2 ring-[#FF0062]; }
+
+  /* Inputs on yellow should be dark text, not white */
+  .on-yellow input[type="text"],
+  .on-yellow input[type="search"],
+  .on-yellow input[type="number"] {
+    @apply bg-white/70 text-[#2F3061] placeholder-[#2F3061]/60
+           border border-white/80;
+  }
+
+  /* Optional: info “i” icon tint on yellow */
+  .on-yellow .hint,
+  .on-yellow .icon {
+    @apply text-[#2F3061]/70;
+  }
+}

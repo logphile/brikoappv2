@@ -7,6 +7,10 @@ export default defineNuxtConfig({
   ...rootConfig,
   ssr: false,
   srcDir: '.',
+  css: [
+    ...(((rootConfig as any)?.css) || []),
+    '@/assets/css/main.css'
+  ],
   nitro: {
     ...(rootConfig as any)?.nitro,
     preset: 'static'
