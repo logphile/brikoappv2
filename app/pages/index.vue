@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
-import HeroSection from '~/components/HeroSection.vue'
+import HeroSection from '~/components/hero/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
 import FeatureBites from '~/components/FeatureBites.vue'
 import BeforeAfterSlider from '~/components/ui/BeforeAfterSlider.vue'
