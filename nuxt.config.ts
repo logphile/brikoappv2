@@ -31,6 +31,13 @@ export default defineNuxtConfig({
         'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
       }
     },
+    // Static pages: prerender
+    '/': { headers: { 'Cache-Control': 'no-store' }, prerender: true },
+    '/how-it-works': { prerender: true },
+    '/pricing': { prerender: true },
+    '/privacy': { prerender: true },
+    '/terms': { prerender: true },
+    '/legal': { prerender: true },
     '/community-studio': { redirect: '/gallery' },
     '/community-studio/**': { redirect: '/gallery' },
     '/studio/new': { redirect: '/projects/new' },
@@ -39,9 +46,15 @@ export default defineNuxtConfig({
     // Robustness: if any link points to /sitemap, redirect to the static sitemap.xml
     '/sitemap': { redirect: '/sitemap.xml' },
     '/sitemap/': { redirect: '/sitemap.xml' },
-    // HTML should not be cached
-    '/': { headers: { 'Cache-Control': 'no-store' } },
-    // Dynamic/auth pages should not be prerendered
+    // Runtime pages should not be prerendered (client-only work: auth/stores/workers)
+    '/login': { prerender: false, ssr: false },
+    '/login/**': { prerender: false, ssr: false },
+    '/gallery': { prerender: false },
+    '/avatar': { prerender: false },
+    '/studio': { prerender: false, ssr: false },
+    '/studio/**': { prerender: false, ssr: false },
+    '/photo': { prerender: false },
+    '/mosaic': { prerender: false, ssr: false },
     '/voxel': { prerender: false, ssr: false },
     '/dev/**': { prerender: false, ssr: false },
     '/auth/**': { prerender: false, ssr: false },
@@ -86,10 +99,16 @@ export default defineNuxtConfig({
       { dir: resolve(rootDir, 'public') }
     ],
     prerender: {
-      // predictable, bounded prerender (no crawling)
-      crawlLinks: false,
+      // allow crawler but ignore runtime pages
+      crawlLinks: true,
       failOnError: false,
-      routes: ['/', '/how-it-works', '/pricing', '/legal', '/gallery']
+      routes: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal'],
+      ignore: [
+        '/login', '/login?next=/studio',
+        '/gallery', '/avatar',
+        '/studio', '/studio/community',
+        '/mosaic', '/voxel'
+      ]
     }
   },
   vite: {

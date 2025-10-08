@@ -1,3 +1,5 @@
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ ssr: false })
 <template>
   <Transition appear enter-active-class="transition ease-out duration-600"
               enter-from-class="opacity-0 translate-y-2"
@@ -163,7 +165,8 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
-// Nuxt auto-imported composable
+import { useSupabaseSafeClient } from '@/composables/useSupabaseSafeClient'
+// Nuxt auto-imported composable (not used directly here)
 declare const useSupabaseClient: <T = any>() => T
 import { useRoute } from 'vue-router'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
@@ -239,8 +242,8 @@ const bgSolid = ref('#111827')
 // Preview overlay now uses inline pink upload icon to match 3D Builder
 const uploadIcon = '/icons/icon-upload-circle-pink.svg'
 
-// Supabase and persistence
-const supabase = useSupabaseClient<any>()
+// Supabase and persistence (SSR-safe)
+const supabase = useSupabaseSafeClient<any>()
 const saving = ref(false)
 const projectId = ref<string>('')
 const isPublic = ref(false)

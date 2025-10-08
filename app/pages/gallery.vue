@@ -59,6 +59,9 @@ import seedsRaw from '@/data/gallery_seeds.json'
 import { useProjects } from '@/composables/useProjects'
 import InlineLoginBanner from '@/components/studio/InlineLoginBanner.vue'
 
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ ssr: false })
+
 // SEO
 useHead({
   title: 'Community Gallery',
