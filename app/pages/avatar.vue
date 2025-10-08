@@ -145,7 +145,7 @@
             <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none" :style="gridOverlayStyle"></div>
             <div v-if="!outReady" class="absolute inset-0 grid place-items-center">
               <div class="text-center">
-                <img src="/icons/icon-upload-circle-pink.svg" alt="" aria-hidden="true" class="mx-auto mb-2 w-16 h-16 select-none" />
+                <img :src="uploadIcon" alt="" aria-hidden="true" class="mx-auto mb-2 w-16 h-16 select-none" />
                 <p class="text-sm text-[#FFD808]/80">Upload an image to begin.</p>
               </div>
             </div>
@@ -237,6 +237,7 @@ const bgMode = ref<BgMode>('keep')
 const route = useRoute()
 const bgSolid = ref('#111827')
 // Preview overlay now uses inline pink upload icon to match 3D Builder
+const uploadIcon = '/icons/icon-upload-circle-pink.svg'
 
 // Supabase and persistence
 const supabase = useSupabaseClient<any>()
