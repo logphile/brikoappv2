@@ -40,6 +40,9 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 // Nuxt auto-imported composables from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
 
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ ssr: false })
+
 const router = useRouter()
 const route = useRoute()
 const { loginWithMagicLink } = useAuth()
