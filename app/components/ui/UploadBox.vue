@@ -7,8 +7,7 @@
  * - Emits `file` (File) or `error` (message)
  */
 import { onMounted, onBeforeUnmount, ref } from 'vue'
-// Public URL for upload icon (served from /public)
-const UploadIcon = '/icons/icon-upload-circle-pink.svg'
+import { ICON_UPLOAD as UploadIcon } from '@/constants/media'
 
 const props = withDefaults(defineProps<{
   accept?: string

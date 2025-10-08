@@ -6,9 +6,8 @@
 </template>
 
 <script setup lang="ts">
+import { ICON_UPLOAD as UploadIcon } from '@/constants/media'
 // minimal placeholder; parent card provides navy background and ring
-// Public URL served from app/public/icons/
-const UploadIcon = '/icons/icon-upload-circle-pink.svg'
 </script>
 
 <style>
