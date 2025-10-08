@@ -20,6 +20,9 @@ import UploadIcon from '@/components/ui/UploadIcon.vue'
 import { legoPalette as LEGO_PALETTE } from '@/lib/palette/lego'
 import { useProjects } from '@/composables/useProjects'
 
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ ssr: false })
+
 const vox = ref<VoxelGrid | null>(null)
 const loading = ref(false)
 const progress = ref(0)

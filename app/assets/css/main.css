@@ -11,8 +11,7 @@
   .on-yellow input[type="text"],
   .on-yellow input[type="search"],
   .on-yellow input[type="number"] {
-    @apply bg-white/80 text-[#2F3061] placeholder-[#2F3061]/60
-           border border-white/80;
+    @apply bg-white/80 text-[#2F3061] placeholder-[#2F3061]/60 border border-white/80;
   }
 
   /* Optional: info “i” icon tint on yellow */
