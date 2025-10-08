@@ -5,12 +5,12 @@
       <div class="absolute inset-0">
         <!-- Mosaic of sample images -->
         <div class="grid grid-cols-3 gap-2 p-2 opacity-35 blur-2xl">
-          <img src="/slider-original.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
-          <img src="/slider-mosaic.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
-          <img src="/demo-original.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
-          <img src="/demo-mosaic.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
-          <img src="/lg-slider-original.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
-          <img src="/large-slider-mosaic.jpg" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img :src="sliderOriginal" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img :src="sliderMosaic" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img :src="demoOriginal" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img :src="demoMosaic" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img :src="lgSliderOrig" alt="preview" class="h-36 w-full object-cover rounded-lg" />
+          <img :src="lgSliderMosaic" alt="preview" class="h-36 w-full object-cover rounded-lg" />
         </div>
         <!-- Dark overlay -->
         <div class="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70"></div>
@@ -51,4 +51,12 @@ useHead({
     { rel: 'canonical', href: 'https://briko.app/community-studio' }
   ]
 })
+
+// Use public URL strings for images to avoid Vite treating them as module imports
+const sliderOriginal = '/slider-original.jpg'
+const sliderMosaic   = '/slider-mosaic.jpg'
+const demoOriginal   = '/demo-original.jpg'
+const demoMosaic     = '/demo-mosaic.jpg'
+const lgSliderOrig   = '/lg-slider-original.jpg'
+const lgSliderMosaic = '/large-slider-mosaic.jpg'
 </script>
