@@ -1,14 +1,32 @@
 <script setup lang="ts">
-// Safe slider refs from public/slider (absolute paths; no bundler transforms)
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+// Static data is SSR-safe
 const slides = [
   { src: '/slider/slide-1.jpg', alt: 'slide 1' },
   { src: '/slider/slide-2.jpg', alt: 'slide 2' },
   { src: '/slider/slide-3.jpg', alt: 'slide 3' }
 ]
+
+// Root element for any future interactive logic (browser-only in onMounted)
+const root = ref<HTMLElement | null>(null)
+let cleanup: (() => void) | undefined
+
+onMounted(() => {
+  const el = root.value
+  if (!el) return
+  // Place any DOM listeners/observers here and set cleanup to remove them
+  // Example:
+  // const onDown = (e: PointerEvent) => {}
+  // el.addEventListener('pointerdown', onDown)
+  // cleanup = () => el.removeEventListener('pointerdown', onDown)
+})
+
+onBeforeUnmount(() => cleanup?.())
 </script>
 
 <template>
-  <section class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+  <section ref="root" class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
     <!-- Left copy -->
     <div class="space-y-6">
       <h1 class="text-[56px] leading-[0.95] font-extrabold text-[#2F3061]">

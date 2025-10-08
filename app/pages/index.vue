@@ -62,7 +62,9 @@ const botAfter  = `/home-3-mosaic.png?v=${v}`
 
 <template>
   <div class="bg-transparent">
-    <HeroSection />
+    <ClientOnly fallback="<div class='soft-card h-[360px] w-full'></div>">
+      <HeroSection />
+    </ClientOnly>
     <FeatureList />
     <main class="px-6 pt-16 pb-0 max-w-6xl mx-auto">
       <!-- Quick Demo: interactive before/after slider -->
@@ -76,7 +78,9 @@ const botAfter  = `/home-3-mosaic.png?v=${v}`
           />
         <div class="mt-6 grid md:grid-cols-2 gap-8">
           <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061]">
-            <BeforeAfterSlider :before-src="midBefore" :after-src="midAfter" :initial="0.5" />
+            <ClientOnly fallback="<div class='h-[280px] w-full'></div>">
+              <BeforeAfterSlider :before-src="midBefore" :after-src="midAfter" :initial="0.5" />
+            </ClientOnly>
             <!-- embedded look: no extra ring overlay -->
           </div>
           <div class="my-auto">
@@ -94,7 +98,9 @@ const botAfter  = `/home-3-mosaic.png?v=${v}`
 
     <section class="mt-12 sm:mt-16 bg-[#FFD808]">
       <div class="mx-auto max-w-6xl px-6 py-8">
-        <BeforeAfterSlider :before-src="botBefore" :after-src="botAfter" :initial="0.5" />
+        <ClientOnly fallback="<div class='h-[280px] w-full'></div>">
+          <BeforeAfterSlider :before-src="botBefore" :after-src="botAfter" :initial="0.5" />
+        </ClientOnly>
       </div>
     </section>
   </div>
