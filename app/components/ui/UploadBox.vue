@@ -7,6 +7,8 @@
  * - Emits `file` (File) or `error` (message)
  */
 import { onMounted, onBeforeUnmount, ref } from 'vue'
+// Public URL for upload icon (served from /public)
+const UploadIcon = '/icons/icon-upload-circle-pink.svg'
 
 const props = withDefaults(defineProps<{
   accept?: string
@@ -86,7 +88,7 @@ onBeforeUnmount(() => props.paste && window.removeEventListener('paste', onPaste
     role="button" tabindex="0" aria-label="Upload image"
   >
     <div class="flex items-center justify-center">
-      <img src="/icons/icon-upload-circle-pink.svg" alt="" class="w-10 h-10 select-none pointer-events-none" aria-hidden="true" />
+      <img :src="UploadIcon" alt="" class="w-10 h-10 select-none pointer-events-none" aria-hidden="true" />
     </div>
     <p :class="props.variant==='glass' ? 'text-sm text-white/70' : 'text-sm text-[#2F3061]'">{{ label }}</p>
     <div class="mt-2">
