@@ -28,6 +28,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
 
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ ssr: false })
+
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any
 const id = String(route.params.id || '')
