@@ -53,13 +53,6 @@ export default defineNuxtConfig({
     '/share/**': { prerender: false }
   },
   css: [
-    '@/assets/css/fonts.css',
-    '@/assets/styles/globals.css',
-    '@/assets/css/controls.css',
-    '@/assets/css/buttons.css',
-    '@/assets/css/forms.css',
-    '@/assets/css/components.css',
-    '@/assets/css/compare-slider.css',
     '@/assets/css/main.css'
   ],
   postcss: {
