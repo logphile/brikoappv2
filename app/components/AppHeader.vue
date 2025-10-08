@@ -4,7 +4,7 @@
       <div class="h-14 md:h-16 flex items-center justify-between">
         <!-- Brand -->
         <NuxtLink to="/" class="flex items-center gap-2 py-1">
-          <img src="/brand/briko-icon.svg" class="h-8 w-8" alt="Briko" />
+          <img :src="BrikoIcon" class="h-8 w-8" alt="Briko" />
           <span class="logo-text text-pink text-[2rem]">Briko</span>
         </NuxtLink>
 
@@ -49,6 +49,10 @@ import { useAuth } from '@/composables/useAuth'
 import { useProfile, type ProfileRow } from '@/composables/useProfile'
 import AccountMenu from '@/components/AccountMenu.client.vue'
 import NavBrick from '@/components/NavBrick.vue'
+
+// Public URL (served from /public)
+const BrikoIcon = '/brand/briko-icon.svg'
+// const BrikoWordmark = '/brand/briko-wordmark.svg' // optional
 
 const route = useRoute()
 const items = [
