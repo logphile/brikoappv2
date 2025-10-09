@@ -50,41 +50,50 @@ useHead({
   <div>
     <!-- HERO -->
     <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 pt-16 lg:pt-24 pb-12 lg:pb-16">
-        <div class="grid grid-cols-1 lg:grid-cols-[520px,1fr] gap-10 lg:gap-12 items-center">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
 
           <!-- LEFT: headline + bullets + CTA -->
           <div>
-            <!-- Shrink ~15% across breakpoints -->
-            <h1 class="text-[45px] md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
+            <!-- Hero headline (slab 700) -->
+            <h1 class="font-slab font-bold text-[44px] md:text-6xl lg:text-7xl leading-tight tracking-tight">
               Create LEGO-style art from your images
             </h1>
 
-            <!-- Bullets w/ Material Symbols -->
-            <ul class="mt-6 space-y-2 text-lg">
+            <!-- Bullets with inline SVG (no external deps) -->
+            <ul class="mt-6 space-y-2 text-base md:text-lg">
               <li class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-brand-pink align-middle">cloud_upload</span>
+                <!-- camera -->
+                <svg class="w-4 h-4 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M9 3a1 1 0 0 0-.894.553L7.382 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2.382l-.724-1.447A1 1 0 0 0 13 3H9zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                </svg>
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-brand-pink align-middle">grid_on</span>
+                <!-- grid -->
+                <svg class="w-4 h-4 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
+                </svg>
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-brand-pink align-middle">request_quote</span>
+                <!-- quote/price -->
+                <svg class="w-4 h-4 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3 5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm12 0v4h4l-4-4zM7 12h10v2H7v-2zm0 4h6v2H7v-2z"/>
+                </svg>
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
 
-            <!-- CTA: remove “See Full Guide”; keep main button; keep larger top gap -->
-            <div class="mt-16 flex items-center gap-3">
-              <NuxtLink to="/photo" class="btn text-lg px-6 py-3">Try Photo to Bricks</NuxtLink>
+            <!-- CTA -->
+            <div class="mt-6 flex items-center gap-3">
+              <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
             </div>
           </div>
 
           <!-- RIGHT: compare slider (unchanged) -->
           <div class="max-w-[720px] justify-self-end w-full">
-            <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="3/2" :start="55" />
+            <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="3/2" :start="52" />
           </div>
         </div>
       </div>
@@ -126,7 +135,7 @@ useHead({
         <!-- body: compare + bullet list -->
         <div class="mt-10 grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-10 items-center">
           <div class="max-w-[540px]">
-            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="48" />
+            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
           </div>
 
           <!-- Make ALL text yellow in this column -->
@@ -159,27 +168,15 @@ useHead({
           <div class="rule"></div>
         </div>
 
-        <!-- 2) Dark step pills + chevrons (centered row) -->
+        <!-- 2) Dark chips + chevrons (centered row) -->
         <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <div class="step-pill--dark">
-            <span class="material-symbols-outlined text-brand-ivory/90">photo_camera</span>
-            <span class="font-semibold">1. Upload a photo</span>
-          </div>
-          <span class="step-chevron">›</span>
-          <div class="step-pill--dark">
-            <span class="material-symbols-outlined text-brand-ivory/90">palette</span>
-            <span class="font-semibold">2. Pick size &amp; palette</span>
-          </div>
-          <span class="step-chevron">›</span>
-          <div class="step-pill--dark">
-            <span class="material-symbols-outlined text-brand-ivory/90">visibility</span>
-            <span class="font-semibold">3. Generate preview</span>
-          </div>
-          <span class="step-chevron">›</span>
-          <div class="step-pill--dark">
-            <span class="material-symbols-outlined text-brand-ivory/90">download</span>
-            <span class="font-semibold">4. Export PNG · CSV · PDF</span>
-          </div>
+          <div class="chip-dark"><span class="text-brand-ivory/90">📷</span><span class="font-semibold">1. Upload a photo</span></div>
+          <span class="chip-chevron">›</span>
+          <div class="chip-dark"><span class="text-brand-ivory/90">🎨</span><span class="font-semibold">2. Pick size &amp; palette</span></div>
+          <span class="chip-chevron">›</span>
+          <div class="chip-dark"><span class="text-brand-ivory/90">👁️</span><span class="font-semibold">3. Generate preview</span></div>
+          <span class="chip-chevron">›</span>
+          <div class="chip-dark"><span class="text-brand-ivory/90">⬇️</span><span class="font-semibold">4. Export PNG · CSV · PDF</span></div>
         </div>
 
         <!-- 3) CTA row -->
