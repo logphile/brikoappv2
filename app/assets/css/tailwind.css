@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Shared Briko UI recipes in Tailwind components layer */
 @layer components {
   .btn {
@@ -34,14 +33,16 @@
     @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
   }
 
-  /* chips / segments (adjust as needed) */
-  .seg-on   { @apply bg-brand-purple text-brand-ivory; }
-  .chip-on  { @apply bg-brand-yellow text-brand-dark; }
-  .chip     { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }
-  .chip-off { @apply bg-transparent text-brand-ivory; }
-  .seg      { @apply flex items-center justify-between rounded-xl px-4 py-3 ring-1 ring-white/20; }
-  .seg-off  { @apply bg-transparent text-brand-ivory; }
-  .step-pill{ @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 ring-1 ring-white/15 bg-white/5; }
+  /* Chips / pills and segments */
+  .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }
+  .chip-on    { @apply bg-brand-yellow text-brand-dark; }
+  .chip-off   { @apply bg-transparent text-brand-ivory; }
+
+  .seg        { @apply flex items-center justify-between rounded-xl px-4 py-3 ring-1 ring-white/20; }
+  .seg-on     { @apply bg-brand-purple text-brand-ivory; }
+  .seg-off    { @apply bg-transparent text-brand-ivory; }
+
+  .step-pill  { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 ring-1 ring-white/15 bg-white/5; }
 
   /* Legacy aliases */
   .badge { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm bg-brand-ivory text-brand-dark ring-1 ring-white/10; }
@@ -111,10 +112,13 @@
   .label-dark   { color: white; }
   .label-yellow { color: theme('colors.purple'); }
 
-  /* Chips (legacy kept minimal; primary chip recipes live above) */
-  .chip-off { background-color: rgba(255,255,255,.5); color: theme('colors.purple'); border-color: rgba(255,255,255,.7); }
-
   /* Sliders */
   .slider-track { @apply h-1.5 rounded-full; background-color: rgba(255,255,255,.5); }
   .slider-fill  { @apply h-1.5 rounded-full; background-color: theme('colors.pink'); }
+}
+
+@layer base {
+  html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark; }
+  .section-yellow { @apply bg-brand-yellow text-brand-dark; }
+  .section-purple { @apply bg-brand-purple text-brand-ivory; }
 }

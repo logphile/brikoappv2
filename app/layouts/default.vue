@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh bg-[var(--brand-bg)]">
+  <div class="min-h-screen section-yellow">
     <slot />
   </div>
 </template>
