@@ -140,6 +140,9 @@
   /* Sliders */
   .slider-track { @apply h-1.5 rounded-full; background-color: rgba(255,255,255,.5); }
   .slider-fill  { @apply h-1.5 rounded-full; background-color: theme('colors.pink'); }
+  /* Section title + pink rule */
+  .section-title { @apply text-center; }
+  .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
   /* Material Symbols helper */
   .ms {
     font-family: 'Material Symbols Outlined';
