@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<{
   right: string
   start?: number
   ratio?: '16/9' | '4/3' | '1/1' | '3/2'
-}>(), { start: 50, ratio: '16/9' })
+}>(), { start: 50, ratio: '3/2' })
 
 const percent = ref<number>(props.start)
 const ratioClass = computed(() => {

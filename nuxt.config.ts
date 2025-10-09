@@ -154,9 +154,10 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/brand/apple-touch-icon.png?v=2' },
         { rel: 'mask-icon', href: '/brand/safari-pinned-tab.svg?v=2', color: '#3AE59F' },
         { rel: 'manifest', href: '/manifest.webmanifest' },
-        // Preload brand fonts to minimize FOUT (match @font-face Regulars)
+        // Preload brand fonts to minimize FOUT (match @font-face weights in use)
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Bold.woff2', crossorigin: 'anonymous' },
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Regular.woff2', crossorigin: 'anonymous' },
-        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Regular.woff2', crossorigin: 'anonymous' }
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-SemiBold.woff2', crossorigin: 'anonymous' }
         ,
         // Material Symbols (icons) - full var-axis URL so ligatures work across sizes
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200' }

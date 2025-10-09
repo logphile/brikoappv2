@@ -3,22 +3,21 @@
 
 @font-face {
   font-family: "Bespoke Slab";
-  src:
-    url("/fonts/BespokeSlab-Regular.woff2") format("woff2"),
-    url("/fonts/BespokeSlab-Regular.woff") format("woff");
-  font-weight: 400 900;
-  font-style: normal;
-  font-display: swap;
+  src: url("/fonts/BespokeSlab-Bold.woff2") format("woff2"),
+       url("/fonts/BespokeSlab-Bold.woff") format("woff");
+  font-weight: 700; font-style: normal; font-display: swap;
 }
-
 @font-face {
   font-family: "Poppins";
-  src:
-    url("/fonts/Poppins-Regular.woff2") format("woff2"),
-    url("/fonts/Poppins-Regular.woff") format("woff");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
+  src: url("/fonts/Poppins-Regular.woff2") format("woff2"),
+       url("/fonts/Poppins-Regular.woff") format("woff");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-SemiBold.woff2") format("woff2"),
+       url("/fonts/Poppins-SemiBold.woff") format("woff");
+  font-weight: 600; font-style: normal; font-display: swap;
 }
 
 @tailwind base;
@@ -27,10 +26,10 @@
 /* Shared Briko UI recipes in Tailwind components layer */
 @layer components {
   .btn {
-    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
-           shadow-sm ring-1 ring-white/10 bg-brand-pink text-white
-           hover:translate-y-[-1px] hover:shadow-md hover:bg-brand-pink/90
-           active:translate-y-[0px];
+    @apply inline-flex items-center justify-center rounded-2xl
+           px-5 py-2.5 text-sm font-semibold bg-brand-pink text-white
+           ring-1 ring-white/10 shadow-sm transition
+           hover:-translate-y-[1px] hover:shadow-md;
   }
   /* Compatibility aliases */
   .btn-primary { @apply btn; }
@@ -40,8 +39,9 @@
     @apply rounded-2xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white shadow;
   }
   .btn-ghost {
-    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 ring-1 ring-white/15
-           bg-white/5 hover:bg-white/10 text-brand-ivory;
+    @apply inline-flex items-center justify-center rounded-2xl
+           px-4 py-2 text-sm font-semibold bg-transparent text-brand-dark
+           ring-1 ring-black/10 hover:bg-black/5;
   }
 
   /* Outline variants */
@@ -102,9 +102,7 @@
     background-color: rgba(255,255,255,.06);
   }
 
-  /* Section headers */
-  .section-title { @apply text-2xl font-extrabold; color: theme('colors.purple'); }
-  .section-kicker { @apply text-sm uppercase tracking-wide; color: theme('colors.purple'); opacity: .7; }
+  /* (removed legacy section header sizes to avoid conflicts) */
 
   /* Tabs (underlined pill) */
   .tabbar { @apply flex gap-6 border-b; border-color: rgba(255,255,255,.2); }
@@ -143,6 +141,13 @@
   /* Section title + pink rule */
   .section-title { @apply text-center; }
   .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
+
+  /* Dark chips (variant used in How it works) */
+  .chip-dark {
+    @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3
+           bg-brand-purple text-brand-ivory ring-1 ring-black/10 shadow-sm;
+  }
+  .chip-chevron { @apply text-brand-purple/70 text-xl select-none; }
   
   /* Dark step pills */
   .step-pill--dark {
