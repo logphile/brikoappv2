@@ -143,6 +143,15 @@
   /* Section title + pink rule */
   .section-title { @apply text-center; }
   .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
+  
+  /* Dark step pills */
+  .step-pill--dark {
+    @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3
+           bg-[#2F3061] text-brand-ivory ring-1 ring-black/10 shadow-sm;
+  }
+  .step-chevron {
+    @apply text-[#2F3061]/70 text-xl select-none;
+  }
   /* Material Symbols helper */
   .ms {
     font-family: 'Material Symbols Outlined';
