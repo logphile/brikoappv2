@@ -2,7 +2,6 @@
 import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
-import HowItWorksSection from '~/components/HowItWorksSection.vue'
 import Compare from '~/components/ui/Compare.vue'
 
 const siteUrl = 'https://briko.app'
@@ -51,11 +50,11 @@ useHead({
   <div>
     <!-- HERO -->
     <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12 lg:py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-[520px,1fr] gap-8 items-center">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 pt-16 lg:pt-24 pb-12 lg:pb-16">
+        <div class="grid grid-cols-1 lg:grid-cols-[520px,1fr] gap-10 lg:gap-12 items-center">
           <!-- left: text -->
           <div>
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
+            <h1 class="text-[44px] md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
               Create LEGO-style art from your images
             </h1>
             <ul class="mt-6 space-y-2 text-lg">
@@ -63,6 +62,12 @@ useHead({
               <li>Instantly see it in bricks</li>
               <li>Get the parts, guide, and price</li>
             </ul>
+
+            <!-- hero CTA block -->
+            <div class="mt-16 flex items-center gap-3">
+              <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
+              <NuxtLink to="/how-it-works" class="btn-ghost">See Full Guide →</NuxtLink>
+            </div>
           </div>
           <!-- right: compare slider -->
           <div class="max-w-[720px] justify-self-end w-full">
@@ -82,15 +87,18 @@ useHead({
     <!-- Purple band (never white) -->
     <section class="section-purple">
       <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-8 items-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold">From Photo to Parts—Fast</h2>
+        <p class="mt-2 text-brand-ivory/80">Color mapping, greedy tiling, BOM, and exports—done in under two seconds.</p>
+
+        <div class="mt-10 grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-10 items-center">
           <div class="max-w-[540px]">
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" :start="48" />
           </div>
           <div class="space-y-4">
-            <div class="seg seg-off">Instant LEGO-style color mapping</div>
-            <div class="seg seg-off">Greedy tiling — fewer plates, cleaner look</div>
-            <div class="seg seg-off">Auto Bill of Materials + cost estimate</div>
-            <div class="seg seg-off">One-click export: PNG · CSV · PDF</div>
+            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">Instant LEGO-style color mapping</div>
+            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">Greedy tiling — fewer plates, cleaner look</div>
+            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">Auto Bill of Materials • cost estimate</div>
+            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">One-click export: PNG · CSV · PDF</div>
           </div>
         </div>
       </div>
@@ -105,10 +113,23 @@ useHead({
       </div>
     </section>
 
-    <!-- How It Works stays -->
+    <!-- How it works (custom) -->
     <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
-        <HowItWorksSection />
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-4">
+        <h3 class="mt-20 text-3xl md:text-4xl font-extrabold text-center">How it works</h3>
+        <p class="mt-1 text-center text-brand-dark/70">Four quick steps from photo to bricks.</p>
+
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <div class="step-pill">1. Upload a photo</div>
+          <div class="step-pill">2. Pick size &amp; palette</div>
+          <div class="step-pill">3. Generate preview</div>
+          <div class="step-pill">4. Export PNG · CSV · PDF</div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-center gap-3">
+          <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
+          <NuxtLink to="/how-it-works" class="btn-ghost">See Full Guide →</NuxtLink>
+        </div>
       </div>
     </section>
   </div>
