@@ -1,3 +1,4 @@
+@import './tokens.css';
 /* Tailwind directives moved to app/assets/css/tailwind.css */
 /* Custom component tokens (safe on the yellow panel) */
 @layer components {

@@ -1,0 +1,38 @@
+/* tokens.css */
+@layer utilities {
+  /* Page container */
+  .container-page { @apply max-w-6xl mx-auto px-4 sm:px-6; }
+
+  /* Section rhythm */
+  .section      { @apply py-section-y; }
+  .section-sm   { @apply py-section-y-sm; }
+  .section-lg   { @apply py-section-y-lg; }
+
+  /* Section header (title + sub + pink underline) */
+  .section-head        { @apply text-center mb-8; }
+  .section-head--tight { @apply mb-6; }
+  .section-eyebrow     { @apply font-medium tracking-wide; }
+  .section-title       { @apply font-slab text-3xl sm:text-4xl md:text-[40px] leading-tight; }
+  .section-sub         { @apply mt-2 font-sans; }
+  .section-underline   { @apply mx-auto mt-5 h-1.5 w-14 rounded-full bg-brand-pink; }
+
+  /* Cards */
+  .soft-card { @apply rounded-xxl bg-brand-paper/0 ring-1 ring-brand-pink/70 p-6 shadow-card; }
+
+  /* Buttons */
+  /* Keep existing .btn behavior; add standardized variants */
+  .btn-primary    { @apply inline-flex items-center gap-2 rounded-xxl px-4 py-2 text-sm font-semibold bg-brand-pink text-white hover:opacity-90 shadow-soft; }
+  .btn-secondary  { @apply inline-flex items-center gap-2 rounded-xxl px-4 py-2 text-sm font-semibold bg-white/10 ring-1 ring-white/60 text-white hover:bg-white/15; }
+  .btn-outline-ink{ @apply inline-flex items-center gap-2 rounded-xxl px-4 py-2 text-sm font-semibold ring-1 ring-brand-dark text-brand-dark bg-transparent hover:bg-brand-dark hover:text-white; }
+  .btn-ghost-ink  { @apply inline-flex items-center gap-2 rounded-xxl px-4 py-2 text-sm font-semibold text-brand-dark/80 hover:text-brand-dark; }
+
+  /* Icon bubble (small) */
+  .chip { @apply inline-flex items-center gap-2 rounded-full bg-brand-navy text-white px-3 py-2 text-xs shadow-card; }
+
+  /* Title sizes for hero */
+  .hero-h1 { @apply font-slab text-[40px] sm:text-[56px] md:text-[66px] leading-[1.05] text-brand-dark; }
+
+  /* Compare slider helpers */
+  .splitter-bar  { @apply absolute inset-y-0 w-[2px] bg-white/60 left-1/2 -translate-x-1/2; }
+  .splitter-knob { @apply absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-10 w-10 rounded-full bg-white shadow-soft ring-1 ring-brand-dark/10; }
+}

@@ -1,13 +1,18 @@
-<template>
-  <div class="mb-4 sm:mb-6">
-    <h2 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-3">
-      {{ title }}
-      <span class="h-[3px] w-10 rounded-full" :style="{ background: '#2F3061' }"></span>
-    </h2>
-  </div>
-  
-</template>
-
 <script setup lang="ts">
-defineProps<{ title: string }>()
+defineProps<{
+  eyebrow?: string
+  title: string
+  sub?: string
+  tight?: boolean
+  align?: 'center'|'left'
+}>()
 </script>
+
+<template>
+  <div :class="['section-head', tight && 'section-head--tight', align==='left' && 'text-left']">
+    <p v-if="eyebrow" class="section-eyebrow">{{ eyebrow }}</p>
+    <h2 class="section-title">{{ title }}</h2>
+    <p v-if="sub" class="section-sub">{{ sub }}</p>
+    <div class="section-underline" />
+  </div>
+</template>

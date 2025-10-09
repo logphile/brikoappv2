@@ -2,6 +2,7 @@
 import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
+import SectionHeader from '@/components/SectionHeader.vue'
 import Compare from '~/components/ui/Compare.vue'
 
 const siteUrl = 'https://briko.app'
@@ -49,14 +50,14 @@ useHead({
 <template>
   <div>
     <!-- HERO -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 pt-24 pb-12 md:pt-28">
+    <section class="section-yellow section-lg">
+      <div class="container-page">
         <div class="grid lg:grid-cols-2 gap-10 items-center">
 
           <!-- LEFT: headline + bullets + CTA -->
           <div>
-            <!-- Hero headline (slab 700) -->
-            <h1 class="font-slab font-bold text-[44px] md:text-6xl lg:text-7xl leading-tight tracking-tight">
+            <!-- Hero headline -->
+            <h1 class="hero-h1">
               Create LEGO-style art from your images
             </h1>
 
@@ -100,41 +101,20 @@ useHead({
     </section>
 
     <!-- “Briko’s Geeky Superpowers” -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
-        <!-- Section header -->
-        <div class="section-title">
-          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">
-            Briko’s Geeky Superpowers
-          </h2>
-          <p class="mt-2 text-brand-dark/70">
-            The tech that makes bricks feel instant.
-          </p>
-          <div class="rule"></div>
-        </div>
-
-        <div class="section-gap">
-          <FeatureList />
-        </div>
+    <section class="section-yellow section">
+      <div class="container-page">
+        <SectionHeader title="Briko’s Geeky Superpowers" sub="The tech that makes bricks feel instant." />
+        <FeatureList />
       </div>
     </section>
 
     <!-- Purple band (never white) -->
-    <section class="section-purple">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-        <!-- Section header -->
-        <div class="section-title text-brand-yellow">
-          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">
-            From Photo to Parts—Fast
-          </h2>
-          <p class="mt-2 text-brand-yellow/80">
-            Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
-          </p>
-          <div class="rule"></div>
-        </div>
+    <section class="section-purple section">
+      <div class="container-page">
+        <SectionHeader class="text-brand-yellow" title="From Photo to Parts—Fast" sub="Color mapping, greedy tiling, BOM, and exports—done in under two seconds." />
 
         <!-- body: compare + bullet list -->
-        <div class="section-gap grid grid-cols-1 lg:grid-cols-[720px,1fr] gap-10 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-[720px,1fr] gap-10 items-center">
           <div class="max-w-[720px]">
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
           </div>
@@ -159,17 +139,11 @@ useHead({
     </section>
 
     <!-- How it works -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12">
+    <section class="section-yellow section">
+      <div class="container-page">
 
-        <!-- 1) Centered header -->
-        <div class="section-title">
-          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">How it works</h2>
-          <p class="mt-2 text-brand-dark/70">Four quick steps from photo to bricks.</p>
-          <div class="rule"></div>
-        </div>
+        <SectionHeader title="How it works" sub="Four quick steps from photo to bricks." />
 
-        <div class="section-gap">
           <!-- 2) Dark chips + chevrons (centered row) -->
           <div class="flex flex-wrap items-center justify-center gap-3">
             <div class="chip-dark"><span class="text-brand-ivory/90">📷</span><span class="font-semibold">1. Upload a photo</span></div>
@@ -184,7 +158,7 @@ useHead({
           <!-- 3) CTA row -->
           <div class="mt-4 flex items-center justify-center gap-3">
             <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
-            <NuxtLink to="/how-it-works" class="btn-ghost-alt">See Full Guide →</NuxtLink>
+            <NuxtLink to="/how-it-works" class="btn-outline-ink">See Full Guide →</NuxtLink>
           </div>
 
           <!-- 4) Parrot compare sits BELOW the pills/CTAs -->
@@ -193,7 +167,6 @@ useHead({
               <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
             </div>
           </div>
-        </div>
 
       </div>
     </section>
