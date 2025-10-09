@@ -25,7 +25,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/**': {
       headers: {
-        'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; font-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://sentry.io https://*.ingest.sentry.io;",
+        'Content-Security-Policy': "default-src 'self'; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'wasm-unsafe-eval'; font-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://sentry.io https://*.ingest.sentry.io;",
         'Referrer-Policy': 'strict-origin-when-cross-origin',
         'X-Content-Type-Options': 'nosniff',
         'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
@@ -157,6 +157,9 @@ export default defineNuxtConfig({
         // Preload brand fonts to minimize FOUT (match @font-face Regulars)
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Regular.woff2', crossorigin: 'anonymous' },
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Regular.woff2', crossorigin: 'anonymous' }
+        ,
+        // Material Symbols (icons)
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1&display=swap' }
       ]
     }
   }
