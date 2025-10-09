@@ -3,13 +3,7 @@
 <template>
   <section class="bg-[#FFD808] text-[#343434]">
     <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16">
-      <SectionHeader
-        title="Briko’s Geeky Superpowers"
-        subtitle="The tech that makes bricks feel instant."
-        align="center"
-        class="mb-8 md:mb-10"
-      />
-      <div class="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <!-- Mosaic Engine -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
