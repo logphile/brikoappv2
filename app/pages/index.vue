@@ -50,7 +50,7 @@ useHead({
   <div>
     <!-- HERO -->
     <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 pt-24 pb-12 md:pt-28">
         <div class="grid lg:grid-cols-2 gap-10 items-center">
 
           <!-- LEFT: headline + bullets + CTA -->
@@ -113,8 +113,9 @@ useHead({
           <div class="rule"></div>
         </div>
 
-        <!-- cards/grid stays the same below -->
-        <FeatureList />
+        <div class="section-gap">
+          <FeatureList />
+        </div>
       </div>
     </section>
 
@@ -133,23 +134,23 @@ useHead({
         </div>
 
         <!-- body: compare + bullet list -->
-        <div class="mt-10 grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-10 items-center">
-          <div class="max-w-[540px]">
+        <div class="section-gap grid grid-cols-1 lg:grid-cols-[720px,1fr] gap-10 items-center">
+          <div class="max-w-[720px]">
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
           </div>
 
           <!-- Make ALL text yellow in this column -->
           <div class="space-y-4 text-brand-yellow">
-            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
               Instant LEGO-style color mapping
             </div>
-            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
               Greedy tiling — fewer plates, cleaner look
             </div>
-            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
               Auto Bill of Materials • cost estimate
             </div>
-            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
               One-click export: PNG · CSV · PDF
             </div>
           </div>
@@ -168,27 +169,29 @@ useHead({
           <div class="rule"></div>
         </div>
 
-        <!-- 2) Dark chips + chevrons (centered row) -->
-        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <div class="chip-dark"><span class="text-brand-ivory/90">📷</span><span class="font-semibold">1. Upload a photo</span></div>
-          <span class="chip-chevron">›</span>
-          <div class="chip-dark"><span class="text-brand-ivory/90">🎨</span><span class="font-semibold">2. Pick size &amp; palette</span></div>
-          <span class="chip-chevron">›</span>
-          <div class="chip-dark"><span class="text-brand-ivory/90">👁️</span><span class="font-semibold">3. Generate preview</span></div>
-          <span class="chip-chevron">›</span>
-          <div class="chip-dark"><span class="text-brand-ivory/90">⬇️</span><span class="font-semibold">4. Export PNG · CSV · PDF</span></div>
-        </div>
+        <div class="section-gap">
+          <!-- 2) Dark chips + chevrons (centered row) -->
+          <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <div class="chip-dark"><span class="text-brand-ivory/90">📷</span><span class="font-semibold">1. Upload a photo</span></div>
+            <span class="chip-chevron">›</span>
+            <div class="chip-dark"><span class="text-brand-ivory/90">🎨</span><span class="font-semibold">2. Pick size &amp; palette</span></div>
+            <span class="chip-chevron">›</span>
+            <div class="chip-dark"><span class="text-brand-ivory/90">👁️</span><span class="font-semibold">3. Generate preview</span></div>
+            <span class="chip-chevron">›</span>
+            <div class="chip-dark"><span class="text-brand-ivory/90">⬇️</span><span class="font-semibold">4. Export PNG · CSV · PDF</span></div>
+          </div>
 
-        <!-- 3) CTA row -->
-        <div class="mt-4 flex items-center justify-center gap-3">
-          <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
-          <NuxtLink to="/how-it-works" class="btn-ghost">See Full Guide →</NuxtLink>
-        </div>
+          <!-- 3) CTA row -->
+          <div class="mt-4 flex items-center justify-center gap-3">
+            <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
+            <NuxtLink to="/how-it-works" class="btn-ghost-alt">See Full Guide →</NuxtLink>
+          </div>
 
-        <!-- 4) Parrot compare sits BELOW the pills/CTAs -->
-        <div class="mt-10 flex justify-center">
-          <div class="w-full max-w-5xl">
-            <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
+          <!-- 4) Parrot compare sits BELOW the pills/CTAs -->
+          <div class="mt-10 flex justify-center">
+            <div class="w-full max-w-5xl">
+              <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
+            </div>
           </div>
         </div>
 

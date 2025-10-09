@@ -43,6 +43,12 @@
            px-4 py-2 text-sm font-semibold bg-transparent text-brand-dark
            ring-1 ring-black/10 hover:bg-black/5;
   }
+  .btn-ghost-alt {
+    @apply inline-flex items-center justify-center rounded-2xl px-4 py-2
+           text-sm font-semibold bg-white/85 text-brand-dark
+           shadow-sm ring-1 ring-black/10;
+  }
+  .btn-ghost-alt:hover { @apply bg-white; }
 
   /* Outline variants */
   .btn-purple-outline {
@@ -141,6 +147,8 @@
   /* Section title + pink rule */
   .section-title { @apply text-center; }
   .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
+  /* uniform space AFTER a .section-title block */
+  .section-gap { @apply mt-8 md:mt-10; }
 
   /* Dark chips (variant used in How it works) */
   .chip-dark {
