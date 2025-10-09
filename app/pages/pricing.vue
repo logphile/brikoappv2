@@ -94,6 +94,6 @@ useHead({
 </template>
 
 <style scoped lang="postcss">
-.btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white shadow; }
+.btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-brand-pink hover:bg-brand-pink text-white shadow; }
 .card{ @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10; }
 </style>
