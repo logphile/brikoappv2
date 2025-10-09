@@ -34,8 +34,11 @@ export default <Partial<Config>>{
           pink:   '#FF0062',
           yellow: '#FFD808',
           purple: '#2F3061',
+          navy:   '#2F3061',
           dark:   '#343434',
-          ivory:  '#F5F4F1'
+          ink:    '#343434',
+          ivory:  '#F5F4F1',
+          paper:  '#F5F4F1'
         },
         // Base ink text color (used via @apply text-ink)
         ink: '#343434',
@@ -71,18 +74,25 @@ export default <Partial<Config>>{
           800:'#9A3412',900:'#7C2D12'
         }
       },
+      spacing: {
+        'section-y-sm': '3.5rem', // 56px
+        'section-y':    '5rem',    // 80px
+        'section-y-lg': '7rem'     // 112px
+      },
       backgroundImage: {
         'cta-grad':'linear-gradient(90deg,#FF5A1F,#FF2A6D)',
         'accent-grad':'linear-gradient(90deg,#2563EB,#06B6D4)'
       },
       borderRadius: {
         '2xl': '1rem',
+        'xxl': '1.25rem',
         'brk-outer': '16px',
         'brk-inner': '8px'
       },
       boxShadow: {
         'soft-card': '0 10px 30px -12px rgba(0,0,0,.35)',
-        'soft': '0 6px 24px rgba(0,0,0,.25)',
+        'soft': '0 10px 30px rgba(0,0,0,.12)',
+        'card': '0 6px 18px rgba(0,0,0,.10)',
         'mint-glow': '0 0 0 3px rgba(58,229,159,0.25), 0 8px 24px rgba(58,229,159,0.15)'
       }
     }
