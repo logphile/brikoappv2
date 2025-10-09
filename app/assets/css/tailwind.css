@@ -148,7 +148,7 @@
   .section-title { @apply text-center; }
   .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
   /* uniform space AFTER a .section-title block */
-  .section-gap { @apply mt-8 md:mt-10; }
+  .section-gap { @apply mt-6 md:mt-8; }
 
   /* Dark chips (variant used in How it works) */
   .chip-dark {
