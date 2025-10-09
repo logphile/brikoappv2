@@ -90,9 +90,21 @@ useHead({
       </div>
     </section>
 
-    <!-- “Geeky Superpowers” stays in yellow -->
+    <!-- “Briko’s Geeky Superpowers” -->
     <section class="section-yellow">
       <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
+        <!-- Section header -->
+        <div class="section-title">
+          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">
+            Briko’s Geeky Superpowers
+          </h2>
+          <p class="mt-2 text-brand-dark/70">
+            The tech that makes bricks feel instant.
+          </p>
+          <div class="rule"></div>
+        </div>
+
+        <!-- cards/grid stays the same below -->
         <FeatureList />
       </div>
     </section>
@@ -100,18 +112,37 @@ useHead({
     <!-- Purple band (never white) -->
     <section class="section-purple">
       <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-        <h2 class="text-3xl md:text-4xl font-extrabold">From Photo to Parts—Fast</h2>
-        <p class="mt-2 text-brand-ivory/80">Color mapping, greedy tiling, BOM, and exports—done in under two seconds.</p>
+        <!-- Section header -->
+        <div class="section-title text-brand-yellow">
+          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">
+            From Photo to Parts—Fast
+          </h2>
+          <p class="mt-2 text-brand-yellow/80">
+            Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
+          </p>
+          <div class="rule"></div>
+        </div>
 
+        <!-- body: compare + bullet list -->
         <div class="mt-10 grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-10 items-center">
           <div class="max-w-[540px]">
-            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" :start="48" />
+            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="48" />
           </div>
-          <div class="space-y-4">
-            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">Instant LEGO-style color mapping</div>
-            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">Greedy tiling — fewer plates, cleaner look</div>
-            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">Auto Bill of Materials • cost estimate</div>
-            <div class="seg seg-off ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">One-click export: PNG · CSV · PDF</div>
+
+          <!-- Make ALL text yellow in this column -->
+          <div class="space-y-4 text-brand-yellow">
+            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+              Instant LEGO-style color mapping
+            </div>
+            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+              Greedy tiling — fewer plates, cleaner look
+            </div>
+            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+              Auto Bill of Materials • cost estimate
+            </div>
+            <div class="seg ring-1 ring-brand-yellow/40 rounded-xl px-5 py-3">
+              One-click export: PNG · CSV · PDF
+            </div>
           </div>
         </div>
       </div>
