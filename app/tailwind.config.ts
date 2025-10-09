@@ -16,7 +16,7 @@ export default <Partial<Config>>{
   safelist: [
     // Global component recipes
     'chip','chip-on','chip-off','seg','seg-on','seg-off','soft-card',
-    'btn','btn-secondary','btn-ghost','step-pill',
+    'btn','btn-secondary','btn-ghost','step-pill','badge','nav-pill',
     // Common utilities used in @apply or conditionals
     'bg-white/5','hover:bg-white/5','ring-white/10','ring-white/15','ring-white/20',
     'text-brand-ivory','text-brand-dark','bg-brand-pink','bg-brand-yellow','bg-brand-purple'
