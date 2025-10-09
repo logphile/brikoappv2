@@ -1,3 +1,110 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Shared Briko UI recipes in Tailwind components layer */
+@layer components {
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
+           shadow-sm ring-1 ring-white/10 bg-brand-pink text-white hover:bg-brand-pink/90
+           active:translate-y-[1px];
+  }
+  /* Compatibility aliases */
+  .btn-primary { @apply btn; }
+  .btn-pink    { @apply btn; }
+
+  .btn-secondary {
+    @apply rounded-2xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white shadow;
+  }
+  .btn-ghost {
+    @apply rounded-2xl px-4 py-2 bg-transparent hover:bg-white/5 ring-1 ring-white/10;
+  }
+
+  /* Outline variants */
+  .btn-purple-outline {
+    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
+           border border-brand-purple text-brand-purple bg-transparent hover:bg-brand-purple/10;
+  }
+  .btn-ivory-outline {
+    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
+           border border-brand-ivory text-brand-ivory bg-transparent hover:bg-brand-ivory/10;
+  }
+
+  .soft-card {
+    @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
+  }
+
+  /* chips / segments (adjust as needed) */
+  .seg-on   { @apply bg-brand-purple text-brand-ivory; }
+  .chip-on  { @apply bg-brand-yellow text-brand-dark; }
+}
+
+/* Legacy component tokens and utilities previously in main.css */
+@layer components {
+  /* Any controls shown over the yellow panel */
+  .on-yellow .label { @apply text-brand-purple; }
+
+  /* Inputs on yellow should be dark text, not white */
+  .on-yellow input[type="text"],
+  .on-yellow input[type="search"],
+  .on-yellow input[type="number"] {
+    @apply bg-white/80 text-brand-purple border border-white/80;
+  }
+  .on-yellow input[type="text"]::placeholder,
+  .on-yellow input[type="search"]::placeholder,
+  .on-yellow input[type="number"]::placeholder {
+    @apply text-brand-purple/60;
+  }
+
+  /* Optional: info “i” icon tint on yellow */
+  .on-yellow .hint,
+  .on-yellow .icon { @apply text-brand-purple/70; }
+
+  /* Card (dark variant) */
+  .soft-card-dark {
+    @apply rounded-2xl border border-white/10 shadow-soft;
+    background-color: rgba(255,255,255,.06);
+  }
+
+  /* Section headers */
+  .section-title { @apply text-2xl font-extrabold; color: theme('colors.purple'); }
+  .section-kicker { @apply text-sm uppercase tracking-wide; color: theme('colors.purple'); opacity: .7; }
+
+  /* Tabs (underlined pill) */
+  .tabbar { @apply flex gap-6 border-b; border-color: rgba(255,255,255,.2); }
+  .tab    { @apply pb-2 -mb-px; color: theme('colors.purple'); opacity: .7; }
+  .tab-active { @apply border-b-4 font-bold; border-color: theme('colors.pink'); color: theme('colors.purple'); opacity: 1; }
+
+  /* Segmented toggles */
+  .segmented { @apply inline-flex items-center rounded-full p-1 border backdrop-blur; border-color: rgba(255,255,255,.8); background-color: rgba(255,255,255,.6); }
+  .seg-btn   { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
+  .seg-off   { color: theme('colors.purple'); }
+  .seg-btn:focus-visible { @apply outline-none ring-2; --tw-ring-color: theme('colors.pink'); }
+
+  /* Inputs */
+  .input-yellow {
+    @apply w-full rounded-[14px] border px-4 py-2.5 focus:outline-none focus:ring-2;
+    border-color: rgba(255,255,255,.8);
+    background-color: rgba(255,255,255,.8);
+    color: theme('colors.purple');
+  }
+  .input-yellow::placeholder { color: rgba(47,48,97,.6); }
+
+  .input-dark {
+    @apply w-full rounded-[14px] border px-4 py-2.5 focus:outline-none focus:ring-2;
+    border-color: rgba(255,255,255,.1);
+    background-color: rgba(255,255,255,.05);
+    color: white;
+  }
+  .input-dark::placeholder { color: rgba(255,255,255,.5); }
+
+  .label-dark   { color: white; }
+  .label-yellow { color: theme('colors.purple'); }
+
+  /* Chips (preset pills) */
+  .chip-off { background-color: rgba(255,255,255,.5); color: theme('colors.purple'); border-color: rgba(255,255,255,.7); }
+
+  /* Sliders */
+  .slider-track { @apply h-1.5 rounded-full; background-color: rgba(255,255,255,.5); }
+  .slider-fill  { @apply h-1.5 rounded-full; background-color: theme('colors.pink'); }
+}
