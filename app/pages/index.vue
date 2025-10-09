@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
-import HeroSection from '~/components/hero/HeroSection.vue'
 import FeatureList from '~/components/FeatureList.vue'
-import FeatureBites from '~/components/FeatureBites.vue'
-import BeforeAfterSlider from '~/components/ui/BeforeAfterSlider.vue'
 import HowItWorksSection from '~/components/HowItWorksSection.vue'
+import Compare from '~/components/ui/Compare.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -30,8 +28,6 @@ useHead({
   ]
 })
 
-// VueCompareImage is globally registered by plugins/vue-compare-image.client.ts
-
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
   siteUrl,
@@ -49,58 +45,70 @@ useHead({
     { type: 'application/ld+json', innerHTML: JSON.stringify(homeBreadcrumbs) }
   ]
 })
-
-// Lock exact pairs (cache-busted)
-const v = '20251004f'
-const topBefore = `/home-1-original.jpg?v=${v}`
-const topAfter  = `/home-1-mosaic.png?v=${v}`
-const midBefore = `/home-2-original.jpg?v=${v}`
-const midAfter  = `/home-2-mosaic.png?v=${v}`
-const botBefore = `/home-3-original.jpg?v=${v}`
-const botAfter  = `/home-3-mosaic.png?v=${v}`
 </script>
 
 <template>
-  <div class="bg-transparent">
-    <ClientOnly fallback="<div class='soft-card h-[360px] w-full'></div>">
-      <HeroSection />
-    </ClientOnly>
-    <FeatureList />
-    <main class="px-6 pt-16 pb-0 max-w-6xl mx-auto">
-      <!-- Quick Demo: interactive before/after slider -->
-      <section class="relative left-1/2 right-1/2 -mx-[50vw] w-screen bg-[#2F3061] text-white py-16 md:py-28 scroll-mt-24 mt-16 md:mt-20 mb-24">
-        <div class="mx-auto max-w-7xl px-4">
-          <SectionHeader
-            title="From Photo to Parts—Fast"
-            subtitle="Color mapping, greedy tiling, BOM, and exports—done in under two seconds."
-            class="mb-8 md:mb-10"
-            tone="sun"
-          />
-        <div class="mt-6 grid md:grid-cols-2 gap-8">
-          <div class="relative overflow-hidden rounded-3xl border border-[#FFD808] shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061]">
-            <ClientOnly fallback="<div class='h-[280px] w-full'></div>">
-              <BeforeAfterSlider :before-src="midBefore" :after-src="midAfter" :initial="0.5" />
-            </ClientOnly>
-            <!-- embedded look: no extra ring overlay -->
+  <div>
+    <!-- HERO -->
+    <section class="section-yellow">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12 lg:py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-[520px,1fr] gap-8 items-center">
+          <!-- left: text -->
+          <div>
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
+              Create LEGO-style art from your images
+            </h1>
+            <ul class="mt-6 space-y-2 text-lg">
+              <li>Upload your photo</li>
+              <li>Instantly see it in bricks</li>
+              <li>Get the parts, guide, and price</li>
+            </ul>
           </div>
-          <div class="my-auto">
-            <FeatureBites tone="light" accent="sun" />
+          <!-- right: compare slider -->
+          <div class="max-w-[720px] justify-self-end w-full">
+            <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" :start="55" />
           </div>
         </div>
-        </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- How It Works -->
-      <section class="mt-12 sm:mt-16">
+    <!-- “Geeky Superpowers” stays in yellow -->
+    <section class="section-yellow">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
+        <FeatureList />
+      </div>
+    </section>
+
+    <!-- Purple band (never white) -->
+    <section class="section-purple">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-8 items-center">
+          <div class="max-w-[540px]">
+            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" :start="48" />
+          </div>
+          <div class="space-y-4">
+            <div class="seg seg-off">Instant LEGO-style color mapping</div>
+            <div class="seg seg-off">Greedy tiling — fewer plates, cleaner look</div>
+            <div class="seg seg-off">Auto Bill of Materials + cost estimate</div>
+            <div class="seg seg-off">One-click export: PNG · CSV · PDF</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom compare -->
+    <section class="section-yellow">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
+        <div class="max-w-4xl">
+          <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" :start="52" />
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works stays -->
+    <section class="section-yellow">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
         <HowItWorksSection />
-      </section>
-    </main>
-
-    <section class="mt-12 sm:mt-16 bg-[#FFD808]">
-      <div class="mx-auto max-w-6xl px-6 py-8">
-        <ClientOnly fallback="<div class='h-[280px] w-full'></div>">
-          <BeforeAfterSlider :before-src="botBefore" :after-src="botAfter" :initial="0.5" />
-        </ClientOnly>
       </div>
     </section>
   </div>
