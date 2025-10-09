@@ -13,6 +13,14 @@ export default <Partial<Config>>{
     './assets/css/**/*.{css,pcss}',
     './assets/styles/**/*.{css,pcss}'
   ],
+  safelist: [
+    // Global component recipes
+    'chip','chip-on','chip-off','seg','seg-on','seg-off','soft-card',
+    'btn','btn-secondary','btn-ghost','step-pill',
+    // Common utilities used in @apply or conditionals
+    'bg-white/5','hover:bg-white/5','ring-white/10','ring-white/15','ring-white/20',
+    'text-brand-ivory','text-brand-dark','bg-brand-pink','bg-brand-yellow','bg-brand-purple'
+  ],
   theme: {
     extend: {
       fontFamily: {
