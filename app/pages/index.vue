@@ -52,24 +52,43 @@ useHead({
     <section class="section-yellow">
       <div class="mx-auto max-w-7xl px-6 lg:px-10 pt-16 lg:pt-24 pb-12 lg:pb-16">
         <div class="grid grid-cols-1 lg:grid-cols-[520px,1fr] gap-10 lg:gap-12 items-center">
-          <!-- left: text -->
+
+          <!-- LEFT: headline + bullets + CTA -->
           <div>
-            <h1 class="text-[44px] md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
+            <!-- +20% headline: was text-[44px] md:6xl lg:7xl -->
+            <h1 class="text-[53px] md:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight">
               Create LEGO-style art from your images
             </h1>
+
+            <!-- Bullets w/ pink mini icons -->
             <ul class="mt-6 space-y-2 text-lg">
-              <li>Upload your photo</li>
-              <li>Instantly see it in bricks</li>
-              <li>Get the parts, guide, and price</li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 shrink-0 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M16 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 3l9 9-9 9M12 8v10" />
+                </svg>
+                <span>Upload your photo</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 shrink-0 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M4 5h16v14H4zM8 9h2v2H8zM12 9h2v2h-2zM16 9h2v2h-2zM8 13h2v2H8zM12 13h2v2h-2zM16 13h2v2h-2z"/>
+                </svg>
+                <span>Instantly see it in bricks</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <svg class="w-5 h-5 shrink-0 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M7 4h10a2 2 0 0 1 2 2v12l-7-3-7 3V6a2 2 0 0 1 2-2z"/>
+                </svg>
+                <span>Get the parts, guide, and price</span>
+              </li>
             </ul>
 
-            <!-- hero CTA block -->
+            <!-- CTA: remove “See Full Guide”; keep main button; keep larger top gap -->
             <div class="mt-16 flex items-center gap-3">
               <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
-              <NuxtLink to="/how-it-works" class="btn-ghost">See Full Guide →</NuxtLink>
             </div>
           </div>
-          <!-- right: compare slider -->
+
+          <!-- RIGHT: compare slider (unchanged) -->
           <div class="max-w-[720px] justify-self-end w-full">
             <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" :start="55" />
           </div>
