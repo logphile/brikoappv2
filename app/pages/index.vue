@@ -171,7 +171,7 @@ useHead({
 
         <div class="section-gap">
           <!-- 2) Dark chips + chevrons (centered row) -->
-          <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div class="flex flex-wrap items-center justify-center gap-3">
             <div class="chip-dark"><span class="text-brand-ivory/90">📷</span><span class="font-semibold">1. Upload a photo</span></div>
             <span class="chip-chevron">›</span>
             <div class="chip-dark"><span class="text-brand-ivory/90">🎨</span><span class="font-semibold">2. Pick size &amp; palette</span></div>
