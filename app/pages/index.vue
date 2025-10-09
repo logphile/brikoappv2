@@ -148,32 +148,53 @@ useHead({
       </div>
     </section>
 
-    <!-- Bottom compare -->
+    <!-- How it works -->
     <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-        <div class="max-w-4xl">
-          <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" :start="52" />
-        </div>
-      </div>
-    </section>
+      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12">
 
-    <!-- How it works (custom) -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-4">
-        <h3 class="mt-20 text-3xl md:text-4xl font-extrabold text-center">How it works</h3>
-        <p class="mt-1 text-center text-brand-dark/70">Four quick steps from photo to bricks.</p>
-
-        <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <div class="step-pill">1. Upload a photo</div>
-          <div class="step-pill">2. Pick size &amp; palette</div>
-          <div class="step-pill">3. Generate preview</div>
-          <div class="step-pill">4. Export PNG · CSV · PDF</div>
+        <!-- 1) Centered header -->
+        <div class="section-title">
+          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">How it works</h2>
+          <p class="mt-2 text-brand-dark/70">Four quick steps from photo to bricks.</p>
+          <div class="rule"></div>
         </div>
 
-        <div class="mt-6 flex items-center justify-center gap-3">
+        <!-- 2) Dark step pills + chevrons (centered row) -->
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div class="step-pill--dark">
+            <span class="material-symbols-outlined text-brand-ivory/90">photo_camera</span>
+            <span class="font-semibold">1. Upload a photo</span>
+          </div>
+          <span class="step-chevron">›</span>
+          <div class="step-pill--dark">
+            <span class="material-symbols-outlined text-brand-ivory/90">palette</span>
+            <span class="font-semibold">2. Pick size &amp; palette</span>
+          </div>
+          <span class="step-chevron">›</span>
+          <div class="step-pill--dark">
+            <span class="material-symbols-outlined text-brand-ivory/90">visibility</span>
+            <span class="font-semibold">3. Generate preview</span>
+          </div>
+          <span class="step-chevron">›</span>
+          <div class="step-pill--dark">
+            <span class="material-symbols-outlined text-brand-ivory/90">download</span>
+            <span class="font-semibold">4. Export PNG · CSV · PDF</span>
+          </div>
+        </div>
+
+        <!-- 3) CTA row -->
+        <div class="mt-4 flex items-center justify-center gap-3">
           <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
           <NuxtLink to="/how-it-works" class="btn-ghost">See Full Guide →</NuxtLink>
         </div>
+
+        <!-- 4) Parrot compare sits BELOW the pills/CTAs -->
+        <div class="mt-10 flex justify-center">
+          <div class="w-full max-w-5xl">
+            <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
+          </div>
+        </div>
+
       </div>
     </section>
   </div>
