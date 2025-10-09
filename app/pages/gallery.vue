@@ -60,7 +60,7 @@ import { useProjects } from '@/composables/useProjects'
 import InlineLoginBanner from '@/components/studio/InlineLoginBanner.vue'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false })
+definePageMeta({ ssr: false, middleware: ['auth'] })
 
 // SEO
 useHead({

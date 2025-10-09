@@ -1,5 +1,3 @@
-// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false })
 <template>
   <Transition appear enter-active-class="transition ease-out duration-600"
               enter-from-class="opacity-0 translate-y-2"
@@ -163,6 +161,8 @@ definePageMeta({ ssr: false })
  </template>
 
 <script setup lang="ts">
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ ssr: false, middleware: ['auth'] })
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
 import { useSupabaseSafeClient } from '@/composables/useSupabaseSafeClient'
