@@ -1,4 +1,4 @@
-/* ---- Custom fonts ---- */
+/* ---- Custom fonts (keep these at the very top) ---- */
 /* Adjust filenames if yours differ; keep `font-display: swap`  for snappy paint */
 
 @font-face {
@@ -152,10 +152,16 @@
 }
 
 @layer base {
-  /* Site-wide defaults */
-  html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark font-sans; }
+  /* ---- Base font assignments (NO @apply) ---- */
+  html, body {
+    font-family: Poppins, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }
+  h1, h2, h3, .font-slab {
+    font-family: "Bespoke Slab", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+
+  /* Existing global colors/helpers */
+  html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark; }
   .section-yellow { @apply bg-brand-yellow text-brand-dark; }
   .section-purple { @apply bg-brand-purple text-brand-ivory; }
-  /* Headings use slab by default (and any .font-slab utility) */
-  h1, h2, h3, .font-slab { @apply font-slab; }
 }
