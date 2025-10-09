@@ -15,7 +15,17 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only (only needed if you ever use a service role on server routes)
+    supabase: {
+      serviceKey: process.env.SUPABASE_SERVICE_KEY || ''
+    },
     public: {
+      // New nested shape preferred by @nuxtjs/supabase
+      supabase: {
+        url: process.env.NUXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+        key: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
+      },
+      // Back-compat keys (if referenced elsewhere in code)
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
       supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
     }
@@ -43,5 +53,11 @@ export default defineNuxtConfig({
     '/mosaic': { prerender: false },
     '/voxel': { prerender: false },
     '/photo': { prerender: false }
+  }
+  ,
+  // Avoid surprise redirects during build previews
+  // @ts-expect-error: Module option provided by @nuxtjs/supabase
+  supabase: {
+    redirectOptions: { login: '/login', callback: '/login' }
   }
 })
