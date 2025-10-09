@@ -1,10 +1,31 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { fileURLToPath } from 'node:url'
+import { dirname, resolve } from 'node:path'
 
 export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
+
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {}
+    }
+  },
+
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
+      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || ''
+    }
+  },
+
   // Only generate truly static routes; do not crawl links
   nitro: {
+    publicAssets: [
+      { dir: resolve(dirname(fileURLToPath(import.meta.url)), '../public') }
+    ],
     prerender: {
       crawlLinks: false,
       routes: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal']
