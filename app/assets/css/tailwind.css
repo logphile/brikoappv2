@@ -5,8 +5,9 @@
 @layer components {
   .btn {
     @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
-           shadow-sm ring-1 ring-white/10 bg-brand-pink text-white hover:bg-brand-pink/90
-           active:translate-y-[1px];
+           shadow-sm ring-1 ring-white/10 bg-brand-pink text-white
+           hover:translate-y-[-1px] hover:shadow-md hover:bg-brand-pink/90
+           active:translate-y-[0px];
   }
   /* Compatibility aliases */
   .btn-primary { @apply btn; }
@@ -16,7 +17,8 @@
     @apply rounded-2xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white shadow;
   }
   .btn-ghost {
-    @apply rounded-2xl px-4 py-2 bg-transparent hover:bg-white/5 ring-1 ring-white/10;
+    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 ring-1 ring-white/15
+           bg-white/5 hover:bg-white/10 text-brand-ivory;
   }
 
   /* Outline variants */
@@ -38,9 +40,9 @@
   .chip-on    { @apply bg-brand-yellow text-brand-dark; }
   .chip-off   { @apply bg-transparent text-brand-ivory; }
 
-  .seg        { @apply flex items-center justify-between rounded-xl px-4 py-3 ring-1 ring-white/20; }
+  .seg        { @apply flex items-center justify-between; }
   .seg-on     { @apply bg-brand-purple text-brand-ivory; }
-  .seg-off    { @apply bg-transparent text-brand-ivory; }
+  .seg-off    { @apply text-brand-ivory; }
 
   .step-pill  { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 ring-1 ring-white/15 bg-white/5; }
 
