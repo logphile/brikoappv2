@@ -56,7 +56,5 @@ async function copyDetails () {
 </template>
 
 <style scoped>
-.btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-brand-pink hover:bg-brand-pink text-white shadow; }
-.btn-secondary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white; }
-.btn-ghost{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-transparent hover:bg-white/5 ring-1 ring-white/10; }
+/* Button recipes are provided globally in app/assets/css/briko.css */
 </style>
