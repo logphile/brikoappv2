@@ -25,5 +25,8 @@
         "cache-control": "no-cache"
       }
     }
-  ]
+  ],
+  "globalHeaders": {
+    "cache-control": "no-store"
+  }
 }

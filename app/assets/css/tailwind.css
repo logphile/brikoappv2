@@ -37,6 +37,11 @@
   /* chips / segments (adjust as needed) */
   .seg-on   { @apply bg-brand-purple text-brand-ivory; }
   .chip-on  { @apply bg-brand-yellow text-brand-dark; }
+  .chip     { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }
+  .chip-off { @apply bg-transparent text-brand-ivory; }
+  .seg      { @apply flex items-center justify-between rounded-xl px-4 py-3 ring-1 ring-white/20; }
+  .seg-off  { @apply bg-transparent text-brand-ivory; }
+  .step-pill{ @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 ring-1 ring-white/15 bg-white/5; }
 }
 
 /* Legacy component tokens and utilities previously in main.css */
@@ -78,7 +83,7 @@
   /* Segmented toggles */
   .segmented { @apply inline-flex items-center rounded-full p-1 border backdrop-blur; border-color: rgba(255,255,255,.8); background-color: rgba(255,255,255,.6); }
   .seg-btn   { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
-  .seg-off   { color: theme('colors.purple'); }
+  /* .seg-off defined above in main recipes */
   .seg-btn:focus-visible { @apply outline-none ring-2; --tw-ring-color: theme('colors.pink'); }
 
   /* Inputs */
@@ -101,7 +106,7 @@
   .label-dark   { color: white; }
   .label-yellow { color: theme('colors.purple'); }
 
-  /* Chips (preset pills) */
+  /* Chips (legacy kept minimal; primary chip recipes live above) */
   .chip-off { background-color: rgba(255,255,255,.5); color: theme('colors.purple'); border-color: rgba(255,255,255,.7); }
 
   /* Sliders */
