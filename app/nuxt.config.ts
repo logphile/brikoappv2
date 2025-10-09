@@ -3,7 +3,11 @@ import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 
 export default defineNuxtConfig({
-  css: ['~/assets/css/main.css'],
+  css: [
+    '~/assets/css/tailwind.css',
+    '~/assets/css/briko.css',
+    '~/assets/css/main.css'
+  ],
 
   modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
 

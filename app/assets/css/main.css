@@ -1,7 +1,4 @@
-/* Tailwind directives must come before any @layer usage */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind directives moved to app/assets/css/tailwind.css */
 /* Custom component tokens (safe on the yellow panel) */
 @layer components {
   /* Any controls shown over the yellow panel */
@@ -25,11 +22,7 @@
 
 
   /* Briko UI v1 — global components */
-  /* Cards */
-  .soft-card {
-    @apply rounded-2xl border border-white/50 shadow-soft backdrop-blur;
-    background-color: rgba(255,255,255,.80);
-  }
+  /* Card (dark variant retained locally) */
   .soft-card-dark {
     @apply rounded-2xl border border-white/10 shadow-soft;
     background-color: rgba(255,255,255,.06);
@@ -39,13 +32,7 @@
   .section-title { @apply text-2xl font-extrabold; color: theme('colors.purple'); }
   .section-kicker { @apply text-sm uppercase tracking-wide; color: theme('colors.purple'); opacity: .7; }
 
-  /* Buttons (rounded rectangles only) */
-  .btn { @apply inline-flex items-center justify-center rounded-[14px] px-4 py-2 font-semibold transition shadow-soft active:translate-y-[1px]; }
-  .btn-primary   { @apply btn; background-color: theme('colors.pink'); color: theme('colors.ivory'); }
-  .btn-secondary { @apply btn; background-color: theme('colors.purple'); color: theme('colors.yellow'); }
-  .btn-ghost     { @apply btn border; border-color: rgba(255,255,255,.7); background-color: rgba(255,255,255,.3); color: theme('colors.purple'); }
-  .btn-outline   { @apply btn border-2; border-color: theme('colors.purple'); color: theme('colors.purple'); }
-  .btn-outline:hover { background-color: theme('colors.purple'); color: theme('colors.yellow'); }
+  /* Buttons moved to app/assets/css/briko.css */
 
   /* Tabs (underlined pill) */
   .tabbar { @apply flex gap-6 border-b; border-color: rgba(255,255,255,.2); }
@@ -55,7 +42,7 @@
   /* Segmented toggles */
   .segmented { @apply inline-flex items-center rounded-full p-1 border backdrop-blur; border-color: rgba(255,255,255,.8); background-color: rgba(255,255,255,.6); }
   .seg-btn   { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
-  .seg-on    { background-color: theme('colors.purple'); color: theme('colors.yellow'); }
+  /* .seg-on moved to app/assets/css/briko.css */
   .seg-off   { color: theme('colors.purple'); }
   .seg-btn:focus-visible { @apply outline-none ring-2; --tw-ring-color: theme('colors.pink'); }
 
@@ -81,7 +68,7 @@
 
   /* Chips (preset pills) */
   .chip     { @apply rounded-full px-3 py-1.5 border text-sm; }
-  .chip-on  { background-color: theme('colors.purple'); color: theme('colors.yellow'); border-color: theme('colors.purple'); }
+  /* .chip-on moved to app/assets/css/briko.css */
   .chip-off { background-color: rgba(255,255,255,.5); color: theme('colors.purple'); border-color: rgba(255,255,255,.7); }
 
   /* Sliders */
