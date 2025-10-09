@@ -1,21 +1,33 @@
 <template>
   <div class="relative overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/10">
-    <!-- base image (right/original) -->
-    <img :src="right" alt="" class="block w-full h-auto select-none pointer-events-none" />
-    <!-- reveal pane (left/mosaic) – fully rendered, clipped by width -->
-    <div class="absolute inset-0 overflow-hidden" :style="{ width: percent + '%' }">
-      <img :src="left" alt="" class="block w-full h-auto select-none pointer-events-none" />
-    </div>
+    <!-- Right/original: full size, fixed -->
+    <img
+      :src="right"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+    />
 
-    <!-- handle: thinner (12px) -->
-    <div class="absolute inset-y-0" :style="{ left: `calc(${percent}% - 6px)` }">
+    <!-- Left/mosaic: full size, clipped by clip-path so it never shrinks -->
+    <img
+      :src="left"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+      :style="{ clipPath: `inset(0 ${100 - percent}% 0 0)`  }"
+    />
+
+    <!-- Handle (12px thick) -->
+    <div class="absolute inset-y-0" :style="{ left: `calc(${percent}% - 6px)`  }">
       <div class="h-full w-[12px] mx-auto rounded bg-black/40 backdrop-blur-sm ring-1 ring-white/40"></div>
     </div>
 
+    <!-- Drag surface -->
     <input
       class="absolute inset-0 w-full opacity-0 cursor-ew-resize"
-      type="range" min="0" max="100" v-model.number="percent" />
+      type="range" min="0" max="100" v-model.number="percent"
+      aria-label="Compare slider"
+    />
   </div>
+  
 </template>
 
 <script setup lang="ts">
@@ -26,6 +38,7 @@ const props = defineProps<{
   right: string
   start?: number
 }>()
-// Start centered; no animation
+
+// Start centered, no animations
 const percent = ref<number>(props.start ?? 50)
 </script>
