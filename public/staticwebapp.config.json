@@ -4,7 +4,9 @@
     "exclude": ["/_nuxt/*", "/slider/*"]
   },
   "mimeTypes": {
-    ".webp": "image/webp"
+    ".webp": "image/webp",
+    ".woff2": "font/woff2",
+    ".woff": "font/woff"
   },
   "routes": [
     {
