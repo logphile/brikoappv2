@@ -1,5 +1,9 @@
 <template>
-  <div class="relative overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/10">
+  <!-- default to 16/9, can be overridden via prop -->
+  <div
+    class="relative w-full overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/10"
+    :class="ratioClass"
+  >
     <!-- Right/original: full size, fixed -->
     <img
       :src="right"
@@ -31,14 +35,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   left: string
   right: string
   start?: number
-}>()
+  ratio?: '16/9' | '4/3' | '1/1' | '3/2'
+}>(), { start: 50, ratio: '16/9' })
 
-// Start centered, no animations
-const percent = ref<number>(props.start ?? 50)
+const percent = ref<number>(props.start)
+const ratioClass = computed(() => {
+  const map: Record<string, string> = {
+    '16/9': 'aspect-[16/9]',
+    '4/3':  'aspect-[4/3]',
+    '1/1':  'aspect-square',
+    '3/2':  'aspect-[3/2]',
+  }
+  return map[props.ratio] || 'aspect-[16/9]'
+})
 </script>

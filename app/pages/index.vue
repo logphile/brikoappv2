@@ -55,29 +55,23 @@ useHead({
 
           <!-- LEFT: headline + bullets + CTA -->
           <div>
-            <!-- +20% headline: was text-[44px] md:6xl lg:7xl -->
-            <h1 class="text-[53px] md:text-7xl lg:text-8xl font-extrabold leading-tight tracking-tight">
+            <!-- Shrink ~15% across breakpoints -->
+            <h1 class="text-[45px] md:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight">
               Create LEGO-style art from your images
             </h1>
 
-            <!-- Bullets w/ pink mini icons -->
+            <!-- Bullets w/ Material Symbols -->
             <ul class="mt-6 space-y-2 text-lg">
               <li class="flex items-center gap-3">
-                <svg class="w-5 h-5 shrink-0 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M16 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 3l9 9-9 9M12 8v10" />
-                </svg>
+                <span class="ms w-5 h-5 text-brand-pink">cloud_upload</span>
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-center gap-3">
-                <svg class="w-5 h-5 shrink-0 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M4 5h16v14H4zM8 9h2v2H8zM12 9h2v2h-2zM16 9h2v2h-2zM8 13h2v2H8zM12 13h2v2h-2zM16 13h2v2h-2z"/>
-                </svg>
+                <span class="ms w-5 h-5 text-brand-pink">grid_on</span>
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-center gap-3">
-                <svg class="w-5 h-5 shrink-0 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M7 4h10a2 2 0 0 1 2 2v12l-7-3-7 3V6a2 2 0 0 1 2-2z"/>
-                </svg>
+                <span class="ms w-5 h-5 text-brand-pink">request_quote</span>
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
@@ -90,7 +84,7 @@ useHead({
 
           <!-- RIGHT: compare slider (unchanged) -->
           <div class="max-w-[720px] justify-self-end w-full">
-            <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" :start="55" />
+            <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="3/2" :start="55" />
           </div>
         </div>
       </div>
