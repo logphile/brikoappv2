@@ -58,6 +58,11 @@ export default defineNuxtConfig({
   // Avoid surprise redirects during build previews
   // @ts-expect-error: Module option provided by @nuxtjs/supabase
   supabase: {
-    redirectOptions: { login: '/login', callback: '/login' }
+    redirect: false,
+    redirectOptions: {
+      login: '/login',
+      callback: '/login',
+      exclude: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal', '/login']
+    }
   }
 })

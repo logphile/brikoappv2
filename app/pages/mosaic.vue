@@ -39,7 +39,7 @@ import SaveRow from '@/components/editor/SaveRow.vue'
 declare const useSupabaseClient: <T = any>() => T
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false })
+definePageMeta({ ssr: false, middleware: ['auth'] })
 
 const mosaic = useMosaicStore()
 const { public: cfg } = useRuntimeConfig() as any

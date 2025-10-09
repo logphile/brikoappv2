@@ -6,7 +6,7 @@ import { signedUrl } from '@/lib/signed-url'
 import BricklinkExportDialog from '@/components/export/BricklinkExportDialog.vue'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false })
+definePageMeta({ ssr: false, middleware: ['auth'] })
 
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any

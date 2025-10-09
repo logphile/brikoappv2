@@ -32,13 +32,15 @@
   </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watchEffect } from 'vue'
 import { useRouter, useNuxtApp, useHead } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 // Nuxt auto-imported composables from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
+// Auto-imported user ref (declare for TS)
+declare const useSupabaseUser: <T = any>() => { value: T | null }
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false })
@@ -48,6 +50,7 @@ const route = useRoute()
 const { loginWithMagicLink } = useAuth()
 const { $supabase } = useNuxtApp() as any
 const supabase = useSupabaseClient<any>()
+const user = useSupabaseUser<any>()
 
 // SEO
 useHead({
@@ -131,8 +134,13 @@ onMounted(async () => {
   if(!supabase) return
   // Handle magic-link callback if present
   try { await supabase.auth.exchangeCodeForSession(window.location.href) } catch {}
-  // If already logged in, redirect to projects
-  const { data } = await supabase.auth.getUser()
-  if(data.user) router.push(nextPath.value)
+})
+
+// Only redirect after the user ref becomes available
+watchEffect(() => {
+  if (user?.value) {
+    const next = typeof route.query.next === 'string' ? route.query.next : '/studio'
+    router.push(next)
+  }
 })
 </script>

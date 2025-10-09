@@ -57,7 +57,7 @@ import ProjectGrid from '@/components/ProjectGrid.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false })
+definePageMeta({ ssr: false, middleware: ['auth'] })
 
 // SEO
 useHead({
