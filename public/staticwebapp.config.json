@@ -22,7 +22,7 @@
     {
       "route": "/index.html",
       "headers": {
-        "cache-control": "no-cache"
+        "cache-control": "no-store"
       }
     }
   ],
