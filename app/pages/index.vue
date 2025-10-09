@@ -63,22 +63,22 @@ useHead({
             <!-- Bullets w/ Material Symbols -->
             <ul class="mt-6 space-y-2 text-lg">
               <li class="flex items-center gap-3">
-                <span class="ms w-5 h-5 text-brand-pink">cloud_upload</span>
+                <span class="material-symbols-outlined text-brand-pink align-middle">cloud_upload</span>
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-center gap-3">
-                <span class="ms w-5 h-5 text-brand-pink">grid_on</span>
+                <span class="material-symbols-outlined text-brand-pink align-middle">grid_on</span>
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-center gap-3">
-                <span class="ms w-5 h-5 text-brand-pink">request_quote</span>
+                <span class="material-symbols-outlined text-brand-pink align-middle">request_quote</span>
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
 
             <!-- CTA: remove “See Full Guide”; keep main button; keep larger top gap -->
             <div class="mt-16 flex items-center gap-3">
-              <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
+              <NuxtLink to="/photo" class="btn text-lg px-6 py-3">Try Photo to Bricks</NuxtLink>
             </div>
           </div>
 
