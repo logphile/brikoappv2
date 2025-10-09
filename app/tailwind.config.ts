@@ -25,7 +25,8 @@ export default <Partial<Config>>{
     extend: {
       fontFamily: {
         brand: ['"Bespoke Slab"', 'Georgia', 'serif'],
-        sans: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+        slab: ['"Bespoke Slab"', 'ui-serif', 'Georgia', 'serif'],
+        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif']
       },
       colors: {
         // Brand tokens used as utilities like bg-brand-pink, text-brand-yellow, ring-brand-purple, etc.

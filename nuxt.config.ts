@@ -154,9 +154,9 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', sizes: '180x180', href: '/brand/apple-touch-icon.png?v=2' },
         { rel: 'mask-icon', href: '/brand/safari-pinned-tab.svg?v=2', color: '#3AE59F' },
         { rel: 'manifest', href: '/manifest.webmanifest' },
-        // Preload brand fonts to minimize FOUT
-        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Medium.woff2', crossorigin: 'anonymous' },
-        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Bold.woff2', crossorigin: 'anonymous' }
+        // Preload brand fonts to minimize FOUT (match @font-face Regulars)
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Regular.woff2', crossorigin: 'anonymous' },
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Regular.woff2', crossorigin: 'anonymous' }
       ]
     }
   }

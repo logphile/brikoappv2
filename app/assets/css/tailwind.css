@@ -1,3 +1,26 @@
+/* ---- Custom fonts ---- */
+/* Adjust filenames if yours differ; keep `font-display: swap`  for snappy paint */
+
+@font-face {
+  font-family: "Bespoke Slab";
+  src:
+    url("/fonts/BespokeSlab-Regular.woff2") format("woff2"),
+    url("/fonts/BespokeSlab-Regular.woff") format("woff");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src:
+    url("/fonts/Poppins-Regular.woff2") format("woff2"),
+    url("/fonts/Poppins-Regular.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -120,7 +143,10 @@
 }
 
 @layer base {
-  html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark; }
+  /* Site-wide defaults */
+  html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark font-sans; }
   .section-yellow { @apply bg-brand-yellow text-brand-dark; }
   .section-purple { @apply bg-brand-purple text-brand-ivory; }
+  /* Headings use slab by default (and any .font-slab utility) */
+  h1, h2, h3, .font-slab { @apply font-slab; }
 }
