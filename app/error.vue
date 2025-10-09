@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHead } from '#imports'
+import { useHead, useError, clearError, computed } from '#imports'
 
 const err = useError()
 const status = computed<number>(() => Number(err.value?.statusCode || 500))
@@ -56,7 +56,7 @@ async function copyDetails () {
 </template>
 
 <style scoped>
-.btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white shadow; }
+.btn-primary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-brand-pink hover:bg-brand-pink text-white shadow; }
 .btn-secondary{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white; }
 .btn-ghost{ @apply inline-flex items-center rounded-xl px-4 py-2 bg-transparent hover:bg-white/5 ring-1 ring-white/10; }
 </style>

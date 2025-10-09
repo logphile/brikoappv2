@@ -20,8 +20,13 @@ export default <Partial<Config>>{
         sans: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
       },
       colors: {
+        // Brand tokens used as utilities like bg-brand-pink, text-brand-yellow, ring-brand-purple, etc.
         brand: {
-          purple: '#2F3061'
+          pink:   '#FF0062',
+          yellow: '#FFD808',
+          purple: '#2F3061',
+          dark:   '#343434',
+          ivory:  '#F5F4F1'
         },
         // Base ink text color (used via @apply text-ink)
         ink: '#343434',

@@ -5,18 +5,23 @@
 /* Custom component tokens (safe on the yellow panel) */
 @layer components {
   /* Any controls shown over the yellow panel */
-  .on-yellow .label { @apply text-[#2F3061]; }
+  .on-yellow .label { @apply text-brand-purple; }
 
   /* Inputs on yellow should be dark text, not white */
   .on-yellow input[type="text"],
   .on-yellow input[type="search"],
   .on-yellow input[type="number"] {
-    @apply bg-white/80 text-[#2F3061] placeholder-[#2F3061]/60 border border-white/80;
+    @apply bg-white/80 text-brand-purple border border-white/80;
+  }
+  .on-yellow input[type="text"]::placeholder,
+  .on-yellow input[type="search"]::placeholder,
+  .on-yellow input[type="number"]::placeholder {
+    @apply text-brand-purple/60;
   }
 
   /* Optional: info “i” icon tint on yellow */
   .on-yellow .hint,
-  .on-yellow .icon { @apply text-[#2F3061]/70; }
+  .on-yellow .icon { @apply text-brand-purple/70; }
 
 
   /* Briko UI v1 — global components */
