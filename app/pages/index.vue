@@ -153,7 +153,7 @@ const fastFeatures = [
               :key="f.text"
               class="flex items-center gap-3 rounded-xl px-4 py-3 text-[17px] leading-tight text-[#FFD808] hover:bg-white/5 transition"
             >
-              <span class="ms text-[22px]" aria-hidden="true">{{ f.icon }}</span>
+              <span class="material-symbols-outlined text-[22px]" aria-hidden="true">{{ f.icon }}</span>
               <span class="tracking-[0.1px]">{{ f.text }}</span>
             </li>
           </ul>
