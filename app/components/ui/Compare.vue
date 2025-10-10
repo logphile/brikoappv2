@@ -19,15 +19,16 @@
       :style="{ clipPath: `inset(0 ${100 - percent}% 0 0)`  }"
     />
 
-    <!-- Handle: thin bar + knob (tokens.css utilities) -->
-    <div class="splitter-bar" :style="{ left: `${percent}%` }"></div>
-    <div class="splitter-knob" :style="{ left: `${percent}%` }"></div>
+    <!-- Handle (12px thick) -->
+    <div class="absolute inset-y-0" :style="{ left: `calc(${percent}% - 6px)`  }">
+      <div class="h-full w-[12px] mx-auto rounded bg-black/40 backdrop-blur-sm ring-1 ring-white/40"></div>
+    </div>
 
     <!-- Drag surface -->
     <input
       class="absolute inset-0 w-full opacity-0 cursor-ew-resize"
       type="range" min="0" max="100" v-model.number="percent"
-      aria-label="Compare slider" :aria-valuenow="percent" aria-valuemin="0" aria-valuemax="100"
+      aria-label="Compare slider"
     />
   </div>
   
