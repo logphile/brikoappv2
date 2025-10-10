@@ -150,6 +150,12 @@
   /* uniform space AFTER a .section-title block */
   .section-gap { @apply mt-6 md:mt-8; }
 
+  /* Hero title sizing (~25% larger) */
+  .hero-h1 {
+    @apply font-slab font-bold leading-[1.03] text-brand-dark
+           text-[50px] sm:text-[70px] md:text-[84px];
+  }
+
   /* Dark chips (variant used in How it works) */
   .chip-dark {
     @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3

@@ -55,9 +55,10 @@ useHead({
 
           <!-- LEFT: headline + bullets + CTA -->
           <div>
-            <!-- Hero headline (slab 700) -->
-            <h1 class="font-slab font-bold text-[44px] md:text-6xl lg:text-7xl leading-tight tracking-tight">
-              Create LEGO-style art from your images
+            <!-- Hero headline (larger + controlled line length) -->
+            <h1 class="hero-h1 max-w-[16ch]">
+              <span class="hidden lg:block">Create</span>
+              <span class="lg:hidden">Create </span>LEGO-style art from your images
             </h1>
 
             <!-- Bullets with inline SVG (no external deps) -->
