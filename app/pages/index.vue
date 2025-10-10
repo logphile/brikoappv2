@@ -44,6 +44,14 @@ useHead({
     { type: 'application/ld+json', innerHTML: JSON.stringify(homeBreadcrumbs) }
   ]
 })
+
+// Fast features for the purple section (icon + text)
+const fastFeatures = [
+  { icon: 'bolt',          text: 'Instant LEGO–style color mapping' },
+  { icon: 'grid_view',     text: 'Greedy tiling — fewer plates, cleaner look' },
+  { icon: 'receipt_long',  text: 'Auto Bill of Materials • cost estimate' },
+  { icon: 'file_download', text: 'One-click export: PNG · CSV · PDF' }
+]
 </script>
 
 <template>
@@ -138,21 +146,17 @@ useHead({
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
           </div>
 
-          <!-- Make ALL text yellow in this column -->
-          <div class="space-y-4 text-brand-yellow">
-            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
-              Instant LEGO-style color mapping
-            </div>
-            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
-              Greedy tiling — fewer plates, cleaner look
-            </div>
-            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
-              Auto Bill of Materials • cost estimate
-            </div>
-            <div class="seg border-2 border-brand-yellow/60 rounded-xl px-5 py-3">
-              One-click export: PNG · CSV · PDF
-            </div>
-          </div>
+          <!-- Icon rows (no borders) -->
+          <ul class="mx-auto w-full max-w-[720px] space-y-3">
+            <li
+              v-for="f in fastFeatures"
+              :key="f.text"
+              class="flex items-center gap-3 rounded-xl px-4 py-3 text-[17px] leading-tight text-[#FFD808] hover:bg-white/5 transition"
+            >
+              <span class="ms text-[22px]" aria-hidden="true">{{ f.icon }}</span>
+              <span class="tracking-[0.1px]">{{ f.text }}</span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>
