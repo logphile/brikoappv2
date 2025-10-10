@@ -5,7 +5,7 @@
         <!-- Mosaic Engine -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">grid_view</span>
+            <AppIcon name="material-symbols:grid-view-outline" :size="24" class="text-[#111827]/90" />
             <h3 class="text-lg font-semibold">Mosaic Engine</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -17,7 +17,7 @@
         <!-- 3D Voxel Preview -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">view_in_ar</span>
+            <AppIcon name="material-symbols:view-in-ar-outline" :size="24" class="text-[#111827]/90" />
             <h3 class="text-lg font-semibold">3D Voxel Preview</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -29,7 +29,7 @@
         <!-- Smart BOM -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">receipt_long</span>
+            <AppIcon name="material-symbols:receipt-long-outline" :size="24" class="text-[#111827]/90" />
             <h3 class="text-lg font-semibold">Smart BOM</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -41,7 +41,7 @@
         <!-- Fast Exports -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">download</span>
+            <AppIcon name="material-symbols:file-download-outline" :size="24" class="text-[#111827]/90" />
             <h3 class="text-lg font-semibold">Fast Exports</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -53,7 +53,7 @@
         <!-- Save & Share -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">share</span>
+            <AppIcon name="material-symbols:share-outline" :size="24" class="text-[#111827]/90" />
             <h3 class="text-lg font-semibold">Save &amp; Share</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -66,7 +66,7 @@
         <!-- Performance -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <span aria-hidden="true" class="material-symbols-rounded text-[24px] text-[#111827]/90">bolt</span>
+            <AppIcon name="material-symbols:bolt-outline" :size="24" class="text-[#111827]/90" />
             <h3 class="text-lg font-semibold">Performance</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>

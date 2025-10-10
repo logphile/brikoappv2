@@ -65,7 +65,7 @@ export default defineNuxtConfig({
     '/project/**': { prerender: false },
     '/share/**': { prerender: false }
   },
-  css: ['~/assets/css/tailwind.css', '~/assets/css/icons.css', '~/assets/css/icons-fix.css'],
+  css: ['~/assets/css/tailwind.css'],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -157,13 +157,7 @@ export default defineNuxtConfig({
         // Preload brand fonts to minimize FOUT (match @font-face weights in use)
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/BespokeSlab-Bold.woff2', crossorigin: 'anonymous' },
         { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-Regular.woff2', crossorigin: 'anonymous' },
-        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-SemiBold.woff2', crossorigin: 'anonymous' },
-        // (A) Self-hosted Material Symbols preload
-        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/MaterialSymbolsOutlined.woff2', crossorigin: 'anonymous' },
-        // (B) CDN fallback for Material Symbols
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0' }
+        { rel: 'preload', as: 'font', type: 'font/woff2', href: '/fonts/Poppins-SemiBold.woff2', crossorigin: 'anonymous' }
       ]
     }
   }
