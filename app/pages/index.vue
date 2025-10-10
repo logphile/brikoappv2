@@ -45,12 +45,12 @@ useHead({
   ]
 })
 
-// Fast features for the purple section (icon + text)
+// Fast features for the purple section (Iconify icon + text)
 const fastFeatures = [
-  { icon: 'bolt',          text: 'Instant LEGO–style color mapping' },
-  { icon: 'grid_view',     text: 'Greedy tiling — fewer plates, cleaner look' },
-  { icon: 'receipt_long',  text: 'Auto Bill of Materials • cost estimate' },
-  { icon: 'file_download', text: 'One-click export: PNG · CSV · PDF' }
+  { icon: 'material-symbols:bolt-outline',          text: 'Instant LEGO–style color mapping' },
+  { icon: 'material-symbols:grid-view-outline',     text: 'Greedy tiling — fewer plates, cleaner look' },
+  { icon: 'material-symbols:receipt-long-outline',  text: 'Auto Bill of Materials • cost estimate' },
+  { icon: 'material-symbols:file-download-outline', text: 'One-click export: PNG · CSV · PDF' }
 ]
 </script>
 
@@ -69,27 +69,18 @@ const fastFeatures = [
               <span class="lg:hidden">Create </span>LEGO-style art from your images
             </h1>
 
-            <!-- Bullets with inline SVG (no external deps) -->
-            <ul class="mt-6 space-y-2 text-base md:text-lg">
+            <!-- Bullets with Iconify SVGs (keep layout/image unchanged) -->
+            <ul class="mt-4 space-y-2 text-[16px] md:text-[18px] text-[#343434]">
               <li class="flex items-center gap-3">
-                <!-- camera -->
-                <svg class="w-4 h-4 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M9 3a1 1 0 0 0-.894.553L7.382 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2.382l-.724-1.447A1 1 0 0 0 13 3H9zm3 5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
-                </svg>
+                <AppIcon name="material-symbols:cloud-upload-outline" />
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-center gap-3">
-                <!-- grid -->
-                <svg class="w-4 h-4 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"/>
-                </svg>
+                <AppIcon name="material-symbols:grid-on-outline" />
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-center gap-3">
-                <!-- quote/price -->
-                <svg class="w-4 h-4 text-brand-pink" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M3 5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm12 0v4h4l-4-4zM7 12h10v2H7v-2zm0 4h6v2H7v-2z"/>
-                </svg>
+                <AppIcon name="material-symbols:request-quote-outline" />
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
@@ -147,14 +138,10 @@ const fastFeatures = [
           </div>
 
           <!-- Icon rows (no borders) -->
-          <ul class="mx-auto w-full max-w-[720px] space-y-3">
-            <li
-              v-for="f in fastFeatures"
-              :key="f.text"
-              class="flex items-center gap-3 rounded-xl px-4 py-3 text-[17px] leading-tight text-[#FFD808] hover:bg-white/5 transition"
-            >
-              <span class="material-symbols-outlined text-[22px]" aria-hidden="true">{{ f.icon }}</span>
-              <span class="tracking-[0.1px]">{{ f.text }}</span>
+          <ul class="flex flex-col gap-3 text-[#F5F4F1]">
+            <li v-for="f in fastFeatures" :key="f.text" class="flex items-start gap-3">
+              <AppIcon :name="f.icon" class="mt-0.5" />
+              <span class="tracking-[0.1px] leading-tight">{{ f.text }}</span>
             </li>
           </ul>
         </div>
