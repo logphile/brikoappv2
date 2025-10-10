@@ -1,0 +1,25 @@
+/* Force Material Symbols ligatures to render the glyphs */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined" !important;
+  display: inline-block;           /* keeps box tight + predictable */
+  line-height: 1;                  /* avoids clipping at some sizes */
+
+  /* 1) LIGATURES: turn them on and keep them on */
+  font-variant-ligatures: common-ligatures contextual discretionary-ligatures !important;
+  -webkit-font-feature-settings: "liga" 1, "clig" 1, "calt" 1;
+  -moz-font-feature-settings: "liga" 1, "clig" 1, "calt" 1;
+  font-feature-settings: "liga" 1, "clig" 1, "calt" 1 !important;
+
+  /* 2) Anything that breaks ligature matching — neutralize it */
+  letter-spacing: 0 !important;    /* Tailwind tracking-* will break ligatures */
+  text-transform: none !important; /* uppercase/lowercase breaks the name */
+  white-space: nowrap;             /* keep the name intact */
+  word-spacing: 0;
+
+  /* 3) Variable axes (tweak if you want filled/bolder icons) */
+  font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24 !important;
+
+  /* 4) Visual polish */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
