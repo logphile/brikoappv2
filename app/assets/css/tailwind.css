@@ -13,181 +13,182 @@
        url("/fonts/Poppins-Regular.woff") format("woff");
   font-weight: 400; font-style: normal; font-display: swap;
 }
-@font-face {
-  font-family: "Poppins";
-  src: url("/fonts/Poppins-SemiBold.woff2") format("woff2"),
-       url("/fonts/Poppins-SemiBold.woff") format("woff");
-  font-weight: 600; font-style: normal; font-display: swap;
-}
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import './typography.css';
-/* Shared Briko UI recipes in Tailwind components layer */
-@layer components {
-  .btn {
-    @apply inline-flex items-center justify-center rounded-2xl
-           px-5 py-2.5 text-sm font-semibold bg-brand-pink text-white
-           ring-1 ring-white/10 shadow-sm transition
-           hover:-translate-y-[1px] hover:shadow-md;
-  }
-  /* Compatibility aliases */
-  .btn-primary { @apply btn; }
-  .btn-pink    { @apply btn; }
-
-  .btn-secondary {
-    @apply rounded-2xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white shadow;
-  }
-  .btn-ghost {
-    @apply inline-flex items-center justify-center rounded-2xl
-           px-4 py-2 text-sm font-semibold bg-transparent text-brand-dark
-           ring-1 ring-black/10 hover:bg-black/5;
-  }
-  .btn-ghost-alt {
-    @apply inline-flex items-center justify-center rounded-2xl px-4 py-2
-           text-sm font-semibold bg-white/85 text-brand-dark
-           shadow-sm ring-1 ring-black/10;
-  }
-  .btn-ghost-alt:hover { @apply bg-white; }
-
-  /* Outline variants */
-  .btn-purple-outline {
-    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
-           border border-brand-purple text-brand-purple bg-transparent hover:bg-brand-purple/10;
-  }
-  .btn-ivory-outline {
-    @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
-           border border-brand-ivory text-brand-ivory bg-transparent hover:bg-brand-ivory/10;
+  @font-face {
+    font-family: "Poppins";
+    src: url("/fonts/Poppins-SemiBold.woff2") format("woff2"),
+         url("/fonts/Poppins-SemiBold.woff") format("woff");
+    font-weight: 600; font-style: normal; font-display: swap;
   }
 
-  .soft-card {
-    @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
+
+  @tailwind base;
+  @tailwind components;
+  @import './typography.css';
+  @tailwind utilities;
+  /* Shared Briko UI recipes in Tailwind components layer */
+  @layer components {
+    .btn {
+      @apply inline-flex items-center justify-center rounded-2xl
+             px-5 py-2.5 text-sm font-semibold bg-brand-pink text-white
+             ring-1 ring-white/10 shadow-sm transition
+             hover:-translate-y-[1px] hover:shadow-md;
+    }
+    /* Compatibility aliases */
+    .btn-primary { @apply btn; }
+    .btn-pink    { @apply btn; }
+
+    .btn-secondary {
+      @apply rounded-2xl px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white shadow;
+    }
+    .btn-ghost {
+      @apply inline-flex items-center justify-center rounded-2xl
+             px-4 py-2 text-sm font-semibold bg-transparent text-brand-dark
+             ring-1 ring-black/10 hover:bg-black/5;
+    }
+    .btn-ghost-alt {
+      @apply inline-flex items-center justify-center rounded-2xl px-4 py-2
+             text-sm font-semibold bg-white/85 text-brand-dark
+             shadow-sm ring-1 ring-black/10;
+    }
+    .btn-ghost-alt:hover { @apply bg-white; }
+
+    /* Outline variants */
+    .btn-purple-outline {
+      @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
+             border border-brand-purple text-brand-purple bg-transparent hover:bg-brand-purple/10;
+    }
+    .btn-ivory-outline {
+      @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
+             border border-brand-ivory text-brand-ivory bg-transparent hover:bg-brand-ivory/10;
+    }
+
+    .soft-card {
+      @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
+    }
+
+    /* Chips / pills and segments */
+    .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }
+    .chip-on    { @apply bg-brand-yellow text-brand-dark; }
+    .chip-off   { @apply bg-transparent text-brand-ivory; }
+
+    .seg        { @apply flex items-center justify-between; }
+    .seg-on     { @apply bg-brand-purple text-brand-ivory; }
+    .seg-off    { @apply text-brand-ivory; }
+
+    .step-pill  { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 ring-1 ring-white/15 bg-white/5; }
+
+    /* Legacy aliases */
+    .badge { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm bg-brand-ivory text-brand-dark ring-1 ring-white/10; }
+    .badge__icon { @apply inline-flex items-center; }
+    .nav-pill { @apply inline-flex items-center rounded-xl px-3.5 py-1.5 bg-brand-pink text-brand-yellow shadow transition; }
   }
 
-  /* Chips / pills and segments */
-  .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }
-  .chip-on    { @apply bg-brand-yellow text-brand-dark; }
-  .chip-off   { @apply bg-transparent text-brand-ivory; }
+  /* Legacy component tokens and utilities previously in main.css */
+  @layer components {
+    /* Any controls shown over the yellow panel */
+    .on-yellow .label { @apply text-brand-purple; }
 
-  .seg        { @apply flex items-center justify-between; }
-  .seg-on     { @apply bg-brand-purple text-brand-ivory; }
-  .seg-off    { @apply text-brand-ivory; }
+    /* Inputs on yellow should be dark text, not white */
+    .on-yellow input[type="text"],
+    .on-yellow input[type="search"],
+    .on-yellow input[type="number"] {
+      @apply bg-white/80 text-brand-purple border border-white/80;
+    }
+    .on-yellow input[type="text"]::placeholder,
+    .on-yellow input[type="search"]::placeholder,
+    .on-yellow input[type="number"]::placeholder {
+      @apply text-brand-purple/60;
+    }
 
-  .step-pill  { @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 ring-1 ring-white/15 bg-white/5; }
+    /* Optional: info “i” icon tint on yellow */
+    .on-yellow .hint,
+    .on-yellow .icon { @apply text-brand-purple/70; }
 
-  /* Legacy aliases */
-  .badge { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm bg-brand-ivory text-brand-dark ring-1 ring-white/10; }
-  .badge__icon { @apply inline-flex items-center; }
-  .nav-pill { @apply inline-flex items-center rounded-xl px-3.5 py-1.5 bg-brand-pink text-brand-yellow shadow transition; }
-}
+    /* Card (dark variant) */
+    .soft-card-dark {
+      @apply rounded-2xl border border-white/10 shadow-soft;
+      background-color: rgba(255,255,255,.06);
+    }
 
-/* Legacy component tokens and utilities previously in main.css */
-@layer components {
-  /* Any controls shown over the yellow panel */
-  .on-yellow .label { @apply text-brand-purple; }
+    /* (removed legacy section header sizes to avoid conflicts) */
 
-  /* Inputs on yellow should be dark text, not white */
-  .on-yellow input[type="text"],
-  .on-yellow input[type="search"],
-  .on-yellow input[type="number"] {
-    @apply bg-white/80 text-brand-purple border border-white/80;
-  }
-  .on-yellow input[type="text"]::placeholder,
-  .on-yellow input[type="search"]::placeholder,
-  .on-yellow input[type="number"]::placeholder {
-    @apply text-brand-purple/60;
-  }
+    /* Tabs (underlined pill) */
+    .tabbar { @apply flex gap-6 border-b; border-color: rgba(255,255,255,.2); }
+    .tab    { @apply pb-2 -mb-px; color: theme('colors.purple'); opacity: .7; }
+    .tab-active { @apply border-b-4 font-bold; border-color: theme('colors.pink'); color: theme('colors.purple'); opacity: 1; }
 
-  /* Optional: info “i” icon tint on yellow */
-  .on-yellow .hint,
-  .on-yellow .icon { @apply text-brand-purple/70; }
+    /* Segmented toggles */
+    .segmented { @apply inline-flex items-center rounded-full p-1 border backdrop-blur; border-color: rgba(255,255,255,.8); background-color: rgba(255,255,255,.6); }
+    .seg-btn   { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
+    /* .seg-off defined above in main recipes */
+    .seg-btn:focus-visible { @apply outline-none ring-2; --tw-ring-color: theme('colors.pink'); }
 
-  /* Card (dark variant) */
-  .soft-card-dark {
-    @apply rounded-2xl border border-white/10 shadow-soft;
-    background-color: rgba(255,255,255,.06);
-  }
+    /* Inputs */
+    .input-yellow {
+      @apply w-full rounded-[14px] border px-4 py-2.5 focus:outline-none focus:ring-2;
+      border-color: rgba(255,255,255,.8);
+      background-color: rgba(255,255,255,.8);
+      color: theme('colors.purple');
+    }
+    .input-yellow::placeholder { color: rgba(47,48,97,.6); }
 
-  /* (removed legacy section header sizes to avoid conflicts) */
+    .input-dark {
+      @apply w-full rounded-[14px] border px-4 py-2.5 focus:outline-none focus:ring-2;
+      border-color: rgba(255,255,255,.1);
+      background-color: rgba(255,255,255,.05);
+      color: white;
+    }
+    .input-dark::placeholder { color: rgba(255,255,255,.5); }
 
-  /* Tabs (underlined pill) */
-  .tabbar { @apply flex gap-6 border-b; border-color: rgba(255,255,255,.2); }
-  .tab    { @apply pb-2 -mb-px; color: theme('colors.purple'); opacity: .7; }
-  .tab-active { @apply border-b-4 font-bold; border-color: theme('colors.pink'); color: theme('colors.purple'); opacity: 1; }
+    .label-dark   { color: white; }
+    .label-yellow { color: theme('colors.purple'); }
 
-  /* Segmented toggles */
-  .segmented { @apply inline-flex items-center rounded-full p-1 border backdrop-blur; border-color: rgba(255,255,255,.8); background-color: rgba(255,255,255,.6); }
-  .seg-btn   { @apply rounded-full px-3 py-1.5 text-sm font-medium transition; }
-  /* .seg-off defined above in main recipes */
-  .seg-btn:focus-visible { @apply outline-none ring-2; --tw-ring-color: theme('colors.pink'); }
+    /* Sliders */
+    .slider-track { @apply h-1.5 rounded-full; background-color: rgba(255,255,255,.5); }
+    .slider-fill  { @apply h-1.5 rounded-full; background-color: theme('colors.pink'); }
+    /* Section title + pink rule */
+    .section-title { @apply text-center; }
+    .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
+    /* uniform space AFTER a .section-title block (align with typography.css) */
+    .section-gap { @apply mb-8 md:mb-10; }
 
-  /* Inputs */
-  .input-yellow {
-    @apply w-full rounded-[14px] border px-4 py-2.5 focus:outline-none focus:ring-2;
-    border-color: rgba(255,255,255,.8);
-    background-color: rgba(255,255,255,.8);
-    color: theme('colors.purple');
-  }
-  .input-yellow::placeholder { color: rgba(47,48,97,.6); }
+    /* Hero title sizing (~25% larger) */
+    .hero-h1 {
+      @apply font-slab font-bold leading-[1.03] text-brand-dark
+             text-[50px] sm:text-[70px] md:text-[84px];
+    }
 
-  .input-dark {
-    @apply w-full rounded-[14px] border px-4 py-2.5 focus:outline-none focus:ring-2;
-    border-color: rgba(255,255,255,.1);
-    background-color: rgba(255,255,255,.05);
-    color: white;
-  }
-  .input-dark::placeholder { color: rgba(255,255,255,.5); }
-
-  .label-dark   { color: white; }
-  .label-yellow { color: theme('colors.purple'); }
-
-  /* Sliders */
-  .slider-track { @apply h-1.5 rounded-full; background-color: rgba(255,255,255,.5); }
-  .slider-fill  { @apply h-1.5 rounded-full; background-color: theme('colors.pink'); }
-  /* Section title + pink rule */
-  .section-title { @apply text-center; }
-  .section-title .rule { @apply mx-auto mt-4 h-1 w-16 rounded-full bg-brand-pink; }
-  /* uniform space AFTER a .section-title block (align with typography.css) */
-  .section-gap { @apply mb-8 md:mb-10; }
-
-  /* Hero title sizing (~25% larger) */
-  .hero-h1 {
-    @apply font-slab font-bold leading-[1.03] text-brand-dark
-           text-[50px] sm:text-[70px] md:text-[84px];
-  }
-
-  /* Dark chips (variant used in How it works) */
-  .chip-dark {
-    @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3
-           bg-brand-purple text-brand-ivory ring-1 ring-black/10 shadow-sm;
-  }
-  .chip-chevron { @apply text-brand-purple/70 text-xl select-none; }
-  
-  /* Dark step pills */
-  .step-pill--dark {
-    @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3
-           bg-[#2F3061] text-brand-ivory ring-1 ring-black/10 shadow-sm;
-  }
-  .step-chevron {
-    @apply text-[#2F3061]/70 text-xl select-none;
-  }
-  /* Material Symbols helpers removed (using Iconify SVGs instead) */
-}
-
-@layer base {
-  /* ---- Base font assignments (NO @apply) ---- */
-  html {
-    font-family: Poppins, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-  }
-  body { @apply text-body text-brand-ink; }
-  h1, h2, h3, .font-slab {
-    font-family: "Bespoke Slab", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    /* Dark chips (variant used in How it works) */
+    .chip-dark {
+      @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3
+             bg-brand-purple text-brand-ivory ring-1 ring-black/10 shadow-sm;
+    }
+    .chip-chevron { @apply text-brand-purple/70 text-xl select-none; }
+    
+    /* Dark step pills */
+    .step-pill--dark {
+      @apply inline-flex items-center gap-3 rounded-2xl px-5 py-3
+             bg-[#2F3061] text-brand-ivory ring-1 ring-black/10 shadow-sm;
+    }
+    .step-chevron {
+      @apply text-[#2F3061]/70 text-xl select-none;
+    }
+    /* Material Symbols helpers removed (using Iconify SVGs instead) */
   }
 
-  /* Existing global colors/helpers */
-  html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark; }
-  .section-yellow { @apply bg-brand-yellow text-brand-dark; }
-  .section-purple { @apply bg-brand-purple text-brand-ivory; }
-}
+  @layer base {
+    /* ---- Base font assignments (NO @apply) ---- */
+    html {
+      font-family: theme('fontFamily.sans');
+    }
+    /* use Tailwind’s base size + explicit line-height */
+    body { @apply text-base leading-[1.6] text-brand-ink; }
+    h1, h2, h3, .font-slab {
+      font-family: "Bespoke Slab", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    /* Existing global colors/helpers */
+    html, body, #__nuxt { @apply bg-brand-yellow text-brand-dark; }
+    .section-yellow { @apply bg-brand-yellow text-brand-dark; }
+    .section-purple { @apply bg-brand-purple text-brand-ivory; }
+  }
