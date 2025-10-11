@@ -14,7 +14,7 @@ const steps = [
       <li>
         <button
           class="inline-flex items-center h-11 rounded-full bg-[#2F3061] text-[#F5F4F1] px-5
-                 text-[15px] font-medium
+                 text-[15px] md:text-[16px] font-medium
                  shadow-[0_6px_16px_rgba(0,0,0,0.16)]
                  transition-transform transition-shadow duration-150
                  hover:-translate-y-[1px] hover:shadow-[0_10px_24px_rgba(0,0,0,0.18)]

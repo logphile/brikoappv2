@@ -71,30 +71,30 @@ useHead({
 
           <!-- LEFT: headline + bullets + CTA -->
           <div>
-            <!-- Hero headline (larger + controlled line length) -->
-            <h1 class="hero-h1 max-w-[16ch]">
+            <!-- Hero headline (semantic class) -->
+            <h1 class="h1-hero max-w-[16ch]">
               <span class="hidden lg:block">Create</span>
               <span class="lg:hidden">Create </span>LEGO-style art from your images
             </h1>
 
             <!-- Bullets with local SVG components (no network) -->
-            <ul class="mt-6 space-y-3 text-[#343434]">
-              <li class="flex items-center gap-3">
-                <IconCloudUpload class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
+            <ul class="mt-6 space-y-3">
+              <li class="flex items-center gap-3 bullet-lg">
+                <IconCloudUpload class="w-5 h-5 text-brand-pink" aria-hidden="true" />
                 <span>Upload your photo</span>
               </li>
-              <li class="flex items-center gap-3">
-                <IconGridOn class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
+              <li class="flex items-center gap-3 bullet-lg">
+                <IconGridOn class="w-5 h-5 text-brand-pink" aria-hidden="true" />
                 <span>Instantly see it in bricks</span>
               </li>
-              <li class="flex items-center gap-3">
-                <IconRequestQuote class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
+              <li class="flex items-center gap-3 bullet-lg">
+                <IconRequestQuote class="w-5 h-5 text-brand-pink" aria-hidden="true" />
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
 
             <!-- CTA -->
-            <div class="mt-6 flex items-center gap-3">
+            <div class="mt-4 flex items-center gap-3">
               <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
             </div>
           </div>
@@ -110,14 +110,10 @@ useHead({
     <!-- “Briko’s Geeky Superpowers” -->
     <section class="section-yellow">
       <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
-        <div class="section-title">
-          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">
-            Briko’s Geeky Superpowers
-          </h2>
-          <p class="mt-2 text-brand-dark/70">
-            The tech that makes bricks feel instant.
-          </p>
-          <div class="rule"></div>
+        <div class="section-stack">
+          <h2 class="h2-section">Briko’s Geeky Superpowers</h2>
+          <p class="subtitle">The tech that makes bricks feel instant.</p>
+          <div class="section-underline section-gap"></div>
         </div>
 
         <div class="section-gap">
@@ -129,14 +125,12 @@ useHead({
     <!-- Purple band (never white) -->
     <section class="section-purple">
       <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-        <div class="section-title text-brand-yellow">
-          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">
-            From Photo to Parts—Fast
-          </h2>
-          <p class="mt-2 text-brand-yellow/80">
+        <div class="section-stack">
+          <h2 class="h2-section text-brand-paper">From Photo to Parts—Fast</h2>
+          <p class="subtitle text-brand-paper/90">
             Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
           </p>
-          <div class="rule"></div>
+          <div class="section-underline section-gap"></div>
         </div>
 
         <!-- body: compare + bullet list -->
@@ -147,19 +141,19 @@ useHead({
 
           <!-- Icon rows (no borders) with local SVG components -->
           <ul class="space-y-5 text-[#F5F4F1]">
-            <li class="flex items-start gap-3">
+            <li class="flex items-start gap-3 bullet-lg">
               <IconBolt class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">Instant LEGO–style color mapping</span>
             </li>
-            <li class="flex items-start gap-3">
+            <li class="flex items-start gap-3 bullet-lg">
               <IconGridView class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">Greedy tiling — fewer plates, cleaner look</span>
             </li>
-            <li class="flex items-start gap-3">
+            <li class="flex items-start gap-3 bullet-lg">
               <IconReceiptLong class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">Auto Bill of Materials • cost estimate</span>
             </li>
-            <li class="flex items-start gap-3">
+            <li class="flex items-start gap-3 bullet-lg">
               <IconFileDownload class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">One-click export: PNG · CSV · PDF</span>
             </li>

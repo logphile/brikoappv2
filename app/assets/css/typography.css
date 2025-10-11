@@ -1,0 +1,25 @@
+@tailwind components;
+
+@layer components {
+  /* Headings */
+  .h1-hero { @apply font-slab font-black text-hero md:text-[72px] leading-[1.05] tracking-tight; }
+  .h2-section { @apply font-slab font-extrabold text-h2 md:text-[40px] leading-tight; }
+  .subtitle { @apply text-subtitle text-brand-ink/90; }
+
+  /* Body & UI */
+  .body-base { @apply text-body; }  /* 16px */
+  .card-title { @apply font-slab font-bold text-[18px] md:text-[20px] leading-snug; }
+  .card-body  { @apply text-body; }
+  .bullet-lg  { @apply text-[18px] leading-relaxed; }
+  .pill-label { @apply text-pill md:text-[16px] font-medium; }
+
+  /* Consistent section underline spacing */
+  .section-stack { @apply flex flex-col items-center text-center; }
+  .section-underline { @apply relative mt-2; }
+  .section-underline::after {
+    content: "";
+    @apply block mx-auto mt-2 h-1 w-16 rounded-full bg-brand-pink;
+  }
+  /* The spacing below the underline should match across sections */
+  .section-gap { @apply mb-8 md:mb-10; } /* use on the block that contains the underline */
+}
