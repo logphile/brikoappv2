@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import IconChevronRight from '~/components/icons/IconChevronRight.vue'
-
 // Only the text we want to show
 const steps = [
   'Upload a photo',
@@ -11,23 +9,28 @@ const steps = [
 </script>
 
 <template>
-  <div class="mt-6 flex flex-wrap items-center justify-center gap-2 md:gap-3">
+  <ol class="mt-[14px] flex flex-wrap items-center justify-center gap-4" role="list" aria-label="How it works">
     <template v-for="(label, i) in steps" :key="label">
-      <!-- Chip with text only -->
-      <span
-        class="inline-flex items-center rounded-full bg-[#2F3061] text-[#F5F4F1]
-               px-4 py-2 md:px-5 md:py-2.5 shadow-[0_6px_16px_rgba(0,0,0,.18)]
-               leading-none text-sm md:text-[15px] font-semibold"
-      >
-        {{ label }}
-      </span>
+      <li>
+        <button
+          class="inline-flex items-center h-11 rounded-full bg-[#2F3061] text-[#F5F4F1] px-5
+                 text-[15px] font-medium
+                 shadow-[0_6px_16px_rgba(0,0,0,0.16)]
+                 transition-transform transition-shadow duration-150
+                 hover:-translate-y-[1px] hover:shadow-[0_10px_24px_rgba(0,0,0,0.18)]
+                 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF0062]">
+          {{ label }}
+        </button>
+      </li>
 
-      <!-- Larger chevron between chips -->
-      <IconChevronRight
+      <!-- Lighter chevron between chips; hidden on xs -->
+      <span
         v-if="i < steps.length - 1"
-        class="text-[#343434]/80 w-5 h-5 md:w-6 md:h-6 mx-1 md:mx-2"
+        class="hidden sm:inline-flex select-none px-1 text-[#343434]/60 align-middle"
         aria-hidden="true"
-      />
+      >
+        ›
+      </span>
     </template>
-  </div>
+  </ol>
 </template>

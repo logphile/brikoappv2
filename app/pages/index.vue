@@ -178,11 +178,11 @@ useHead({
           <div class="rule"></div>
         </div>
 
-        <div class="section-gap">
+        <div>
           <HowItWorks />
 
           <!-- 3) CTA row -->
-          <div class="mt-4 flex items-center justify-center gap-3">
+          <div class="mt-5 flex items-center justify-center gap-3">
             <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
             <NuxtLink to="/how-it-works" class="btn-ghost-alt">See Full Guide →</NuxtLink>
           </div>
