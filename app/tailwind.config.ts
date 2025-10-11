@@ -28,6 +28,13 @@ export default <Partial<Config>>{
         slab: ['"Bespoke Slab"', 'ui-serif', 'Georgia', 'serif'],
         sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif']
       },
+      fontSize: {
+        hero: ['64px', { lineHeight: '1.05' }],
+        h2: ['36px', { lineHeight: '1.15' }],
+        subtitle: ['18px', { lineHeight: '1.5' }],
+        body: ['16px', { lineHeight: '1.6' }],
+        pill: ['15px', { lineHeight: '1.4' }]
+      },
       colors: {
         // Brand tokens used as utilities like bg-brand-pink, text-brand-yellow, ring-brand-purple, etc.
         brand: {
@@ -93,7 +100,8 @@ export default <Partial<Config>>{
         'soft-card': '0 10px 30px -12px rgba(0,0,0,.35)',
         'soft': '0 10px 30px rgba(0,0,0,.12)',
         'card': '0 6px 18px rgba(0,0,0,.10)',
-        'mint-glow': '0 0 0 3px rgba(58,229,159,0.25), 0 8px 24px rgba(58,229,159,0.15)'
+        'mint-glow': '0 0 0 3px rgba(58,229,159,0.25), 0 8px 24px rgba(58,229,159,0.15)',
+        pill: '0 6px 14px rgba(52,52,52,0.2)'
       }
     }
   }
