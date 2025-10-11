@@ -112,7 +112,10 @@ export default defineNuxtConfig({
   vite: {
     worker: { format: 'es' },
     assetsInclude: ['**/*.wasm'],
-    optimizeDeps: { exclude: ['@techstark/opencv-js'] },
+    optimizeDeps: {
+      exclude: ['@techstark/opencv-js'],
+      include: ['@iconify/vue']
+    },
     build: {
       sourcemap: false,
       chunkSizeWarningLimit: 2000,
