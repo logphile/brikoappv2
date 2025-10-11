@@ -3,14 +3,6 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import IconCloudUpload from '~/components/icons/IconCloudUpload.vue'
-import IconGridOn from '~/components/icons/IconGridOn.vue'
-import IconRequestQuote from '~/components/icons/IconRequestQuote.vue'
-import IconBolt from '~/components/icons/IconBolt.vue'
-import IconGridView from '~/components/icons/IconGridView.vue'
-import IconReceiptLong from '~/components/icons/IconReceiptLong.vue'
-import IconFileDownload from '~/components/icons/IconFileDownload.vue'
-import HowItWorks from '~/components/home/HowItWorks.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -65,42 +57,30 @@ useHead({
 <template>
   <div>
     <!-- HERO -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 pt-24 pb-12 md:pt-28">
-        <div class="grid lg:grid-cols-2 gap-10 items-center">
-
-          <!-- LEFT: headline + bullets + CTA -->
+    <section class="relative bg-[#FFD808]">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 pt-16 md:pt-24">
+        <div class="grid md:grid-cols-[1.05fr,1fr] items-center gap-10 md:gap-14">
+          <!-- Left: copy -->
           <div>
-            <!-- Hero headline (semantic class) -->
-            <h1 class="h1-hero max-w-[16ch]">
-              <span class="hidden lg:block">Create</span>
-              <span class="lg:hidden">Create </span>LEGO-style art from your images
+            <h1 class="h1-hero text-[#343434] max-w-[16ch]">
+              Create LEGO-style art from your images
             </h1>
 
-            <!-- Bullets with local SVG components (no network) -->
-            <ul class="mt-6 space-y-3">
-              <li class="flex items-center gap-3 bullet-lg">
-                <IconCloudUpload class="w-5 h-5 text-brand-pink" aria-hidden="true" />
-                <span>Upload your photo</span>
-              </li>
-              <li class="flex items-center gap-3 bullet-lg">
-                <IconGridOn class="w-5 h-5 text-brand-pink" aria-hidden="true" />
-                <span>Instantly see it in bricks</span>
-              </li>
-              <li class="flex items-center gap-3 bullet-lg">
-                <IconRequestQuote class="w-5 h-5 text-brand-pink" aria-hidden="true" />
-                <span>Get the parts, guide, and price</span>
-              </li>
+            <ul class="mt-5 text-[#343434] space-y-2">
+              <li>Upload your photo</li>
+              <li>Instantly see it in bricks</li>
+              <li>Get the parts, guide, and price</li>
             </ul>
 
-            <!-- CTA -->
-            <div class="mt-4 flex items-center gap-3">
-              <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
+            <div class="mt-6">
+              <NuxtLink to="/mosaic" class="btn bg-[#FF0062] text-white ring-transparent hover:opacity-90">
+                Try Photo to Bricks
+              </NuxtLink>
             </div>
           </div>
 
-          <!-- RIGHT: compare slider (unchanged) -->
-          <div class="max-w-[720px] justify-self-end w-full">
+          <!-- Right: image card -->
+          <div class="soft-card p-0 overflow-hidden rounded-2xl shadow-md">
             <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="3/2" :start="52" />
           </div>
         </div>
@@ -108,54 +88,47 @@ useHead({
     </section>
 
     <!-- “Briko’s Geeky Superpowers” -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-10">
-        <div class="section-stack">
-          <h2 class="h2-section">Briko’s Geeky Superpowers</h2>
-          <p class="subtitle">The tech that makes bricks feel instant.</p>
-          <div class="section-underline section-gap"></div>
-        </div>
+    <section class="bg-[#FFD808]">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 py-12 md:py-16">
+        <header class="text-center mb-8 md:mb-10">
+          <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">Briko’s Geeky Superpowers</h2>
+        </header>
 
-        <div class="section-gap">
-          <FeatureList />
-        </div>
+        <FeatureList />
       </div>
     </section>
 
-    <!-- Purple band (never white) -->
-    <section class="section-purple">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-16">
-        <div class="section-stack">
-          <h2 class="h2-section text-brand-paper">From Photo to Parts—Fast</h2>
-          <p class="subtitle text-brand-paper/90">
+    <!-- Purple band -->
+    <section class="bg-[#2F3061]">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 py-16">
+        <header class="text-center mb-6">
+          <h2 class="font-slab text-[24px] md:text-[28px] text-white">From Photo to Parts—Fast</h2>
+          <p class="mt-2 text-white/75 text-[14px] md:text-[15px]">
             Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
           </p>
-          <div class="section-underline section-gap"></div>
-        </div>
+        </header>
 
-        <!-- body: compare + bullet list -->
-        <div class="section-gap grid grid-cols-1 lg:grid-cols-[720px,1fr] gap-10 items-center">
-          <div class="max-w-[720px]">
+        <div class="grid md:grid-cols-2 items-center gap-10">
+          <div class="soft-card p-0 overflow-hidden rounded-2xl border-white/10 bg-white/5">
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
           </div>
 
-          <!-- Icon rows (no borders) with local SVG components -->
-          <ul class="space-y-5 text-[#F5F4F1]">
-            <li class="flex items-start gap-3 bullet-lg">
-              <IconBolt class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
-              <span class="tracking-[0.1px] leading-tight">Instant LEGO–style color mapping</span>
+          <ul class="space-y-3 text-white">
+            <li class="pl-8 relative">
+              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
+              Instant LEGO-style color mapping
             </li>
-            <li class="flex items-start gap-3 bullet-lg">
-              <IconGridView class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
-              <span class="tracking-[0.1px] leading-tight">Greedy tiling — fewer plates, cleaner look</span>
+            <li class="pl-8 relative">
+              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
+              Greedy tiling — fewer plates, cleaner look
             </li>
-            <li class="flex items-start gap-3 bullet-lg">
-              <IconReceiptLong class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
-              <span class="tracking-[0.1px] leading-tight">Auto Bill of Materials • cost estimate</span>
+            <li class="pl-8 relative">
+              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
+              Auto Bill of Materials + cost estimate
             </li>
-            <li class="flex items-start gap-3 bullet-lg">
-              <IconFileDownload class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
-              <span class="tracking-[0.1px] leading-tight">One-click export: PNG · CSV · PDF</span>
+            <li class="pl-8 relative">
+              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
+              One-click export: PNG · CSV · PDF
             </li>
           </ul>
         </div>
@@ -163,31 +136,29 @@ useHead({
     </section>
 
     <!-- How it works -->
-    <section class="section-yellow">
-      <div class="mx-auto max-w-7xl px-6 lg:px-10 py-12">
+    <section class="bg-[#FFD808]">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 py-16">
+        <header class="text-center mb-8">
+          <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">How it works</h2>
+          <p class="mt-1 text-[#343434]/75">Four quick steps from photo to bricks.</p>
+        </header>
 
-        <div class="section-title">
-          <h2 class="font-slab text-3xl md:text-4xl font-extrabold">How it works</h2>
-          <p class="mt-2 text-brand-dark/70">Four quick steps from photo to bricks.</p>
-          <div class="rule"></div>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Upload a photo</span>
+          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Pick size &amp; palette</span>
+          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Generate preview</span>
+          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Export PNG · CSV · PDF</span>
         </div>
 
-        <div>
-          <HowItWorks />
+        <div class="mt-6 flex items-center justify-center gap-3">
+          <NuxtLink to="/mosaic" class="btn bg-[#FF0062] text-white hover:opacity-90">Try Photo to Bricks</NuxtLink>
+          <NuxtLink to="/docs/build-guide" class="btn bg-transparent ring-1 ring-[#000]/15 text-[#343434] hover:bg-white/30">See Full Guide →</NuxtLink>
+        </div>
 
-          <!-- 3) CTA row -->
-          <div class="mt-5 flex items-center justify-center gap-3">
-            <NuxtLink to="/photo" class="btn">Try Photo to Bricks</NuxtLink>
-            <NuxtLink to="/how-it-works" class="btn-ghost-alt">See Full Guide →</NuxtLink>
+        <div class="mt-10 flex justify-center">
+          <div class="soft-card p-0 overflow-hidden rounded-2xl w-full max-w-5xl border-white/10 bg-white/5">
+            <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
           </div>
-
-          <!-- 4) Parrot compare sits BELOW the pills/CTAs -->
-          <div class="mt-10 flex justify-center">
-            <div class="w-full max-w-5xl">
-              <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
-            </div>
-          </div>
-
         </div>
       </div>
     </section>

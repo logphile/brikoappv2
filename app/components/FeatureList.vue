@@ -3,7 +3,7 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <!-- Mosaic Engine -->
-        <article class="rounded-xl border border-brand-pink/40 bg-yellow-50/10 p-5 md:p-6 shadow-sm">
+        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-2">
             <i-material-symbols-grid-view-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="card-title">Mosaic Engine</h3>
@@ -14,7 +14,7 @@
         </article>
 
         <!-- 3D Voxel Preview -->
-        <article class="rounded-xl border border-brand-pink/40 bg-yellow-50/10 p-5 md:p-6 shadow-sm">
+        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-2">
             <i-material-symbols-view-in-ar-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="card-title">3D Voxel Preview</h3>
@@ -25,7 +25,7 @@
         </article>
 
         <!-- Smart BOM -->
-        <article class="rounded-xl border border-brand-pink/40 bg-yellow-50/10 p-5 md:p-6 shadow-sm">
+        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-2">
             <i-material-symbols-receipt-long-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="card-title">Smart BOM</h3>
@@ -36,7 +36,7 @@
         </article>
 
         <!-- Fast Exports -->
-        <article class="rounded-xl border border-brand-pink/40 bg-yellow-50/10 p-5 md:p-6 shadow-sm">
+        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-2">
             <i-material-symbols-file-download-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="card-title">Fast Exports</h3>
@@ -47,7 +47,7 @@
         </article>
 
         <!-- Save & Share -->
-        <article class="rounded-xl border border-brand-pink/40 bg-yellow-50/10 p-5 md:p-6 shadow-sm">
+        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-2">
             <i-material-symbols-share-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="card-title">Save &amp; Share</h3>
@@ -59,7 +59,7 @@
         </article>
 
         <!-- Performance -->
-        <article class="rounded-xl border border-brand-pink/40 bg-yellow-50/10 p-5 md:p-6 shadow-sm">
+        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-2">
             <i-material-symbols-bolt-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="card-title">Performance</h3>

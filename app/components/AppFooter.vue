@@ -13,11 +13,11 @@
     -->
 
     <!-- Stacked link columns -->
-    <nav aria-label="Footer" class="max-w-7xl mx-auto px-4 sm:px-6 py-10 text-[#FF0062] text-[14px] md:text-[15px]">
+    <nav aria-label="Footer" class="max-w-7xl mx-auto px-6 md:px-8 pt-12 pb-16 text-[#343434] text-[14px] md:text-[15px]">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Column: Build -->
         <section>
-          <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Build</h3>
+          <h3 class="mb-3 font-brand font-bold text-base text-[#343434]">Build</h3>
           <ul class="space-y-3">
             <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
             <li v-if="cfg?.features?.builder3d"><FooterBrick to="/voxel" label="3D Builder" /></li>
@@ -28,7 +28,7 @@
 
         <!-- Column: Learn -->
         <section>
-          <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Learn</h3>
+          <h3 class="mb-3 font-brand font-bold text-base text-[#343434]">Learn</h3>
           <ul class="space-y-3">
             <li><FooterBrick to="/how-it-works"   label="Docs" /></li>
             <li><FooterBrick to="#"   label="Blog" /></li>
@@ -39,7 +39,7 @@
 
         <!-- Column: Company -->
         <section>
-          <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Company</h3>
+          <h3 class="mb-3 font-brand font-bold text-base text-[#343434]">Company</h3>
           <ul class="space-y-3">
             <li><FooterBrick to="mailto:hello@briko.app" label="Contact" /></li>
             <li><FooterBrick to="/gallery" label="Community Gallery" /></li>
@@ -50,7 +50,7 @@
 
         <!-- Column: Legal -->
         <section>
-          <h3 class="mb-3 font-brand font-bold text-base text-[#FF0062]">Legal</h3>
+          <h3 class="mb-3 font-brand font-bold text-base text-[#343434]">Legal</h3>
           <ul class="space-y-3">
             <li><FooterBrick to="/privacy" label="Privacy" /></li>
             <li><FooterBrick to="/terms"   label="Terms" /></li>
@@ -60,13 +60,10 @@
       </div>
 
       <!-- Bottom fine print -->
-      <div class="mt-10 pt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm text-[#FF0062]">
-        <p>© {{ new Date().getFullYear() }} Briko</p>
-        <p class="text-center sm:text-left">
-          Briko is an independent tool — not affiliated with, endorsed by, or associated with the LEGO® Group.
-          LEGO® is a trademark of the LEGO Group of companies.
-        </p>
-      </div>
+      <p class="mt-8 text-center text-[12px] text-[#343434]/75">
+        Briko is an independent tool — not affiliated with, endorsed by, or associated with the LEGO® Group. LEGO® is a
+        trademark of the LEGO Group of companies.
+      </p>
     </nav>
   </footer>
 </template>
