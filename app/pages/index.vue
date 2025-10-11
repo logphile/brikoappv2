@@ -3,6 +3,13 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
+import IconCloudUpload from '~/components/icons/IconCloudUpload.vue'
+import IconGridOn from '~/components/icons/IconGridOn.vue'
+import IconRequestQuote from '~/components/icons/IconRequestQuote.vue'
+import IconBolt from '~/components/icons/IconBolt.vue'
+import IconGridView from '~/components/icons/IconGridView.vue'
+import IconReceiptLong from '~/components/icons/IconReceiptLong.vue'
+import IconFileDownload from '~/components/icons/IconFileDownload.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -61,18 +68,18 @@ useHead({
               <span class="lg:hidden">Create </span>LEGO-style art from your images
             </h1>
 
-            <!-- Bullets with bundled SVGs (unplugin-icons) -->
+            <!-- Bullets with local SVG components (no network) -->
             <ul class="mt-6 space-y-3 text-[#343434]">
               <li class="flex items-center gap-3">
-                <i-material-symbols-cloud-upload-rounded class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
+                <IconCloudUpload class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-center gap-3">
-                <i-material-symbols-grid-on-rounded class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
+                <IconGridOn class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-center gap-3">
-                <i-material-symbols-request-quote-rounded class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
+                <IconRequestQuote class="w-5 h-5 text-[#FF0062]" aria-hidden="true" />
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
@@ -129,22 +136,22 @@ useHead({
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
           </div>
 
-          <!-- Icon rows (no borders) -->
+          <!-- Icon rows (no borders) with local SVG components -->
           <ul class="space-y-5 text-[#F5F4F1]">
             <li class="flex items-start gap-3">
-              <i-material-symbols-bolt-rounded class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
+              <IconBolt class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">Instant LEGO–style color mapping</span>
             </li>
             <li class="flex items-start gap-3">
-              <i-material-symbols-grid-view-rounded class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
+              <IconGridView class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">Greedy tiling — fewer plates, cleaner look</span>
             </li>
             <li class="flex items-start gap-3">
-              <i-material-symbols-receipt-long-rounded class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
+              <IconReceiptLong class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">Auto Bill of Materials • cost estimate</span>
             </li>
             <li class="flex items-start gap-3">
-              <i-material-symbols-file-download-rounded class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
+              <IconFileDownload class="mt-0.5 w-5 h-5 text-[#FFD808]" aria-hidden="true" />
               <span class="tracking-[0.1px] leading-tight">One-click export: PNG · CSV · PDF</span>
             </li>
           </ul>
