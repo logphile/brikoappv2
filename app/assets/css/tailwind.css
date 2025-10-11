@@ -25,10 +25,18 @@
   @tailwind components;
   @import './typography.css';
   @layer utilities {
-    /* local utility aliases using @apply */
+    /* local utility aliases using @apply (quick unblock with raw hex) */
     .text-body-plus { @apply text-[17px] leading-[1.7]; }
-    .text-ink       { @apply text-brand-ink; }
-    .bg-ink         { @apply bg-brand-ink; }
+    .text-ink       { @apply text-[#343434]; }
+    .bg-ink         { @apply bg-[#343434]; }
+    .text-ivory     { @apply text-[#F5F4F1]; }
+    .bg-ivory       { @apply bg-[#F5F4F1]; }
+    .text-pink      { @apply text-[#FF0062]; }
+    .bg-pink        { @apply bg-[#FF0062]; }
+    .text-yellow    { @apply text-[#FFD808]; }
+    .bg-yellow      { @apply bg-[#FFD808]; }
+    .text-purple    { @apply text-[#2F3061]; }
+    .bg-purple      { @apply bg-[#2F3061]; }
   }
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */
@@ -188,7 +196,7 @@
       font-family: theme('fontFamily.sans');
     }
     /* use Tailwind’s base size + explicit line-height */
-    body { @apply text-base leading-[1.6] text-brand-ink; }
+    body { @apply text-base leading-[1.6] text-[#343434]; }
     h1, h2, h3, .font-slab {
       font-family: "Bespoke Slab", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     }
