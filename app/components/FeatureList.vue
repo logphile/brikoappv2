@@ -1,58 +1,70 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+</script>
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <!-- Mosaic Engine -->
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
-          <div class="flex items-center gap-2">
-            <i-material-symbols-grid-view-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
-            <h3 class="card-title">Mosaic Engine</h3>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-9 w-9 rounded-xl bg-[#FFD808]/80 ring-1 ring-[#000]/10 items-center justify-center">
+              <Icon icon="material-symbols:grid-on-rounded" width="20" height="20" />
+            </span>
+            <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
-          <p class="mt-1 card-body">
+          <p class="mt-2 text-[15px]">
             Turn any photo into a colorful brick mosaic in seconds.
           </p>
         </article>
 
         <!-- 3D Voxel Preview -->
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
-          <div class="flex items-center gap-2">
-            <i-material-symbols-view-in-ar-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
-            <h3 class="card-title">3D Voxel Preview</h3>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-9 w-9 rounded-xl bg-[#FFD808]/80 ring-1 ring-[#000]/10 items-center justify-center">
+              <Icon icon="material-symbols:view-in-ar-rounded" width="20" height="20" />
+            </span>
+            <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
-          <p class="mt-1 card-body">
+          <p class="mt-2 text-[15px]">
             See your build in 3D — rotate, zoom, and step through layers.
           </p>
         </article>
 
         <!-- Smart BOM -->
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
-          <div class="flex items-center gap-2">
-            <i-material-symbols-receipt-long-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
-            <h3 class="card-title">Smart BOM</h3>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-9 w-9 rounded-xl bg-[#FFD808]/80 ring-1 ring-[#000]/10 items-center justify-center">
+              <Icon icon="material-symbols:receipts-rounded" width="20" height="20" />
+            </span>
+            <h3 class="text-[18px] font-semibold">Smart BOM</h3>
           </div>
-          <p class="mt-1 card-body">
+          <p class="mt-2 text-[15px]">
             Get an instant parts list with sizes and counts, ready to order.
           </p>
         </article>
 
         <!-- Fast Exports -->
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
-          <div class="flex items-center gap-2">
-            <i-material-symbols-file-download-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
-            <h3 class="card-title">Fast Exports</h3>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-9 w-9 rounded-xl bg-[#FFD808]/80 ring-1 ring-[#000]/10 items-center justify-center">
+              <Icon icon="material-symbols:file-download-rounded" width="20" height="20" />
+            </span>
+            <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
-          <p class="mt-1 card-body">
+          <p class="mt-2 text-[15px]">
             Download your build steps as PNG, CSV, or PDF with one click.
           </p>
         </article>
 
         <!-- Save & Share -->
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
-          <div class="flex items-center gap-2">
-            <i-material-symbols-share-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
-            <h3 class="card-title">Save &amp; Share</h3>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-9 w-9 rounded-xl bg-[#FFD808]/80 ring-1 ring-[#000]/10 items-center justify-center">
+              <Icon icon="material-symbols:share-rounded" width="20" height="20" />
+            </span>
+            <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
-          <p class="mt-1 card-body">
+          <p class="mt-2 text-[15px]">
             Keep your projects online and share them with friends
             <span class="text-pink-500">(coming soon)</span>.
           </p>
@@ -60,11 +72,13 @@
 
         <!-- Performance -->
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
-          <div class="flex items-center gap-2">
-            <i-material-symbols-bolt-outline class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
-            <h3 class="card-title">Performance</h3>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex h-9 w-9 rounded-xl bg-[#FFD808]/80 ring-1 ring-[#000]/10 items-center justify-center">
+              <Icon icon="material-symbols:bolt-rounded" width="20" height="20" />
+            </span>
+            <h3 class="text-[18px] font-semibold">Performance</h3>
           </div>
-          <p class="mt-1 card-body">
+          <p class="mt-2 text-[15px]">
             Smooth and instant — mosaics and 3D models render in under 2 seconds.
           </p>
         </article>

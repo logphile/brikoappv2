@@ -37,6 +37,18 @@
     .bg-yellow      { @apply bg-[#FFD808]; }
     .text-purple    { @apply text-[#2F3061]; }
     .bg-purple      { @apply bg-[#2F3061]; }
+
+    /* XL hero heading utility */
+    .h1-hero {
+      font-family: "Bespoke Slab", ui-serif, system-ui;
+      font-weight: 700;
+      font-size: 64px; /* mobile */
+      line-height: 1.05;
+    }
+  }
+  /* md+ scale for hero */
+  @media (min-width: 768px) {
+    .h1-hero { font-size: 72px; }
   }
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */

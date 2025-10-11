@@ -2,7 +2,6 @@
 
 @layer components {
   /* Headings */
-  .h1-hero { @apply font-slab font-black text-[64px] md:text-[72px] leading-[1.05] tracking-tight; }
   .h2-section { @apply font-slab font-extrabold text-[36px] md:text-[40px] leading-tight; }
   .subtitle { @apply text-[18px] leading-[1.5] text-brand-ink/90; }
 

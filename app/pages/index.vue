@@ -62,7 +62,7 @@ useHead({
         <div class="grid md:grid-cols-[1.05fr,1fr] items-center gap-10 md:gap-14">
           <!-- Left: copy -->
           <div>
-            <h1 class="h1-hero text-[#343434] max-w-[16ch]">
+            <h1 class="h1-hero text-[#343434] max-w-[18ch]">
               Create LEGO-style art from your images
             </h1>
 
@@ -92,6 +92,7 @@ useHead({
       <div class="mx-auto max-w-7xl px-6 md:px-8 py-12 md:py-16">
         <header class="text-center mb-8 md:mb-10">
           <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">Briko’s Geeky Superpowers</h2>
+          <p class="mt-2 text-[#343434]/75 text-[14px] md:text-[15px]">The tech that makes bricks feel instant.</p>
         </header>
 
         <FeatureList />
