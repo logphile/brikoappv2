@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     { path: '~/components/gallery', pathPrefix: true }
   ],
   devtools: { enabled: false },
-  modules: ['@pinia/nuxt', '@vueuse/nuxt', 'nuxt-icon'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', 'unplugin-icons/nuxt'],
   plugins: [
     { src: '~/plugins/img-comparison-slider.client', mode: 'client' },
     '~/plugins/seo.global',
@@ -133,6 +133,10 @@ export default defineNuxtConfig({
     },
     // Drop console/debugger from prod bundles
     esbuild: { drop: ['console', 'debugger'] }
+  },
+  // Icons (unplugin-icons)
+  icons: {
+    autoInstall: true
   },
   // optional: reduce CSS inlining into HTML (uncomment if needed)
   // experimental: { inlineSSRStyles: false },
