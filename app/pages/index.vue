@@ -45,12 +45,12 @@ useHead({
   ]
 })
 
-// Fast features for the purple section (Iconify icon + text)
+// Fast features for the purple section (Iconify rounded icons + text)
 const fastFeatures = [
-  { icon: 'material-symbols:bolt-outline',          text: 'Instant LEGO–style color mapping' },
-  { icon: 'material-symbols:grid-view-outline',     text: 'Greedy tiling — fewer plates, cleaner look' },
-  { icon: 'material-symbols:receipt-long-outline',  text: 'Auto Bill of Materials • cost estimate' },
-  { icon: 'material-symbols:file-download-outline', text: 'One-click export: PNG · CSV · PDF' }
+  { icon: 'material-symbols:bolt-rounded',           text: 'Instant LEGO–style color mapping' },
+  { icon: 'material-symbols:grid-view-rounded',      text: 'Greedy tiling — fewer plates, cleaner look' },
+  { icon: 'material-symbols:receipts-rounded',       text: 'Auto Bill of Materials • cost estimate' },
+  { icon: 'material-symbols:file-download-rounded',  text: 'One-click export: PNG · CSV · PDF' }
 ]
 </script>
 
@@ -70,17 +70,17 @@ const fastFeatures = [
             </h1>
 
             <!-- Bullets with Iconify SVGs (keep layout/image unchanged) -->
-            <ul class="mt-4 space-y-2 text-[16px] md:text-[18px] text-[#343434]">
+            <ul class="mt-6 space-y-3 text-[#343434]">
               <li class="flex items-center gap-3">
-                <AppIcon name="material-symbols:cloud-upload-outline" />
+                <AppIcon name="material-symbols:cloud-upload-rounded" class="w-5 h-5 text-[#FF0062]" />
                 <span>Upload your photo</span>
               </li>
               <li class="flex items-center gap-3">
-                <AppIcon name="material-symbols:grid-on-outline" />
+                <AppIcon name="material-symbols:grid-on-rounded" class="w-5 h-5 text-[#FF0062]" />
                 <span>Instantly see it in bricks</span>
               </li>
               <li class="flex items-center gap-3">
-                <AppIcon name="material-symbols:request-quote-outline" />
+                <AppIcon name="material-symbols:request-quote-rounded" class="w-5 h-5 text-[#FF0062]" />
                 <span>Get the parts, guide, and price</span>
               </li>
             </ul>
@@ -140,7 +140,7 @@ const fastFeatures = [
           <!-- Icon rows (no borders) -->
           <ul class="flex flex-col gap-3 text-[#F5F4F1]">
             <li v-for="f in fastFeatures" :key="f.text" class="flex items-start gap-3">
-              <AppIcon :name="f.icon" class="mt-0.5" />
+              <AppIcon :name="f.icon" class="mt-0.5 text-[#FFD808]" />
               <span class="tracking-[0.1px] leading-tight">{{ f.text }}</span>
             </li>
           </ul>
