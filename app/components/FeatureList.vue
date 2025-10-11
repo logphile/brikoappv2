@@ -5,7 +5,7 @@
         <!-- Mosaic Engine -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <AppIcon name="material-symbols:grid-view-outline" :size="24" class="text-[#111827]/90" />
+            <Icon name="material-symbols:grid-view-outline" class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="text-lg font-semibold">Mosaic Engine</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -17,7 +17,7 @@
         <!-- 3D Voxel Preview -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <AppIcon name="material-symbols:view-in-ar-outline" :size="24" class="text-[#111827]/90" />
+            <Icon name="material-symbols:view-in-ar-outline" class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="text-lg font-semibold">3D Voxel Preview</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -29,7 +29,7 @@
         <!-- Smart BOM -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <AppIcon name="material-symbols:receipt-long-outline" :size="24" class="text-[#111827]/90" />
+            <Icon name="material-symbols:receipt-long-outline" class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="text-lg font-semibold">Smart BOM</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -41,7 +41,7 @@
         <!-- Fast Exports -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <AppIcon name="material-symbols:file-download-outline" :size="24" class="text-[#111827]/90" />
+            <Icon name="material-symbols:file-download-outline" class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="text-lg font-semibold">Fast Exports</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -53,7 +53,7 @@
         <!-- Save & Share -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <AppIcon name="material-symbols:share-outline" :size="24" class="text-[#111827]/90" />
+            <Icon name="material-symbols:share-outline" class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="text-lg font-semibold">Save &amp; Share</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>
@@ -66,7 +66,7 @@
         <!-- Performance -->
         <article class="rounded-2xl border border-[#FF0062] bg-white/5 p-5 ring-1 ring-[#FF0062] cursor-default select-none">
           <div class="flex items-center gap-2">
-            <AppIcon name="material-symbols:bolt-outline" :size="24" class="text-[#111827]/90" />
+            <Icon name="material-symbols:bolt-outline" class="w-6 h-6 text-[#111827]/90" aria-hidden="true" />
             <h3 class="text-lg font-semibold">Performance</h3>
           </div>
           <span aria-hidden="true" class="mt-2 block h-1 w-10 bg-pink-500"></span>

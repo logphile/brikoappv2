@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     { path: '~/components/gallery', pathPrefix: true }
   ],
   devtools: { enabled: false },
-  modules: ['@pinia/nuxt', '@vueuse/nuxt'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', 'nuxt-icon'],
   plugins: [
     { src: '~/plugins/img-comparison-slider.client', mode: 'client' },
     '~/plugins/seo.global',

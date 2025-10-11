@@ -10,6 +10,7 @@
     "check:no-mint": "rg -n 'btn-mint' 'app/**/*.vue' -S && echo '❌ Mint button detected; use btn-pink/btn-ivory-outline instead.' && exit 1 || echo 'OK: no mint button found'"
   },
   "devDependencies": {
+    "@iconify-json/material-symbols": "^1.2.41",
     "@lhci/cli": "^0.15.1",
     "@pinia/nuxt": "^0.5.1",
     "@playwright/test": "^1.55.0",
@@ -26,6 +27,7 @@
     "http-server": "^14.1.1",
     "lighthouse": "^12.8.2",
     "nuxt": "^3.12.0",
+    "nuxt-icon": "1.0.0-beta.7",
     "pinia": "^2.1.7",
     "postcss": "^8.4.44",
     "prettier": "^3.3.3",
