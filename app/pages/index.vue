@@ -3,6 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
+import { Icon } from '@iconify/vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -66,10 +67,27 @@ useHead({
               Create LEGO-style art from your images
             </h1>
 
-            <ul class="mt-5 text-[#343434] space-y-2">
-              <li>Upload your photo</li>
-              <li>Instantly see it in bricks</li>
-              <li>Get the parts, guide, and price</li>
+            <ul class="mt-5 space-y-2">
+              <li class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
+                  <Icon icon="material-symbols:cloud-upload-rounded" width="18" height="18" class="text-white" />
+                </span>
+                <span class="text-[#343434]">Upload your photo</span>
+              </li>
+
+              <li class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
+                  <Icon icon="material-symbols:grid-on-rounded" width="18" height="18" class="text-white" />
+                </span>
+                <span class="text-[#343434]">Instantly see it in bricks</span>
+              </li>
+
+              <li class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
+                  <Icon icon="material-symbols:request-quote-rounded" width="18" height="18" class="text-white" />
+                </span>
+                <span class="text-[#343434]">Get the parts, guide, and price</span>
+              </li>
             </ul>
 
             <div class="mt-6">
@@ -93,6 +111,7 @@ useHead({
         <header class="text-center mb-8 md:mb-10">
           <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">Briko’s Geeky Superpowers</h2>
           <p class="mt-2 text-[#343434]/75 text-[14px] md:text-[15px]">The tech that makes bricks feel instant.</p>
+          <span class="mini-rule mini-rule--ink mx-auto mt-3"></span>
         </header>
 
         <FeatureList />
@@ -107,6 +126,7 @@ useHead({
           <p class="mt-2 text-white/75 text-[14px] md:text-[15px]">
             Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
           </p>
+          <span class="mini-rule mini-rule--light mx-auto mt-3"></span>
         </header>
 
         <div class="grid md:grid-cols-2 items-center gap-10">
@@ -142,6 +162,7 @@ useHead({
         <header class="text-center mb-8">
           <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">How it works</h2>
           <p class="mt-1 text-[#343434]/75">Four quick steps from photo to bricks.</p>
+          <span class="mini-rule mini-rule--ink mx-auto mt-3"></span>
         </header>
 
         <div class="flex flex-wrap items-center justify-center gap-3">
