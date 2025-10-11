@@ -28,13 +28,6 @@ export default <Partial<Config>>{
         slab: ['"Bespoke Slab"', 'ui-serif', 'Georgia', 'serif'],
         sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif']
       },
-      fontSize: {
-        hero: ['64px', { lineHeight: '1.05' }],
-        h2: ['36px', { lineHeight: '1.15' }],
-        subtitle: ['18px', { lineHeight: '1.5' }],
-        body: ['16px', { lineHeight: '1.6' }],
-        pill: ['15px', { lineHeight: '1.4' }]
-      },
       colors: {
         // Brand tokens used as utilities like bg-brand-pink, text-brand-yellow, ring-brand-purple, etc.
         brand: {

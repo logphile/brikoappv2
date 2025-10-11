@@ -2,16 +2,16 @@
 
 @layer components {
   /* Headings */
-  .h1-hero { @apply font-slab font-black text-hero md:text-[72px] leading-[1.05] tracking-tight; }
-  .h2-section { @apply font-slab font-extrabold text-h2 md:text-[40px] leading-tight; }
-  .subtitle { @apply text-subtitle text-brand-ink/90; }
+  .h1-hero { @apply font-slab font-black text-[64px] md:text-[72px] leading-[1.05] tracking-tight; }
+  .h2-section { @apply font-slab font-extrabold text-[36px] md:text-[40px] leading-tight; }
+  .subtitle { @apply text-[18px] leading-[1.5] text-brand-ink/90; }
 
   /* Body & UI */
-  .body-base { @apply text-body; }  /* 16px */
+  .body-base { @apply text-base leading-[1.6]; }  /* 16px */
   .card-title { @apply font-slab font-bold text-[18px] md:text-[20px] leading-snug; }
-  .card-body  { @apply text-body; }
+  .card-body  { @apply text-base leading-[1.6]; }
   .bullet-lg  { @apply text-[18px] leading-relaxed; }
-  .pill-label { @apply text-pill md:text-[16px] font-medium; }
+  .pill-label { @apply text-[15px] md:text-[16px] font-medium; }
 
   /* Consistent section underline spacing */
   .section-stack { @apply flex flex-col items-center text-center; }
