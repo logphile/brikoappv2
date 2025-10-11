@@ -24,6 +24,11 @@
   @tailwind base;
   @tailwind components;
   @import './typography.css';
+  @layer utilities {
+    /* local utility aliases using @apply */
+    .text-body-plus { @apply text-[17px] leading-[1.7]; }
+    .text-ink       { @apply text-brand-ink; }
+  }
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */
   @layer components {

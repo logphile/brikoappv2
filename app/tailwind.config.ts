@@ -10,8 +10,8 @@ export default <Partial<Config>>{
     './pages/**/*.vue',
     './plugins/**/*.{js,ts}',
     './composables/**/*.{js,ts}',
-    './assets/css/**/*.{css,pcss}',
-    './assets/styles/**/*.{css,pcss}'
+    './assets/css/**/*.{css,pcss,scss}',
+    './assets/styles/**/*.{css,pcss,scss}'
   ],
   safelist: [
     // Global component recipes
