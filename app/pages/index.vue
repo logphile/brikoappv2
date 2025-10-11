@@ -10,6 +10,7 @@ import IconBolt from '~/components/icons/IconBolt.vue'
 import IconGridView from '~/components/icons/IconGridView.vue'
 import IconReceiptLong from '~/components/icons/IconReceiptLong.vue'
 import IconFileDownload from '~/components/icons/IconFileDownload.vue'
+import HowItWorks from '~/components/home/HowItWorks.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -33,6 +34,14 @@ useHead({
     { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004f' }
   ]
 })
+
+// How it works: plain text labels (no numbers/icons)
+const steps = [
+  'Upload a photo',
+  'Pick size & palette',
+  'Generate preview',
+  'Export PNG · CSV · PDF'
+]
 
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
@@ -170,16 +179,7 @@ useHead({
         </div>
 
         <div class="section-gap">
-          <!-- 2) Dark chips + chevrons (centered row) -->
-          <div class="flex flex-wrap items-center justify-center gap-3">
-            <div class="chip-dark"><span class="text-brand-ivory/90">📷</span><span class="font-semibold">1. Upload a photo</span></div>
-            <span class="chip-chevron">›</span>
-            <div class="chip-dark"><span class="text-brand-ivory/90">🎨</span><span class="font-semibold">2. Pick size &amp; palette</span></div>
-            <span class="chip-chevron">›</span>
-            <div class="chip-dark"><span class="text-brand-ivory/90">👁️</span><span class="font-semibold">3. Generate preview</span></div>
-            <span class="chip-chevron">›</span>
-            <div class="chip-dark"><span class="text-brand-ivory/90">⬇️</span><span class="font-semibold">4. Export PNG · CSV · PDF</span></div>
-          </div>
+          <HowItWorks />
 
           <!-- 3) CTA row -->
           <div class="mt-4 flex items-center justify-center gap-3">
