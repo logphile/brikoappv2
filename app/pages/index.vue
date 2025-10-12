@@ -3,9 +3,10 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import CloudUpload from '~icons/material-symbols/cloud-upload-rounded'
-import GridOn from '~icons/material-symbols/grid-on-rounded'
-import RequestQuote from '~icons/material-symbols/request-quote-rounded'
+import FileUpload from '~icons/material-symbols/upload-rounded'
+import Tune from '~icons/material-symbols/tune-rounded'
+import AutoAwesome from '~icons/material-symbols/auto-awesome-rounded'
+import { __ICONS_OK__ } from '@/lib/icons-required'
 
 const siteUrl = 'https://briko.app'
 
@@ -29,6 +30,9 @@ useHead({
     { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004f' }
   ]
 })
+
+// Keep build-time icon imports alive so bad names fail at compile-time
+void __ICONS_OK__
 
 // How it works: plain text labels (no numbers/icons)
 const steps = [
@@ -72,21 +76,21 @@ useHead({
             <ul class="mt-5 space-y-2">
               <li class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <CloudUpload class="h-[18px] w-[18px] text-white" />
+                  <FileUpload class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">Upload your photo</span>
               </li>
 
               <li class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <GridOn class="h-[18px] w-[18px] text-white" />
+                  <Tune class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">Instantly see it in bricks</span>
               </li>
 
               <li class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <RequestQuote class="h-[18px] w-[18px] text-white" />
+                  <AutoAwesome class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">Get the parts, guide, and price</span>
               </li>

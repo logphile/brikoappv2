@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import GridView from '~icons/material-symbols/grid-view-rounded'
-import ViewInAr from '~icons/material-symbols/view-in-ar-rounded'
+import Palette from '~icons/material-symbols/palette'
+import Layers from '~icons/material-symbols/layers-rounded'
 import ReceiptLong from '~icons/material-symbols/receipt-long-rounded'
-import FileDownload from '~icons/material-symbols/file-download-rounded'
-import Share from '~icons/material-symbols/share-rounded'
+import Download from '~icons/material-symbols/download-rounded'
+import Photo from '~icons/material-symbols/photo-rounded'
 import Bolt from '~icons/material-symbols/bolt-rounded'
 </script>
 
@@ -13,7 +13,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <GridView class="h-[18px] w-[18px] text-[#2F3061]" />
+              <Palette class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
@@ -26,7 +26,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ViewInAr class="h-[18px] w-[18px] text-[#2F3061]" />
+              <Layers class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
@@ -52,7 +52,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <FileDownload class="h-[18px] w-[18px] text-[#2F3061]" />
+              <Download class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
@@ -65,7 +65,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <Share class="h-[18px] w-[18px] text-[#2F3061]" />
+              <Photo class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
