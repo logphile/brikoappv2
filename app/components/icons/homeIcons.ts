@@ -24,4 +24,4 @@ export const homeIcons = {
     save: share,
     perf: bolt,
   },
-} as const
+}
