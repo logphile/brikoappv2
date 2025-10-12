@@ -3,8 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import { Icon } from '@iconify/vue'
-import { homeIcons } from '@/components/icons/homeIcons'
+ 
 
 const siteUrl = 'https://briko.app'
 
@@ -71,21 +70,21 @@ useHead({
             <ul class="mt-5 space-y-2">
               <li class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <Icon :icon="homeIcons.hero.cloudUpload" width="18" height="18" class="text-white" />
+                  <i-material-symbols-cloud-upload-rounded class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">Upload your photo</span>
               </li>
 
               <li class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <Icon :icon="homeIcons.hero.gridOn" width="18" height="18" class="text-white" />
+                  <i-material-symbols-grid-on-rounded class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">Instantly see it in bricks</span>
               </li>
 
               <li class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <Icon :icon="homeIcons.hero.requestQuote" width="18" height="18" class="text-white" />
+                  <i-material-symbols-request-quote-rounded class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">Get the parts, guide, and price</span>
               </li>

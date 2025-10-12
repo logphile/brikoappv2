@@ -5,12 +5,12 @@ import { dirname, resolve } from 'node:path'
 export default defineNuxtConfig({
   css: ['~/assets/css/tailwind.css'],
 
-  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
+  modules: ['unplugin-icons/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
 
-  // Ensure vite prebundles the vue wrapper and doesn't externalize the JSON package in SSR
-  vite: {
-    optimizeDeps: { include: ['@iconify/vue'] },
-    ssr: { noExternal: ['@iconify-json/material-symbols'] }
+  // @ts-expect-error: Provided by unplugin-icons/nuxt module
+  icons: {
+    autoInstall: true,
+    compiler: 'vue3'
   },
 
   postcss: {
@@ -42,7 +42,6 @@ export default defineNuxtConfig({
     publicAssets: [
       { dir: resolve(dirname(fileURLToPath(import.meta.url)), '../public') }
     ],
-    externals: { inline: ['@iconify-json/material-symbols'] },
     prerender: {
       crawlLinks: false,
       routes: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal']
@@ -63,7 +62,6 @@ export default defineNuxtConfig({
   }
   ,
   // Avoid surprise redirects during build previews
-  // @ts-expect-error: Module option provided by @nuxtjs/supabase
   supabase: {
     redirect: false,
     redirectOptions: {
