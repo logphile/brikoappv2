@@ -14,6 +14,13 @@ export default defineNuxtConfig({
     autoInstall: false
   },
 
+  // Do NOT treat i-* tags as custom elements; they are Vue SFC components from unplugin-icons
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => false
+    }
+  },
+
   postcss: {
     plugins: {
       tailwindcss: {},
