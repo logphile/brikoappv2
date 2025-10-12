@@ -7,6 +7,12 @@ export default defineNuxtConfig({
 
   modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
 
+  // Ensure vite prebundles the vue wrapper and doesn't externalize the JSON package in SSR
+  vite: {
+    optimizeDeps: { include: ['@iconify/vue'] },
+    ssr: { noExternal: ['@iconify-json/material-symbols'] }
+  },
+
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -36,6 +42,7 @@ export default defineNuxtConfig({
     publicAssets: [
       { dir: resolve(dirname(fileURLToPath(import.meta.url)), '../public') }
     ],
+    externals: { inline: ['@iconify-json/material-symbols'] },
     prerender: {
       crawlLinks: false,
       routes: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal']
@@ -63,6 +70,15 @@ export default defineNuxtConfig({
       login: '/login',
       callback: '/login',
       exclude: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal', '/login']
+    }
+  }
+  ,
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        resolveJsonModule: true,
+        esModuleInterop: true
+      }
     }
   }
 })

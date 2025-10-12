@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
+import { homeIcons } from '@/components/icons/homeIcons'
 </script>
 
 <template>
@@ -8,7 +9,7 @@ import { Icon } from '@iconify/vue'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ClientOnly><Icon icon="material-symbols:grid-view-rounded" width="18" height="18" class="text-[#2F3061]" /></ClientOnly>
+              <Icon :icon="homeIcons.features.mosaic" width="18" height="18" class="text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
@@ -21,7 +22,7 @@ import { Icon } from '@iconify/vue'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ClientOnly><Icon icon="material-symbols:view-in-ar-rounded" width="18" height="18" class="text-[#2F3061]" /></ClientOnly>
+              <Icon :icon="homeIcons.features.voxel" width="18" height="18" class="text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
@@ -34,7 +35,7 @@ import { Icon } from '@iconify/vue'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ClientOnly><Icon icon="material-symbols:receipt-long-rounded" width="18" height="18" class="text-[#2F3061]" /></ClientOnly>
+              <Icon :icon="homeIcons.features.bom" width="18" height="18" class="text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Smart BOM</h3>
           </div>
@@ -47,7 +48,7 @@ import { Icon } from '@iconify/vue'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ClientOnly><Icon icon="material-symbols:file-download-rounded" width="18" height="18" class="text-[#2F3061]" /></ClientOnly>
+              <Icon :icon="homeIcons.features.export" width="18" height="18" class="text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
@@ -60,7 +61,7 @@ import { Icon } from '@iconify/vue'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ClientOnly><Icon icon="material-symbols:share-rounded" width="18" height="18" class="text-[#2F3061]" /></ClientOnly>
+              <Icon :icon="homeIcons.features.save" width="18" height="18" class="text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
@@ -74,7 +75,7 @@ import { Icon } from '@iconify/vue'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ClientOnly><Icon icon="material-symbols:bolt-rounded" width="18" height="18" class="text-[#2F3061]" /></ClientOnly>
+              <Icon :icon="homeIcons.features.perf" width="18" height="18" class="text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Performance</h3>
           </div>

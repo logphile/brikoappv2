@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@iconify-icons/material-symbols": "^1.2.58",
+    "@iconify-json/material-symbols": "^1.2.41",
     "@iconify/vue": "^5.0.0",
     "@supabase/supabase-js": "^2.45.0",
     "@techstark/opencv-js": "4.11.0-release.1",
