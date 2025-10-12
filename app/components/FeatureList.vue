@@ -1,4 +1,11 @@
- 
+<script setup lang="ts">
+import GridView from '~icons/material-symbols/grid-view-rounded'
+import ViewInAr from '~icons/material-symbols/view-in-ar-rounded'
+import ReceiptLong from '~icons/material-symbols/receipt-long-rounded'
+import FileDownload from '~icons/material-symbols/file-download-rounded'
+import Share from '~icons/material-symbols/share-rounded'
+import Bolt from '~icons/material-symbols/bolt-rounded'
+</script>
 
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -6,7 +13,7 @@
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <i-material-symbols-grid-view-rounded class="h-[18px] w-[18px] text-[#2F3061]" />
+              <GridView class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
@@ -19,7 +26,7 @@
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <i-material-symbols-view-in-ar-rounded class="h-[18px] w-[18px] text-[#2F3061]" />
+              <ViewInAr class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
@@ -32,7 +39,7 @@
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <i-material-symbols-receipt-long-rounded class="h-[18px] w-[18px] text-[#2F3061]" />
+              <ReceiptLong class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Smart BOM</h3>
           </div>
@@ -45,7 +52,7 @@
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <i-material-symbols-file-download-rounded class="h-[18px] w-[18px] text-[#2F3061]" />
+              <FileDownload class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
@@ -58,7 +65,7 @@
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <i-material-symbols-share-rounded class="h-[18px] w-[18px] text-[#2F3061]" />
+              <Share class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
@@ -72,7 +79,7 @@
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <i-material-symbols-bolt-rounded class="h-[18px] w-[18px] text-[#2F3061]" />
+              <Bolt class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Performance</h3>
           </div>

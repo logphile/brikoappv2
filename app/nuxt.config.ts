@@ -14,13 +14,10 @@ export default defineNuxtConfig({
     autoInstall: false
   },
 
-  // Do NOT treat i-* tags as custom elements; they are Vue SFC components from unplugin-icons
+  // Do NOT treat i-* tags as custom elements; only whitelist real web components
   vue: {
     compilerOptions: {
-      isCustomElement: (tag) => {
-        const webComponents = ['model-viewer', 'lottie-player']
-        return webComponents.includes(tag)
-      }
+      isCustomElement: (tag) => tag.startsWith('lottie-') || tag.startsWith('dotlottie-')
     }
   },
 
