@@ -7,10 +7,11 @@ export default defineNuxtConfig({
 
   modules: ['unplugin-icons/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
 
+  // Build-time SVG compiler for <i-collection-name-icon-name/> components
   // @ts-expect-error: Provided by unplugin-icons/nuxt module
   icons: {
-    autoInstall: true,
-    compiler: 'vue3'
+    compiler: 'vue3',
+    autoInstall: false
   },
 
   postcss: {
