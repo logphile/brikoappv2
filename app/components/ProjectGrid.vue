@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
       <ProjectCard v-for="p in items" :key="p.id" :project="p" overlay :view-prefix="viewPrefix" />
     </div>
 
     <div v-if="moreLink" class="mt-4 flex justify-center">
-      <NuxtLink :to="moreLink" class="btn-purple-outline focus-cyber">{{ moreLabel ?? 'See all' }}</NuxtLink>
+      <NuxtLink :to="moreLink" class="btn-outline-ink">{{ moreLabel ?? 'See all' }}</NuxtLink>
     </div>
   </div>
 </template>

@@ -93,11 +93,21 @@
       @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
              border border-brand-ivory text-brand-ivory bg-transparent hover:bg-brand-ivory/10;
     }
+    .btn-outline-ink {
+      @apply inline-flex items-center justify-center rounded-full border border-[#34343A] px-3.5 py-2 text-sm font-medium text-[#34343A]
+             hover:bg-[#34343A]/5 transition;
+    }
 
     .soft-card {
       @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
     }
     .card-outline-soft { @apply border border-[#34343A]/20; }
+    .card       { @apply rounded-2xl border border-[#34343A]/20 bg-white/5; }
+    .card-hover { @apply transition hover:shadow-md hover:-translate-y-[1px]; }
+    .pill-micro { @apply text-[11px] px-2 py-0.5 rounded-full bg-[#34343A]/5 border border-[#34343A]/10; }
+    .page-wrap  { @apply max-w-7xl mx-auto px-6 lg:px-8; }
+    .section-h { @apply text-xs uppercase tracking-wide text-[#34343A]/60; }
+    .section-rule { @apply h-px bg-[#34343A]/10 w-full; }
 
     /* Chips / pills and segments */
     .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }

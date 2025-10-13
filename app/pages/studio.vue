@@ -1,58 +1,71 @@
 <template>
   <main class="min-h-screen bg-yellow text-dark">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
-      <header class="mb-8 flex items-start justify-between gap-3">
-        <div>
-          <h1 class="text-3xl md:text-4xl font-bold">Briko Studio</h1>
-          <p class="mt-2 text-dim">Start a new project or explore the community.</p>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <NuxtLink to="/gallery" class="btn-purple-outline focus-cyber">Community Gallery</NuxtLink>
-          <NuxtLink to="/studio/new" class="btn-pink focus-cyber">New Project</NuxtLink>
+    <div class="page-wrap py-10 lg:py-12">
+      <header class="mb-8">
+        <h1 class="text-5xl lg:text-6xl font-slab">Briko Studio</h1>
+        <p class="mt-2 text-[#34343A]/70">Start a new project or explore the community.</p>
+        <div class="mt-4 flex items-center gap-3">
+          <NuxtLink to="/gallery" class="btn-outline-ink">Community Gallery</NuxtLink>
+          <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
         </div>
       </header>
 
       <!-- Your Projects -->
-      <section class="card-ivory p-4 sm:p-6 mb-8">
-        <SectionHeader title="Your Projects" />
-        <div v-if="loadingMy" class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <section class="mb-8">
+        <div class="mt-10 mb-4">
+          <div class="flex items-center gap-3">
+            <span class="section-h">Your Projects</span>
+            <div class="section-rule"></div>
+          </div>
+        </div>
+        <div v-if="loadingMy" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
           <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
         </div>
         <ProjectGrid v-else-if="myItems.length" :items="myItems" view-prefix="/studio" />
-        <div v-else class="text-center py-10">
-          <p class="text-dim">No projects yet.</p>
-          <NuxtLink to="/studio/new" class="btn-pink mt-4 focus-cyber">Create your first project</NuxtLink>
+        <div v-else class="mt-4">
+          <div class="card p-8 flex items-center gap-4">
+            <div class="rounded-full h-10 w-10 bg-[#34343A]/10 flex items-center justify-center">
+              <span class="text-[#34343A]">+</span>
+            </div>
+            <div class="flex-1">
+              <p class="font-medium">Create your first project</p>
+              <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
+            </div>
+            <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
+          </div>
         </div>
       </section>
 
-      
-
       <!-- Community Projects -->
-      <section class="card-ivory p-4 sm:p-6">
-        <SectionHeader title="Community Projects" />
-        <div v-if="loadingComm && commItems.length===0" class="grid gap-4 sm:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <section>
+        <div class="mt-10 mb-4">
+          <div class="flex items-center gap-3">
+            <span class="section-h">Community Projects</span>
+            <div class="section-rule"></div>
+          </div>
+        </div>
+        <div v-if="loadingComm && commItems.length===0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
           <div v-for="n in pageSize" :key="`skc-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
         </div>
         <ProjectGrid v-else-if="commItems.length" :items="commItems" more-link="/gallery" more-label="See all" />
         <div v-else class="text-center py-10">
           <p class="text-dim">No projects yet.</p>
-          <NuxtLink to="/gallery" class="btn-purple-outline mt-4 focus-cyber">Browse the Community Gallery</NuxtLink>
+          <NuxtLink to="/gallery" class="btn-outline-ink mt-4">Browse the Community Gallery</NuxtLink>
         </div>
         <div v-if="hasMoreComm" class="mt-6 flex justify-center">
-          <button @click="loadMoreComm" :disabled="loadingComm" class="btn-purple-outline focus-cyber">Load More</button>
+          <button @click="loadMoreComm" :disabled="loadingComm" class="btn-outline-ink">Load More</button>
         </div>
       </section>
     </div>
   </main>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
 // Nuxt auto-imported composable
 declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
-import SectionHeader from '@/components/SectionHeader.vue'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
