@@ -42,13 +42,11 @@
         </div>
       </div>
     </div>
-    <!-- meta -->
-    <div class="px-3 pb-3">
-      <h3 class="mt-2 text-base leading-tight font-medium line-clamp-1">
-        {{ project.title || 'Untitled' }}
-      </h3>
-      <div class="mt-1 flex items-center gap-2">
-        <span class="pill-micro">{{ new Date(project.created_at).toLocaleDateString() }}</span>
+    <!-- caption -->
+    <div class="mt-2 card-caption-ink p-3">
+      <h3 class="card-title-ink text-base line-clamp-1">{{ project.title || 'Untitled' }}</h3>
+      <div class="mt-1">
+        <span class="card-date-ink">{{ new Date(project.created_at).toLocaleDateString() }}</span>
       </div>
     </div>
   </article>

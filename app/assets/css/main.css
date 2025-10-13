@@ -54,6 +54,14 @@
   .input-briko--ink  { @apply bg-white text-[#34343A] border-white/10 focus:border-[#FF0062] focus:ring-[#FF0062]/30; }
   .select-briko--ink { @apply bg-white text-[#34343A] border-white/10 focus:border-[#FF0062] focus:ring-[#FF0062]/30; }
   .help-briko--ink   { @apply text-white/70; }
+
+  /* Caption bar under the image (Studio cards) */
+  .card-caption-ink {
+    @apply rounded-2xl bg-[#2F3061] text-white border border-white/10;
+  }
+  .card-caption-ink:hover { @apply bg-[#2B2D59]; }
+  .card-title-ink { @apply text-[#FFD808] font-medium leading-tight; }
+  .card-date-ink  { @apply text-white/90 text-[11px]; }
   .on-yellow input[type="text"]::placeholder,
   .on-yellow input[type="search"]::placeholder,
   .on-yellow input[type="number"]::placeholder {
