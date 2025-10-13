@@ -1,25 +1,23 @@
-// Build-time imports from unplugin-icons; these WILL fail the build if misspelled.
-import Upload from '~icons/material-symbols/upload-rounded'
-import Tune from '~icons/material-symbols/tune-rounded'
-import AutoAwesome from '~icons/material-symbols/auto-awesome-rounded'
-
-import Bolt from '~icons/material-symbols/bolt-rounded'
-import Palette from '~icons/material-symbols/palette'
-import Photo from '~icons/material-symbols/photo-rounded'
-import Layers from '~icons/material-symbols/layers-rounded'
-import Download from '~icons/material-symbols/download-rounded'
-import ReceiptLong from '~icons/material-symbols/receipt-long-rounded'
+import IconUpload from '@/components/icons/IconUpload.vue'
+import IconTune from '@/components/icons/IconTune.vue'
+import IconAuto from '@/components/icons/IconAuto.vue'
+import IconBolt from '@/components/icons/IconBolt.vue'
+import IconPalette from '@/components/icons/IconPalette.vue'
+import IconPhoto from '@/components/icons/IconPhoto.vue'
+import IconLayers from '@/components/icons/IconLayers.vue'
+import IconDownload from '@/components/icons/IconDownload.vue'
+import IconReceipt from '@/components/icons/IconReceipt.vue'
 
 export const HomeIcons = {
-  upload: Upload,
-  tune: Tune,
-  auto: AutoAwesome,
-  bolt: Bolt,
-  palette: Palette,
-  photo: Photo,
-  layers: Layers,
-  download: Download,
-  receipt: ReceiptLong,
+  upload: IconUpload,
+  tune: IconTune,
+  auto: IconAuto,
+  bolt: IconBolt,
+  palette: IconPalette,
+  photo: IconPhoto,
+  layers: IconLayers,
+  download: IconDownload,
+  receipt: IconReceipt,
 } as const
 
 // Keep tree-shaking honest in case of “imported but not used” during generate

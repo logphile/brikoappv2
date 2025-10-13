@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Palette from '~icons/material-symbols/palette'
-import Layers from '~icons/material-symbols/layers-rounded'
-import ReceiptLong from '~icons/material-symbols/receipt-long-rounded'
-import Download from '~icons/material-symbols/download-rounded'
-import Photo from '~icons/material-symbols/photo-rounded'
-import Bolt from '~icons/material-symbols/bolt-rounded'
+import IconPalette from '@/components/icons/IconPalette.vue'
+import IconLayers from '@/components/icons/IconLayers.vue'
+import IconReceipt from '@/components/icons/IconReceipt.vue'
+import IconDownload from '@/components/icons/IconDownload.vue'
+import IconPhoto from '@/components/icons/IconPhoto.vue'
+import IconBolt from '@/components/icons/IconBolt.vue'
 </script>
 
 <template>
@@ -13,7 +13,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <Palette class="h-[18px] w-[18px] text-[#2F3061]" />
+              <IconPalette class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
@@ -26,7 +26,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <Layers class="h-[18px] w-[18px] text-[#2F3061]" />
+              <IconLayers class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
@@ -39,7 +39,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <ReceiptLong class="h-[18px] w-[18px] text-[#2F3061]" />
+              <IconReceipt class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Smart BOM</h3>
           </div>
@@ -52,7 +52,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <Download class="h-[18px] w-[18px] text-[#2F3061]" />
+              <IconDownload class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
@@ -65,7 +65,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <Photo class="h-[18px] w-[18px] text-[#2F3061]" />
+              <IconPhoto class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
@@ -79,7 +79,7 @@ import Bolt from '~icons/material-symbols/bolt-rounded'
         <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <Bolt class="h-[18px] w-[18px] text-[#2F3061]" />
+              <IconBolt class="h-[18px] w-[18px] text-[#2F3061]" />
             </span>
             <h3 class="text-[18px] font-semibold">Performance</h3>
           </div>

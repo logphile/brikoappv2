@@ -1,6 +1,7 @@
+
 <template>
-  <svg viewBox="0 0 24 24" fill="currentColor" class="inline-block">
-    <!-- simple, bold lightning bolt that reads well at 20px -->
-    <path d="M13 2 4 14h7l-1 8 10-12h-7l0-8z"/>
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" role="img">
+    <!-- bolt-rounded -->
+<path fill="currentColor" d="M9 15H5.9q-.6 0-.888-.537t.063-1.038l7.475-10.75q.25-.35.65-.487t.825.012t.625.525t.15.8L14 10h3.875q.65 0 .913.575t-.163 1.075L10.4 21.5q-.275.325-.675.425t-.775-.075t-.587-.537t-.163-.788z"/>
   </svg>
 </template>

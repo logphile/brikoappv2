@@ -5,14 +5,9 @@ import { dirname, resolve } from 'node:path'
 export default defineNuxtConfig({
   css: ['~/assets/css/tailwind.css'],
 
-  modules: ['unplugin-icons/nuxt', '@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
 
-  // Build-time SVG compiler for <i-collection-name-icon-name/> components
-  // @ts-expect-error: Provided by unplugin-icons/nuxt module
-  icons: {
-    compiler: 'vue3',
-    autoInstall: false
-  },
+  // Icons are vendored as local components; no icon plugin needed
 
   // Do NOT treat i-* tags as custom elements; only whitelist real web components
   vue: {
@@ -28,17 +23,7 @@ export default defineNuxtConfig({
     }
   },
 
-  // Ensure icon virtual modules are not externalized during SSR/prerender
-  vite: {
-    ssr: {
-      noExternal: ['unplugin-icons', '@unplugin-icons/*', '@iconify-json/*']
-    }
-  },
-
-  // Transpile icon collections and plugin for SSR parity
-  build: {
-    transpile: ['@iconify-json/material-symbols', 'unplugin-icons']
-  },
+  // No special SSR settings required for local SVG components
 
   runtimeConfig: {
     // Server-only (only needed if you ever use a service role on server routes)
@@ -65,9 +50,6 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: false,
       routes: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal']
-    },
-    externals: {
-      inline: ['unplugin-icons', '@iconify-json/material-symbols']
     }
   },
 

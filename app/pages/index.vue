@@ -3,7 +3,9 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import { HomeIcons, __ICONS_OK__ } from '@/lib/home-icons'
+import IconUpload from '@/components/icons/IconUpload.vue'
+import IconTune from '@/components/icons/IconTune.vue'
+import IconAuto from '@/components/icons/IconAuto.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -28,13 +30,10 @@ useHead({
   ]
 })
 
-// Keep build-time icon imports alive so bad names fail at compile-time
-void __ICONS_OK__
-
 const heroItems = [
-  { label: 'Upload your photo', Icon: HomeIcons.upload },
-  { label: 'Instantly see it in bricks', Icon: HomeIcons.tune },
-  { label: 'Get the parts, guide, and price', Icon: HomeIcons.auto }
+  { label: 'Upload your photo', Icon: IconUpload },
+  { label: 'Instantly see it in bricks', Icon: IconTune },
+  { label: 'Get the parts, guide, and price', Icon: IconAuto }
 ]
 
 // How it works: plain text labels (no numbers/icons)
