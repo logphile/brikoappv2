@@ -15,66 +15,66 @@
     <!-- Content cards -->
     <main class="page-wrap mt-8 space-y-10">
       <!-- Identity -->
-      <section class="card card-hover p-6">
+      <section class="card-ink p-6">
         <div class="flex items-center gap-3 mb-4">
-          <span class="section-h">Identity</span>
-          <div class="section-rule"></div>
+          <span class="section-h--ink">Identity</span>
+          <div class="section-rule--ink"></div>
         </div>
 
         <div class="form-grid">
           <div>
-            <label class="label-briko" for="handle">Handle</label>
-            <input id="handle" v-model="form.handle" :class="['input-briko mt-1', errors.handle && 'input-error']" placeholder="yourname" />
-            <p class="help-briko">Shown as @handle. Letters, numbers, dashes, underscores.</p>
+            <label class="label-briko text-white" for="handle">Handle</label>
+            <input id="handle" v-model="form.handle" :class="['input-briko', 'input-briko--ink', 'mt-1', errors.handle && 'input-error']" placeholder="yourname" />
+            <p class="help-briko help-briko--ink">Shown as @handle. Letters, numbers, dashes, underscores.</p>
             <p v-if="errors.handle" class="msg-error">{{ errors.handle }}</p>
           </div>
 
           <div>
-            <label class="label-briko" for="display">Display name</label>
-            <input id="display" v-model="form.displayName" class="input-briko mt-1" placeholder="Your name" />
-            <p class="help-briko">How your name appears across Briko.</p>
+            <label class="label-briko text-white" for="display">Display name</label>
+            <input id="display" v-model="form.displayName" class="input-briko input-briko--ink mt-1" placeholder="Your name" />
+            <p class="help-briko help-briko--ink">How your name appears across Briko.</p>
           </div>
         </div>
       </section>
 
       <!-- Contact -->
-      <section class="card card-hover p-6">
+      <section class="card-ink p-6">
         <div class="flex items-center gap-3 mb-4">
-          <span class="section-h">Contact</span>
-          <div class="section-rule"></div>
+          <span class="section-h--ink">Contact</span>
+          <div class="section-rule--ink"></div>
         </div>
 
         <div class="form-grid">
           <div>
-            <label class="label-briko" for="email">Email</label>
-            <input id="email" :value="user?.email || ''" class="input-briko mt-1" disabled />
-            <p class="help-briko">Email is managed by your account provider.</p>
+            <label class="label-briko text-white" for="email">Email</label>
+            <input id="email" :value="user?.email || ''" class="input-briko input-briko--ink mt-1" disabled />
+            <p class="help-briko help-briko--ink">Email is managed by your account provider.</p>
           </div>
 
           <div>
-            <label class="label-briko" for="visibility">Profile visibility</label>
-            <select id="visibility" v-model="form.visibility" class="select-briko mt-1">
+            <label class="label-briko text-white" for="visibility">Profile visibility</label>
+            <select id="visibility" v-model="form.visibility" class="select-briko select-briko--ink mt-1">
               <option value="public">Public</option>
               <option value="private">Private</option>
             </select>
-            <p class="help-briko">Public profiles show your handle and projects.</p>
+            <p class="help-briko help-briko--ink">Public profiles show your handle and projects.</p>
           </div>
         </div>
       </section>
 
       <!-- Danger zone -->
-      <section class="card card-hover p-6">
+      <section class="card-ink p-6">
         <div class="flex items-center gap-3 mb-4">
-          <span class="section-h">Danger zone</span>
-          <div class="section-rule"></div>
+          <span class="section-h--ink">Danger zone</span>
+          <div class="section-rule--ink"></div>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <p class="font-medium">Delete account</p>
-            <p class="help-briko">This permanently removes your profile and projects.</p>
+            <p class="font-medium text-white">Delete account</p>
+            <p class="help-briko help-briko--ink">This permanently removes your profile and projects.</p>
           </div>
-          <button @click="onDelete" class="btn-outline-ink">Delete</button>
+          <button @click="onDelete" class="btn-pink-outline">Delete</button>
         </div>
       </section>
     </main>

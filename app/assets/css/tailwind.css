@@ -95,6 +95,10 @@
       @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
              border border-brand-ivory text-brand-ivory bg-transparent hover:bg-brand-ivory/10;
     }
+    .btn-pink-outline {
+      @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-semibold transition
+             border border-brand-pink text-brand-pink bg-transparent hover:bg-brand-pink/10;
+    }
     .btn-outline-ink {
       @apply inline-flex items-center justify-center rounded-full border border-[#34343A] px-3.5 py-2 text-sm font-medium text-[#34343A]
              hover:bg-[#34343A]/5 transition;
@@ -106,14 +110,24 @@
     .card-outline-soft { @apply border border-[#34343A]/20; }
     .card       { @apply rounded-2xl border border-[#34343A]/20 bg-white/5; }
     .card-hover { @apply transition hover:shadow-md hover:-translate-y-[1px]; }
+    /* Ink card (purple) for Settings */
+    .card-ink {
+      @apply rounded-2xl bg-[#2F3061] text-white border border-white/10 shadow-sm;
+    }
+    .section-h--ink { @apply text-[11px] uppercase tracking-wide font-semibold text-white/80; }
+    .section-rule--ink { @apply h-px bg-white/15 flex-1; }
     .pill-micro { @apply text-[11px] px-2 py-0.5 rounded-full bg-[#34343A]/5 border border-[#34343A]/10; }
     .page-wrap  { @apply max-w-7xl mx-auto px-6 lg:px-8; }
     .section-h { @apply text-[11px] uppercase tracking-wide font-semibold text-[#34343A]/75; }
     .section-rule { @apply h-px bg-[#34343A]/15 flex-1; }
     .select-briko { @apply rounded-2xl border border-[#34343A]/20 bg-white/80 text-[#34343A] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#34343A]/20; }
     .input-briko { @apply w-full rounded-xl bg-white text-[#34343A] border border-[#34343A]/20 px-3 py-2 shadow-sm outline-none focus:border-[#FF0062] focus:ring-2 focus:ring-[#FF0062]/30; }
+    /* Light inputs on ink cards */
+    .input-briko--ink  { @apply bg-white text-[#34343A] border-white/10 focus:border-[#FF0062] focus:ring-[#FF0062]/30; }
+    .select-briko--ink { @apply bg-white text-[#34343A] border-white/10 focus:border-[#FF0062] focus:ring-[#FF0062]/30; }
     .label-briko { @apply text-sm font-medium text-[#34343A]/95; }
     .help-briko  { @apply mt-1 text-xs text-[#34343A]/75; }
+    .help-briko--ink { @apply text-white/70; }
     @media (prefers-contrast: more) {
       .section-h   { color: rgba(52, 52, 58, 0.90); }
       .label-briko { color: rgba(52, 52, 58, 0.98); }

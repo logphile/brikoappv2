@@ -43,6 +43,17 @@
     .nav-enter:nth-child(5) { animation-delay: .18s; }
   }
   .nav-active { box-shadow: 0 0 0 0 rgba(255,0,98,0), 0 0 0 2px rgba(255,0,98,.35) inset; }
+
+  /* Ink card (purple) for Settings */
+  .card-ink {
+    @apply rounded-2xl bg-[#2F3061] text-white border border-white/10 shadow-sm;
+  }
+  .section-h--ink    { @apply text-[11px] uppercase tracking-wide font-semibold text-white/80; }
+  .section-rule--ink { @apply h-px bg-white/15 flex-1; }
+  /* Light inputs on ink cards */
+  .input-briko--ink  { @apply bg-white text-[#34343A] border-white/10 focus:border-[#FF0062] focus:ring-[#FF0062]/30; }
+  .select-briko--ink { @apply bg-white text-[#34343A] border-white/10 focus:border-[#FF0062] focus:ring-[#FF0062]/30; }
+  .help-briko--ink   { @apply text-white/70; }
   .on-yellow input[type="text"]::placeholder,
   .on-yellow input[type="search"]::placeholder,
   .on-yellow input[type="number"]::placeholder {
