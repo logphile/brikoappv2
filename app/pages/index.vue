@@ -46,6 +46,14 @@ const steps = [
   'Export PNG · CSV · PDF'
 ]
 
+// Feature cards for Purple band
+const features = [
+  { title: 'Instant LEGO-style color mapping', blurb: 'Automatic brick-color remap for any photo.' },
+  { title: 'Greedy tiling', blurb: 'Fewer plates, cleaner joins, faster build.' },
+  { title: 'Auto Bill of Materials', blurb: 'Brick count and cost estimate in one click.' },
+  { title: 'One-click export', blurb: 'PNG · CSV · PDF build guide.' },
+]
+
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
   siteUrl,
@@ -115,7 +123,7 @@ useHead({
 
     <!-- Purple band -->
     <section class="bg-[#2F3061]">
-      <div class="mx-auto max-w-7xl px-6 md:px-8 py-16">
+      <div class="mx-auto max-w-7xl px-6 md:px-8">
         <header class="text-center mb-6">
           <h2 class="font-slab text-[24px] md:text-[28px] text-white">From Photo to Parts—Fast</h2>
           <p class="mt-2 text-white/75 text-[14px] md:text-[15px]">
@@ -124,29 +132,25 @@ useHead({
           <span class="mini-rule mini-rule--pink mx-auto mt-3"></span>
         </header>
 
-        <div class="grid md:grid-cols-2 items-center gap-10">
-          <div class="soft-card p-0 overflow-hidden rounded-2xl border-white/10 bg-white/5">
-            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="3/2" :start="45" />
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center py-16 lg:py-24">
+          <!-- LEFT: image -->
+          <div class="relative rounded-2xl overflow-hidden shadow-lg max-h-[420px]">
+            <img src="/home-1-mosaic.png" alt="" class="w-full h-auto object-cover" />
           </div>
 
-          <ul class="space-y-3 text-white">
-            <li class="pl-8 relative">
-              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
-              Instant LEGO-style color mapping
-            </li>
-            <li class="pl-8 relative">
-              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
-              Greedy tiling — fewer plates, cleaner look
-            </li>
-            <li class="pl-8 relative">
-              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
-              Auto Bill of Materials + cost estimate
-            </li>
-            <li class="pl-8 relative">
-              <span class="absolute left-1 top-[0.5rem] inline-block w-[14px] h-[14px] rounded-full bg-[#FFD808]"></span>
-              One-click export: PNG · CSV · PDF
-            </li>
-          </ul>
+          <!-- RIGHT: feature grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+            <div v-for="(f,i) in features" :key="i"
+                 class="rounded-2xl bg-[#343434]/60 border border-[#343434]/25 p-4 transition hover:border-[#00E5A0]/40 hover:ring-1 hover:ring-[#00E5A0]/25">
+              <div class="flex items-start gap-3">
+                <span class="mt-1 inline-block h-2 w-2 rounded-full" style="background-color:#00E5A0"></span>
+                <div>
+                  <h4 class="font-slab text-purple-200 text-base leading-tight">{{ f.title }}</h4>
+                  <p class="text-white/70 text-sm mt-1">{{ f.blurb }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
