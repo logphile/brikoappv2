@@ -3,10 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import FileUpload from '~icons/material-symbols/upload-rounded'
-import Tune from '~icons/material-symbols/tune-rounded'
-import AutoAwesome from '~icons/material-symbols/auto-awesome-rounded'
-import { __ICONS_OK__ } from '@/lib/icons-required'
+import { HomeIcons, __ICONS_OK__ } from '@/lib/home-icons'
 
 const siteUrl = 'https://briko.app'
 
@@ -33,6 +30,12 @@ useHead({
 
 // Keep build-time icon imports alive so bad names fail at compile-time
 void __ICONS_OK__
+
+const heroItems = [
+  { label: 'Upload your photo', Icon: HomeIcons.upload },
+  { label: 'Instantly see it in bricks', Icon: HomeIcons.tune },
+  { label: 'Get the parts, guide, and price', Icon: HomeIcons.auto }
+]
 
 // How it works: plain text labels (no numbers/icons)
 const steps = [
@@ -74,25 +77,11 @@ useHead({
             </h1>
 
             <ul class="mt-5 space-y-2">
-              <li class="flex items-start gap-3">
+              <li v-for="h in heroItems" :key="h.label" class="flex items-start gap-3">
                 <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <FileUpload class="h-[18px] w-[18px] text-white" />
+                  <component :is="h.Icon" class="h-[18px] w-[18px] text-white" />
                 </span>
-                <span class="text-[#343434]">Upload your photo</span>
-              </li>
-
-              <li class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <Tune class="h-[18px] w-[18px] text-white" />
-                </span>
-                <span class="text-[#343434]">Instantly see it in bricks</span>
-              </li>
-
-              <li class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
-                  <AutoAwesome class="h-[18px] w-[18px] text-white" />
-                </span>
-                <span class="text-[#343434]">Get the parts, guide, and price</span>
+                <span class="text-[#343434]">{{ h.label }}</span>
               </li>
             </ul>
 
