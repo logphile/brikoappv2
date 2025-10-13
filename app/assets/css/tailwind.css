@@ -97,6 +97,7 @@
     .soft-card {
       @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
     }
+    .card-outline-soft { @apply border border-[#34343A]/20; }
 
     /* Chips / pills and segments */
     .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }

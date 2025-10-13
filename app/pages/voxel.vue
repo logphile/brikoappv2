@@ -331,7 +331,7 @@ async function makePublic(){
     <div class="mt-8 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
       <!-- Controls panel (left) -->
       <aside class="lg:col-span-1">
-        <div class="bg-[#FFD808] border border-[#343434]/20 rounded-xl shadow-sm p-6 space-y-6">
+        <div class="bg-[#FFD808] card-outline-soft rounded-xl shadow-sm p-6 space-y-6">
           <!-- Upload -->
           <section id="upload" class="scroll-mt-28 pt-2">
             <div class="flex items-center gap-3 mb-1">

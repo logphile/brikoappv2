@@ -1043,7 +1043,7 @@ watchDebounced(
                 enter-from-class="opacity-0 translate-y-2"
                 enter-to-class="opacity-100 translate-y-0"
               >
-                <div class="z-0 rounded-2xl border border-black/80 bg-[#FFD808] p-3 sm:p-4 space-y-6">
+                <div class="z-0 rounded-2xl card-outline-soft bg-[#FFD808] p-3 sm:p-4 space-y-6">
                   <!-- Step 1: Upload -->
                   <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
                     <StepCard :step="1" title="Upload your photo">
