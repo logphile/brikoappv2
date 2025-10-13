@@ -11,6 +11,7 @@ module.exports = {
     './assets/css/**/*.{css,scss}',
     './app/assets/css/**/*.{css,scss}',
   ],
+  safelist: ['font-slab'],
   theme: {
     extend: {
       colors: {
