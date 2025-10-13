@@ -37,7 +37,7 @@
       <div class="grid gap-6 lg:grid-cols-[460px,1fr] items-start">
         <!-- Controls column (yellow panel) -->
         <aside class="lg:col-span-1">
-          <div class="rounded-2xl bg-[#FFD808] p-3 sm:p-4">
+          <div class="rounded-2xl card-outline-soft bg-[#FFD808] p-3 sm:p-4">
             <!-- Upload -->
             <section id="upload" class="scroll-mt-28 pt-2">
               <StepCard :step="1" title="Upload your photo">
