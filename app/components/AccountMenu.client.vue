@@ -2,17 +2,13 @@
   <div class="relative" ref="root">
     <button
       @click="toggle"
-      class="user-trigger inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 min-h-[40px]
-             bg-pink text-brandYellow font-medium
-             shadow-[0_2px_0_rgba(0,0,0,0.25)] transition-all duration-150
-             hover:shadow-[0_6px_14px_rgba(0,0,0,0.2)] hover:-translate-y-[1px] active:translate-y-0
-             focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+      class="user-pill"
       aria-haspopup="menu"
       :aria-expanded="open ? 'true' : 'false'"
     >
-      <span class="material-symbols-rounded text-base" aria-hidden="true">account_circle</span>
-      <span class="max-w-[200px] truncate">{{ label || 'Sign in' }}</span>
-      <span class="material-symbols-rounded text-base -mr-1" aria-hidden="true">expand_more</span>
+      <span class="material-symbols-rounded text-base user-pill__icon" aria-hidden="true">account_circle</span>
+      <span class="truncate max-w-[14ch] sm:max-w-[24ch]">{{ label || 'Sign in' }}</span>
+      <span class="material-symbols-rounded text-base opacity-90 -mr-1" aria-hidden="true">expand_more</span>
     </button>
     <div v-if="open" class="absolute right-0 mt-2 w-64 z-50">
       <ul class="menu-surface rounded-2xl bg-[#2A2356] text-[#FFD808] shadow-2xl ring-1 ring-white/10 p-2 w-64 relative overflow-hidden" role="menu" aria-label="User menu">
@@ -56,7 +52,7 @@
 
         <li class="relative group">
           <NuxtLink
-            to="/settings/profile"
+            to="/settings"
             role="menuitem"
             :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.path.startsWith('/settings') ? 'font-semibold' : '']"
           >

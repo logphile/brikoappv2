@@ -124,6 +124,18 @@
     .input-error   { @apply border-red-500 focus:ring-red-400/30; }
     .msg-error     { @apply mt-1 text-sm text-red-600; }
 
+    /* Readable user pill for account trigger */
+    .user-pill {
+      @apply inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm
+             bg-[#2F3061] text-white shadow-sm hover:bg-[#262853] transition
+             focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062]/40;
+    }
+    .user-pill__icon { @apply opacity-90; }
+    .user-pill--cta { @apply bg-[#FF0062] text-white hover:bg-[#e20058]; }
+
+    /* Base menu item style (can be overridden per-surface) */
+    .menu-item { @apply px-3 py-2 rounded-lg text-[#34343A] hover:bg-[#FFD808]/25; }
+
     /* Chips / pills and segments */
     .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }
     .chip-on    { @apply bg-brand-yellow text-brand-dark; }
