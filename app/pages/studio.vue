@@ -1,68 +1,84 @@
 <template>
   <main class="min-h-screen bg-yellow text-dark">
-    <div class="page-wrap py-10 lg:py-12">
-      <header class="mb-8">
+    <header class="page-wrap mt-4 flex items-end justify-between gap-4">
+      <div>
         <h1 class="text-5xl lg:text-6xl font-slab">Briko Studio</h1>
         <p class="mt-2 text-[#34343A]/70">Start a new project or explore the community.</p>
-        <div class="mt-4 flex items-center gap-3">
-          <NuxtLink to="/gallery" class="btn-outline-ink">Community Gallery</NuxtLink>
+      </div>
+      <div class="hidden md:flex items-center gap-3">
+        <NuxtLink to="/gallery" class="btn-outline-ink">Community Gallery</NuxtLink>
+        <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
+      </div>
+    </header>
+
+    <div class="page-wrap mt-10 mb-4">
+      <div class="flex items-center gap-3">
+        <span class="section-h">Your Projects</span>
+        <div class="section-rule"></div>
+        <div class="ml-auto flex items-center gap-2">
+          <select v-model="sort" class="select-briko">
+            <option value="recent">Recent</option>
+            <option value="oldest">Oldest</option>
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+            <option value="largest">Largest</option>
+          </select>
+          <div class="hidden sm:flex gap-2">
+            <button :class="['pill-micro', filter==='all' && 'bg-[#34343A]/10']" @click="filter='all'">All</button>
+            <button :class="['pill-micro', filter==='public' && 'bg-[#34343A]/10']" @click="filter='public'">Public</button>
+            <button :class="['pill-micro', filter==='private' && 'bg-[#34343A]/10']" @click="filter='private'">Private</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-wrap">
+      <div v-if="loadingMy" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
+        <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
+      </div>
+      <ProjectGrid v-else-if="computedMyItems.length" :items="computedMyItems" view-prefix="/studio" />
+      <div v-else class="mt-4">
+        <div class="card p-8 flex items-center gap-4">
+          <div class="rounded-full h-10 w-10 bg-[#34343A]/10 flex items-center justify-center">
+            <span class="text-[#34343A]">+</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-medium">Create your first project</p>
+            <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
+          </div>
           <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
         </div>
-      </header>
-
-      <!-- Your Projects -->
-      <section class="mb-8">
-        <div class="mt-10 mb-4">
-          <div class="flex items-center gap-3">
-            <span class="section-h">Your Projects</span>
-            <div class="section-rule"></div>
-          </div>
-        </div>
-        <div v-if="loadingMy" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
-          <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
-        </div>
-        <ProjectGrid v-else-if="myItems.length" :items="myItems" view-prefix="/studio" />
-        <div v-else class="mt-4">
-          <div class="card p-8 flex items-center gap-4">
-            <div class="rounded-full h-10 w-10 bg-[#34343A]/10 flex items-center justify-center">
-              <span class="text-[#34343A]">+</span>
-            </div>
-            <div class="flex-1">
-              <p class="font-medium">Create your first project</p>
-              <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
-            </div>
-            <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
-          </div>
-        </div>
-      </section>
-
-      <!-- Community Projects -->
-      <section>
-        <div class="mt-10 mb-4">
-          <div class="flex items-center gap-3">
-            <span class="section-h">Community Projects</span>
-            <div class="section-rule"></div>
-          </div>
-        </div>
-        <div v-if="loadingComm && commItems.length===0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
-          <div v-for="n in pageSize" :key="`skc-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
-        </div>
-        <ProjectGrid v-else-if="commItems.length" :items="commItems" more-link="/gallery" more-label="See all" />
-        <div v-else class="text-center py-10">
-          <p class="text-dim">No projects yet.</p>
-          <NuxtLink to="/gallery" class="btn-outline-ink mt-4">Browse the Community Gallery</NuxtLink>
-        </div>
-        <div v-if="hasMoreComm" class="mt-6 flex justify-center">
-          <button @click="loadMoreComm" :disabled="loadingComm" class="btn-outline-ink">Load More</button>
-        </div>
-      </section>
+      </div>
     </div>
+
+    <div class="page-wrap mt-10 mb-4">
+      <div class="flex items-center gap-3">
+        <span class="section-h">Community Projects</span>
+        <div class="section-rule"></div>
+      </div>
+    </div>
+
+    <div class="page-wrap">
+      <div v-if="loadingComm && commItems.length===0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
+        <div v-for="n in pageSize" :key="`skc-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
+      </div>
+      <ProjectGrid v-else-if="commItems.length" :items="commItems" more-link="/gallery" more-label="See all" />
+      <div v-else class="text-center py-10">
+        <p class="text-dim">No projects yet.</p>
+        <NuxtLink to="/gallery" class="btn-outline-ink mt-4">Browse the Community Gallery</NuxtLink>
+      </div>
+      <div v-if="hasMoreComm" class="mt-6 flex justify-center">
+        <button @click="loadMoreComm" :disabled="loadingComm" class="btn-outline-ink">Load More</button>
+      </div>
+    </div>
+
+    <NuxtLink to="/studio/new" class="md:hidden fixed bottom-4 right-4 btn-primary shadow-md">New Project</NuxtLink>
   </main>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useNuxtApp, useHead } from 'nuxt/app'
+import { ref, onMounted, computed } from 'vue'
+import { useHead } from 'nuxt/app'
 // Nuxt auto-imported composable
 declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
@@ -100,6 +116,28 @@ const user = ref<any>(null)
 // Your Projects
 const myItems = ref<any[]>([])
 const loadingMy = ref(false)
+const sort = ref<'recent'|'oldest'|'az'|'za'|'largest'>('recent')
+const filter = ref<'all'|'public'|'private'>('all')
+
+const computedMyItems = computed(() => {
+  let arr = [...myItems.value]
+  if (filter.value === 'public') arr = arr.filter((p:any) => p.is_public === true)
+  else if (filter.value === 'private') arr = arr.filter((p:any) => p.is_public === false)
+  switch (sort.value) {
+    case 'recent':
+      arr.sort((a:any,b:any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break
+    case 'oldest':
+      arr.sort((a:any,b:any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()); break
+    case 'az':
+      arr.sort((a:any,b:any) => (a.title||'').localeCompare(b.title||'')); break
+    case 'za':
+      arr.sort((a:any,b:any) => (b.title||'').localeCompare(a.title||'')); break
+    case 'largest':
+    default:
+      break
+  }
+  return arr
+})
 
 // My Gallery is rendered via <MyGalleryGrid />
 
@@ -125,7 +163,7 @@ async function fetchMy(){
   let rows: any[] = []
   try {
     const { data, error } = await supabase.from('user_projects')
-      .select('id, title, preview_path, created_at, updated_at')
+      .select('id, title, preview_path, created_at, updated_at, is_public')
       .eq('user_id', user.value.id)
       .order('updated_at', { ascending: false })
       .limit(100)
@@ -134,7 +172,7 @@ async function fetchMy(){
   } catch (e) {
     // Fallback to base projects table using modern column names
     const { data } = await supabase.from('projects')
-      .select('id, name as title, preview_path, created_at, updated_at')
+      .select('id, name as title, preview_path, created_at, updated_at, is_public')
       .eq('user_id', user.value.id)
       .order('updated_at', { ascending: false })
       .limit(100)
@@ -145,6 +183,7 @@ async function fetchMy(){
     title: r.title,
     created_at: r.updated_at || r.created_at,
     cover_url: r.preview_path ? `${buildPreviewUrl(r.preview_path)}?v=${bust(r.updated_at || r.created_at)}` : null,
+    is_public: !!r.is_public,
   }))
   loadingMy.value = false
 }

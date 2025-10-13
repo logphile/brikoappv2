@@ -51,6 +51,8 @@
       font-size: 64px; /* mobile */
       line-height: 1.05;
     }
+    /* Simple 1-line clamp without plugin */
+    .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   }
   /* md+ scale for hero */
   @media (min-width: 768px) {
@@ -108,6 +110,7 @@
     .page-wrap  { @apply max-w-7xl mx-auto px-6 lg:px-8; }
     .section-h { @apply text-xs uppercase tracking-wide text-[#34343A]/60; }
     .section-rule { @apply h-px bg-[#34343A]/10 w-full; }
+    .select-briko { @apply rounded-2xl border border-[#34343A]/20 bg-white/80 text-[#34343A] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#34343A]/20; }
 
     /* Chips / pills and segments */
     .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm ring-1 ring-white/20; }

@@ -5,6 +5,7 @@
     <div class="framed-img aspect-[4/3] bg-black/30">
       <img v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
+           loading="lazy" decoding="async" fetchpriority="low"
            class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
            @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-white/40 text-sm">No preview</div>
@@ -24,11 +25,13 @@
   <article v-else class="card card-hover group relative overflow-hidden">
     <!-- cover -->
     <div class="relative aspect-square overflow-hidden rounded-2xl bg-black/5">
+      <div class="absolute inset-0 animate-pulse bg-black/5" v-if="!imgLoaded" />
       <img v-if="project.cover_url"
            :src="project.cover_url as string" :alt="project.title || 'Project preview'"
-           loading="lazy" decoding="async"
+           loading="lazy" decoding="async" fetchpriority="low"
+           sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw"
            class="h-full w-full object-cover"
-           @error="emit('img-error', project.id)" />
+           @load="onImgLoad" @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-black/60 text-sm">No preview</div>
 
       <!-- hover action cluster -->
@@ -41,7 +44,7 @@
     </div>
     <!-- meta -->
     <div class="px-3 pb-3">
-      <h3 class="mt-2 text-base leading-tight font-medium truncate">
+      <h3 class="mt-2 text-base leading-tight font-medium line-clamp-1">
         {{ project.title || 'Untitled' }}
       </h3>
       <div class="mt-1 flex items-center gap-2">
@@ -52,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 const emit = defineEmits<{ (e: 'img-error', id: string | number): void }>()
 interface OwnerInfo { handle?: string | null; display_name?: string | null }
 interface CommunityProject {
@@ -66,4 +70,7 @@ const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: bo
   overlay: false,
   viewPrefix: '/project',
 })
+
+const imgLoaded = ref(false)
+function onImgLoad(){ imgLoaded.value = true }
 </script>
