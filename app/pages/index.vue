@@ -3,8 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import FeatureGrid from '@/components/home/FeatureGrid.vue'
-import HeroBg from '@/components/home/HeroBg.vue'
+import HeroSplitImage from '@/components/home/HeroSplitImage.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
@@ -76,12 +75,10 @@ useHead({
 <template>
   <div>
     <!-- HERO -->
-    <section class="relative isolate">
-      <HeroBg />
-      <div class="relative z-10 mx-auto max-w-7xl px-6 md:px-8 pt-32 md:pt-48 pb-2.5">
-        <div class="grid md:grid-cols-[1.05fr,1fr] items-start gap-y-10 gap-x-8 lg:gap-x-12">
-          <!-- Left: copy -->
-          <div>
+    <section class="relative bg-brand-yellow">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 py-12 lg:py-20 grid grid-cols-1 lg:grid-cols-[1fr,520px] gap-10 items-center">
+        <!-- Left: copy -->
+        <div class="relative z-10">
             <h1 class="h1-hero text-[#343434] max-w-[18ch]">
               Create LEGO-style art from your images
             </h1>
@@ -100,10 +97,15 @@ useHead({
                 Try Photo to Bricks
               </NuxtLink>
             </div>
-          </div>
+        </div>
 
-          <!-- Right: feature grid cards -->
-          <FeatureGrid class="mt-4 md:mt-0 lg:pl-6" />
+        <!-- Right: split image box -->
+        <div class="flex justify-center lg:justify-end">
+          <HeroSplitImage
+            originalSrc="/home-1-original.jpg"
+            mosaicSrc="/home-1-mosaic.png"
+            alt="Original vs. LEGO-style mosaic"
+          />
         </div>
       </div>
     </section>
