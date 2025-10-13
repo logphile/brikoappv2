@@ -40,7 +40,6 @@ export default defineNuxtConfig({
     '/legal': { prerender: true },
     '/community-studio': { redirect: '/gallery' },
     '/community-studio/**': { redirect: '/gallery' },
-    '/studio/new': { redirect: '/projects/new' },
     // Historic URL label ("Photo to Bricks") now routes to /mosaic
     '/photo-to-bricks': { redirect: '/mosaic' },
     // Robustness: if any link points to /sitemap, redirect to the static sitemap.xml
