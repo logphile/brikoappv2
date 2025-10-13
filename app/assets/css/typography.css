@@ -2,12 +2,12 @@
 
 @layer components {
   /* Headings */
-  .h2-section { @apply font-slab font-extrabold text-[36px] md:text-[40px] leading-tight; }
+  .h2-section { font-family: theme('fontFamily.slab'); @apply font-extrabold text-[36px] md:text-[40px] leading-tight; }
   .subtitle { @apply text-[18px] leading-[1.5] text-brand-ink/90; }
 
   /* Body & UI */
   .body-base { @apply text-base leading-[1.6]; }  /* 16px */
-  .card-title { @apply font-slab font-bold text-[18px] md:text-[20px] leading-snug; }
+  .card-title { font-family: theme('fontFamily.slab'); @apply font-bold text-[18px] md:text-[20px] leading-snug; }
   .card-body  { @apply text-base leading-[1.6]; }
   .bullet-lg  { @apply text-[18px] leading-relaxed; }
   .pill-label { @apply text-[15px] md:text-[16px] font-medium; }

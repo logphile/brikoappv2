@@ -12,7 +12,7 @@
   .section-head        { @apply text-center mb-8; }
   .section-head--tight { @apply mb-6; }
   .section-eyebrow     { @apply font-medium tracking-wide; }
-  .section-title       { @apply font-slab text-3xl sm:text-4xl md:text-[40px] leading-tight; }
+  .section-title       { font-family: theme('fontFamily.slab'); @apply text-3xl sm:text-4xl md:text-[40px] leading-tight; }
   .section-sub         { @apply mt-2 font-sans; }
   .section-underline   { @apply mx-auto mt-5 h-1.5 w-14 rounded-full bg-brand-pink; }
 
@@ -30,7 +30,7 @@
   .chip { @apply inline-flex items-center gap-2 rounded-full bg-brand-navy text-white px-3 py-2 text-xs shadow-card; }
 
   /* Title sizes for hero */
-  .hero-h1 { @apply font-slab text-[40px] sm:text-[56px] md:text-[66px] leading-[1.05] text-brand-dark; }
+  .hero-h1 { font-family: theme('fontFamily.slab'); @apply text-[40px] sm:text-[56px] md:text-[66px] leading-[1.05] text-brand-dark; }
 
   /* Compare slider helpers */
   .splitter-bar  { @apply absolute inset-y-0 w-[2px] bg-white/60 left-1/2 -translate-x-1/2; }

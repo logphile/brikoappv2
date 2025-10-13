@@ -177,7 +177,7 @@
   .prose-briko ul { @apply my-3 list-disc pl-5 space-y-1; }
   .prose-briko a  { @apply underline decoration-[#34343A]/30 underline-offset-4 hover:decoration-[#34343A]/70; }
   .prose-muted    { @apply text-sm text-[#34343A]/70; }
-  .font-display   { @apply font-slab; }
+  .font-display   { font-family: theme('fontFamily.slab'); }
 
   .card       { @apply rounded-2xl border border-[#34343A]/20 bg-white/5; }
   .card-ink   { @apply rounded-2xl bg-[#2F3061] text-white border border-white/10; }
