@@ -3,6 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
+import FeatureGrid from '@/components/home/FeatureGrid.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
@@ -68,7 +69,7 @@ useHead({
     <!-- HERO -->
     <section class="relative bg-[#FFD808]">
       <div class="mx-auto max-w-7xl px-6 md:px-8 pt-32 md:pt-48 pb-2.5">
-        <div class="grid md:grid-cols-[1.05fr,1fr] items-center gap-10 md:gap-14">
+        <div class="grid md:grid-cols-[1.05fr,1fr] items-start gap-y-10 gap-x-8 lg:gap-x-12">
           <!-- Left: copy -->
           <div>
             <h1 class="h1-hero text-[#343434] max-w-[18ch]">
@@ -91,10 +92,8 @@ useHead({
             </div>
           </div>
 
-          <!-- Right: image card -->
-          <div class="soft-card p-0 overflow-hidden rounded-2xl shadow-md">
-            <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="3/2" :start="52" />
-          </div>
+          <!-- Right: feature grid cards -->
+          <FeatureGrid class="mt-4 md:mt-0 lg:pl-6" />
         </div>
       </div>
     </section>
