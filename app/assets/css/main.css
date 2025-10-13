@@ -74,4 +74,32 @@
   /* Sliders */
   .slider-track { @apply h-1.5 rounded-full; background-color: rgba(255,255,255,.5); }
   .slider-fill  { @apply h-1.5 rounded-full; background-color: theme('colors.pink'); }
+
+  /* Settings/Studio hierarchy + contrast tweaks */
+  /* Section label (top-left of each card) */
+  .section-h {
+    @apply text-[11px] uppercase tracking-wide font-semibold text-[#34343A]/75;
+  }
+
+  /* Hairline under the section label */
+  .section-rule {
+    @apply h-px bg-[#34343A]/15 flex-1;
+  }
+
+  /* Field label (Handle, Email, etc.) */
+  .label-briko {
+    @apply text-sm font-medium text-[#34343A]/95;
+  }
+
+  /* Help copy */
+  .help-briko {
+    @apply mt-1 text-xs text-[#34343A]/75;
+  }
+
+  /* Optional: accessibility bump for users who ask for more contrast */
+  @media (prefers-contrast: more) {
+    .section-h   { color: rgba(52, 52, 58, 0.90); }
+    .label-briko { color: rgba(52, 52, 58, 0.98); }
+    .help-briko  { color: rgba(52, 52, 58, 0.85); }
+  }
 }

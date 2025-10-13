@@ -108,12 +108,17 @@
     .card-hover { @apply transition hover:shadow-md hover:-translate-y-[1px]; }
     .pill-micro { @apply text-[11px] px-2 py-0.5 rounded-full bg-[#34343A]/5 border border-[#34343A]/10; }
     .page-wrap  { @apply max-w-7xl mx-auto px-6 lg:px-8; }
-    .section-h { @apply text-xs uppercase tracking-wide text-[#34343A]/60; }
-    .section-rule { @apply h-px bg-[#34343A]/10 w-full; }
+    .section-h { @apply text-[11px] uppercase tracking-wide font-semibold text-[#34343A]/75; }
+    .section-rule { @apply h-px bg-[#34343A]/15 flex-1; }
     .select-briko { @apply rounded-2xl border border-[#34343A]/20 bg-white/80 text-[#34343A] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#34343A]/20; }
     .input-briko { @apply w-full rounded-xl bg-white text-[#34343A] border border-[#34343A]/20 px-3 py-2 shadow-sm outline-none focus:border-[#FF0062] focus:ring-2 focus:ring-[#FF0062]/30; }
-    .label-briko { @apply text-sm font-medium text-[#34343A]; }
-    .help-briko  { @apply mt-1 text-xs text-[#34343A]/70; }
+    .label-briko { @apply text-sm font-medium text-[#34343A]/95; }
+    .help-briko  { @apply mt-1 text-xs text-[#34343A]/75; }
+    @media (prefers-contrast: more) {
+      .section-h   { color: rgba(52, 52, 58, 0.90); }
+      .label-briko { color: rgba(52, 52, 58, 0.98); }
+      .help-briko  { color: rgba(52, 52, 58, 0.85); }
+    }
     .form-grid   { @apply grid grid-cols-1 md:grid-cols-2 gap-6; }
     .input-success { @apply border-emerald-500 focus:ring-emerald-400/30; }
     .input-error   { @apply border-red-500 focus:ring-red-400/30; }

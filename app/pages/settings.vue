@@ -91,12 +91,11 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useHead } from 'nuxt/app'
 
-// Nuxt auto import (types only declared)
-declare const useSupabaseClient: <T = any>() => T
+import { useBrikoSupabase } from '@/composables/useBrikoSupabase'
 
 useHead({ title: 'Settings' })
 
-const supabase = useSupabaseClient<any>()
+const supabase = useBrikoSupabase()
 const user = ref<{ id: string; email?: string; user_metadata?: Record<string, any> } | null>(null)
 
 const form = reactive({
