@@ -5,6 +5,7 @@
   @layer utilities {
     /* local utility aliases using @apply (quick unblock with raw hex) */
     .font-slab { font-family: theme('fontFamily.slab'); }
+    .chev { background-color: rgb(0 229 160 / 0.95); -webkit-mask: url('/icons/chevron-right.svg') no-repeat center / contain; mask: url('/icons/chevron-right.svg') no-repeat center / contain; opacity: .9; }
     .text-body-plus { @apply text-[17px] leading-[1.7]; }
     .text-ink       { @apply text-[#343434]; }
     .bg-ink         { @apply bg-[#343434]; }

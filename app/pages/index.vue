@@ -164,11 +164,18 @@ useHead({
           <span class="mini-rule mini-rule--pink mx-auto mt-3"></span>
         </header>
 
-        <div class="flex flex-wrap items-center justify-center gap-3">
-          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Upload a photo</span>
-          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Pick size &amp; palette</span>
-          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Generate preview</span>
-          <span class="px-4 py-2 rounded-xl ring-1 ring-[#000]/10 bg-white/40 text-[#343434]">Export PNG · CSV · PDF</span>
+        <div class="mx-auto flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <template v-for="(label, i) in steps" :key="label">
+            <!-- step chip -->
+            <span
+              class="inline-flex items-center rounded-full border border-[#343434]/20 bg-[#343434]/5 px-4 py-2 text-sm md:text-base text-[#343434]/90 shadow-sm"
+            >
+              {{ label }}
+            </span>
+
+            <!-- chevron (skip after last) -->
+            <span v-if="i < steps.length - 1" class="chev inline-flex h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
+          </template>
         </div>
 
         <div class="mt-6 flex items-center justify-center gap-3">
