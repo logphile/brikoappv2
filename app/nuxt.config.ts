@@ -28,6 +28,18 @@ export default defineNuxtConfig({
     }
   },
 
+  // Ensure icon virtual modules are not externalized during SSR/prerender
+  vite: {
+    ssr: {
+      noExternal: ['unplugin-icons', '@unplugin-icons/*', '@iconify-json/*']
+    }
+  },
+
+  // Transpile icon collections and plugin for SSR parity
+  build: {
+    transpile: ['@iconify-json/material-symbols', 'unplugin-icons']
+  },
+
   runtimeConfig: {
     // Server-only (only needed if you ever use a service role on server routes)
     supabase: {
@@ -53,6 +65,9 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: false,
       routes: ['/', '/how-it-works', '/pricing', '/privacy', '/terms', '/legal']
+    },
+    externals: {
+      inline: ['unplugin-icons', '@iconify-json/material-symbols']
     }
   },
 
