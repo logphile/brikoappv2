@@ -8,14 +8,14 @@
       </div>
       <div class="hidden md:flex items-center gap-3">
         <button class="btn-outline-ink" @click="onCancel">Cancel</button>
-        <button class="btn-primary" @click="onSave">Create</button>
+        <button class="btn-primary" :disabled="saving" @click="onCreate">Create</button>
       </div>
     </header>
 
     <!-- mobile FAB -->
     <div class="md:hidden fixed bottom-4 right-4 left-4 flex justify-end gap-2">
       <button class="btn-outline-ink" @click="onCancel">Cancel</button>
-      <button class="btn-primary" @click="onSave">Create</button>
+      <button class="btn-primary" :disabled="saving" @click="onCreate">Create</button>
     </div>
 
     <!-- Content -->
@@ -55,7 +55,7 @@
             <label class="label-briko text-white">Preview</label>
             <div class="mt-2 aspect-square rounded-xl bg-black/20 flex items-center justify-center text-white/70">
               <span v-if="!form.file">No image</span>
-              <img v-else :src="URL.createObjectURL(form.file)" loading="lazy" class="h-full w-full object-cover rounded-xl" />
+              <img v-else :src="toObjectUrl(form.file)" loading="lazy" decoding="async" class="h-full w-full object-cover rounded-xl" />
             </div>
           </div>
         </div>
@@ -126,8 +126,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { navigateTo } from 'nuxt/app'
+import { useBrikoSupabase } from '@/composables/useBrikoSupabase'
+import { saveToGalleryPrivate } from '@/lib/gallery'
+
+// @ts-expect-error definePageMeta is provided by Nuxt at runtime
+definePageMeta({ middleware: ['auth'] })
 
 const form = reactive<{ title: string; visibility: 'private'|'public'; width: number; height: number; units: 'studs'|'cm'|'in'; palette: 'lego'|'duplo'|'bw'; file: File | null }>({
   title: '',
@@ -139,8 +144,57 @@ const form = reactive<{ title: string; visibility: 'private'|'public'; width: nu
   file: null
 })
 
-function onSave(){
-  // TODO: create project (upload file, save metadata)
+const saving = ref(false)
+const err = ref<string | null>(null)
+const toObjectUrl = (f: File | null) => (f ? URL.createObjectURL(f) : '')
+
+async function onCreate(){
+  const supabase = useBrikoSupabase()
+  // Ensure user is signed in
+  const { data: u } = await supabase.auth.getUser()
+  if (!u?.user) return navigateTo('/login')
+
+  err.value = null
+  if (!form.title.trim()) { err.value = 'Please add a title.'; return }
+
+  saving.value = true
+  try {
+    // 1) Create project shell via resilient helper (modern/legacy schema safe)
+    const id = await saveToGalleryPrivate({
+      name: form.title.trim(),
+      thumbnail_path: null,
+      width: form.width,
+      height: form.height,
+      data: { units: form.units, palette: form.palette }
+    })
+
+    // 2) Apply visibility (public/private)
+    try {
+      await supabase.from('projects').update({ is_public: form.visibility === 'public' }).eq('id', id)
+    } catch {}
+
+    // 3) Optional cover upload (store under projects bucket)
+    if (form.file) {
+      const ext = (form.file.name.split('.').pop() || 'png').toLowerCase()
+      const key = `${id}/original.${ext}`
+      const up = await supabase.storage.from('projects').upload(key, form.file, { upsert: true })
+      if (!up.error) {
+        // Try modern column first; fallback to legacy preview_path
+        let upd = await supabase.from('projects').update({ original_path: key }).eq('id', id)
+        if (upd.error && /column .* does not exist/i.test(String(upd.error.message || ''))) {
+          await supabase.from('projects').update({ preview_path: key }).eq('id', id)
+        }
+      }
+    }
+
+    // 4) Go to Mosaic preloaded via remix param
+    return navigateTo({ path: '/mosaic', query: { remix: id } })
+  } catch (e: any) {
+    err.value = e?.message ?? 'Failed to create project'
+  } finally {
+    saving.value = false
+  }
 }
+
 function onCancel(){ navigateTo('/studio') }
 </script>

@@ -7,7 +7,7 @@
       </div>
       <div class="hidden md:flex items-center gap-3">
         <NuxtLink to="/gallery" class="btn-outline-ink">Community Gallery</NuxtLink>
-        <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
+        <NuxtLink :to="{ name: 'studio-new' }" class="btn-primary">New Project</NuxtLink>
       </div>
     </header>
 
@@ -46,7 +46,7 @@
             <p class="font-medium">Create your first project</p>
             <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
           </div>
-          <NuxtLink to="/studio/new" class="btn-primary">New Project</NuxtLink>
+          <NuxtLink :to="{ name: 'studio-new' }" class="btn-primary">New Project</NuxtLink>
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <NuxtLink to="/studio/new" class="md:hidden fixed bottom-4 right-4 btn-primary shadow-md">New Project</NuxtLink>
+    <NuxtLink :to="{ name: 'studio-new' }" class="md:hidden fixed bottom-4 right-4 btn-primary shadow-md">New Project</NuxtLink>
   </main>
 </template>
 
