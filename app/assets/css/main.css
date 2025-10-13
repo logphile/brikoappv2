@@ -1,3 +1,5 @@
+/* Tailwind components directive needed here because this file defines @layer components */
+@tailwind components;
 /* Tailwind directives moved to app/assets/css/tailwind.css */
 /* Custom component tokens (safe on the yellow panel) */
 @layer components {
@@ -166,4 +168,24 @@
     .label-briko { color: rgba(52, 52, 58, 0.98); }
     .help-briko  { color: rgba(52, 52, 58, 0.85); }
   }
+  /* Shared style utilities ensured for legal and cards */
+  .page-wrap { @apply max-w-7xl mx-auto px-6 lg:px-8; }
+  .prose-briko { @apply text-[#34343A] leading-relaxed; }
+  .prose-briko h2 { @apply mt-8 mb-3 text-2xl font-semibold; }
+  .prose-briko h3 { @apply mt-6 mb-2 text-xl font-semibold; }
+  .prose-briko p  { @apply my-3; }
+  .prose-briko ul { @apply my-3 list-disc pl-5 space-y-1; }
+  .prose-briko a  { @apply underline decoration-[#34343A]/30 underline-offset-4 hover:decoration-[#34343A]/70; }
+  .prose-muted    { @apply text-sm text-[#34343A]/70; }
+  .font-display   { @apply font-slab; }
+
+  .card       { @apply rounded-2xl border border-[#34343A]/20 bg-white/5; }
+  .card-ink   { @apply rounded-2xl bg-[#2F3061] text-white border border-white/10; }
+  .section-h--ink { @apply text-[11px] uppercase tracking-wide font-semibold text-white/80; }
+  .section-rule--ink { @apply h-px bg-white/15 flex-1; }
+
+  /* Studio/Gallery card caption (purple) */
+  .card-caption-ink { @apply rounded-2xl bg-[#2F3061] text-white border border-white/10; }
+  .card-title-ink   { @apply text-[#FFD808] font-medium leading-tight; }
+  .card-date-ink    { @apply text-white/90 text-[11px]; }
 }

@@ -1,5 +1,5 @@
 <template>
-  <article v-if="!broken" class="rounded-2xl border border-white/10 bg-white/5 shadow-[0_4px_18px_rgba(0,0,0,0.12)] hover:border-white/20 hover:shadow-[0_8px_28px_rgba(0,0,0,0.16)] transition overflow-hidden group relative">
+  <article v-if="!broken" class="card card-hover group relative overflow-hidden">
     <!-- Preview area: square, original swap on hover/tap -->
     <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
@@ -26,12 +26,14 @@
       </div>
     </div>
 
-    <!-- Meta: title + date chip -->
-    <div class="flex items-center gap-2 px-3 py-2">
-      <div class="text-[14px] font-medium text-black/80 truncate">
+    <!-- Purple caption under image (default) or light caption via prop -->
+    <div :class="['mt-2 p-3 rounded-2xl border', props.caption === 'light' ? 'bg-white/5 border-[#34343A]/20 text-[#34343A]' : 'card-caption-ink']">
+      <h3 :class="[props.caption === 'light' ? 'text-[#34343A] font-medium' : 'card-title-ink', 'text-base line-clamp-1']">
         {{ name }}
+      </h3>
+      <div class="mt-1">
+        <span :class="[props.caption === 'light' ? 'text-[#34343A]/70 text-[11px]' : 'card-date-ink']">{{ dateLocal }}</span>
       </div>
-      <span class="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-black/5 text-black/60">{{ dateLocal }}</span>
     </div>
   </article>
 </template>
@@ -57,6 +59,7 @@ const props = defineProps<{
   likedByMe: boolean
   savedByMe?: boolean
   isSeed?: boolean
+  caption?: 'ink' | 'light'
 }>()
 
 const emit = defineEmits<{

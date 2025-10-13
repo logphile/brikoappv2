@@ -25,6 +25,9 @@ module.exports = {
           ivory:  '#F5F4F1', // = paper
         },
       },
+      boxShadow: {
+        soft: '0 4px 18px rgba(0,0,0,0.12)'
+      },
       fontFamily: {
         sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         slab: ['Bespoke Slab', 'ui-serif', 'Georgia', 'serif'],

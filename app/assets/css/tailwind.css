@@ -1,3 +1,4 @@
+@import './typography.css';
 /* ---- Custom fonts (keep these at the very top) ---- */
 /* Adjust filenames if yours differ; keep `font-display: swap`  for snappy paint */
 
@@ -23,7 +24,6 @@
 
   @tailwind base;
   @tailwind components;
-  @import './typography.css';
   @layer utilities {
     /* local utility aliases using @apply (quick unblock with raw hex) */
     .text-body-plus { @apply text-[17px] leading-[1.7]; }
