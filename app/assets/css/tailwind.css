@@ -128,6 +128,12 @@
     .label-briko { @apply text-sm font-medium text-[#34343A]/95; }
     .help-briko  { @apply mt-1 text-xs text-[#34343A]/75; }
     .help-briko--ink { @apply text-white/70; }
+    /* Legal/article prose */
+    .prose-briko { @apply text-[#34343A] leading-[1.7] space-y-4; }
+    .prose-briko h2 { @apply font-slab font-bold text-[20px] md:text-[22px] leading-snug mt-6; }
+    .prose-briko ul { @apply list-disc pl-5 space-y-2; }
+    .prose-briko a { @apply text-[#FF0062] underline; }
+    .prose-muted { @apply text-[#34343A]/70 text-sm; }
     /* Studio card caption (purple bar under image) */
     .card-caption-ink { @apply rounded-2xl bg-[#2F3061] text-white border border-white/10; }
     .card-caption-ink:hover { @apply bg-[#2B2D59]; }
