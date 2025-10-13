@@ -3,7 +3,7 @@
     <AppHeader />
     <div class="flex-1">
       <NuxtLayout>
-        <NuxtPage />
+        <NuxtPage :key="$route.fullPath" />
       </NuxtLayout>
     </div>
     <AppFooter />

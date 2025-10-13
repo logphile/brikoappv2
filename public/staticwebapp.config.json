@@ -1,7 +1,16 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/_nuxt/*", "/slider/*"]
+    "exclude": [
+      "/assets/*",
+      "/_nuxt/*",
+      "/favicon.*",
+      "/robots.txt",
+      "/slider/*"
+    ]
+  },
+  "responseOverrides": {
+    "404": { "rewrite": "/index.html", "statusCode": 200 }
   },
   "mimeTypes": {
     ".webp": "image/webp",
