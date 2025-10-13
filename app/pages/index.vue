@@ -67,7 +67,7 @@ useHead({
   <div>
     <!-- HERO -->
     <section class="relative bg-[#FFD808]">
-      <div class="mx-auto max-w-7xl px-6 md:px-8 pt-16 md:pt-24">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 pt-32 md:pt-48 pb-2.5">
         <div class="grid md:grid-cols-[1.05fr,1fr] items-center gap-10 md:gap-14">
           <!-- Left: copy -->
           <div>

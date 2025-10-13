@@ -48,7 +48,7 @@
     .h1-hero {
       font-family: "Bespoke Slab", ui-serif, system-ui;
       font-weight: 700;
-      font-size: 64px; /* mobile */
+      font-size: 80px; /* mobile */
       line-height: 1.05;
     }
     /* Simple 1-line clamp without plugin */
@@ -56,7 +56,7 @@
   }
   /* md+ scale for hero */
   @media (min-width: 768px) {
-    .h1-hero { font-size: 72px; }
+    .h1-hero { font-size: 88px; }
   }
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */
