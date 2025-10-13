@@ -4,6 +4,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
 import FeatureGrid from '@/components/home/FeatureGrid.vue'
+import HeroBg from '@/components/home/HeroBg.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
@@ -67,8 +68,9 @@ useHead({
 <template>
   <div>
     <!-- HERO -->
-    <section class="relative bg-[#FFD808]">
-      <div class="mx-auto max-w-7xl px-6 md:px-8 pt-32 md:pt-48 pb-2.5">
+    <section class="relative isolate">
+      <HeroBg />
+      <div class="relative z-10 mx-auto max-w-7xl px-6 md:px-8 pt-32 md:pt-48 pb-2.5">
         <div class="grid md:grid-cols-[1.05fr,1fr] items-start gap-y-10 gap-x-8 lg:gap-x-12">
           <!-- Left: copy -->
           <div>
