@@ -2,7 +2,7 @@
   <div class="relative" ref="root">
     <button
       @click="toggle"
-      class="user-pill"
+      class="user-pill nav-enter"
       aria-haspopup="menu"
       :aria-expanded="open ? 'true' : 'false'"
     >

@@ -1,8 +1,7 @@
 <template>
   <NuxtLink
     :to="to"
-    :data-active="isActive ? 'true' : null"
-    class="nav-pill"
+    :class="['nav-pill', isActive && 'nav-active']"
   >
     {{ label }}
   </NuxtLink>
