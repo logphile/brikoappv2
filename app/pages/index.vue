@@ -3,7 +3,6 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
-import HeroSplitImage from '@/components/home/HeroSplitImage.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
@@ -102,13 +101,9 @@ useHead({
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
-        <!-- Right: split image box -->
+        <!-- Right: hero before/after slider -->
         <div class="flex justify-center lg:justify-end">
-          <HeroSplitImage
-            originalSrc="/home-1-original.jpg"
-            mosaicSrc="/home-1-mosaic.png"
-            alt="Original vs. LEGO-style mosaic"
-          />
+          <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
         </div>
       </div>
     </section>
@@ -138,10 +133,8 @@ useHead({
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center py-16 lg:py-24">
-          <!-- LEFT: image -->
-          <div class="relative rounded-2xl overflow-hidden shadow-lg max-h-[420px]">
-            <img src="/home-1-mosaic.png" alt="" class="w-full h-auto object-cover" />
-          </div>
+          <!-- LEFT: before/after slider (Mona Lisa) -->
+          <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
 
           <!-- RIGHT: feature grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
@@ -190,7 +183,7 @@ useHead({
 
         <div class="mt-10 flex justify-center">
           <div class="soft-card p-0 overflow-hidden rounded-2xl w-full max-w-5xl border-white/10 bg-white/5">
-            <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="3/2" :start="52" />
+            <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="4/3" :start="50" />
           </div>
         </div>
       </div>
