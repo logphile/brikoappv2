@@ -180,6 +180,5 @@
   .card-caption-ink { @apply rounded-2xl bg-[#2F3061] text-white border border-white/10; }
   .card-title-ink   { @apply text-[#FFD808] font-medium leading-tight; }
   .card-date-ink    { @apply text-white/90 text-[11px]; }
-}
-
   .home-midpad { @apply pt-4; }
+}  
