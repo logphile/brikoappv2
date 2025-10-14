@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import defaultTheme from 'tailwindcss/defaultTheme'
 
 export default <Partial<Config>>{
   darkMode: 'class',
@@ -25,8 +26,9 @@ export default <Partial<Config>>{
     extend: {
       fontFamily: {
         brand: ['"Bespoke Slab"', 'Georgia', 'serif'],
-        slab: ['"Bespoke Slab"', 'ui-serif', 'Georgia', 'serif'],
-        sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif']
+        slab: ['"Bespoke Slab"', 'serif'],
+        // Prepend Poppins to Tailwind's default sans stack
+        sans: ['Poppins', ...defaultTheme.fontFamily.sans]
       },
       colors: {
         // Brand tokens used as utilities like bg-brand-pink, text-brand-yellow, ring-brand-purple, etc.

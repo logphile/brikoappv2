@@ -13,13 +13,13 @@ const items: Item[] = [
     <div
       v-for="(it,i) in items"
       :key="i"
-      class="rounded-2xl bg-[#343434]/60 border border-[#343434]/25 p-4 lg:p-5 shadow-sm transition hover:border-[#00E5A0]/40 hover:ring-1 hover:ring-[#00E5A0]/20"
+      class="rounded-2xl bg-ink/60 border border-ink/25 p-4 lg:p-5 shadow-sm hover:border-mint/40 hover:ring-1 hover:ring-mint/20 transition"
     >
       <div class="flex items-start gap-3">
-        <span class="mt-1 inline-block h-2 w-2 rounded-full" style="background-color:#00E5A0"></span>
+        <span class="mt-1 inline-block h-2 w-2 rounded-full bg-mint"></span>
         <div>
           <h3 class="font-slab text-purple-200 text-base leading-tight">{{ it.title }}</h3>
-          <p class="text-white/70 text-sm mt-1">{{ it.blurb }}</p>
+          <p class="text-white/80 text-sm mt-1">{{ it.blurb }}</p>
         </div>
       </div>
     </div>
