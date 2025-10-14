@@ -1,12 +1,10 @@
 <template>
   <NuxtLink
     :to="to"
-    class="nav-box nav-item transition"
-    :class="[isActive ? 'text-white/95 after:w-full' : 'after:w-0']"
+    :class="['nav-chip', isActive ? 'is-active' : '']"
   >
     {{ label }}
   </NuxtLink>
-  
 </template>
 
 <script setup lang="ts">
@@ -19,16 +17,5 @@ const isActive = computed(() => route.path.startsWith(props.to))
 </script>
 
 <style scoped>
-.nav-item { position: relative; }
-.nav-item::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  height: 2px;
-  width: 0;
-  background: currentColor;
-  transition: width 200ms ease;
-  border-radius: 999px;
-}
+/* No hover effects; visuals controlled by .nav-chip in global CSS */
 </style>

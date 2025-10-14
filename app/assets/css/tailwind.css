@@ -47,6 +47,27 @@
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */
   @layer components {
+    /* Equal-size nav chip */
+    .nav-chip {
+      /* layout */
+      @apply inline-flex items-center justify-center rounded-xl ring-1;
+      /* size — tune width if needed */
+      @apply h-10 px-4; /* height 40px; padding only affects inner spacing */
+      width: 12rem;     /* equal width for all chips */
+
+      /* visuals */
+      background-color: #FF0062;   /* pink */
+      color: #FFD808;              /* yellow text */
+      border-color: rgba(255,255,255,0.08); /* subtle ring edge on dark headers */
+
+      /* behavior */
+      transition: none;            /* no hover animations */
+      text-decoration: none;
+    }
+
+    /* Optional: active state — a subtle purple outline */
+    .nav-chip.is-active { box-shadow: 0 0 0 2px #2F3061 inset; }
+
     /* Equal nav boxes */
     .nav-box {
       @apply inline-flex items-center justify-center rounded-xl ring-1 ring-white/10 text-sm text-white/80;
