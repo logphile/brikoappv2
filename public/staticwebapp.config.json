@@ -4,6 +4,9 @@
     "exclude": [
       "/assets/*",
       "/_nuxt/*",
+      "/fonts/*",
+      "/icons/*",
+      "/images/*",
       "/favicon.*",
       "/robots.txt",
       "/slider/*"
