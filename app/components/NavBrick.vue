@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="to"
-    :class="['nav-chip', isActive ? 'is-active' : '']"
+    :class="['nav-link', isActive ? 'is-active' : '']"
   >
     {{ label }}
   </NuxtLink>
@@ -17,5 +17,5 @@ const isActive = computed(() => route.path.startsWith(props.to))
 </script>
 
 <style scoped>
-/* No hover effects; visuals controlled by .nav-chip in global CSS */
+/* Visuals controlled by global .nav-link in app/assets/css/app.css */
 </style>
