@@ -94,8 +94,8 @@ useHead({
             </ul>
 
             <div class="mt-6">
-              <NuxtLink to="/mosaic" class="btn bg-[#FF0062] text-white ring-transparent hover:opacity-90">
-                Try Photo to Bricks
+              <NuxtLink to="/mosaic" class="btn rounded-lg bg-[#FF0062] text-white ring-transparent hover:opacity-90">
+                Try it →
               </NuxtLink>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
@@ -166,7 +166,7 @@ useHead({
           <template v-for="(label, i) in steps" :key="label">
             <!-- step chip -->
             <span
-              class="inline-flex items-center rounded-full border border-[#343434]/20 bg-[#343434]/5 px-4 py-2 text-sm md:text-base text-[#343434]/90 shadow-sm"
+              class="inline-flex items-center rounded-lg border border-[#343434]/20 bg-[#343434]/5 px-4 py-2 text-sm md:text-base text-[#343434]/90 shadow-sm"
             >
               {{ label }}
             </span>
