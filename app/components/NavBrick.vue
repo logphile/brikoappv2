@@ -1,10 +1,12 @@
 <template>
   <NuxtLink
     :to="to"
-    :class="['nav-pill', isActive && 'nav-active']"
+    class="nav-box nav-item transition"
+    :class="[isActive ? 'text-white/95 after:w-full' : 'after:w-0']"
   >
     {{ label }}
   </NuxtLink>
+  
 </template>
 
 <script setup lang="ts">
@@ -17,5 +19,16 @@ const isActive = computed(() => route.path.startsWith(props.to))
 </script>
 
 <style scoped>
-/* No extra styles needed: uses global .nav-pill utility for lift/shadow */
+.nav-item { position: relative; }
+.nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 0;
+  background: currentColor;
+  transition: width 200ms ease;
+  border-radius: 999px;
+}
 </style>

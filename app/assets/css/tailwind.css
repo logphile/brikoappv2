@@ -47,6 +47,13 @@
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */
   @layer components {
+    /* Equal nav boxes */
+    .nav-box {
+      @apply inline-flex items-center justify-center rounded-xl ring-1 ring-white/10 text-sm text-white/80;
+      @apply h-10 px-4; /* consistent height */
+      width: 11.5rem;   /* tuned to “Photo to Bricks”; bump if it truncates */
+    }
+
     .btn {
       @apply inline-flex items-center justify-center rounded-2xl
              px-5 py-2.5 text-sm font-semibold bg-brand-pink text-white
