@@ -96,14 +96,14 @@ useHead({
 
             <div class="mt-6">
               <NuxtLink to="/mosaic" class="btn rounded-lg bg-[#FF0062] text-white ring-transparent hover:opacity-90">
-                Try it →
+                Try Photo to Bricks! →
               </NuxtLink>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
         <!-- Right: hero before/after slider -->
-        <div class="flex justify-center lg:justify-end">
+        <div class="flex justify-centerT lg:justify-end">
           <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
         </div>
       </div>
