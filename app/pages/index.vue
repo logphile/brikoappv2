@@ -130,7 +130,7 @@ useHead({
     <section class="bg-[#2F3061]">
       <div class="mx-auto max-w-7xl px-6 md:px-8">
         <header class="text-center mb-2 mt-2">
-          <h2 class="font-slab text-[24px] md:text-[28px] text-white">From Photo to Parts—Fast</h2>
+          <h2 class="font-slab home-midpad text-[24px] md:text-[28px] text-white">From Photo to Parts—Fast</h2>
           <p class="mt-2 text-white/75 text-[14px] md:text-[15px]">
             Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
           </p>

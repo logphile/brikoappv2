@@ -181,3 +181,5 @@
   .card-title-ink   { @apply text-[#FFD808] font-medium leading-tight; }
   .card-date-ink    { @apply text-white/90 text-[11px]; }
 }
+
+.home-midpad { padding-top: 4rem; }
