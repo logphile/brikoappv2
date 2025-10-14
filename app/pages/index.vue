@@ -4,6 +4,7 @@ import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
 import FeaturePoints from '@/components/home/FeaturePoints.vue'
+import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
@@ -39,21 +40,7 @@ const heroItems = [
   { label: 'Get the parts, guide, and price', Icon: IconAuto }
 ]
 
-// How it works: plain text labels (no numbers/icons)
-const steps = [
-  'Upload a photo',
-  'Pick size & palette',
-  'Generate preview',
-  'Export PNG · CSV · PDF'
-]
-
-// Feature cards for Purple band
-const features = [
-  { title: 'Instant LEGO-style color mapping', blurb: 'Automatic brick-color remap for any photo.' },
-  { title: 'Greedy tiling', blurb: 'Fewer plates, cleaner joins, faster build.' },
-  { title: 'Auto Bill of Materials', blurb: 'Brick count and cost estimate in one click.' },
-  { title: 'One-click export', blurb: 'PNG · CSV · PDF build guide.' },
-]
+// (data now owned by components)
 
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
@@ -147,40 +134,7 @@ useHead({
     </section>
 
     <!-- How it works -->
-    <section class="bg-[#FFD808]">
-      <div class="mx-auto max-w-7xl px-6 md:px-8 py-16">
-        <header class="text-center mb-8">
-          <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">How it works</h2>
-          <p class="mt-1 text-[#343434]/75">Four quick steps from photo to bricks.</p>
-          <span class="mini-rule mini-rule--pink mx-auto mt-3"></span>
-        </header>
-
-        <div class="mx-auto flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <template v-for="(label, i) in steps" :key="label">
-            <!-- step chip -->
-            <span
-              class="inline-flex items-center rounded-lg border border-[#343434]/20 bg-[#343434]/5 px-4 py-2 text-sm md:text-base text-[#343434]/90 shadow-sm"
-            >
-              {{ label }}
-            </span>
-
-            <!-- chevron (skip after last) -->
-            <span v-if="i < steps.length - 1" class="chev inline-flex h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
-          </template>
-        </div>
-
-        <div class="mt-6 flex items-center justify-center gap-3">
-          <NuxtLink to="/mosaic" class="btn bg-[#FF0062] text-white hover:opacity-90">Try Photo to Bricks</NuxtLink>
-          <NuxtLink to="/docs/build-guide" class="btn bg-transparent ring-1 ring-[#000]/15 text-[#343434] hover:bg-white/30">See Full Guide →</NuxtLink>
-        </div>
-
-        <div class="mt-10 flex justify-center">
-          <div class="soft-card p-0 overflow-hidden rounded-2xl w-full max-w-5xl border-white/10 bg-white/5">
-            <Compare left="/home-3-mosaic.png" right="/home-3-original.jpg" ratio="4/3" :start="50" />
-          </div>
-        </div>
-      </div>
-    </section>
+    <HowItWorks />
   </div>
 </template>
 
