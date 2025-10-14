@@ -96,7 +96,7 @@ useHead({
 
             <div>
               <NuxtLink to="/mosaic" class="btn rounded-lg bg-[#FF0062] text-white ring-transparent hover:opacity-90">
-                Try it →
+                Check it out! →
               </NuxtLink>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
