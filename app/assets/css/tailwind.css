@@ -47,6 +47,15 @@
   @tailwind utilities;
   /* Shared Briko UI recipes in Tailwind components layer */
   @layer components {
+    /* ——— Feature card styles ——— */
+    .feature-card {
+      @apply rounded-2xl border border-white/15 bg-white/5 p-5;
+      @apply shadow-[0_8px_24px_rgba(0,0,0,0.25)];
+      @apply transition-none;
+    }
+    .feature-card__title { @apply text-base font-semibold leading-tight text-white; }
+    .feature-card__text  { @apply mt-1 text-sm leading-6 text-white/75; }
+
     /* Equal-size nav chip */
     .nav-chip {
       /* layout */
