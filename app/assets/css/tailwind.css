@@ -80,23 +80,23 @@
     /* Equal-size nav chip */
     .nav-chip {
       /* layout */
-      @apply inline-flex items-center justify-center rounded-xl ring-1;
+      @apply inline-flex items-center justify-center rounded-xl;
       /* size — tune width if needed */
       @apply h-10 px-4; /* height 40px; padding only affects inner spacing */
       width: 12rem;     /* equal width for all chips */
 
       /* visuals */
       background-color: #FF0062;   /* pink */
-      color: #FFD808;              /* yellow text */
-      border-color: rgba(255,255,255,0.08); /* subtle ring edge on dark headers */
+      color: #FFFFFF;              /* white text */
 
       /* behavior */
-      transition: none;            /* no hover animations */
+      transition: transform 150ms ease, box-shadow 150ms ease;
       text-decoration: none;
     }
+    .nav-chip:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,0.20); }
 
-    /* Optional: active state — a subtle purple outline */
-    .nav-chip.is-active { box-shadow: 0 0 0 2px #2F3061 inset; }
+    /* Optional: active state — disabled outline to keep chips borderless */
+    .nav-chip.is-active { box-shadow: none; }
 
     /* Equal nav boxes */
     .nav-box {
