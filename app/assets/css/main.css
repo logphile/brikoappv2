@@ -1,6 +1,19 @@
-/* Tailwind components directive needed here because this file defines @layer components */
+/* Tailwind directives */
+@tailwind base;
 @tailwind components;
-/* Tailwind directives moved to app/assets/css/tailwind.css */
+@tailwind utilities;
+
+/* Global defaults */
+@layer base {
+  html, body {
+    font-family: theme('fontFamily.sans');
+    font-weight: 400;
+  }
+  h1, h2, h3, .heading, .wordmark {
+    font-family: theme('fontFamily.slab');
+    font-weight: 700;
+  }
+}
 /* Custom component tokens (safe on the yellow panel) */
 @layer components {
   /* Any controls shown over the yellow panel */

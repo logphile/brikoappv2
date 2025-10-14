@@ -15,7 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { useHead, useRuntimeConfig } from 'nuxt/app'
+import { useRuntimeConfig } from 'nuxt/app'
+import { useHead } from '#imports'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
@@ -24,6 +25,10 @@ import { useSiteMeta } from '@/composables/useSiteMeta'
 import { Toaster } from 'vue-sonner'
 
 const { siteName, siteUrl } = useSiteMeta()
+// Force Poppins (font-sans) globally on <body>
+useHead({
+  bodyAttrs: { class: 'font-sans antialiased' }
+})
 // Inject the Cloudflare Web Analytics beacon during SSR/SSG so it appears in View-Source
 const token = useRuntimeConfig().public.cloudflareAnalyticsToken
 useHead({
