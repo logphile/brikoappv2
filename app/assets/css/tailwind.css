@@ -19,6 +19,8 @@
     @media (min-width: 768px) {
       .md\:px-8 { padding-left: 2rem; padding-right: 2rem; padding-top: 20px; }
     }
+    /* Optional utility to force Poppins where needed */
+    .font-body { font-family: theme('fontFamily.sans'); }
     .bg-purple      { @apply bg-[#2F3061]; }
 
     /* Mini horizontal rule for section headings */
