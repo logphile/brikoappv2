@@ -17,7 +17,7 @@
     .bg-yellow      { @apply bg-[#FFD808]; }
     .text-purple    { @apply text-[#2F3061]; }
     @media (min-width: 768px) {
-      .md\:px-8 { padding-top: 2rem; }
+      .md\:px-8 { padding-left: 2rem; padding-right: 2rem; padding-top: 20px; }
     }
     .bg-purple      { @apply bg-[#2F3061]; }
 
