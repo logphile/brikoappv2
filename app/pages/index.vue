@@ -82,7 +82,7 @@ useHead({
             </ul>
 
             <div>
-              <NuxtLink to="/mosaic" class="btn rounded-lg bg-[#FF0062] text-white ring-transparent hover:opacity-90">
+              <NuxtLink to="/mosaic" class="btn btn-primary">
                 Try Photo to Bricks Now! →
               </NuxtLink>
             </div>

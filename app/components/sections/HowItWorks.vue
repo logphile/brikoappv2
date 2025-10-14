@@ -28,10 +28,10 @@ const steps = [
         </div>
       </div>
 
-      <!-- Single primary CTA + optional doc link -->
-      <div class="flex items-center justify-center gap-4">
-        <NuxtLink to="/mosaic" class="cta-primary">Try Photo to Bricks</NuxtLink>
-        <NuxtLink to="/guide" class="cta-link">See full guide →</NuxtLink>
+      <!-- Unified CTA row -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
+        <NuxtLink to="/mosaic" class="btn btn-primary">Try Photo to Bricks →</NuxtLink>
+        <NuxtLink to="/guide"  class="btn btn-secondary">See full guide →</NuxtLink>
       </div>
     </div>
   </section>
