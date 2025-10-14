@@ -10,6 +10,8 @@ import IconAuto from '@/components/icons/IconAuto.vue'
 
 const siteUrl = 'https://briko.app'
 
+const buildTag = new Date().toISOString()
+
 useHead({
   title: 'Turn Any Idea Into a Brick Build',
   meta: [
@@ -97,6 +99,7 @@ useHead({
                 Try Photo to Bricks
               </NuxtLink>
             </div>
+            <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
         <!-- Right: split image box -->
