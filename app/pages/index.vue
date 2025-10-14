@@ -78,32 +78,32 @@ useHead({
   <div>
     <!-- HERO -->
     <section class="relative bg-brand-yellow">
-      <div class="mx-auto max-w-7xl px-6 md:px-8 py-12 lg:py-20 grid grid-cols-1 lg:grid-cols-[1fr,520px] gap-10 items-center">
+      <div class="container mx-auto px-4 lg:px-6 py-20 md:py-24 lg:py-28 grid grid-cols-1 lg:grid-cols-[1fr,520px] gap-10 items-center">
         <!-- Left: copy -->
         <div class="relative z-10">
-            <h1 class="h1-hero text-[#343434] max-w-[18ch]">
+            <h1 class="h1-hero text-[#343434] max-w-[18ch] mb-6">
               Create LEGO-style art from your images
             </h1>
 
-            <ul class="mt-5 space-y-2">
-              <li v-for="h in heroItems" :key="h.label" class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
+            <ul class="space-y-2 mb-6">
+              <li v-for="h in heroItems" :key="h.label" class="flex items-center gap-3">
+                <span class="inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
                   <component :is="h.Icon" class="h-[18px] w-[18px] text-white" />
                 </span>
                 <span class="text-[#343434]">{{ h.label }}</span>
               </li>
             </ul>
 
-            <div class="mt-6">
+            <div>
               <NuxtLink to="/mosaic" class="btn rounded-lg bg-[#FF0062] text-white ring-transparent hover:opacity-90">
-                Try Photo to Bricks! →
+                Try it →
               </NuxtLink>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
         <!-- Right: hero before/after slider -->
-        <div class="flex justify-centerT lg:justify-end">
+        <div class="flex justify-center lg:justify-end">
           <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
         </div>
       </div>
@@ -111,7 +111,7 @@ useHead({
 
     <!-- “Briko’s Geeky Superpowers” -->
     <section class="bg-[#FFD808]">
-      <div class="mx-auto max-w-7xl px-6 md:px-8 py-12 md:py-16">
+      <div class="mx-auto max-w-7xl px-6 md:px-8 pt-0 pb-12 md:pb-16">
         <header class="text-center mb-8 md:mb-10">
           <h2 class="font-slab text-[28px] md:text-[32px] text-[#343434]">Briko’s Geeky Superpowers</h2>
           <p class="mt-2 text-[#343434]/75 text-[14px] md:text-[15px]">The tech that makes bricks feel instant.</p>
