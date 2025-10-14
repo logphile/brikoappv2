@@ -3,6 +3,7 @@ import { useHead } from 'nuxt/app'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
+import FeaturePoints from '@/components/home/FeaturePoints.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
@@ -121,34 +122,26 @@ useHead({
       </div>
     </section>
 
-    <!-- Purple band -->
-    <section class="bg-[#2F3061]">
-      <div class="mx-auto max-w-7xl px-6 md:px-8">
-        <header class="text-center mb-2 mt-2">
-          <h2 class="font-slab home-midpad text-[24px] md:text-[28px] text-white">From Photo to Parts—Fast</h2>
-          <p class="mt-2 text-white/75 text-[14px] md:text-[15px]">
+    <!-- Purple band: spacing + structured content -->
+    <section class="bg-[#2F3061] text-white">
+      <div class="container mx-auto px-4 lg:px-6 py-16 lg:py-24">
+        <!-- heading block: breathing room -->
+        <div class="text-center mb-10">
+          <h2 class="font-slab text-2xl md:text-3xl">From Photo to Parts—Fast</h2>
+          <p class="text-white/80 mt-2">
             Color mapping, greedy tiling, BOM, and exports—done in under two seconds.
           </p>
-          <span class="mini-rule mini-rule--pink mx-auto mt-3"></span>
-        </header>
+          <span class="mt-3 inline-block h-1 w-16 rounded bg-[#FF0062]"></span>
+        </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center py-16 lg:py-24">
-          <!-- LEFT: before/after slider (Mona Lisa) -->
-          <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
-
-          <!-- RIGHT: feature grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-            <div v-for="(f,i) in features" :key="i"
-                 class="rounded-2xl bg-[#343434]/60 border border-[#343434]/25 p-4 transition hover:border-[#00E5A0]/40 hover:ring-1 hover:ring-[#00E5A0]/25">
-              <div class="flex items-start gap-3">
-                <span class="mt-1 inline-block h-2 w-2 rounded-full" style="background-color:#00E5A0"></span>
-                <div>
-                  <h4 class="font-slab text-purple-200 text-base leading-tight">{{ f.title }}</h4>
-                  <p class="text-white/70 text-sm mt-1">{{ f.blurb }}</p>
-                </div>
-              </div>
-            </div>
+        <!-- content: image left, cards right -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div class="max-w-[720px]">
+            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
           </div>
+
+          <!-- 2×2 feature cards -->
+          <FeaturePoints />
         </div>
       </div>
     </section>
