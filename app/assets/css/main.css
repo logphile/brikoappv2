@@ -182,4 +182,4 @@
   .card-date-ink    { @apply text-white/90 text-[11px]; }
 }
 
-.home-midpad { padding-top: 4rem; }
+  .home-midpad { @apply pt-4; }
