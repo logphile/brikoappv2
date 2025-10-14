@@ -5,7 +5,7 @@
   @layer utilities {
     /* local utility aliases using @apply (quick unblock with raw hex) */
     .font-slab { font-family: theme('fontFamily.slab'); }
-    .chev { background-color: rgb(0 229 160 / 0.95); -webkit-mask: url('/icons/chevron-right.svg') no-repeat center / contain; mask: url('/icons/chevron-right.svg') no-repeat center / contain; opacity: .9; }
+    .chev { background-color: #343434bf; -webkit-mask: url('/icons/chevron-right.svg') no-repeat center / contain; mask: url('/icons/chevron-right.svg') no-repeat center / contain; opacity: .9; }
     .text-body-plus { @apply text-[17px] leading-[1.7]; }
     .text-ink       { @apply text-[#343434]; }
     .bg-ink         { @apply bg-[#343434]; }
@@ -16,6 +16,9 @@
     .text-yellow    { @apply text-[#FFD808]; }
     .bg-yellow      { @apply bg-[#FFD808]; }
     .text-purple    { @apply text-[#2F3061]; }
+    @media (min-width: 768px) {
+      .md\:px-8 { padding-top: 2rem; }
+    }
     .bg-purple      { @apply bg-[#2F3061]; }
 
     /* Mini horizontal rule for section headings */
