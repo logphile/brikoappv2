@@ -32,7 +32,8 @@
       font-family: "Bespoke Slab", ui-serif, system-ui;
       font-weight: 700;
       font-size: 80px; /* mobile */
-      line-height: 2.05;
+      line-height: 1.05;
+      padding-bottom: 1rem;
     }
     /* Simple 1-line clamp without plugin */
     .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
