@@ -23,14 +23,8 @@ export default defineNuxtConfig({
     }
   },
 
-  // Ensure all imports of 'dayjs' resolve to our extended singleton
-  vite: {
-    resolve: {
-      alias: {
-        dayjs: resolve(dirname(fileURLToPath(import.meta.url)), './lib/day.ts')
-      }
-    }
-  },
+  // Vite config (no custom alias for dayjs; use '@/lib/day' directly in code)
+  vite: {},
 
   // No special SSR settings required for local SVG components
 

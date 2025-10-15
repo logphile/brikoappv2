@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import dayjs from '@/lib/day'
 
 export default defineNuxtPlugin((nuxtApp) => {
   if (import.meta.dev) {
