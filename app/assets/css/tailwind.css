@@ -77,33 +77,6 @@
     .feature-card__title { @apply text-base font-semibold leading-tight text-white; }
     .feature-card__text  { @apply mt-1 text-sm leading-6 text-white/75; }
 
-    /* Equal-size nav chip */
-    .nav-chip {
-      /* layout */
-      @apply inline-flex items-center justify-center rounded-xl;
-      /* size — tune width if needed */
-      @apply h-10 px-4; /* height 40px; padding only affects inner spacing */
-      width: 12rem;     /* equal width for all chips */
-
-      /* visuals */
-      background-color: #FF0062;   /* pink */
-      color: #FFFFFF;              /* white text */
-
-      /* behavior */
-      transition: transform 150ms ease, box-shadow 150ms ease;
-      text-decoration: none;
-    }
-    .nav-chip:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,0.20); }
-
-    /* Optional: active state — disabled outline to keep chips borderless */
-    .nav-chip.is-active { box-shadow: none; }
-
-    /* Equal nav boxes */
-    .nav-box {
-      @apply inline-flex items-center justify-center rounded-xl ring-1 ring-white/10 text-sm text-white/80;
-      @apply h-10 px-4; /* consistent height */
-      width: 11.5rem;   /* tuned to “Photo to Bricks”; bump if it truncates */
-    }
 
     .btn {
       @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold tracking-tight shadow-md select-none;
