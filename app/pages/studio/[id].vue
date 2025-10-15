@@ -55,21 +55,23 @@ async function load(){
     // eslint-disable-next-line no-console
     console.log('[check] typeof supabase.from =', typeof (supabase as any)?.from)
   }
-  const { data, error } = await supabase
-    .from('projects')
-    .select('id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at, width, height, data')
-    .eq('id', id)
-    .single()
-  if (error) {
-    console.warn('[studio/[id]] load error', error)
-    return
+  try {
+    const { data, error } = await supabase
+      .from('projects')
+      .select('id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at, width, height, data')
+      .eq('id', route.params.id)
+      .single()
+    if (error) throw error
+    project.value = data
+    previewUrl.value =
+      (await signedUrl(project.value.thumbnail_path)) ||
+      (await signedUrl(project.value.mosaic_path)) ||
+      (await signedUrl(project.value.original_path)) ||
+      null
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('[project load failed]', e)
   }
-  project.value = data
-  previewUrl.value =
-    (await signedUrl(project.value.thumbnail_path)) ||
-    (await signedUrl(project.value.mosaic_path)) ||
-    (await signedUrl(project.value.original_path)) ||
-    null
 }
 
 onMounted(load)
