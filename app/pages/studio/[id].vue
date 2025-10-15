@@ -27,7 +27,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
-import { fromNowSafe, formatDate } from '@/utils/date'
+import { fromNowSafe, formatDateSafe } from '@/utils/date'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false })
@@ -39,7 +39,7 @@ const id = String(route.params.id || '')
 const project = ref<any | null>(null)
 const previewUrl = ref<string | null>(null)
 
-const dateLocal = computed(() => formatDate(project.value?.created_at, 'M/D/YYYY'))
+const dateLocal = computed(() => formatDateSafe(project.value?.created_at, 'M/D/YYYY'))
 const dateRelative = computed(() => fromNowSafe(project.value?.created_at))
 
 async function load(){
