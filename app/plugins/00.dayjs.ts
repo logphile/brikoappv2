@@ -8,6 +8,4 @@ dayjs.extend(relativeTime)
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-export default defineNuxtPlugin(() => {
-  return { provide: { dayjs } }
-})
+export default defineNuxtPlugin(() => ({ provide: { dayjs } }))
