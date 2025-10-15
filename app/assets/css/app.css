@@ -86,9 +86,15 @@
 
   /* Shared site rails */
   .site-container {
-    max-width: 72rem;            /* ≈ max-w-6xl */
+    max-width: 80rem;            /* ≈ max-w-7xl */
     margin-inline: auto;
-    padding: 3rem 1rem;          /* py-12 px-4 */
+    padding-top: 3rem;
+    padding-bottom: 3rem;        /* py-12 */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;       /* px-6 */
+  }
+  @media (min-width: 1024px) {   /* lg */
+    .site-container { padding-left: 2rem; padding-right: 2rem; } /* px-8 */
   }
 
   /* Footer grid centered as a block */

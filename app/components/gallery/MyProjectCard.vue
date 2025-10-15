@@ -84,20 +84,33 @@ async function togglePublic(){
 </script>
 
 <template>
-  <article class="rounded-2xl overflow-hidden bg-white/5 border border-white/10">
-    <div class="aspect-[4/3] bg-black/20 grid place-items-center">
-      <img v-if="previewUrl" :src="previewUrl" alt="" class="w-full h-full object-cover" loading="lazy" />
-      <div v-else class="text-sm opacity-60">No preview</div>
-    </div>
+  <article
+    class="group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition hover:bg-white/7"
+  >
+    <!-- Thumb -->
+    <NuxtLink :to="{ path: '/photo', query: { remix: p.id } }" class="block">
+      <div class="aspect-[16/10] overflow-hidden bg-black/10">
+        <img
+          v-if="previewUrl"
+          :src="previewUrl"
+          alt=""
+          class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          loading="lazy"
+          decoding="async"
+        />
+        <div v-else class="h-full w-full grid place-items-center text-sm opacity-60">No preview</div>
+      </div>
+    </NuxtLink>
 
-    <div class="p-3 flex items-start justify-between gap-2">
-      <div class="font-medium truncate">{{ p.name || 'Untitled' }}</div>
-      <div class="flex items-center gap-2">
-        <div class="text-xs opacity-70">{{ new Date(p.created_at).toLocaleDateString() }}</div>
-        <!-- Private/Public pill -->
+    <!-- Meta / actions -->
+    <div class="p-4">
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="truncate font-medium text-[var(--briko-ink-900)]">
+          {{ p.name || 'Untitled' }}
+        </h3>
         <button
-          class="px-3 py-1 rounded-full text-xs font-medium border transition disabled:opacity-60"
-          :class="isPublic ? 'bg-green-500/15 border-green-400 text-green-200' : 'bg-white/10 border-white/20 text-white/70'"
+          class="pill"
+          :class="isPublic ? 'pill--public' : 'pill--private'"
           :disabled="busyToggle"
           @click="togglePublic"
           :aria-pressed="isPublic"
@@ -105,25 +118,36 @@ async function togglePublic(){
           {{ isPublic ? 'Public' : 'Private' }}
         </button>
       </div>
-    </div>
 
-    <div class="px-3 pb-3 flex items-center gap-2">
-      <button type="button" @click="onView"
-        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
-        <span class="material-symbols-rounded text-base">visibility</span>
-        View
-      </button>
+      <div class="mt-1 text-xs opacity-60 flex items-center gap-3">
+        <time :datetime="p.created_at">{{ new Date(p.created_at).toLocaleDateString() }}</time>
+      </div>
 
-      <button type="button" @click="onRemix"
-        class="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
-        <span class="material-symbols-rounded text-base">auto_fix_high</span>
-        Remix
-      </button>
+      <div class="mt-3 flex items-center gap-2">
+        <NuxtLink
+          :to="{ path: '/photo', query: { remix: p.id } }"
+          class="h-9 rounded-xl px-3 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition"
+        >
+          View
+        </NuxtLink>
+        <button
+          type="button"
+          class="h-9 rounded-xl px-3 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
+          @click="onRemix"
+        >
+          Remix
+        </button>
 
-      <button v-if="isOwner" type="button" @click="onDelete" title="Delete"
-        class="ml-auto inline-flex items-center gap-1 px-2 py-1.5 rounded-md border border-white/20 hover:bg-white/10 cursor-pointer">
-        <span class="material-symbols-rounded text-base">delete</span>
-      </button>
+        <button
+          v-if="isOwner"
+          type="button"
+          @click="onDelete"
+          class="ml-auto h-9 rounded-xl px-3 ring-1 ring-red-500/30 text-red-600/90 bg-red-50/60 hover:bg-red-50"
+          title="Delete"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   </article>
 </template>

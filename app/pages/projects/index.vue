@@ -1,14 +1,21 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
-    <header class="mb-6">
-      <h1 class="text-2xl font-semibold">My Gallery</h1>
-      <p class="text-sm mt-1 text-[#343434]/80 dark:text-white/70">
-        Your saved builds. Private by default—make them public to share.
-      </p>
-    </header>
+  <main class="min-h-screen">
+    <!-- Page container -->
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Header -->
+      <header class="pt-8 sm:pt-10">
+        <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--briko-ink-900)]">
+          My Gallery
+        </h1>
+        <p class="mt-2 text-sm opacity-80">Your saved builds. Private by default—make them public to share.</p>
+      </header>
 
-    <MyGalleryGrid />
-  </div>
+      <!-- Cards grid -->
+      <section class="mt-6 sm:mt-8">
+        <MyGalleryGrid />
+      </section>
+    </div>
+  </main>
 </template>
 
 <script setup lang="ts">

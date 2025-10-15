@@ -1,5 +1,5 @@
 <template>
-  <article v-if="!broken" class="card card-hover group relative overflow-hidden">
+  <article v-if="!broken" class="group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 transition hover:bg-white/7">
     <!-- Preview area: square, original swap on hover/tap -->
     <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
@@ -17,17 +17,17 @@
            :class="{ 'opacity-100': showOriginal }"
            @error="onImgError" />
 
-      <!-- Hover overlay actions: Remix (mint outline), View (pink solid) -->
+      <!-- Hover overlay actions: neutral/outline buttons (no mint) -->
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
         <div class="w-full flex gap-2">
-          <button class="flex-1 px-3 py-1.5 rounded-xl border border-[#00E5A0]/60 text-[#00E5A0] bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30" @click.stop="remixProject">Remix</button>
-          <button class="flex-1 px-3 py-1.5 rounded-xl bg-[#FF0062] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30" @click.stop="toProject(publicId)">View</button>
+          <button class="flex-1 px-3 py-1.5 rounded-xl ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition" @click.stop="remixProject">Remix</button>
+          <button class="flex-1 px-3 py-1.5 rounded-xl ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition" @click.stop="toProject(publicId)">View</button>
         </div>
       </div>
     </div>
 
-    <!-- Purple caption under image (default) or light caption via prop -->
-    <div :class="['mt-2 p-3 rounded-2xl border', props.caption === 'light' ? 'bg-white/5 border-[#34343A]/20 text-[#34343A]' : 'card-caption-ink']">
+    <!-- Caption under image: keep ink card variant or light variant -->
+    <div :class="['mt-2 p-3 rounded-2xl border', props.caption === 'light' ? 'bg-white/5 border-[#34343A]/20 text-[var(--briko-ink-900)]' : 'card-caption-ink']">
       <h3 :class="[props.caption === 'light' ? 'text-[#34343A] font-medium' : 'card-title-ink', 'text-base line-clamp-1']">
         {{ name }}
       </h3>
