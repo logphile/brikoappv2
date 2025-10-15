@@ -30,6 +30,7 @@
             <input id="handle" v-model="form.handle" :class="['input-briko', 'input-briko--ink', 'mt-1', errors.handle && 'input-error']" placeholder="yourname" />
             <p class="help-briko help-briko--ink">Shown as @handle. Letters, numbers, dashes, underscores.</p>
             <p v-if="errors.handle" class="msg-error">{{ errors.handle }}</p>
+            <p v-if="saved==='err' && serverError" class="msg-error">{{ serverError }}</p>
           </div>
 
           <div>
@@ -90,7 +91,7 @@
 
     <!-- Saved feedback -->
     <p v-if="saved==='ok'" class="page-wrap mt-4 text-sm text-[#343434]">Saved. Your header will update momentarily.</p>
-    <p v-if="saved==='err'" class="page-wrap mt-4 text-sm text-red-500">Couldn’t save—try again.</p>
+    <p v-if="saved==='err'" class="page-wrap mt-4 text-sm text-red-500">{{ serverError || 'Couldn’t save—try again.' }}</p>
   </div>
 </template>
 
@@ -105,7 +106,7 @@ useHead({ title: 'Settings' })
 // Auth user for email display only
 const user = useSupabaseUser<any>()
 
-const { profile, loading, saveProfile, loadProfile } = useProfile()
+const { profile, loading, saveProfile, loadProfile, error: serverError } = useProfile()
 
 const form = reactive({
   handle: '',
