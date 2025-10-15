@@ -45,4 +45,5 @@
   padding: 0 .75rem;         /* px-3 */
   border-radius: .75rem;     /* rounded-xl */
   line-height: 1;            /* leading-none */
+  vertical-align: middle;
 }
