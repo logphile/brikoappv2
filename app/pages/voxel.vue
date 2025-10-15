@@ -349,17 +349,22 @@ async function makePublic(){
             <!-- Voxel settings -->
             <section class="pt-4 pb-6">
               <h3 class="text-lg font-semibold text-[#343434] mb-1">Voxel settings</h3>
-              <label class="block text-sm text-[#2F3061] mb-1">Resolution</label>
-              <input type="range" min="16" max="96" step="8" v-model.number="size" class="w-full pink-slider">
+              <div class="flex items-center gap-2 mb-1">
+                <label class="block text-sm text-[#2F3061]">Resolution</label>
+                <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" style="background:rgba(255,0,98,.12); color:#FF0062;">{{ size }}³</span>
+              </div>
+              <input type="range" min="16" max="96" step="8" v-model.number="size" class="range-pink">
               <div class="text-xs text-[#2F3061] mt-1">Higher = more detail (slower).</div>
             </section>
 
             <!-- Lighting -->
             <section class="pt-4 pb-6">
               <h3 class="text-lg font-semibold text-[#343434] mb-1">Lighting</h3>
-              <label class="block text-sm text-[#2F3061] mb-1">Brightness</label>
-              <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full pink-slider" />
-              <div class="text-xs text-[#2F3061] mt-1">{{ exposure.toFixed(1) }}×</div>
+              <div class="flex items-center gap-2 mb-1">
+                <label class="block text-sm text-[#2F3061]">Brightness</label>
+                <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" style="background:rgba(255,0,98,.12); color:#FF0062;">{{ exposure.toFixed(1) }}×</span>
+              </div>
+              <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="range-pink" />
             </section>
 
             <!-- Build steps -->
