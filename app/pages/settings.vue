@@ -7,8 +7,11 @@
         <p class="mt-2 text-[#34343A]/70">Update how your name appears publicly.</p>
       </div>
       <div class="hidden md:flex items-center gap-3">
-        <NuxtLink to="/studio" class="btn-outline-ink">Briko Studio</NuxtLink>
-        <button @click="onSave" class="btn-primary">Save</button>
+        <NuxtLink to="/studio" class="btn btn-secondary">Briko Studio</NuxtLink>
+        <button @click="onSave" :disabled="saving" class="btn btn-primary">
+          <span v-if="!saving">Save</span>
+          <span v-else>Saving…</span>
+        </button>
       </div>
     </header>
 
@@ -31,7 +34,7 @@
 
           <div>
             <label class="label-briko text-white" for="display">Display name</label>
-            <input id="display" v-model="form.displayName" class="input-briko input-briko--ink mt-1" placeholder="Your name" />
+            <input id="display" v-model="form.display_name" class="input-briko input-briko--ink mt-1" placeholder="Your name" />
             <p class="help-briko help-briko--ink">How your name appears across Briko.</p>
           </div>
         </div>
@@ -53,7 +56,7 @@
 
           <div>
             <label class="label-briko text-white" for="visibility">Profile visibility</label>
-            <select id="visibility" v-model="form.visibility" class="select-briko select-briko--ink mt-1">
+            <select id="visibility" v-model="form.profile_visibility" class="select-briko select-briko--ink mt-1">
               <option value="public">Public</option>
               <option value="private">Private</option>
             </select>
@@ -82,53 +85,69 @@
     <!-- Mobile sticky actions -->
     <div class="md:hidden fixed bottom-4 right-4 left-4 flex justify-end gap-2">
       <button @click="onCancel" class="btn-outline-ink">Cancel</button>
-      <button @click="onSave" class="btn-primary">Save</button>
+      <button @click="onSave" :disabled="saving" class="btn btn-primary">Save</button>
     </div>
+
+    <!-- Saved feedback -->
+    <p v-if="saved==='ok'" class="page-wrap mt-4 text-sm text-[#343434]">Saved. Your header will update momentarily.</p>
+    <p v-if="saved==='err'" class="page-wrap mt-4 text-sm text-red-500">Couldn’t save—try again.</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { reactive, ref, watchEffect, computed } from 'vue'
 import { useHead } from 'nuxt/app'
-
-import { useBrikoSupabase } from '@/composables/useBrikoSupabase'
+import { useProfile } from '@/composables/useProfile'
+declare const useSupabaseUser: <T = any>() => T
 
 useHead({ title: 'Settings' })
 
-const supabase = useBrikoSupabase()
-const user = ref<{ id: string; email?: string; user_metadata?: Record<string, any> } | null>(null)
+// Auth user for email display only
+const user = useSupabaseUser<any>()
+
+const { profile, loading, saveProfile, loadProfile } = useProfile()
 
 const form = reactive({
   handle: '',
-  displayName: '',
-  visibility: 'public'
+  display_name: '',
+  profile_visibility: 'public' as 'public' | 'private'
 })
 
 const errors = reactive<{ handle?: string }>({})
+const saving = ref(false)
+const saved = ref<null | 'ok' | 'err'>(null)
 
-onMounted(async () => {
-  try {
-    const { data } = await supabase.auth.getUser()
-    user.value = data?.user || null
-  } catch {}
-  form.handle = (user.value?.user_metadata?.handle as string) || ''
-  form.displayName = (user.value?.user_metadata?.displayName as string) || ''
+watchEffect(() => {
+  if (profile.value) {
+    form.handle = profile.value.handle ?? ''
+    form.display_name = profile.value.display_name ?? ''
+    form.profile_visibility = (profile.value.profile_visibility as 'public' | 'private') ?? 'public'
+  }
 })
 
 function onCancel(){
-  form.handle = (user.value?.user_metadata?.handle as string) || ''
-  form.displayName = (user.value?.user_metadata?.displayName as string) || ''
+  if (profile.value) {
+    form.handle = profile.value.handle ?? ''
+    form.display_name = profile.value.display_name ?? ''
+    form.profile_visibility = (profile.value.profile_visibility as 'public' | 'private') ?? 'public'
+  }
 }
 
 async function onSave(){
   errors.handle = ''
-  if (!/^[a-z0-9_-]{3,20}$/i.test(form.handle)) {
+  if (form.handle && !/^[a-z0-9_-]{3,20}$/i.test(form.handle)) {
     errors.handle = 'Use 3–20 letters, numbers, dashes, or underscores.'
     return
   }
-  // TODO: call your API to persist profile fields
-  // await updateProfile(form)
-  // show toast on success
+  saving.value = true; saved.value = null
+  const { err } = await saveProfile({
+    handle: form.handle || null,
+    display_name: form.display_name || null,
+    profile_visibility: form.profile_visibility
+  } as any)
+  saved.value = err ? 'err' : 'ok'
+  saving.value = false
+  try { await loadProfile() } catch {}
 }
 
 async function onDelete(){

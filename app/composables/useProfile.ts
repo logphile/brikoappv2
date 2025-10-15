@@ -1,66 +1,55 @@
-import { useState } from 'nuxt/app'
-// Use official Nuxt Supabase composable (only available on client)
+import { ref, watch } from 'vue'
+// Use official Nuxt Supabase composables
 declare const useSupabaseClient: <T = any>() => T
+declare const useSupabaseUser: <T = any>() => any
 
-export type ProfileRow = {
-  user_id: string
-  handle?: string | null
-  display_name?: string | null
-}
+export function useProfile() {
+  const supabase = useSupabaseClient<any>()
+  const user = useSupabaseUser<any>()
 
-export const useProfile = () => {
-  // SSR-safe shared state
-  const profile = useState<ProfileRow | null>('profile:data', () => null)
-  const loading = useState<boolean>('profile:loading', () => false)
-  const loaded  = useState<boolean>('profile:loaded',  () => false)
+  const profile = ref<{
+    id: string
+    handle: string | null
+    display_name: string | null
+    profile_visibility: 'public' | 'private'
+  } | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-  async function getMyProfile(): Promise<ProfileRow | null> {
-    if (!import.meta.client) return null
-    const supabase = useSupabaseClient<any>()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
-    const { data, error } = await supabase
+  async function loadProfile() {
+    if (!user?.value) return
+    loading.value = true; error.value = null
+    const { data, error: err } = await supabase
       .from('profiles')
-      .select('user_id, handle, display_name')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    if (error) throw error
-    return (data as ProfileRow) || null
-  }
-
-  async function refreshProfile(): Promise<void> {
-    if (!import.meta.client || loaded.value || loading.value) return
-    loading.value = true
-    try {
-      profile.value = await getMyProfile()
-    } finally {
-      loading.value = false
-      loaded.value  = true
+      .select('id, handle, display_name, profile_visibility')
+      .eq('id', user.value.id)
+      .single()
+    if (err) error.value = err.message
+    profile.value = (data as any) || {
+      id: user.value.id,
+      handle: null,
+      display_name: null,
+      profile_visibility: 'public' as const
     }
+    loading.value = false
   }
 
-  async function updateMyProfile(payload: { handle?: string; display_name?: string }): Promise<void> {
-    if (!import.meta.client) throw new Error('Supabase unavailable during SSR')
-    const supabase = useSupabaseClient<any>()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Not authenticated')
-    const { error } = await supabase
+  async function saveProfile(patch: Partial<Omit<NonNullable<typeof profile.value>, 'id'>>) {
+    if (!user?.value) return { data: null, err: new Error('Not authenticated') }
+    loading.value = true; error.value = null
+    const payload = { id: user.value.id, ...(profile.value || {}), ...patch }
+    const { data, error: err } = await supabase
       .from('profiles')
-      .update(payload)
-      .eq('user_id', user.id)
-    if (error) throw error
-    // Best-effort refresh
-    try { await refreshProfile() } catch {}
+      .upsert(payload)
+      .select()
+      .single()
+    if (err) error.value = err.message
+    profile.value = (data as any) || (payload as any)
+    loading.value = false
+    return { data, err }
   }
 
-  // Alias to match existing call sites / docs
-  async function updateProfile(payload: { handle?: string; display_name?: string }): Promise<void> {
-    return updateMyProfile(payload)
-  }
+  watch(user, () => { try { loadProfile() } catch {} }, { immediate: true })
 
-  if (import.meta.client && !loaded.value && !loading.value) {
-    void refreshProfile()
-  }
-
-  return { getMyProfile, updateMyProfile, updateProfile, profile, loading, loaded, refreshProfile }
+  return { profile, loading, error, loadProfile, saveProfile }
 }

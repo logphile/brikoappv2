@@ -43,7 +43,7 @@
 import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import { useProfile, type ProfileRow } from '@/composables/useProfile'
+import { useProfile } from '@/composables/useProfile'
 import AccountMenu from '@/components/AccountMenu.client.vue'
 import NavBrick from '@/components/NavBrick.vue'
 
@@ -61,18 +61,18 @@ const items = [
 const isActive = (href: string) => route.path.startsWith(href)
 
 const { user, loading, refreshUser } = useAuth()
-const { getMyProfile } = useProfile()
-const profile = ref<ProfileRow | null>(null)
+const { profile, loadProfile } = useProfile()
 
 async function fetchProfile(){
-  try { profile.value = await getMyProfile() } catch {}
+  try { await loadProfile() } catch {}
 }
 
 const identityLabel = computed(() => {
   const p = profile.value
-  if (p?.handle && p.handle.trim()) return `@${p.handle.trim()}`
-  if (p?.display_name && p.display_name.trim()) return p.display_name.trim()
-  return user.value?.email || 'Account'
+  if (p?.display_name && String(p.display_name).trim()) return String(p.display_name).trim()
+  if (p?.handle && String(p.handle).trim()) return `@${String(p.handle).trim()}`
+  const em = user.value?.email || ''
+  return (em && em.includes('@')) ? em.split('@')[0] : (em || 'Account')
 })
 
 onMounted(() => {
