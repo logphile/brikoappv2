@@ -127,3 +127,8 @@
     .lift-card, .lift-card:hover { transition: none; transform: none; }
   }
 }
+
+/* Tiny global polish: make native <select> clip like inputs across browsers */
+@layer base {
+  select { background-clip: padding-box; }
+}

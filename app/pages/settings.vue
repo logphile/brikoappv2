@@ -18,50 +18,78 @@
     <!-- Content cards -->
     <main class="page-wrap mt-8 space-y-10">
       <!-- Identity -->
-      <section class="card-ink p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <span class="section-h--ink">Identity</span>
-          <div class="section-rule--ink"></div>
-        </div>
+      <section class="soft-card rounded-2xl p-6 md:p-8">
+        <h3 class="text-sm tracking-wide uppercase opacity-80 mb-4">Identity</h3>
 
-        <div class="form-grid">
-          <div>
-            <label class="label-briko text-white" for="handle">Handle</label>
-            <input id="handle" v-model="form.handle" :class="['input-briko', 'input-briko--ink', 'mt-1', errors.handle && 'input-error']" placeholder="yourname" />
-            <p class="help-briko help-briko--ink">Shown as @handle. Letters, numbers, dashes, underscores.</p>
+        <!-- 12-col grid: Handle (6) + Display name (6) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-end">
+          <!-- Handle -->
+          <div class="md:col-span-6">
+            <label for="handle" class="block text-sm mb-1.5">Handle</label>
+            <input
+              id="handle"
+              v-model="form.handle"
+              type="text"
+              class="w-full h-11 rounded-xl px-4 ring-1 ring-white/10 bg-white/5 focus:outline-none focus:ring-2 focus:ring-fuchsia-500/60"
+              placeholder="yourhandle"
+            />
+            <p class="mt-1 text-xs opacity-70">Shown on Community, Gallery, remixes, exports, and share links.</p>
             <p v-if="errors.handle" class="msg-error">{{ errors.handle }}</p>
             <p v-if="saved==='err' && serverError" class="msg-error">{{ serverError }}</p>
           </div>
 
-          <div>
-            <label class="label-briko text-white" for="display">Display name</label>
-            <input id="display" v-model="form.display_name" class="input-briko input-briko--ink mt-1" placeholder="Your name" />
-            <p class="help-briko help-briko--ink">How your name appears across Briko.</p>
+          <!-- Display name -->
+          <div class="md:col-span-6">
+            <label for="displayName" class="block text-sm mb-1.5">Display name</label>
+            <input
+              id="displayName"
+              v-model="form.display_name"
+              type="text"
+              class="w-full h-11 rounded-xl px-4 ring-1 ring-white/10 bg-white/5 focus:outline-none focus:ring-2 focus:ring-fuchsia-500/60"
+              placeholder="Your name"
+            />
+            <p class="mt-1 text-xs opacity-70">How your name appears across Briko.</p>
           </div>
         </div>
       </section>
 
       <!-- Contact -->
-      <section class="card-ink p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <span class="section-h--ink">Contact</span>
-          <div class="section-rule--ink"></div>
-        </div>
+      <section class="soft-card rounded-2xl p-6 md:p-8">
+        <h3 class="text-sm tracking-wide uppercase opacity-80 mb-4">Contact</h3>
 
-        <div class="form-grid">
-          <div>
-            <label class="label-briko text-white" for="email">Email</label>
-            <input id="email" :value="user?.email || ''" class="input-briko input-briko--ink mt-1" disabled />
-            <p class="help-briko help-briko--ink">Email is managed by your account provider.</p>
+        <!-- 12-col grid: Email (8) + Visibility (4) -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-end">
+          <!-- Email -->
+          <div class="md:col-span-8">
+            <label for="email" class="block text-sm mb-1.5">Email</label>
+            <input
+              id="email"
+              :value="user?.email || ''"
+              type="email"
+              class="w-full h-11 rounded-xl px-4 ring-1 ring-white/10 bg-white/5 focus:outline-none focus:ring-2 focus:ring-fuchsia-500/60"
+              disabled
+            />
+            <p class="mt-1 text-xs opacity-70">Email is managed by your account provider.</p>
           </div>
 
-          <div>
-            <label class="label-briko text-white" for="visibility">Profile visibility</label>
-            <select id="visibility" v-model="form.profile_visibility" class="select-briko select-briko--ink mt-1">
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-            </select>
-            <p class="help-briko help-briko--ink">Public profiles show your handle and projects.</p>
+          <!-- Profile visibility -->
+          <div class="md:col-span-4">
+            <label for="profileVisibility" class="block text-sm mb-1.5">Profile visibility</label>
+            <div class="relative">
+              <select
+                id="profileVisibility"
+                v-model="form.profile_visibility"
+                class="w-full h-11 rounded-xl pl-4 pr-10 ring-1 ring-white/10 bg-white/5 appearance-none focus:outline-none focus:ring-2 focus:ring-fuchsia-500/60"
+              >
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </select>
+              <!-- chevron -->
+              <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 opacity-70" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <p class="mt-1 text-xs opacity-70">Public profiles show your handle and projects.</p>
           </div>
         </div>
       </section>
