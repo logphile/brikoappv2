@@ -3,7 +3,7 @@
     <header class="mb-6">
       <h1 class="text-3xl font-bold truncate">{{ project?.name || 'Untitled' }}</h1>
       <p v-if="project" class="text-sm opacity-70">
-        {{ dateLocal }}
+        {{ dateLocal }}<span v-if="dateRelative"> ({{ dateRelative }})</span>
         • {{ project.is_public ? 'Public' : 'Private' }}
         <span v-if="project.width && project.height"> • {{ project.width }}×{{ project.height }}</span>
       </p>
@@ -27,6 +27,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
+import { fromNowSafe, formatDate } from '@/utils/date'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false })
@@ -38,9 +39,8 @@ const id = String(route.params.id || '')
 const project = ref<any | null>(null)
 const previewUrl = ref<string | null>(null)
 
-const dateLocal = computed(() => {
-  try { return project.value?.created_at ? new Date(project.value.created_at).toLocaleString() : '' } catch { return '' }
-})
+const dateLocal = computed(() => formatDate(project.value?.created_at, 'M/D/YYYY'))
+const dateRelative = computed(() => fromNowSafe(project.value?.created_at))
 
 async function load(){
   if (!$supabase || !id) return

@@ -23,8 +23,14 @@ export default defineNuxtConfig({
     }
   },
 
-  // Vite config (no custom alias for dayjs; use '@/lib/day' directly in code)
-  vite: {},
+  // Vite config: exact-match alias so subpaths like 'dayjs/plugin/*' are untouched
+  vite: {
+    resolve: {
+      alias: [
+        { find: /^dayjs$/, replacement: resolve(dirname(fileURLToPath(import.meta.url)), './lib/day.ts') }
+      ]
+    }
+  },
 
   // No special SSR settings required for local SVG components
 
