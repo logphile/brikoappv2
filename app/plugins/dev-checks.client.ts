@@ -1,17 +1,14 @@
-import { defineNuxtPlugin } from 'nuxt/app'
+import { defineNuxtPlugin, useNuxtApp } from 'nuxt/app'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
   if (import.meta.dev) {
     try {
-      const d = (nuxtApp.$dayjs as any)?.()
-      const ok = d && typeof d.from === 'function' && typeof d.fromNow === 'function'
+      const { $dayjs } = useNuxtApp()
+      const ok = typeof (($dayjs as any)()?.fromNow) === 'function'
       if (!ok) {
         // eslint-disable-next-line no-console
-        console.error('[dayjs] relativeTime missing on injected instance')
+        console.warn('[dayjs] relativeTime not attached yet; helpers will attach on demand.')
       }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('[dayjs] injected instance not available', e)
-    }
+    } catch {}
   }
 })
