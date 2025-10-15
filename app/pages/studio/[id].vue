@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
 import { fromNowSafe, formatDateSafe } from '@/utils/date'
@@ -40,7 +40,10 @@ const project = ref<any | null>(null)
 const previewUrl = ref<string | null>(null)
 
 const dateLocal = computed(() => formatDateSafe(project.value?.created_at, 'M/D/YYYY'))
-const dateRelative = computed(() => fromNowSafe(project.value?.created_at))
+const dateRelative = ref('')
+watchEffect(async () => {
+  dateRelative.value = await fromNowSafe(project.value?.created_at)
+})
 
 async function load(){
   if (!$supabase || !id) return

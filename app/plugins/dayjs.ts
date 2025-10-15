@@ -4,7 +4,6 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import { defineNuxtPlugin } from 'nuxt/app'
 
-// Extend a single global instance
 dayjs.extend(relativeTime)
 dayjs.extend(utc)
 dayjs.extend(timezone)
