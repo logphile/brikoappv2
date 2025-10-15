@@ -10,7 +10,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <!-- Mosaic Engine -->
-        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
+        <article class="lift-card p-5 md:p-6 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
               <IconPalette class="h-[18px] w-[18px] text-[#2F3061]" />
@@ -23,7 +23,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         </article>
 
         <!-- 3D Voxel Preview -->
-        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
+        <article class="lift-card p-5 md:p-6 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
               <IconLayers class="h-[18px] w-[18px] text-[#2F3061]" />
@@ -36,7 +36,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         </article>
 
         <!-- Smart BOM -->
-        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
+        <article class="lift-card p-5 md:p-6 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
               <IconReceipt class="h-[18px] w-[18px] text-[#2F3061]" />
@@ -49,7 +49,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         </article>
 
         <!-- Fast Exports -->
-        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
+        <article class="lift-card p-5 md:p-6 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
               <IconDownload class="h-[18px] w-[18px] text-[#2F3061]" />
@@ -62,7 +62,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         </article>
 
         <!-- Save & Share -->
-        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
+        <article class="lift-card p-5 md:p-6 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
               <IconPhoto class="h-[18px] w-[18px] text-[#2F3061]" />
@@ -76,7 +76,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         </article>
 
         <!-- Performance -->
-        <article class="soft-card border p-5 md:p-6 border-[#000]/10 bg-white/30 text-[#343434]">
+        <article class="lift-card p-5 md:p-6 text-[#343434]">
           <div class="flex items-center gap-3">
             <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
               <IconBolt class="h-[18px] w-[18px] text-[#2F3061]" />
