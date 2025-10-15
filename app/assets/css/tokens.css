@@ -6,6 +6,9 @@
   --briko-accent:     #FF0062; /* focus ring */
 }
 
+/* Provide a local utilities layer so @layer utilities below is valid even when this file is processed alone */
+@tailwind utilities;
+
 @layer utilities {
   /* Page container */
   .container-page { @apply max-w-6xl mx-auto px-4 sm:px-6; }
