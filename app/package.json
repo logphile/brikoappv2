@@ -38,6 +38,7 @@
     "vue-eslint-parser": "^10.2.0"
   },
   "dependencies": {
+    "dayjs": "^1.11.11",
     "@supabase/supabase-js": "^2.45.0",
     "@techstark/opencv-js": "4.11.0-release.1",
     "html2canvas": "^1.4.1",
