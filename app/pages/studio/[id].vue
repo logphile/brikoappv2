@@ -28,6 +28,7 @@ import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
 import { fromNowSafe, formatDateSafe } from '@/utils/date'
+import { useDayjs } from '@/composables/useDayjs'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false })
@@ -65,4 +66,10 @@ async function load(){
 }
 
 onMounted(load)
+
+if (import.meta.dev) {
+  const dj = useDayjs()
+  // eslint-disable-next-line no-console
+  console.log('[debug] from/fromNow present?', typeof (dj() as any).from, typeof (dj() as any).fromNow)
+}
 </script>
