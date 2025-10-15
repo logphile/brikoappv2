@@ -42,7 +42,7 @@ const id = String(route.params.id || '')
 const project = ref<any | null>(null)
 const previewUrl = ref<string | null>(null)
 
-const dj = useDayjs()
+const dayjs = useDayjs()
 const dateLocal = computed(() => formatDateSafe(project.value?.created_at, 'M/D/YYYY'))
 const dateRelative = ref('')
 watchEffect(async () => {
@@ -76,6 +76,6 @@ onMounted(load)
 
 if (import.meta.dev) {
   // eslint-disable-next-line no-console
-  console.log('[debug] from/fromNow present?', typeof (dj() as any).from, typeof (dj() as any).fromNow)
+  console.log('[debug] from/fromNow present?', typeof (dayjs() as any).from, typeof (dayjs() as any).fromNow)
 }
 </script>
