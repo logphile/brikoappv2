@@ -1,4 +1,11 @@
 /* tokens.css */
+:root{
+  --briko-purple-900: #2F3061; /* card bg (Danger Zone purple) */
+  --briko-purple-50:  #EAE6FF; /* input bg: very light lavender */
+  --briko-ink-900:    #111827; /* dark text */
+  --briko-accent:     #FF0062; /* focus ring */
+}
+
 @layer utilities {
   /* Page container */
   .container-page { @apply max-w-6xl mx-auto px-4 sm:px-6; }
