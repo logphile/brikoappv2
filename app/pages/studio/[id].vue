@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useNuxtApp } from 'nuxt/app'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { signedUrl } from '@/lib/signed-url'
 import { fromNowSafe, formatDateSafe } from '@/utils/date'
 import { useDayjs } from '@/composables/useDayjs'
@@ -35,11 +36,13 @@ definePageMeta({ ssr: false })
 
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any
+const supabase = $supabase as SupabaseClient
 const id = String(route.params.id || '')
 
 const project = ref<any | null>(null)
 const previewUrl = ref<string | null>(null)
 
+const dj = useDayjs()
 const dateLocal = computed(() => formatDateSafe(project.value?.created_at, 'M/D/YYYY'))
 const dateRelative = ref('')
 watchEffect(async () => {
@@ -47,8 +50,12 @@ watchEffect(async () => {
 })
 
 async function load(){
-  if (!$supabase || !id) return
-  const { data, error } = await $supabase
+  if (!supabase || !id) return
+  if (import.meta.dev) {
+    // eslint-disable-next-line no-console
+    console.log('[check] typeof supabase.from =', typeof (supabase as any)?.from)
+  }
+  const { data, error } = await supabase
     .from('projects')
     .select('id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at, width, height, data')
     .eq('id', id)
@@ -68,7 +75,6 @@ async function load(){
 onMounted(load)
 
 if (import.meta.dev) {
-  const dj = useDayjs()
   // eslint-disable-next-line no-console
   console.log('[debug] from/fromNow present?', typeof (dj() as any).from, typeof (dj() as any).fromNow)
 }
