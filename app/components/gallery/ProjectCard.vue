@@ -20,8 +20,8 @@
       <!-- Hover overlay actions: neutral/outline buttons (no mint) -->
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
         <div class="w-full flex gap-2">
-          <button class="flex-1 px-3 py-1.5 rounded-xl ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition" @click.stop="remixProject">Remix</button>
-          <button class="flex-1 px-3 py-1.5 rounded-xl ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition" @click.stop="toProject(publicId)">View</button>
+          <button class="btn flex-1 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition" @click.stop="remixProject">Remix</button>
+          <NuxtLink :to="viewHref" class="btn flex-1 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition">View</NuxtLink>
         </div>
       </div>
     </div>
