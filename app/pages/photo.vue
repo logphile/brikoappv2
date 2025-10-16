@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { signedUrl } from '@/lib/signed-url'
 import { fromNowSafe, formatDateSafe } from '@/utils/date'
@@ -14,6 +14,7 @@ declare const useSupabaseClient: <T = any>() => T
 
 const route = useRoute()
 const supabase = useSupabaseClient() as SupabaseClient
+const router = useRouter()
 
 const projectId = computed(() => (route.query?.remix ?? (route as any)?.params?.id ?? '').toString().trim())
 
@@ -138,6 +139,14 @@ async function downloadMosaic(){
   a.download = (project.value?.name || 'briko-mosaic') + '.png'
   a.click()
 }
+
+async function onRemix(){
+  const id = (project.value as any)?.id
+  if (!id) return
+  try {
+    await router.push({ path: '/studio', query: { remix: id } })
+  } catch {}
+}
 </script>
 
 <template>
@@ -195,10 +204,11 @@ async function downloadMosaic(){
           @click="downloadMosaic()"
         >Download PNG</button>
 
-        <NuxtLink
-          :to="`/studio?remix=${project.id}`"
+        <button
+          type="button"
           class="btn btn-ghost h-8 px-3 text-xs"
-        >Remix</NuxtLink>
+          @click="onRemix"
+        >Remix</button>
 
         <button
           class="btn btn-ghost h-8 px-3 text-xs"
