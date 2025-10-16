@@ -25,7 +25,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect } from 'vue'
-import { useRoute, useNuxtApp } from 'nuxt/app'
+import { useRoute } from 'nuxt/app'
+import { useSupabaseClient } from '#imports'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { signedUrl } from '@/lib/signed-url'
 import { fromNowSafe, formatDateSafe } from '@/utils/date'
@@ -35,8 +36,7 @@ import { useDayjs } from '@/composables/useDayjs'
 definePageMeta({ ssr: false })
 
 const route = useRoute()
-const { $supabase } = useNuxtApp() as any
-const supabase = $supabase as SupabaseClient
+const supabase = useSupabaseClient() as SupabaseClient
 const projectId = String(route.params.id || '')
 
 const project = ref<any | null>(null)
@@ -60,7 +60,7 @@ async function load(){
       .from('projects')
       .select('id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at, width, height, data')
       .eq('id', projectId)
-      .single()
+      .maybeSingle()
     if (error) throw error
     project.value = data
     previewUrl.value =
