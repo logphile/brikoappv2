@@ -42,43 +42,29 @@ async function load () {
       // eslint-disable-next-line no-console
       console.log('[typeof supabase.from]', typeof (supabase as any)?.from)
     }
-    const { data, error } = await supabase
+
+    // 1) Project (with user_id)
+    const { data: proj, error: projErr } = await supabase
       .from('projects')
-      .select(`
-        id, user_id, name, created_at, is_public,
-        width, height, part_count, palette_name,
-        original_path, mosaic_path, thumbnail_path, voxel_path, user_id,
-        profiles:profiles!projects_user_id_fkey ( handle )
-      `)
+      .select('id,user_id,name,created_at,is_public,width,height,part_count,palette_name,original_path,mosaic_path,thumbnail_path,voxel_path')
       .eq('id', projectId.value)
       .maybeSingle()
-    let result = data as any
-    if (error) {
-      const msg = String((error as any)?.message || '')
-      if (/relationship|foreign key|does not exist/i.test(msg)) {
-        const { data: proj, error: projErr } = await supabase
-          .from('projects')
-          .select('id,user_id,name,created_at,is_public,width,height,part_count,palette_name,original_path,mosaic_path,thumbnail_path,voxel_path')
-          .eq('id', projectId.value)
-          .maybeSingle()
-        if (projErr) throw projErr
-        if (!proj) { errorMsg.value = 'Project not found.'; return }
-        let handle: string | undefined
-        if ((proj as any)?.user_id) {
-          const { data: prof } = await supabase
-            .from('profiles')
-            .select('handle')
-            .eq('id', (proj as any).user_id)
-            .maybeSingle()
-          handle = (prof as any)?.handle
-        }
-        result = { ...(proj as any), profiles: handle ? { handle } : undefined }
-      } else {
-        throw error
-      }
+    if (projErr) throw projErr
+    if (!proj) { errorMsg.value = 'Project not found.'; return }
+
+    // 2) Handle (separate query)
+    let handle: string | undefined
+    if ((proj as any).user_id) {
+      const { data: prof, error: profErr } = await supabase
+        .from('profiles')
+        .select('handle')
+        .eq('id', (proj as any).user_id)
+        .maybeSingle()
+      if (!profErr) handle = (prof as any)?.handle
     }
-    if (!result) { errorMsg.value = 'Project not found.'; return }
-    project.value = result
+
+    // merge for template
+    project.value = { ...(proj as any), profile_handle: handle }
 
     img.value =
       (await signedUrl(project.value.original_path)) ||
@@ -154,7 +140,7 @@ async function downloadMosaic(){
       </div>
       <!-- META -->
       <div v-if="project" class="meta mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <span v-if="project.profiles?.handle" class="font-medium">@{{ project.profiles.handle }}</span>
+        <span v-if="project.profile_handle" class="font-medium">@{{ project.profile_handle }}</span>
 
         <span class="dim">
           {{ submittedAbs }}
