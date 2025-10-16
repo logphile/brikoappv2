@@ -48,7 +48,7 @@ async function load () {
       .from('projects')
       .select(`
         id, user_id, name, created_at, is_public,
-        width, height, part_count, palette_name,
+        width, height, palette_name,
         original_path, mosaic_path, thumbnail_path, voxel_path,
         profiles:profiles!projects_user_id_profiles_fkey ( handle )
       `)
@@ -75,6 +75,14 @@ async function load () {
 const submittedAbs = computed(() => formatDateSafe(project.value?.created_at))
 const submittedRel = ref('')
 watchEffect(async () => { submittedRel.value = await fromNowSafe(project.value?.created_at) })
+
+// Safe parts display: use part_count if present, else fallback to width*height
+const partsDisplay = computed(() => {
+  const p = project.value
+  if (!p) return ''
+  const count = (p as any)?.part_count ?? ((p?.width && p?.height) ? (p.width * p.height) : 0)
+  return count ? `${count.toLocaleString()} parts` : ''
+})
 
 const siblings = ref<{ prev?: any; next?: any }>({})
 async function loadSiblings(userId: string, createdAt: string){
@@ -146,9 +154,7 @@ async function downloadMosaic(){
           {{ project.width }} × {{ project.height }} studs
         </span>
 
-        <span v-if="project.part_count" class="dim">
-          {{ project.part_count.toLocaleString() }} parts
-        </span>
+        <span v-if="partsDisplay" class="dim">{{ partsDisplay }}</span>
 
         <span v-if="project.palette_name" class="dim">
           Palette: {{ project.palette_name }}
