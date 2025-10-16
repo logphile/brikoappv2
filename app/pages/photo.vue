@@ -48,7 +48,7 @@ async function load () {
       .from('projects')
       .select(`
         id, user_id, name, created_at, is_public,
-        width, height, palette_name,
+        width, height, part_count, palette_name,
         original_path, mosaic_path, thumbnail_path, voxel_path,
         profiles:profiles!projects_user_id_profiles_fkey ( handle )
       `)
