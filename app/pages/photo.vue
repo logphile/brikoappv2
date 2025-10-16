@@ -47,15 +47,38 @@ async function load () {
       .select(`
         id, user_id, name, created_at, is_public,
         width, height, part_count, palette_name,
-        original_path, mosaic_path, thumbnail_path, voxel_path,
-        profiles!inner ( handle )
+        original_path, mosaic_path, thumbnail_path, voxel_path, user_id,
+        profiles:profiles!projects_user_id_fkey ( handle )
       `)
       .eq('id', projectId.value)
       .maybeSingle()
-
-    if (error) throw error
-    if (!data) { errorMsg.value = 'Project not found.'; return }
-    project.value = data
+    let result = data as any
+    if (error) {
+      const msg = String((error as any)?.message || '')
+      if (/relationship|foreign key|does not exist/i.test(msg)) {
+        const { data: proj, error: projErr } = await supabase
+          .from('projects')
+          .select('id,user_id,name,created_at,is_public,width,height,part_count,palette_name,original_path,mosaic_path,thumbnail_path,voxel_path')
+          .eq('id', projectId.value)
+          .maybeSingle()
+        if (projErr) throw projErr
+        if (!proj) { errorMsg.value = 'Project not found.'; return }
+        let handle: string | undefined
+        if ((proj as any)?.user_id) {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('handle')
+            .eq('id', (proj as any).user_id)
+            .maybeSingle()
+          handle = (prof as any)?.handle
+        }
+        result = { ...(proj as any), profiles: handle ? { handle } : undefined }
+      } else {
+        throw error
+      }
+    }
+    if (!result) { errorMsg.value = 'Project not found.'; return }
+    project.value = result
 
     img.value =
       (await signedUrl(project.value.original_path)) ||
