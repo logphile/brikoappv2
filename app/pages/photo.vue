@@ -48,8 +48,8 @@ async function load () {
       .from('projects')
       .select(`
         id, user_id, name, created_at, is_public,
-        width, height, part_count,
-        original_path, mosaic_path, thumbnail_path, voxel_path,
+        width, height, part_count, palette_name,
+        original_path, mosaic_path, thumbnail_path,
         data,
         profiles:profiles!projects_user_id_profiles_fkey ( handle )
       `)
@@ -95,6 +95,16 @@ const paletteLabel = computed(() => {
     ''
   )
 })
+
+// Safe voxel presence/url derived from column or nested data
+const voxelUrl = computed(() => {
+  const d = (project.value as any)?.data || {}
+  return (
+    (project.value as any)?.voxel_path ||
+    d.voxel_path || d.voxelUrl || d.voxel || ''
+  )
+})
+const hasVoxel = computed(() => !!voxelUrl.value)
 
 const siblings = ref<{ prev?: any; next?: any }>({})
 async function loadSiblings(userId: string, createdAt: string){
@@ -196,7 +206,7 @@ async function downloadMosaic(){
         >Copy share link</button>
 
         <NuxtLink
-          v-if="project.voxel_path"
+          v-if="hasVoxel"
           :to="`/3d?project=${project.id}`"
           class="btn btn-ghost h-8 px-3 text-xs"
         >Open in 3D Builder</NuxtLink>
