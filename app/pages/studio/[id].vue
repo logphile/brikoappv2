@@ -37,7 +37,7 @@ definePageMeta({ ssr: false })
 const route = useRoute()
 const { $supabase } = useNuxtApp() as any
 const supabase = $supabase as SupabaseClient
-const id = String(route.params.id || '')
+const projectId = String(route.params.id || '')
 
 const project = ref<any | null>(null)
 const previewUrl = ref<string | null>(null)
@@ -50,7 +50,7 @@ watchEffect(async () => {
 })
 
 async function load(){
-  if (!supabase || !id) return
+  if (!supabase || !projectId) return
   if (import.meta.dev) {
     // eslint-disable-next-line no-console
     console.log('[check] typeof supabase.from =', typeof (supabase as any)?.from)
@@ -59,7 +59,7 @@ async function load(){
     const { data, error } = await supabase
       .from('projects')
       .select('id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at, width, height, data')
-      .eq('id', route.params.id)
+      .eq('id', projectId)
       .single()
     if (error) throw error
     project.value = data
