@@ -48,8 +48,9 @@ async function load () {
       .from('projects')
       .select(`
         id, user_id, name, created_at, is_public,
-        width, height, part_count, palette_name,
+        width, height, part_count,
         original_path, mosaic_path, thumbnail_path, voxel_path,
+        data,
         profiles:profiles!projects_user_id_profiles_fkey ( handle )
       `)
       .eq('id', projectId.value)
@@ -82,6 +83,17 @@ const partsDisplay = computed(() => {
   if (!p) return ''
   const count = (p as any)?.part_count ?? ((p?.width && p?.height) ? (p.width * p.height) : 0)
   return count ? `${count.toLocaleString()} parts` : ''
+})
+
+// Safe palette label derived from column or nested data
+const paletteLabel = computed(() => {
+  const p = project.value
+  return (
+    (p as any)?.palette_name ||
+    (p as any)?.data?.palette_name ||
+    (p as any)?.data?.palette ||
+    ''
+  )
 })
 
 const siblings = ref<{ prev?: any; next?: any }>({})
@@ -156,8 +168,8 @@ async function downloadMosaic(){
 
         <span v-if="partsDisplay" class="dim">{{ partsDisplay }}</span>
 
-        <span v-if="project.palette_name" class="dim">
-          Palette: {{ project.palette_name }}
+        <span v-if="paletteLabel" class="dim">
+          Palette: {{ paletteLabel }}
         </span>
 
         <!-- quick actions -->
