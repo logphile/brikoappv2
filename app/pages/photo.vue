@@ -151,7 +151,7 @@ async function onRemix(){
       console.error('remix error', error)
       return
     }
-    if (data) await router.push(`/studio/${data}`)
+    if (data) await router.push(`/studio/${data}?tab=mosaic`)
   } catch {}
 }
 </script>

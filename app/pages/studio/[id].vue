@@ -50,6 +50,14 @@ watchEffect(async () => {
   dateRelative.value = await fromNowSafe(project.value?.created_at)
 })
 
+// Active tab preference (mosaic|voxel|overview) read once on mount
+const activeTab = ref<'mosaic' | 'voxel' | 'overview'>('mosaic')
+onMounted(() => {
+  const raw = (route.query.tab as string) || (route.hash ? String(route.hash).replace('#','') : '') || 'mosaic'
+  const q = raw.replace(/^\//, '')
+  if (['mosaic', 'voxel', 'overview'].includes(q)) activeTab.value = q as any
+})
+
 async function load(){
   if (!supabase || !projectId) return
   if (import.meta.dev) {
