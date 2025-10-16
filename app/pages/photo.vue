@@ -143,6 +143,8 @@ async function onRemix(){
   const src = projectId.value || (project.value as any)?.id
   if (!src) return
   try {
+    // quick log so you can see it fire
+    console.log('Remix clicked', src)
     const { data, error } = await supabase.rpc('remix_project', { src })
     if (error) {
       // eslint-disable-next-line no-console
