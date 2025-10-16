@@ -26,7 +26,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute } from 'nuxt/app'
-import { useSupabaseClient } from '#imports'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { signedUrl } from '@/lib/signed-url'
 import { fromNowSafe, formatDateSafe } from '@/utils/date'
@@ -36,6 +35,8 @@ import { useDayjs } from '@/composables/useDayjs'
 definePageMeta({ ssr: false })
 
 const route = useRoute()
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
 const supabase = useSupabaseClient() as SupabaseClient
 const projectId = String(route.params.id || '')
 

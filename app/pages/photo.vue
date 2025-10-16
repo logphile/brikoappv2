@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { signedUrl } from '@/lib/signed-url'
+import { fromNowSafe, formatDateSafe } from '@/utils/date'
 import BricklinkExportDialog from '@/components/export/BricklinkExportDialog.vue'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
@@ -14,71 +15,97 @@ declare const useSupabaseClient: <T = any>() => T
 const route = useRoute()
 const supabase = useSupabaseClient() as SupabaseClient
 
-const loading = ref(true)
-const error = ref<string | null>(null)
-const img = ref<string | null>(null)
-const projectName = ref<string | null>(null)
+const projectId = computed(() => (route.query?.remix ?? (route as any)?.params?.id ?? '').toString().trim())
 
-// BrickLink Export dialog state
+const project = ref<any>(null)
+const loading = ref(true)
+const errorMsg = ref('')
+const img = ref<string | null>(null)
+
 const showBricklink = ref(false)
-async function exportXml(){
-  try { console.log('[photo] Export BrickLink XML requested') } catch {}
+async function exportBricklink(p?: any){
+  try { console.log('[photo] Export BrickLink XML requested', p?.id) } catch {}
   showBricklink.value = false
 }
 
-// The id comes from ?remix=<id> OR /photo/<id>
-const projectId = computed(() => {
-  const q = (route.query?.remix ?? (route as any)?.params?.id ?? '').toString().trim()
-  return q || ''
-})
+onMounted(load)
+watch(projectId, load, { flush: 'post' })
 
-onMounted(loadProject)
-watch(projectId, () => loadProject(), { flush: 'post' })
-
-async function loadProject() {
+async function load () {
   loading.value = true
-  error.value = null
+  errorMsg.value = ''
+  project.value = null
   img.value = null
-  projectName.value = null
-
   try {
-    if (!projectId.value) {
-      error.value = 'No project specified.'
-      return
-    }
-
-    // DEV sanity: prove we’re using the real client
+    if (!projectId.value) { errorMsg.value = 'No project id.'; return }
     if (import.meta.dev) {
       // eslint-disable-next-line no-console
       console.log('[typeof supabase.from]', typeof (supabase as any)?.from)
     }
-
-    const { data, error: qErr } = await supabase
+    const { data, error } = await supabase
       .from('projects')
-      .select('id,name,original_path,mosaic_path,thumbnail_path,created_at,is_public')
+      .select(`
+        id, user_id, name, created_at, is_public,
+        width, height, part_count, palette_name,
+        original_path, mosaic_path, thumbnail_path, voxel_path,
+        profiles!inner ( handle )
+      `)
       .eq('id', projectId.value)
       .maybeSingle()
 
-    if (qErr) throw qErr
-    if (!data) {
-      error.value = 'Project not found.'
-      return
-    }
+    if (error) throw error
+    if (!data) { errorMsg.value = 'Project not found.'; return }
+    project.value = data
 
-    projectName.value = data.name ?? null
     img.value =
-      (await signedUrl(data.original_path)) ||
-      (await signedUrl(data.mosaic_path)) ||
-      (await signedUrl(data.thumbnail_path)) ||
+      (await signedUrl(project.value.original_path)) ||
+      (await signedUrl(project.value.mosaic_path)) ||
+      (await signedUrl(project.value.thumbnail_path)) ||
       null
-    if (!img.value) error.value = 'No preview available.'
   } catch (e: any) {
     // eslint-disable-next-line no-console
-    console.error('[photo load failed]', e)
-    error.value = e?.message || 'Failed to load project.'
+    console.error(e)
+    errorMsg.value = e?.message ?? 'Failed to load project.'
   } finally {
     loading.value = false
   }
+}
+
+const submittedAbs = computed(() => formatDateSafe(project.value?.created_at))
+const submittedRel = ref('')
+watchEffect(async () => { submittedRel.value = await fromNowSafe(project.value?.created_at) })
+
+const siblings = ref<{ prev?: any; next?: any }>({})
+async function loadSiblings(userId: string, createdAt: string){
+  try {
+    const prev = await supabase
+      .from('projects')
+      .select('id, name, thumbnail_path, created_at')
+      .eq('user_id', userId)
+      .lt('created_at', createdAt).order('created_at', { ascending:false }).limit(1)
+    const next = await supabase
+      .from('projects')
+      .select('id, name, thumbnail_path, created_at')
+      .eq('user_id', userId)
+      .gt('created_at', createdAt).order('created_at', { ascending:true }).limit(1)
+    siblings.value = { prev: prev.data?.[0], next: next.data?.[0] }
+  } catch {}
+}
+watch(project, (p) => {
+  if (p?.user_id && p?.created_at) loadSiblings(p.user_id, p.created_at)
+})
+
+function shareUrl(id: string){ return `${location.origin}/photo?remix=${id}` }
+async function copy(text: string){ try{ await navigator.clipboard.writeText(text) } catch{} }
+async function downloadMosaic(){
+  const el = document.querySelector('#mosaic-frame') as HTMLElement | null
+  if(!el) return
+  const { default: html2canvas } = await import('html2canvas')
+  const canvas = await html2canvas(el, { backgroundColor: null, scale: 2 })
+  const a = document.createElement('a')
+  a.href = canvas.toDataURL('image/png')
+  a.download = (project.value?.name || 'briko-mosaic') + '.png'
+  a.click()
 }
 </script>
 
@@ -87,22 +114,88 @@ async function loadProject() {
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <header class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold">Photo</h1>
-        <div class="flex items-center gap-2">
-          <button class="btn-purple-outline focus-cyber" @click="showBricklink = true">Export for BrickLink (.xml)</button>
-          <NuxtLink to="/studio" class="btn-purple-outline focus-cyber">Back to Studio</NuxtLink>
+        <div class="flex items-center gap-3">
+          <button class="btn btn-purple" @click="exportBricklink(project)">Export for BrickLink (.xml)</button>
+          <NuxtLink to="/studio" class="btn btn-purple">Back to Studio</NuxtLink>
         </div>
       </header>
 
       <div v-if="loading" class="text-[color:var(--dark)/.7]">Loading…</div>
-      <div v-else-if="error" class="text-[color:var(--dark)/.7]">{{ error }}</div>
+      <div v-else-if="errorMsg" class="text-[color:var(--dark)/.7]">{{ errorMsg }}</div>
 
       <div v-else class="rounded-2xl overflow-hidden border border-[color:var(--dark)/.15] bg-white/60 p-2">
-        <figure class="bg-black/5 grid place-items-center">
-          <img v-if="img" :src="img" :alt="projectName || 'Project'" class="max-h-[70vh] w-auto object-contain" />
+        <figure id="mosaic-frame" class="bg-black/5 grid place-items-center">
+          <img v-if="img" :src="img" :alt="project?.name || 'Project'" class="max-h-[70vh] w-auto object-contain" />
           <div v-else class="p-8 text-[color:var(--dark)/.7]">No image to display.</div>
         </figure>
       </div>
-      <BricklinkExportDialog v-model:open="showBricklink" @export="exportXml" />
+      <!-- META -->
+      <div v-if="project" class="meta mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span v-if="project.profiles?.handle" class="font-medium">@{{ project.profiles.handle }}</span>
+
+        <span class="dim">
+          {{ submittedAbs }}
+          <span v-if="submittedRel"> ({{ submittedRel }})</span>
+        </span>
+
+        <span v-if="project.is_public" class="badge badge-green">Public</span>
+        <span v-else class="badge badge-gray">Private</span>
+
+        <span v-if="project.width && project.height" class="dim">
+          {{ project.width }} × {{ project.height }} studs
+        </span>
+
+        <span v-if="project.part_count" class="dim">
+          {{ project.part_count.toLocaleString() }} parts
+        </span>
+
+        <span v-if="project.palette_name" class="dim">
+          Palette: {{ project.palette_name }}
+        </span>
+
+        <!-- quick actions -->
+        <button
+          v-if="project.original_path"
+          class="btn btn-ghost h-8 px-3 text-xs"
+          @click="copy(project.original_path)"
+        >Copy original URL</button>
+
+        <button
+          v-if="project.mosaic_path"
+          class="btn btn-ghost h-8 px-3 text-xs"
+          @click="downloadMosaic()"
+        >Download PNG</button>
+
+        <NuxtLink
+          :to="`/studio?remix=${project.id}`"
+          class="btn btn-ghost h-8 px-3 text-xs"
+        >Remix</NuxtLink>
+
+        <button
+          class="btn btn-ghost h-8 px-3 text-xs"
+          @click="copy(shareUrl(project.id))"
+        >Copy share link</button>
+
+        <NuxtLink
+          v-if="project.voxel_path"
+          :to="`/3d?project=${project.id}`"
+          class="btn btn-ghost h-8 px-3 text-xs"
+        >Open in 3D Builder</NuxtLink>
+      </div>
+
+      <div class="flex items-center gap-2 mt-2" v-if="siblings.prev || siblings.next">
+        <NuxtLink
+          v-if="siblings.prev"
+          :to="`/photo?remix=${siblings.prev.id}`"
+          class="btn btn-ghost h-8 px-3 text-xs"
+        >← Prev</NuxtLink>
+        <NuxtLink
+          v-if="siblings.next"
+          :to="`/photo?remix=${siblings.next.id}`"
+          class="btn btn-ghost h-8 px-3 text-xs"
+        >Next →</NuxtLink>
+      </div>
+      <BricklinkExportDialog v-model:open="showBricklink" @export="exportBricklink(project)" />
     </div>
   </main>
 </template>

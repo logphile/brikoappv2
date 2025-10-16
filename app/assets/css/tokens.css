@@ -48,3 +48,24 @@
   vertical-align: middle;
   -webkit-appearance: none;
 }
+
+/* overrides and new tokens */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:2.25rem; padding:0 .9rem; border-radius:.75rem;
+  line-height:1; -webkit-appearance:none; vertical-align:middle;
+  font-weight:600;
+}
+.btn-purple{ background:#342157; color:#fff; box-shadow:0 1px 0 rgba(0,0,0,.06); }
+.btn-purple:hover{ background:#3d2766; }
+.btn-ghost{ background:transparent; color:inherit; border-radius:.6rem; outline:1px solid rgba(0,0,0,.08); }
+.btn-ghost:hover{ background:rgba(255,255,255,.35); }
+.badge{
+  display:inline-flex; align-items:center; gap:.375rem; padding:.125rem .5rem;
+  border-radius:9999px; font-size:.75rem; line-height:1rem; font-weight:600;
+  outline:1px solid;
+}
+.badge-green{ background:#eaf8ef; color:#166534; outline-color:#a7e3bf; }
+.badge-gray{ background:#f2f2f3; color:#303038; outline-color:#d8d8dd; }
+.meta{ color:rgba(21, 20, 30, .80); }
+.meta .dim{ opacity:.72; }
