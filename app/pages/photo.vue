@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useNuxtApp } from 'nuxt/app'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { signedUrl } from '@/lib/signed-url'
 import BricklinkExportDialog from '@/components/export/BricklinkExportDialog.vue'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false, middleware: ['auth'] })
 
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
+
 const route = useRoute()
-const { $supabase } = useNuxtApp() as any
+const supabase = useSupabaseClient() as SupabaseClient
 
 const loading = ref(true)
 const error = ref<string | null>(null)
@@ -19,28 +22,49 @@ const projectName = ref<string | null>(null)
 // BrickLink Export dialog state
 const showBricklink = ref(false)
 async function exportXml(){
-  // TODO: hook up to actual XML exporter when available
   try { console.log('[photo] Export BrickLink XML requested') } catch {}
   showBricklink.value = false
 }
 
-onMounted(async () => {
+// The id comes from ?remix=<id> OR /photo/<id>
+const projectId = computed(() => {
+  const q = (route.query?.remix ?? (route as any)?.params?.id ?? '').toString().trim()
+  return q || ''
+})
+
+onMounted(loadProject)
+watch(projectId, () => loadProject(), { flush: 'post' })
+
+async function loadProject() {
   loading.value = true
+  error.value = null
+  img.value = null
+  projectName.value = null
+
   try {
-    const remixId = route.query.remix as string | undefined
-    if (!remixId) {
+    if (!projectId.value) {
       error.value = 'No project specified.'
       return
     }
-    const { data, error: qErr } = await $supabase
+
+    // DEV sanity: prove we’re using the real client
+    if (import.meta.dev) {
+      // eslint-disable-next-line no-console
+      console.log('[typeof supabase.from]', typeof (supabase as any)?.from)
+    }
+
+    const { data, error: qErr } = await supabase
       .from('projects')
-      .select('name, original_path, mosaic_path, thumbnail_path')
-      .eq('id', remixId)
+      .select('id,name,original_path,mosaic_path,thumbnail_path,created_at,is_public')
+      .eq('id', projectId.value)
       .maybeSingle()
-    if (qErr || !data) {
+
+    if (qErr) throw qErr
+    if (!data) {
       error.value = 'Project not found.'
       return
     }
+
     projectName.value = data.name ?? null
     img.value =
       (await signedUrl(data.original_path)) ||
@@ -49,11 +73,13 @@ onMounted(async () => {
       null
     if (!img.value) error.value = 'No preview available.'
   } catch (e: any) {
+    // eslint-disable-next-line no-console
+    console.error('[photo load failed]', e)
     error.value = e?.message || 'Failed to load project.'
   } finally {
     loading.value = false
   }
-})
+}
 </script>
 
 <template>
