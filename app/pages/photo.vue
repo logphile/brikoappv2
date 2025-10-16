@@ -212,7 +212,7 @@ async function onRemix(){
         <button
           type="button"
           class="btn btn-ghost h-8 px-3 text-xs"
-          @click="onRemix"
+          @click.stop.prevent="onRemix"
         >Remix</button>
 
         <!-- removed: Copy share link (disabled until public links ship) -->
