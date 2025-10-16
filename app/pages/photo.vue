@@ -127,7 +127,6 @@ watch(project, (p) => {
   if (p?.user_id && p?.created_at) loadSiblings(p.user_id, p.created_at)
 })
 
-function shareUrl(id: string){ return `${location.origin}/photo?remix=${id}` }
 async function copy(text: string){ try{ await navigator.clipboard.writeText(text) } catch{} }
 async function downloadMosaic(){
   const el = document.querySelector('#mosaic-frame') as HTMLElement | null
@@ -141,10 +140,16 @@ async function downloadMosaic(){
 }
 
 async function onRemix(){
-  const id = (project.value as any)?.id
-  if (!id) return
+  const src = projectId.value || (project.value as any)?.id
+  if (!src) return
   try {
-    await router.push({ path: '/studio', query: { remix: id } })
+    const { data, error } = await supabase.rpc('remix_project', { src })
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error('remix error', error)
+      return
+    }
+    if (data) await router.push(`/studio/${data}`)
   } catch {}
 }
 </script>
@@ -210,10 +215,7 @@ async function onRemix(){
           @click="onRemix"
         >Remix</button>
 
-        <button
-          class="btn btn-ghost h-8 px-3 text-xs"
-          @click="copy(shareUrl(project.id))"
-        >Copy share link</button>
+        <!-- removed: Copy share link (disabled until public links ship) -->
 
         <NuxtLink
           v-if="hasVoxel"
