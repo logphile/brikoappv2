@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHead, useError, clearError, computed } from '#imports'
+import AppButton from '@/components/ui/AppButton.vue'
 
 const err = useError()
 const status = computed<number>(() => Number(err.value?.statusCode || 500))
@@ -7,13 +8,13 @@ const headline = computed(() =>
   status.value === 404 ? 'Page not found' : 'Something went wrong'
 )
 const detail = computed(() => {
-  // Keep this light; avoid full stack in UI by default
   const e = err.value as any
   return JSON.stringify(
     { statusCode: e?.statusCode, message: e?.message, url: e?.url },
     null, 2
   )
 })
+const handleErrorText = computed(() => JSON.stringify(err.value, null, 2))
 
 useHead({
   title: `${status.value} — ${headline.value}`,
@@ -41,10 +42,10 @@ async function copyDetails () {
       </p>
 
       <div class="mt-6 flex flex-wrap gap-3">
-        <button class="btn-primary" @click="goHome">Back home</button>
-        <NuxtLink to="/how-it-works" class="btn-ghost">How it works</NuxtLink>
-        <a class="btn-secondary" href="mailto:support@briko.app?subject=Briko%20error%20report">Report issue</a>
-        <button class="btn-ghost" @click="copyDetails">Copy details</button>
+        <AppButton to="/" label="Back home" />
+        <AppButton to="/how-it-works" label="How it works" />
+        <AppButton href="https://github.com/logphile/Briko/issues/new" label="Report issue" />
+        <AppButton :href="`mailto:support@briko.app?subject=Error&body=${encodeURIComponent(handleErrorText)}`" label="Copy details" />
       </div>
 
       <details class="mt-6">

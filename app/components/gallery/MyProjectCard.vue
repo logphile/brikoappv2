@@ -44,19 +44,14 @@ watch(() => props.p.is_public, (v) => { isPublic.value = !!v })
 
 async function onView() {
   // Open the Mosaic editor pre-loaded with this project
-  await router.push({ path: '/photo', query: { remix: props.p.id } })
+  await router.push({ path: '/mosaic', query: { remix: props.p.id } })
 }
 
 async function onRemix() {
   if (isRemixing.value) return
   isRemixing.value = true
   try {
-    const { data: newId, error } = await $supabase.rpc('remix_project', { src: props.p.id })
-    if (error || !newId) {
-      console.error('remix error', error)
-      return
-    }
-    await router.push(`/studio/${newId}?tab=mosaic`)
+    await router.push({ path: '/mosaic', query: { remix: props.p.id } })
   } finally {
     isRemixing.value = false
   }
@@ -99,7 +94,7 @@ async function togglePublic(){
     class="group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition hover:bg-white/7"
   >
     <!-- Thumb -->
-    <NuxtLink :to="{ path: '/photo', query: { remix: p.id } }" class="block">
+    <NuxtLink :to="{ path: '/mosaic', query: { remix: p.id } }" class="block">
       <div class="aspect-[16/10] overflow-hidden bg-black/10">
         <img
           v-if="previewUrl"
@@ -136,7 +131,7 @@ async function togglePublic(){
 
       <div class="mt-3 flex items-center gap-2">
         <NuxtLink
-          :to="{ path: '/photo', query: { remix: p.id } }"
+          :to="{ path: '/mosaic', query: { remix: p.id } }"
           class="h-9 rounded-xl px-3 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition"
         >
           View

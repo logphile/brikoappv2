@@ -582,9 +582,8 @@ async function loadRemixIfAny() {
       .eq('id', remixId)
       .single()
     if (error || !data) return
-    // Prefill draft from existing project
+    // Prefill draft from existing project — do NOT carry over id so Save creates a new copy
     try {
-      draft.id = (data as any).id || null
       draft.title = (data as any).name || ''
       draft.is_public = !!(data as any).is_public
       draft.original_path = (data as any).original_path || null
@@ -1005,6 +1004,10 @@ watchDebounced(
   <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434] mb-20">
     <h1 class="text-4xl md:text-5xl font-bold text-[#343434]">{{ copy.mosaic.title }}</h1>
     <p class="text-lg md:text-xl text-[#2F3061] mb-8">{{ copy.mosaic.subtitle }}</p>
+    <div v-if="route.query.remix" class="mb-4 text-sm rounded-xl px-3 py-2 bg-white/10 ring-1 ring-white/15">
+      Remixing: <strong>{{ draft.title || 'Untitled' }}</strong> — changes won’t affect the original.
+      <span class="opacity-70 ml-2">You’ll save as a new copy.</span>
+    </div>
     <nav aria-label="Quick guide" class="mt-2 flex flex-wrap gap-6 md:gap-8 items-center">
       <a
         v-for="(s, i) in stepsGuide"

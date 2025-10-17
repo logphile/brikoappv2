@@ -41,9 +41,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { navigateTo } from 'nuxt/app'
-// Nuxt auto-imported composable
-declare const useSupabaseClient: <T = any>() => T
-const supabase = useSupabaseClient() as any
 const isRemixing = ref(false)
 
 const props = defineProps<{
@@ -118,20 +115,14 @@ function toProject(id?: string){
   return navigateTo(`/p/${id}${slug ? '-' + slug : ''}`)
 }
 
-// Fork project via RPC and jump to Studio Mosaic
+// Remix: param-only navigation (no insert)
 async function onRemix(){
   if (isRemixing.value) return
   isRemixing.value = true
   try {
     const id = String(props.id || '')
     if (!id) return
-    const { data: newId, error } = await supabase.rpc('remix_project', { src: id })
-    if (error || !newId) {
-      // eslint-disable-next-line no-console
-      console.error('remix error', error)
-      return
-    }
-    await navigateTo(`/studio/${newId}?tab=mosaic`)
+    await navigateTo({ path: '/mosaic', query: { remix: id } })
   } finally {
     isRemixing.value = false
   }

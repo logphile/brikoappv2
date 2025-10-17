@@ -96,7 +96,10 @@ async function save(){
   else { await upsertReaction(id, u.id, 'save'); saves.value = saves.value + 1 }
   savedByMe.value = !savedByMe.value
 }
-function remix(){ location.href = '/mosaic' }
+function remix(){
+  const id = (project.value as any)?.id
+  if (id) location.href = `/mosaic?remix=${id}`
+}
 
 onMounted(fetchDetail)
 </script>

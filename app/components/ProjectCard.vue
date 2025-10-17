@@ -55,9 +55,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { navigateTo } from 'nuxt/app'
-// Nuxt auto-imported composable
-declare const useSupabaseClient: <T = any>() => T
-const supabase = useSupabaseClient() as any
 const isRemixing = ref(false)
 const emit = defineEmits<{ (e: 'img-error', id: string | number): void }>()
 interface OwnerInfo { handle?: string | null; display_name?: string | null }
@@ -77,21 +74,10 @@ const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: bo
 const imgLoaded = ref(false)
 function onImgLoad(){ imgLoaded.value = true }
 
-// Fork via RPC and route to Studio Mosaic
+// Remix: navigate to editor with source id as a query param (no insert)
 async function onRemix(id: string | number){
-  if (isRemixing.value) return
-  isRemixing.value = true
-  try {
-    const src = String(id)
-    const { data: newId, error } = await supabase.rpc('remix_project', { src })
-    if (error || !newId) {
-      // eslint-disable-next-line no-console
-      console.error('remix error', error)
-      return
-    }
-    await navigateTo(`/studio/${newId}?tab=mosaic`)
-  } finally {
-    isRemixing.value = false
-  }
+  const src = String(id)
+  if (!src) return
+  await navigateTo({ path: '/mosaic', query: { remix: src } })
 }
 </script>

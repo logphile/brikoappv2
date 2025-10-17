@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRoute } from 'nuxt/app'
 // Nuxt auto-imported composables from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
 declare const useSupabaseUser: <T = any>() => T
@@ -25,6 +26,15 @@ const user = useSupabaseUser()
 const saving = ref(false)
 const menuOpen = ref(false)
 const savedAt = ref<string | null>(null)
+const route = useRoute()
+const remixSourceId = computed<string | null>(() => {
+  try {
+    const id = (route?.query as any)?.remix
+    return typeof id === 'string' && id ? id : null
+  } catch {
+    return null
+  }
+})
 
 async function save() {
   if (import.meta.server) return
@@ -40,7 +50,8 @@ async function save() {
       thumbnail_path: props.draft.thumbnail_path,
       mosaic_path: props.draft.mosaic_path,
       original_path: props.draft.original_path,
-      is_public: props.draft.is_public
+      is_public: props.draft.is_public,
+      source_project_id: remixSourceId.value ?? undefined
     }
 
     let data: any = null
@@ -51,12 +62,28 @@ async function save() {
         .upsert(row, { onConflict: 'id' })
         .select('id')
         .single())
+      if (error && /source_project_id|column .*source_project_id.* does not exist/i.test(String(error.message || ''))) {
+        const { source_project_id: _omit, ...row2 } = row as any
+        ;({ data, error } = await supabase
+          .from('projects')
+          .upsert(row2, { onConflict: 'id' })
+          .select('id')
+          .single())
+      }
     } else {
       ;({ data, error } = await supabase
         .from('projects')
         .insert(row)
         .select('id')
         .single())
+      if (error && /source_project_id|column .*source_project_id.* does not exist/i.test(String(error.message || ''))) {
+        const { source_project_id: _omit, ...row2 } = row as any
+        ;({ data, error } = await supabase
+          .from('projects')
+          .insert(row2)
+          .select('id')
+          .single())
+      }
     }
 
     if (error) throw error

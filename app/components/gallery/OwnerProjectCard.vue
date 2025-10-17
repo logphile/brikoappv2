@@ -82,18 +82,13 @@ const isOwner = computed(() => {
 })
 
 async function onView(){
-  await router.push(`/studio/${props.p.id}`)
+  await router.push({ path: '/mosaic', query: { remix: props.p.id } })
 }
 async function onRemix(){
   if (isRemixing.value) return
   isRemixing.value = true
   try {
-    const { data: newId, error } = await $supabase.rpc('remix_project', { src: props.p.id })
-    if (error || !newId) {
-      console.error('remix error', error)
-      return
-    }
-    await router.push(`/studio/${newId}?tab=mosaic`)
+    await router.push({ path: '/mosaic', query: { remix: props.p.id } })
   } finally {
     isRemixing.value = false
   }
