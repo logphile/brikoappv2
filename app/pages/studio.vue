@@ -6,8 +6,16 @@
         <p class="mt-2 text-[#34343A]/70">Start a new project or explore the community.</p>
       </div>
       <div class="hidden md:flex items-center gap-3">
-        <NuxtLink to="/gallery" class="btn-outline-ink">Community Gallery</NuxtLink>
-        <NuxtLink :to="{ name: 'studio-new' }" class="btn-primary">New Project</NuxtLink>
+        <AppButton
+          to="/gallery"
+          icon="i-lucide-users"
+          label="Community Gallery"
+        />
+        <AppButton
+          to="/studio/new"
+          icon="i-lucide-plus"
+          label="New Project"
+        />
       </div>
     </header>
 
@@ -83,6 +91,7 @@ import { useHead } from 'nuxt/app'
 declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
 import ProjectGrid from '@/components/ProjectGrid.vue'
+import AppButton from '@/components/ui/AppButton.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
