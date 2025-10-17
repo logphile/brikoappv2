@@ -34,6 +34,7 @@ import { useMosaicify } from '@/composables/useMosaicify'
 import { suggestStuds } from '@/composables/useAutoSize'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import SaveRow from '@/components/editor/SaveRow.vue'
+import Chip from '@/components/ui/Chip.vue'
 
 // Nuxt auto-imported composable from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
@@ -1569,7 +1570,7 @@ watchDebounced(
         <section :id="stepsGuide[2].id" class="scroll-mt-28">
           <ClientOnly>
             <div
-              class="bg-[#2F3061] rounded-xl shadow-lg ring-1 ring-[#343434]/20 p-6 overflow-hidden"
+              class="bg-[#2F3061] text-white/90 rounded-xl shadow-lg ring-1 ring-[#343434]/20 p-6 overflow-hidden"
             >
               <!-- Unified header -->
               <div class="flex flex-wrap items-center gap-3 border-b border-white/10 px-5 py-3">
@@ -1623,13 +1624,15 @@ watchDebounced(
                 @drop="handleDrop"
               >
                 <RegeneratingChip />
-                <!-- Applied preset & size chips (on purple surface) -->
+                <!-- Applied preset & size chips (dark panel variant) -->
                 <div
-                  class="mt-2 flex items-center gap-2 on-purple"
+                  class="mt-2 flex items-center gap-2"
                   v-if="resolvedMode || (target.w && target.h)"
                 >
-                  <span class="chip chip--active">Preset: {{ resolvedMode }}</span>
-                  <span class="chip chip--active">{{ target.w }}×{{ target.h }} studs</span>
+                  <Chip on="ink">Preset: {{ resolvedMode || 'auto' }}</Chip>
+                  <Chip on="ink">
+                    {{ Number.isFinite(target.w) && Number.isFinite(target.h) ? (target.w + '×' + target.h + ' studs') : 'Size pending…' }}
+                  </Chip>
                 </div>
                 <div
                   v-if="dropActive"
@@ -1644,7 +1647,8 @@ watchDebounced(
                   <div v-if="loading" class="h-[480px] grid place-items-center opacity-80">
                     <div class="w-2/3 max-w-md text-center space-y-3">
                       <div>
-                        Processing… <span v-if="progress">{{ Math.round(progress) }}%</span>
+                        <span class="text-white/90 text-sm">Processing…</span>
+                        <span class="text-white/90 text-sm" v-if="progress">{{ Math.round(progress) }}%</span>
                       </div>
                       <div class="h-2 w-full bg-white/10 rounded">
                         <div
