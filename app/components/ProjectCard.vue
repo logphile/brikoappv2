@@ -36,9 +36,22 @@
 
       <!-- hover action cluster -->
       <div class="pointer-events-none absolute inset-0">
-        <div class="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition pointer-events-auto">
-          <NuxtLink :to="`${viewPrefix}/${project.id}`" class="btn ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition">View</NuxtLink>
-          <button @click.stop.prevent="onRemix(project.id)" :disabled="isRemixing" class="btn ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition">Remix</button>
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
+          <div class="w-full flex gap-2">
+            <NuxtLink
+              :to="`${viewPrefix}/${project.id}`"
+              class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
+            >
+              View
+            </NuxtLink>
+            <button
+              @click.stop.prevent="onRemix(project.id)"
+              :disabled="isRemixing"
+              class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20 transition"
+            >
+              Remix
+            </button>
+          </div>
         </div>
       </div>
     </div>

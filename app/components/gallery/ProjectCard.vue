@@ -20,8 +20,26 @@
       <!-- Hover overlay actions: neutral/outline buttons (no mint) -->
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
         <div class="w-full flex gap-2">
-          <NuxtLink :to="viewHref" class="btn flex-1 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition">View</NuxtLink>
-          <button @click.stop.prevent="onRemix" :disabled="isRemixing" class="btn flex-1 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition">Remix</button>
+          <NuxtLink
+            :to="viewHref"
+            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
+          >
+            View
+          </NuxtLink>
+          <button
+            @click.stop.prevent="onRemix"
+            :disabled="isRemixing"
+            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20 transition"
+          >
+            Remix
+          </button>
+          <button
+            v-if="canDelete"
+            @click.stop.prevent="askDelete = true"
+            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium text-white bg-[#FF0062] shadow-sm hover:bg-[#ff1c73] transition"
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -36,12 +54,33 @@
       </div>
     </div>
   </article>
+  <ConfirmModal
+    v-if="canDelete"
+    :open="askDelete"
+    title="Delete project?"
+    :message="`“${props.name || 'Untitled'}” will be permanently removed.`"
+    confirm-label="Delete"
+    cancel-label="Cancel"
+    danger
+    @close="askDelete = false"
+    @confirm="doDelete"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { navigateTo } from 'nuxt/app'
+import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import { useToasts } from '@/composables/useToasts'
+// Nuxt auto-imported composables from @nuxtjs/supabase
+declare const useSupabaseClient: <T = any>() => T
+declare const useSupabaseUser: <T = any>() => T
 const isRemixing = ref(false)
+const askDelete = ref(false)
+const deleting = ref(false)
+const supabase = useSupabaseClient<any>()
+const user = useSupabaseUser<any>()
+const { show: showToast } = useToasts()
 
 const props = defineProps<{
   id?: string | number
@@ -61,6 +100,7 @@ const props = defineProps<{
   savedByMe?: boolean
   isSeed?: boolean
   caption?: 'ink' | 'light'
+  canDelete?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -71,6 +111,7 @@ const emit = defineEmits<{
   (e: 'remix'): void
   (e: 'share'): void
   (e: 'img-error', id: string | number | undefined): void
+  (e: 'deleted', id: string | number | undefined): void
 }>()
 
 const broken = ref(false)
@@ -146,4 +187,26 @@ const viewHref = computed(() => props.publicId ? `/p/${props.publicId}-${slugify
 const dateLocal = computed(() => {
   try { return props.date ? new Date(props.date).toLocaleDateString() : '' } catch { return '' }
 })
+
+async function doDelete(){
+  if (!props.id) return
+  if (deleting.value) return
+  deleting.value = true
+  try {
+    const me = user?.value?.id || ''
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', String(props.id))
+      .eq('user_id', me)
+    if (error) throw error
+    emit('deleted', props.id)
+    showToast('Project removed.', 'success')
+  } catch (e: any) {
+    showToast('Could not delete this project.', 'error')
+  } finally {
+    deleting.value = false
+    askDelete.value = false
+  }
+}
 </script>
