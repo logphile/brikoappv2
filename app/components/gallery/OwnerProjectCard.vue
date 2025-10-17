@@ -21,8 +21,13 @@
       <button type="button" @click="onView" class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
         View
       </button>
-      <button type="button" @click="onRemix" class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer">
-        Remix
+      <button
+        type="button"
+        class="px-3 py-1.5 text-sm rounded-md bg-white/90 text-black hover:bg-white cursor-pointer"
+        :disabled="isRemixing"
+        @click.stop.prevent="onRemix"
+      >
+        {{ isOwner ? 'Duplicate' : 'Remix' }}
       </button>
 
       <button
@@ -48,6 +53,7 @@ import { deleteProject } from '@/lib/gallery'
 
 const props = defineProps<{ p: any }>()
 const url = ref<string | null>(null)
+const isRemixing = ref(false)
 const userId = ref<string | null>(null)
 const router = useRouter()
 const { $supabase } = useNuxtApp() as any
@@ -79,7 +85,18 @@ async function onView(){
   await router.push(`/studio/${props.p.id}`)
 }
 async function onRemix(){
-  await router.push({ path: '/mosaic', query: { remix: props.p.id } })
+  if (isRemixing.value) return
+  isRemixing.value = true
+  try {
+    const { data: newId, error } = await $supabase.rpc('remix_project', { src: props.p.id })
+    if (error || !newId) {
+      console.error('remix error', error)
+      return
+    }
+    await router.push(`/studio/${newId}?tab=mosaic`)
+  } finally {
+    isRemixing.value = false
+  }
 }
 async function onDelete(){
   if (!isOwner.value) return

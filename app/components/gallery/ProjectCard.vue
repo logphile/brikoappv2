@@ -20,8 +20,8 @@
       <!-- Hover overlay actions: neutral/outline buttons (no mint) -->
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
         <div class="w-full flex gap-2">
-          <button class="btn flex-1 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition" @click.stop="remixProject">Remix</button>
           <NuxtLink :to="viewHref" class="btn flex-1 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition">View</NuxtLink>
+          <button @click.stop.prevent="onRemix" :disabled="isRemixing" class="btn flex-1 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition">Remix</button>
         </div>
       </div>
     </div>
@@ -41,6 +41,10 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { navigateTo } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
+const supabase = useSupabaseClient() as any
+const isRemixing = ref(false)
 
 const props = defineProps<{
   id?: string | number
@@ -95,6 +99,9 @@ function onImgError(){
   emit('img-error', props.id ?? props.publicId)
 }
 
+const imgLoaded = ref(false)
+function onImgLoad(){ imgLoaded.value = true }
+
 const showOriginal = ref(false)
 function preloadOriginal(){ if(props.originalUrl){ const img = new Image(); img.src = props.originalUrl } }
 function onTapSwap(){ if (props.originalUrl) { showOriginal.value = !showOriginal.value } }
@@ -111,15 +118,25 @@ function toProject(id?: string){
   return navigateTo(`/p/${id}${slug ? '-' + slug : ''}`)
 }
 
-function remixProject(){
-  const id = props.publicId || ''
-  const kind = (props.kind || '').toLowerCase()
-  const src = props.originalUrl || props.thumbUrl || ''
-  if(!src) return
-  const query: Record<string, string> = { src, from: id }
-  const path = kind === 'voxel' ? '/voxel' : (kind === 'avatar' ? '/avatar' : '/mosaic')
-  return navigateTo({ path, query })
+// Fork project via RPC and jump to Studio Mosaic
+async function onRemix(){
+  if (isRemixing.value) return
+  isRemixing.value = true
+  try {
+    const id = String(props.id || '')
+    if (!id) return
+    const { data: newId, error } = await supabase.rpc('remix_project', { src: id })
+    if (error || !newId) {
+      // eslint-disable-next-line no-console
+      console.error('remix error', error)
+      return
+    }
+    await navigateTo(`/studio/${newId}?tab=mosaic`)
+  } finally {
+    isRemixing.value = false
+  }
 }
+
 
 function relativeTime(input?: string){
   if(!input) return ''

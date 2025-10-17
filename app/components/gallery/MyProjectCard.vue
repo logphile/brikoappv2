@@ -25,6 +25,7 @@ const isOwner = computed(() => userId.value === props.p.user_id)
 const previewUrl = ref<string | null>(null)
 const busyToggle = ref(false)
 const isPublic = ref<boolean>(!!props.p.is_public)
+const isRemixing = ref(false)
 
 onMounted(async () => {
   try {
@@ -47,8 +48,18 @@ async function onView() {
 }
 
 async function onRemix() {
-  // Same destination for now; separate flow can be added later
-  await router.push({ path: '/photo', query: { remix: props.p.id } })
+  if (isRemixing.value) return
+  isRemixing.value = true
+  try {
+    const { data: newId, error } = await $supabase.rpc('remix_project', { src: props.p.id })
+    if (error || !newId) {
+      console.error('remix error', error)
+      return
+    }
+    await router.push(`/studio/${newId}?tab=mosaic`)
+  } finally {
+    isRemixing.value = false
+  }
 }
 
 async function onDelete() {
@@ -133,9 +144,10 @@ async function togglePublic(){
         <button
           type="button"
           class="h-9 rounded-xl px-3 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
-          @click="onRemix"
+          :disabled="isRemixing"
+          @click.stop.prevent="onRemix"
         >
-          Remix
+          {{ isOwner ? 'Duplicate' : 'Remix' }}
         </button>
 
         <button

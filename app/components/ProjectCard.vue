@@ -38,7 +38,7 @@
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition pointer-events-auto">
           <NuxtLink :to="`${viewPrefix}/${project.id}`" class="btn ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition">View</NuxtLink>
-          <NuxtLink :to="`/mosaic?remix=${project.id}`" class="btn ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition">Remix</NuxtLink>
+          <button @click.stop.prevent="onRemix(project.id)" :disabled="isRemixing" class="btn ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition">Remix</button>
         </div>
       </div>
     </div>
@@ -54,6 +54,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { navigateTo } from 'nuxt/app'
+// Nuxt auto-imported composable
+declare const useSupabaseClient: <T = any>() => T
+const supabase = useSupabaseClient() as any
+const isRemixing = ref(false)
 const emit = defineEmits<{ (e: 'img-error', id: string | number): void }>()
 interface OwnerInfo { handle?: string | null; display_name?: string | null }
 interface CommunityProject {
@@ -71,4 +76,22 @@ const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: bo
 
 const imgLoaded = ref(false)
 function onImgLoad(){ imgLoaded.value = true }
+
+// Fork via RPC and route to Studio Mosaic
+async function onRemix(id: string | number){
+  if (isRemixing.value) return
+  isRemixing.value = true
+  try {
+    const src = String(id)
+    const { data: newId, error } = await supabase.rpc('remix_project', { src })
+    if (error || !newId) {
+      // eslint-disable-next-line no-console
+      console.error('remix error', error)
+      return
+    }
+    await navigateTo(`/studio/${newId}?tab=mosaic`)
+  } finally {
+    isRemixing.value = false
+  }
+}
 </script>
