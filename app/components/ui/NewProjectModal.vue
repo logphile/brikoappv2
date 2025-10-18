@@ -22,9 +22,9 @@
           <!-- Header -->
           <div class="mb-5">
             <div class="inline-flex items-center gap-2 rounded-xl
-                        bg-[#00E5A0]/15 text-[#00E5A0] px-3 py-1
-                        ring-1 ring-[#00E5A0]/30">
-              <span class="h-2 w-2 rounded-full bg-[#00E5A0]"></span>
+                        bg-[#FF0062]/15 text-white px-3 py-1
+                        ring-1 ring-[#FF0062]/30">
+              <span class="h-2 w-2 rounded-full bg-[#FF0062]"></span>
               <span class="text-xs font-semibold tracking-wide">New Project</span>
             </div>
             <h2 class="mt-3 text-2xl font-semibold text-white">Start a new project</h2>
@@ -37,9 +37,9 @@
               to="/photo"
               class="group block rounded-xl p-4
                      bg-white/5 hover:bg-white/8
-                     ring-1 ring-white/10 hover:ring-[#00E5A0]/40
+                     ring-1 ring-white/10 hover:ring-[#FF0062]/40
                      transition-all cursor-pointer focus:outline-none
-                     focus:ring-2 focus:ring-[#00E5A0]/60"
+                     focus:ring-2 focus:ring-[#FF0062]/60"
             >
               <div class="flex items-start justify-between">
                 <div>
@@ -48,7 +48,7 @@
                 </div>
                 <span class="mt-1 opacity-0 group-hover:opacity-100 transition
                               inline-flex h-6 w-6 items-center justify-center rounded-full
-                              bg-[#00E5A0]/20 ring-1 ring-[#00E5A0]/40">→</span>
+                              bg-[#FF0062]/20 ring-1 ring-[#FF0062]/40">→</span>
               </div>
             </NuxtLink>
 
@@ -56,9 +56,9 @@
               to="/voxel"
               class="group block rounded-xl p-4
                      bg-white/5 hover:bg-white/8
-                     ring-1 ring-white/10 hover:ring-[#00E5A0]/40
+                     ring-1 ring-white/10 hover:ring-[#FF0062]/40
                      transition-all cursor-pointer focus:outline-none
-                     focus:ring-2 focus:ring-[#00E5A0]/60"
+                     focus:ring-2 focus:ring-[#FF0062]/60"
             >
               <div class="text-base font-semibold text-white">3D Voxel Builder</div>
               <div class="mt-0.5 text-sm text-white/70">Live 3D preview with instanced bricks.</div>
@@ -68,9 +68,9 @@
               to="/avatar"
               class="group block rounded-xl p-4
                      bg-white/5 hover:bg-white/8
-                     ring-1 ring-white/10 hover:ring-[#00E5A0]/40
+                     ring-1 ring-white/10 hover:ring-[#FF0062]/40
                      transition-all cursor-pointer focus:outline-none
-                     focus:ring-2 focus:ring-[#00E5A0]/60"
+                     focus:ring-2 focus:ring-[#FF0062]/60"
             >
               <div class="text-base font-semibold text-white">Avatar (LEGO-style)</div>
               <div class="mt-0.5 text-sm text-white/70">Quick face filter—fun & sharable.</div>
@@ -81,10 +81,9 @@
           <div class="mt-6 flex justify-end">
             <button
               class="inline-flex h-10 items-center justify-center rounded-xl px-4
-                     bg-gradient-to-r from-[#00E5A0] to-[#32f0be]
-                     text-[#111827] font-medium shadow
+                     bg-[#FF0062] text-white font-medium shadow
                      hover:brightness-110 active:brightness-95
-                     focus:outline-none focus:ring-2 focus:ring-white/30"
+                     focus:outline-none focus:ring-2 focus:ring-white/40"
               @click="$emit('update:open', false)"
             >
               Close
@@ -95,7 +94,7 @@
           <div class="pointer-events-none absolute -inset-px rounded-2xl
                       ring-1 ring-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]
                       after:absolute after:inset-0 after:rounded-2xl
-                      after:shadow-[0_0_60px_10px_rgba(0,229,160,0.08)]"></div>
+                      after:shadow-[0_0_60px_10px_rgba(255,0,98,0.10)]"></div>
         </div>
       </div>
     </transition>
