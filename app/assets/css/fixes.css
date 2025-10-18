@@ -1,0 +1,12 @@
+/* stop any stray parent from forcing default across the app */
+html, body { cursor: auto !important; }
+
+/* make obvious interactive things show a pointer, even if a parent set something weird */
+a[href],
+button,
+[role="button"],
+input[type="submit"],
+label[for],
+summary {
+  cursor: pointer;
+}
