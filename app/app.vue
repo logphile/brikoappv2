@@ -90,4 +90,7 @@ useHead({
 })
 </script>
 
- 
+<style>
+:root { font-size: 16px; }
+body { @apply text-body; }
+</style>
