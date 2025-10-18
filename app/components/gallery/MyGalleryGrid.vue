@@ -5,11 +5,19 @@ import MyProjectCard from '@/components/gallery/MyProjectCard.vue'
 
 const { items, loading, ready, refresh } = useMyGallery()
 
+function onDeleted(e: any){
+  try {
+    const id = String(e?.detail ?? '')
+    if (!id) return
+    items.value = items.value.filter(p => String(p.id) !== id)
+  } catch {}
+}
+
 onMounted(() => {
-  try { window.addEventListener('project:deleted', refresh as any, { passive: true }) } catch {}
+  try { window.addEventListener('project:deleted', onDeleted as any, { passive: true }) } catch {}
 })
 onBeforeUnmount(() => {
-  try { window.removeEventListener('project:deleted', refresh as any) } catch {}
+  try { window.removeEventListener('project:deleted', onDeleted as any) } catch {}
 })
 </script>
 

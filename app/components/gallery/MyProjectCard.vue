@@ -112,7 +112,7 @@ async function togglePublic(){
 
 <template>
   <article
-    class="group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition hover:bg-white/7"
+    class="gallery-card group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition hover:bg-white/7"
   >
     <!-- Thumb -->
     <NuxtLink :to="{ path: '/mosaic', query: { remix: p.id } }" class="block">
@@ -150,7 +150,7 @@ async function togglePublic(){
         <time :datetime="p.created_at">{{ new Date(p.created_at).toLocaleDateString() }}</time>
       </div>
 
-      <div class="mt-3 flex items-center gap-2">
+      <div class="actions mt-2 flex items-center gap-2">
         <NuxtLink
           :to="{ path: '/mosaic', query: { remix: p.id } }"
           class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
@@ -171,9 +171,10 @@ async function togglePublic(){
         <button
           v-if="isOwner"
           type="button"
-          @click="askDelete = true"
+          @click.stop="askDelete = true"
           class="ml-auto inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
-                 ring-1 ring-red-500/30 text-red-50 bg-[#FF0062] hover:bg-[#ff1c73] transition"
+                 text-sm font-medium text-white bg-[#FF0062]
+                 ring-1 ring-black/0 shadow-sm hover:bg-[#ff1c73] transition"
           title="Delete"
         >
           Delete
