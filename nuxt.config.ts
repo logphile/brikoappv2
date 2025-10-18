@@ -63,7 +63,7 @@ export default defineNuxtConfig({
     '/project/**': { prerender: false },
     '/share/**': { prerender: false }
   },
-  css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css', '~/assets/css/main.css', '~/assets/css/fixes.css'],
+  css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css', '~/assets/css/main.css', '~/assets/css/fixes.css', '~/assets/css/base.css'],
   postcss: {
     plugins: {
       tailwindcss: {},

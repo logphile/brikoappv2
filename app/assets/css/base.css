@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global focus ring */
+:where(a,button,[role="button"],input,select,textarea) {
+  @apply focus:outline-none focus:ring-2 focus:ring-pink/60;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

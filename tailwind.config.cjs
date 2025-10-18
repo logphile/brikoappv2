@@ -1,25 +1,43 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './app/**/*.{vue,ts}',
+    './app/**/*.{vue,ts,js}',
+    './components/**/*.{vue,ts,js}',
+    './pages/**/*.{vue,ts,js}',
+    './layouts/**/*.{vue,ts,js}',
+    './plugins/**/*.{ts,js}',
   ],
   safelist: ['font-slab'],
   theme: {
     extend: {
       colors: {
+        // Brand tokens
+        paper: '#FFD808',   // site bg
+        ink:   '#1F2342',   // dark cards/nav
+        pink:  '#FF0062',   // primary accent
+        plum:  '#272A52',   // optional dark alt
+        // existing brand map retained for back-compat utilities
         brand: {
           pink:   '#FF0062',
           yellow: '#FFD808',
           purple: '#2F3061',
           ink:    '#343434',
           paper:  '#F5F4F1',
-          // aliases used in CSS
-          dark:   '#343434', // = ink
-          ivory:  '#F5F4F1', // = paper
+          dark:   '#343434',
+          ivory:  '#F5F4F1',
         },
       },
       boxShadow: {
-        soft: '0 4px 18px rgba(0,0,0,0.12)'
+        soft: '0 4px 18px rgba(0,0,0,0.12)',
+        card: '0 8px 24px -8px rgba(0,0,0,.35)',
+        elevated: '0 14px 40px -10px rgba(0,0,0,.45)',
+      },
+      borderRadius: {
+        xl: '0.75rem',
+        '2xl': '1rem',
+      },
+      fontSize: {
+        body: ['15px', { lineHeight: '1.7' }],
       },
       fontFamily: {
         sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
@@ -27,5 +45,15 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        '.h1': { fontWeight: 800, lineHeight: '1.1', fontSize: '42px' },
+        '@screen md': { '.h1': { fontSize: '3.75rem' } }, // md:text-6xl
+        '.h2': { fontWeight: 800, lineHeight: '1.15', fontSize: '2rem' },
+        '@screen md': { '.h2': { fontSize: '2.5rem' } },
+        '.h3': { fontWeight: 600, fontSize: '1.125rem' },
+      })
+    }
+  ],
 }
