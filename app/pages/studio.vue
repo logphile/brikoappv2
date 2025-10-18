@@ -44,7 +44,13 @@
       <div v-if="loadingMy" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 lg:gap-10">
         <div v-for="n in 10" :key="`sk-${n}`" class="aspect-square rounded-2xl bg-white/70 animate-pulse"></div>
       </div>
-      <ProjectGrid v-else-if="computedMyItems.length" :items="computedMyItems" view-prefix="/studio" />
+      <ProjectGrid
+        v-else-if="computedMyItems.length"
+        :items="computedMyItems"
+        view-prefix="/studio"
+        :can-delete="true"
+        @deleted="onMyProjectDeleted"
+      />
       <div v-else class="mt-4">
         <div class="card p-8 flex items-center gap-4">
           <div class="rounded-full h-10 w-10 bg-[#34343A]/10 flex items-center justify-center">
@@ -235,6 +241,11 @@ onMounted(async () => {
   if (user.value) fetchMy()
   fetchCommPage()
 })
+
+function onMyProjectDeleted(id: string | number) {
+  const sid = String(id)
+  myItems.value = myItems.value.filter((p:any) => String(p.id) !== sid)
+}
 
 </script>
 

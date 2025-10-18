@@ -40,16 +40,29 @@
           <div class="w-full flex gap-2">
             <NuxtLink
               :to="`${viewPrefix}/${project.id}`"
-              class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
+              class="inline-flex items-center justify-center h-9 px-3 rounded-full
+                     leading-none text-sm font-medium bg-white text-gray-900/90
+                     ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
             >
               View
             </NuxtLink>
             <button
-              @click.stop.prevent="onRemix(project.id)"
+              class="inline-flex items-center justify-center h-9 px-3 rounded-full
+                     leading-none text-sm font-medium bg-white/10 text-white/90
+                     ring-1 ring-white/15 hover:bg-white/20 transition"
+              @click.stop="onRemix(project.id)"
               :disabled="isRemixing"
-              class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20 transition"
             >
               Remix
+            </button>
+            <button
+              v-if="canDelete"
+              class="inline-flex items-center justify-center h-9 px-3 rounded-full
+                     leading-none text-sm font-medium text-white bg-[#FF0062]
+                     ring-1 ring-black/0 shadow-sm hover:bg-[#ff1c73] transition"
+              @click.stop="askDelete = true"
+            >
+              Delete
             </button>
           </div>
         </div>
@@ -63,13 +76,34 @@
       </div>
     </div>
   </article>
+  <ConfirmModal
+    v-if="canDelete"
+    :open="askDelete"
+    title="Delete project?"
+    :message="`“${project.title || 'Untitled'}” will be permanently removed.`"
+    confirm-label="Delete"
+    cancel-label="Cancel"
+    danger
+    @close="askDelete = false"
+    @confirm="doDelete"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { navigateTo } from 'nuxt/app'
+import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import { useToasts } from '@/composables/useToasts'
+// Nuxt auto-imported composables from @nuxtjs/supabase
+declare const useSupabaseClient: <T = any>() => T
+declare const useSupabaseUser: <T = any>() => T
 const isRemixing = ref(false)
-const emit = defineEmits<{ (e: 'img-error', id: string | number): void }>()
+const askDelete = ref(false)
+const deleting = ref(false)
+const supabase = useSupabaseClient<any>()
+const user = useSupabaseUser<any>()
+const { show: showToast } = useToasts()
+const emit = defineEmits<{ (e: 'img-error', id: string | number): void; (e: 'deleted', id: string | number): void }>()
 interface OwnerInfo { handle?: string | null; display_name?: string | null }
 interface CommunityProject {
   id: string | number
@@ -79,7 +113,7 @@ interface CommunityProject {
   owner?: OwnerInfo
 }
 
-const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: boolean; viewPrefix?: string }>(), {
+const props = withDefaults(defineProps<{ project: CommunityProject; overlay?: boolean; viewPrefix?: string; canDelete?: boolean }>(), {
   overlay: false,
   viewPrefix: '/project',
 })
@@ -92,5 +126,26 @@ async function onRemix(id: string | number){
   const src = String(id)
   if (!src) return
   await navigateTo({ path: '/mosaic', query: { remix: src } })
+}
+
+async function doDelete(){
+  if (deleting.value) return
+  deleting.value = true
+  try {
+    const me = user?.value?.id || ''
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', String(props.project.id))
+      .eq('user_id', me)
+    if (error) throw error
+    emit('deleted', props.project.id)
+    showToast('Project removed.', 'success')
+  } catch (e: any) {
+    showToast('Could not delete project.', 'error')
+  } finally {
+    deleting.value = false
+    askDelete.value = false
+  }
 }
 </script>
