@@ -1,5 +1,5 @@
 <template>
-  <article v-if="!broken" class="group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 transition hover:bg-white/7">
+  <article v-if="!broken" class="gallery-card group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 transition hover:bg-white/7">
     <!-- Preview area: square, original swap on hover/tap -->
     <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
@@ -19,7 +19,7 @@
 
       <!-- Hover overlay actions: neutral/outline buttons (no mint) -->
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
-        <div class="w-full flex gap-2">
+        <div class="actions w-full flex gap-2">
           <NuxtLink
             :to="viewHref"
             class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
