@@ -35,6 +35,8 @@ import { suggestStuds } from '@/composables/useAutoSize'
 import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
 import SaveRow from '@/components/editor/SaveRow.vue'
 import Chip from '@/components/ui/Chip.vue'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiPillGroup from '@/components/ui/UiPillGroup.vue'
 
 // Nuxt auto-imported composable from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
@@ -655,6 +657,19 @@ function choosePreset(w: number, h: number) {
   mosaic.setTargetSize(w, h)
 }
 
+// Preset pill group binding (symmetric sizes only)
+const presetChoice = computed<string>({
+  get() {
+    const opts = [16, 20, 32, 48, 64]
+    const n = nearestOption(Math.min(target.value.w, target.value.h), opts)
+    return `${n}x${n}`
+  },
+  set(v: string) {
+    const [w, h] = String(v || '').split('x').map((n) => parseInt(n, 10))
+    if (Number.isFinite(w) && Number.isFinite(h)) choosePreset(w, h)
+  }
+})
+
 // Snap sliders to nearest allowed value on commit and surface a subtle toast
 function snapDim(which: 'w' | 'h') {
   const cur = target.value[which]
@@ -1163,22 +1178,18 @@ watchDebounced(
                       </ButtonPrimary>
                     </div>
                   </div>
-                  <!-- Optional preset size chips -->
-                  <div class="mt-2 flex flex-wrap gap-2">
-                    <button
-                      v-for="preset in [
-                        [16, 16],
-                        [20, 20],
-                        [32, 32],
-                        [48, 48],
-                        [64, 64],
+                  <!-- Preset size pill group -->
+                  <div class="mt-2">
+                    <UiPillGroup
+                      v-model="presetChoice"
+                      :options="[
+                        { label: '16×16', value: '16x16' },
+                        { label: '20×20', value: '20x20' },
+                        { label: '32×32', value: '32x32' },
+                        { label: '48×48', value: '48x48' },
+                        { label: '64×64', value: '64x64' },
                       ]"
-                      :key="(preset as any).join('x')"
-                      class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[#343434]/80 hover:border-pink-500/40"
-                      @click="choosePreset((preset as any)[0], (preset as any)[1])"
-                    >
-                      {{ (preset as any)[0] }}×{{ (preset as any)[1] }}
-                    </button>
+                    />
                   </div>
                   <div class="grid grid-cols-2 gap-5 text-sm">
                     <label class="text-[#2F3061]"
@@ -1218,8 +1229,9 @@ watchDebounced(
                   <div class="h-px bg-white/5 my-3"></div>
                   <!-- Step 2 footer row -->
                   <div class="mt-6 flex items-center justify-end gap-3 on-yellow">
-                    <button
-                      class="btn-primary rounded-full px-5 py-2"
+                    <UiButton
+                      as="button"
+                      variant="primary"
                       :disabled="isSaving || !mosaicReady"
                       @click="onSave"
                       aria-label="Save mosaic to My Gallery"
@@ -1227,7 +1239,7 @@ watchDebounced(
                     >
                       <span v-if="!isSaving">Save</span>
                       <span v-else>Saving…</span>
-                    </button>
+                    </UiButton>
                   </div>
                   <!-- Hidden SaveRow to reuse save() logic without showing bottom bar -->
                   <div class="hidden" aria-hidden="true">
@@ -1956,6 +1968,7 @@ watchDebounced(
                   </template>
                   <template v-else>
                     <EmptyMosaicPlaceholder />
+                    <p class="mt-3 text-sm text-white/70 text-center">Drop an image to begin</p>
                   </template>
                 </div>
               </div>

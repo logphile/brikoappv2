@@ -348,7 +348,7 @@ async function makePublic(){
           <div class="divide-y divide-[#343434]/10">
             <!-- Voxel settings -->
             <section class="pt-4 pb-6">
-              <h3 class="text-lg font-semibold text-[#343434] mb-1">Voxel settings</h3>
+              <h3 class="h3 text-[#343434] mb-1">Voxel settings</h3>
               <div class="flex items-center gap-2 mb-1">
                 <label class="block text-sm text-[#2F3061]">Resolution</label>
                 <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" style="background:rgba(255,0,98,.12); color:#FF0062;">{{ size }}³</span>
@@ -359,7 +359,7 @@ async function makePublic(){
 
             <!-- Lighting -->
             <section class="pt-4 pb-6">
-              <h3 class="text-lg font-semibold text-[#343434] mb-1">Lighting</h3>
+              <h3 class="h3 text-[#343434] mb-1">Lighting</h3>
               <div class="flex items-center gap-2 mb-1">
                 <label class="block text-sm text-[#2F3061]">Brightness</label>
                 <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" style="background:rgba(255,0,98,.12); color:#FF0062;">{{ exposure.toFixed(1) }}×</span>
@@ -369,13 +369,13 @@ async function makePublic(){
 
             <!-- Build steps -->
             <section class="pt-4 pb-6">
-              <h3 class="text-lg font-semibold text-[#343434] mb-1">Build steps</h3>
+              <h3 class="h3 text-[#343434] mb-1">Build steps</h3>
               <p class="text-sm text-[#2F3061]">Control how many layers per step.</p>
             </section>
 
             <!-- Export -->
             <section class="pt-4 pb-0">
-              <h3 class="text-lg font-semibold text-[#343434] mb-3">Export</h3>
+              <h3 class="h3 text-[#343434] mb-3">Export</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
                 <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
                   <span v-if="!pdfWorking">One-click PDF</span>
@@ -403,7 +403,7 @@ async function makePublic(){
       </aside>
 
       <!-- Viewport panel (right) -->
-      <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-6 relative">
+      <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-8 relative">
         <!-- Toolbar top-right -->
         <div class="absolute right-3 top-3 z-10 flex gap-2">
           <button type="button" title="Reset camera" class="inline-flex items-center justify-center rounded-md border border-white/30 text-white/90 hover:bg-[#343434] px-2 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#2F3061]" @click="previewRef?.resetCam?.()">Reset</button>
@@ -424,6 +424,7 @@ async function makePublic(){
           :mode="mode" :exposure="exposure" :debug="debug" :debug3d="debug3d" ref="previewRef"
           @unique-colors="(n:number)=> instUniqueColors = n" @exporting="onExporting" />
         <Empty3DPlaceholder v-else />
+        <p v-if="!vox && !loading" class="mt-3 text-sm text-white/70 text-center">Drop an image to begin</p>
 
         <!-- Palette swatches -->
         <div v-if="vox && paletteUsed.length" class="mt-3">
