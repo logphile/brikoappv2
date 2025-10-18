@@ -18,7 +18,6 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt', '@vueuse/nuxt', 'unplugin-icons/nuxt'],
   plugins: [
     { src: '~/plugins/img-comparison-slider.client', mode: 'client' },
-    '~/plugins/seo.global',
     '~/plugins/schema.org'
   ],
   typescript: { strict: true },
