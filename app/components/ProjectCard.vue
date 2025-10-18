@@ -22,7 +22,7 @@
   </NuxtLink>
 
   <!-- Studio overlay style: soft card with square preview and hover actions -->
-  <article v-else class="card card-hover group relative overflow-hidden">
+  <article v-else class="gallery-card card card-hover group relative overflow-hidden">
     <!-- cover -->
     <div class="relative aspect-square overflow-hidden rounded-2xl bg-black/5">
       <div class="absolute inset-0 animate-pulse bg-black/5" v-if="!imgLoaded" />
@@ -37,7 +37,7 @@
       <!-- hover action cluster -->
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
-          <div class="w-full flex gap-2">
+          <div class="actions w-full flex gap-2">
             <NuxtLink
               :to="`${viewPrefix}/${project.id}`"
               class="inline-flex items-center justify-center h-9 px-3 rounded-full

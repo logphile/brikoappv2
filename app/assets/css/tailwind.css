@@ -353,3 +353,15 @@
     .section-yellow { @apply bg-brand-yellow text-brand-dark; }
     .section-purple { @apply bg-brand-purple text-brand-ivory; }
   }
+
+  /* Gallery action pills: force vertical centering everywhere */
+  .gallery-card .actions a,
+  .gallery-card .actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.25rem;      /* h-9 */
+    line-height: 1;       /* leading-none */
+    padding: 0 0.75rem;   /* px-3 */
+    border-radius: 9999px;/* rounded-full */
+  }
