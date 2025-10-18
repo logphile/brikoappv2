@@ -25,24 +25,24 @@
       <div class="grid grid-cols-2 gap-3">
         <button
           type="button"
-          class="w-full rounded-xl bg-brand-yellow text-white
+          class="w-full rounded-xl bg-brand-yellow text-[#FF0062]
                  font-medium px-4 py-2.5
                  shadow-[0_2px_0_rgba(0,0,0,0.2)]
                  transition-colors duration-150
                  focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/70
-                 hover:bg-pink active:translate-y-[1px]"
+                 hover:bg-pink hover:text-brand-yellow active:translate-y-[1px]"
           @click="accept"
         >
           Yes, I Accept
         </button>
         <button
           type="button"
-          class="w-full rounded-xl bg-brand-yellow text-white
+          class="w-full rounded-xl bg-brand-yellow text-[#FF0062]
                  font-medium px-4 py-2.5
                  shadow-[0_2px_0_rgba(0,0,0,0.2)]
                  transition-colors duration-150
                  focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/70
-                 hover:bg-pink active:translate-y-[1px]"
+                 hover:bg-pink hover:text-brand-yellow active:translate-y-[1px]"
           @click="decline"
         >
           No Thanks, I Decline
