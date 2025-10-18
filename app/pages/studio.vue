@@ -6,26 +6,18 @@
         <p class="mt-2 text-[#34343A]/70">Start a new project or explore the community.</p>
       </div>
       <div class="hidden md:flex items-center gap-3">
-        <NuxtLink
+        <UiButton
+          variant="primary"
           to="/gallery"
-          class="inline-flex items-center justify-center h-10 px-4 rounded-xl
-                 ring-1 ring-white/10 bg-[#FF0062] text-white font-medium
-                 hover:bg-[#e20058] transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF0062]/50"
           aria-label="Open Community Gallery"
-        >
-          Community Gallery
-        </NuxtLink>
-        <button
-          type="button"
+        >Community Gallery</UiButton>
+        <UiButton
+          variant="secondary"
+          as="button"
           @click="openNewProjectModal()"
-          class="inline-flex items-center justify-center h-10 px-4 rounded-xl
-                 ring-1 ring-[#34343A]/20 bg-white/70 text-[#34343A] font-medium
-                 hover:bg-white transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#34343A]/30"
           aria-haspopup="dialog"
           aria-controls="new-project-modal"
-        >
-          New Project
-        </button>
+        >New Project</UiButton>
       </div>
     </header>
 
@@ -108,6 +100,7 @@ declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useUiStore } from '@/stores/ui'
+import UiButton from '@/components/ui/UiButton.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
