@@ -36,24 +36,11 @@ module.exports = {
         xl: '0.75rem',
         '2xl': '1rem',
       },
-      fontSize: {
-        body: ['15px', { lineHeight: '1.7' }],
-      },
       fontFamily: {
         sans: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         slab: ['Bespoke Slab', 'ui-serif', 'Georgia', 'serif'],
       },
     },
   },
-  plugins: [
-    function ({ addComponents }) {
-      addComponents({
-        '.h1': { fontWeight: 800, lineHeight: '1.1', fontSize: '42px' },
-        '@screen md': { '.h1': { fontSize: '3.75rem' } }, // md:text-6xl
-        '.h2': { fontWeight: 800, lineHeight: '1.15', fontSize: '2rem' },
-        '@screen md': { '.h2': { fontSize: '2.5rem' } },
-        '.h3': { fontWeight: 600, fontSize: '1.125rem' },
-      })
-    }
-  ],
+  plugins: [],
 }

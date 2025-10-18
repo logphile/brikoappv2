@@ -11,3 +11,10 @@
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* Proper Tailwind layer for custom utility-like classes */
+@layer components {
+  .h1 { @apply font-extrabold leading-tight text-[42px] md:text-6xl; }
+  .h2 { @apply font-extrabold text-3xl md:text-4xl; }
+  .h3 { @apply font-semibold text-lg; }
+}

@@ -92,5 +92,5 @@ useHead({
 
 <style>
 :root { font-size: 16px; }
-body { @apply text-body; }
+body { @apply text-[15px] leading-[1.7]; }
 </style>
