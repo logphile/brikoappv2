@@ -8,6 +8,7 @@ import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
+import UiButton from '@/components/ui/UiButton.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -68,7 +69,7 @@ useHead({
       <div class="container mx-auto px-4 lg:px-6 py-20 md:py-24 lg:py-28 grid grid-cols-1 lg:grid-cols-[1fr,624px] gap-10 lg:gap-[30px] items-center">
         <!-- Left: copy -->
         <div class="relative z-10">
-            <h1 class="h1-hero text-[#343434] max-w-[18ch] mb-6">
+            <h1 class="h1 text-[#343434] max-w-[18ch] mb-6">
               Create LEGO-<br class="hidden md:block" />style art from your images
             </h1>
 
@@ -81,16 +82,15 @@ useHead({
               </li>
             </ul>
 
-            <div>
-              <NuxtLink to="/mosaic" class="btn btn-primary">
-                Try Photo to Bricks Now! →
-              </NuxtLink>
+            <div class="flex items-center gap-3">
+              <UiButton variant="primary" to="/mosaic">Try Photo to Bricks Now! →</UiButton>
+              <UiButton variant="secondary" to="/gallery">Explore Gallery</UiButton>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
         <!-- Right: hero before/after slider -->
-        <div class="flex justify-center lg:justify-end">
+        <div class="flex justify-center lg:justify-end rounded-2xl ring-1 ring-black/10 overflow-hidden shadow-card">
           <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
         </div>
       </div>
@@ -123,7 +123,7 @@ useHead({
 
         <!-- content: image left, cards right -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div class="max-w-[720px]">
+          <div class="max-w-[720px] rounded-2xl ring-1 ring-black/10 overflow-hidden shadow-card">
             <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
           </div>
 
