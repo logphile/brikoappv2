@@ -101,7 +101,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false, requiresAuth: true })
+definePageMeta({ ssr: false, requiresAuth: true, middleware: ['auth'] })
 
 // SEO
 useHead({

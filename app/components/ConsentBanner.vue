@@ -37,7 +37,7 @@ function decline() {
 <template>
   <div
     v-if="show"
-    class="fixed bottom-4 inset-x-4 md:right-4 md:inset-x-auto z-50 max-w-lg p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur"
+    class="fixed bottom-4 inset-x-4 md:right-4 md:inset-x-auto z-50 max-w-lg p-4 rounded-xl border border-white/10 bg-white/5 backdrop-blur text-white"
   >
     <p class="text-sm opacity-90">
       We use privacy-friendly analytics (GA4) to improve Briko. Accept to help us measure usage.

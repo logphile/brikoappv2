@@ -132,7 +132,7 @@ declare const useSupabaseUser: <T = any>() => T
 useHead({ title: 'Settings' })
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ requiresAuth: true })
+definePageMeta({ requiresAuth: true, middleware: ['auth'] })
 
 // Auth user for email display only
 const user = useSupabaseUser<any>()

@@ -32,7 +32,7 @@ import { fromNowSafe, formatDateSafe } from '@/utils/date'
 import { useDayjs } from '@/composables/useDayjs'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false, requiresAuth: true })
+definePageMeta({ ssr: false, requiresAuth: true, middleware: ['auth'] })
 
 const route = useRoute()
 // Nuxt auto-imported composable

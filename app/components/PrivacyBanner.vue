@@ -6,7 +6,7 @@
              bottom-4 right-4 md:bottom-6 md:right-6
              left-4 md:left-auto
              w-[min(90vw,520px)] max-w-sm
-             rounded-2xl bg-brand-purple text-brand-paper
+             rounded-2xl bg-brand-purple text-white
              border-2 border-brand-paper/90
              shadow-[0_10px_24px_rgba(0,0,0,0.25)]
              p-5 md:p-6 space-y-4"
@@ -16,33 +16,33 @@
       <p class="font-sans text-base leading-6">
         We use GA4 analytics (no ads, no selling data) to see what features click and which ones crumble.
         You can change your choice anytime in
-        <NuxtLink to="/settings/profile" class="underline underline-offset-2 hover:text-pink">Settings</NuxtLink>
+        <NuxtLink to="/settings/profile" class="underline underline-offset-2 text-white/90 hover:text-white">Settings</NuxtLink>
         or our
-        <NuxtLink to="/privacy" class="underline underline-offset-2 hover:text-pink">Privacy Policy</NuxtLink>.
+        <NuxtLink to="/privacy" class="underline underline-offset-2 text-white/90 hover:text-white">Privacy Policy</NuxtLink>.
       </p>
 
       <!-- 50/50 buttons -->
       <div class="grid grid-cols-2 gap-3">
         <button
           type="button"
-          class="w-full rounded-xl bg-brand-yellow text-brand-purple
+          class="w-full rounded-xl bg-brand-yellow text-white
                  font-medium px-4 py-2.5
                  shadow-[0_2px_0_rgba(0,0,0,0.2)]
                  transition-colors duration-150
                  focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/70
-                 hover:bg-pink hover:text-brand-yellow active:translate-y-[1px]"
+                 hover:bg-pink active:translate-y-[1px]"
           @click="accept"
         >
           Yes, I Accept
         </button>
         <button
           type="button"
-          class="w-full rounded-xl bg-brand-yellow text-brand-purple
+          class="w-full rounded-xl bg-brand-yellow text-white
                  font-medium px-4 py-2.5
                  shadow-[0_2px_0_rgba(0,0,0,0.2)]
                  transition-colors duration-150
                  focus:outline-none focus-visible:ring-2 focus-visible:ring-pink/70
-                 hover:bg-pink hover:text-brand-yellow active:translate-y-[1px]"
+                 hover:bg-pink active:translate-y-[1px]"
           @click="decline"
         >
           No Thanks, I Decline

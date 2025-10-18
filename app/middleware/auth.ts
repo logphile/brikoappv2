@@ -1,32 +1,20 @@
 import { defineNuxtRouteMiddleware, navigateTo } from 'nuxt/app'
 
-// Named auth middleware applied only on protected pages via definePageMeta({ middleware: ['auth'] })
+// Named auth middleware; attach via definePageMeta({ middleware: ['auth'], requiresAuth: true })
 export default defineNuxtRouteMiddleware((to) => {
-  // Only run on client; protected pages are client-only (ssr: false)
-  if (process.server) return
+  // Client only; never redirect during SSR/static generation
+  if (import.meta.server) return
 
-  // Nuxt Supabase composable (provided by @nuxtjs/supabase); rely on auto-import at runtime
+  // Nuxt Supabase composable (auto-imported at runtime)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = (globalThis as any).useSupabaseUser?.()
   if (!user) return
 
-  // Do not guard the login route
-  if (to.path === '/login') return
+  // If still hydrating, do nothing — avoids false negatives on refresh
+  if (user.value === null) return
 
-  // Explicit allowlist of protected routes
-  const protectedRoutes = new Set<string>([
-    '/studio',
-    '/studio/community',
-    '/gallery',
-    '/avatar',
-    '/mosaic',
-    '/voxel',
-    '/photo'
-  ])
-
-  if (protectedRoutes.has(to.path)) {
-    if (!user.value) {
-      return navigateTo(`/login?next=${encodeURIComponent(to.fullPath)}`)
-    }
+  // If route is protected and user not signed in, send to /login
+  if (to.meta.requiresAuth && !user.value) {
+    return navigateTo('/login')
   }
 })
