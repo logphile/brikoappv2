@@ -1,7 +1,8 @@
 <template>
   <NuxtLink
     :to="to"
-    :class="['nav-link', isActive ? 'is-active' : '']"
+    :class="['nav-link', isActive ? 'is-active' : '', 'text-[15px]']"
+    :aria-current="isActive ? 'page' : undefined"
   >
     {{ label }}
   </NuxtLink>
