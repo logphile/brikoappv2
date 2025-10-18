@@ -135,6 +135,7 @@ async function togglePublic(){
         <h3 class="truncate font-medium text-[var(--briko-ink-900)]">
           {{ p.name || 'Untitled' }}
         </h3>
+        <span data-live-card="gallery" class="sr-only">gallery-live</span>
         <button
           class="pill"
           :class="isPublic ? 'pill--public' : 'pill--private'"
