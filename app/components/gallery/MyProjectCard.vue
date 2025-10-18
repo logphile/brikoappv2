@@ -146,7 +146,6 @@ async function togglePublic(){
         <h3 class="truncate font-medium text-[var(--briko-ink-900)]">
           {{ p.name || 'Untitled' }}
         </h3>
-        <span data-live-card="gallery" class="sr-only">gallery-live</span>
         <button
           class="pill"
           :class="isPublic ? 'pill--public' : 'pill--private'"
@@ -162,51 +161,55 @@ async function togglePublic(){
         <time :datetime="p.created_at">{{ new Date(p.created_at).toLocaleDateString() }}</time>
       </div>
 
+      <!-- Actions (client-only to avoid SSR race with user) -->
       <ClientOnly>
-      <div class="actions mt-2 flex items-center gap-2">
-        <NuxtLink
-          :to="{ path: '/mosaic', query: { remix: p.id } }"
-          class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
-                 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition"
-        >
-          View
-        </NuxtLink>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
-                 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
-          :disabled="isRemixing"
-          @click.stop.prevent="onRemix"
-        >
-          {{ isOwner ? 'Duplicate' : 'Remix' }}
-        </button>
+        <div class="actions mt-2 flex items-center gap-2">
+          <!-- View -->
+          <NuxtLink
+            :to="{ path: '/mosaic', query: { remix: p.id } }"
+            class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
+                   ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition"
+          >
+            View
+          </NuxtLink>
 
-        <button
+          <!-- Remix -->
+          <button
+            type="button"
+            class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
+                   ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
+            :disabled="isRemixing"
+            @click.stop.prevent="onRemix"
+          >
+            Remix
+          </button>
+
+          <!-- Delete -->
+          <button
+            v-if="isOwner"
+            type="button"
+            class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
+                   text-sm font-medium text-white bg-[#FF0062]
+                   ring-1 ring-black/0 shadow-sm hover:bg-[#ff1c73] transition"
+            @click.stop="askDelete = true"
+          >
+            Delete
+          </button>
+        </div>
+
+        <!-- Confirm modal -->
+        <ConfirmModal
           v-if="isOwner"
-          type="button"
-          @click.stop="askDelete = true"
-          class="ml-auto inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
-                 text-sm font-medium text-white bg-[#FF0062]
-                 ring-1 ring-black/0 shadow-sm hover:bg-[#ff1c73] transition"
-          title="Delete"
-        >
-          Delete
-        </button>
-      </div>
+          :open="askDelete"
+          title="Delete project?"
+          :message="`“${p.name || p.title || 'Untitled'}” will be permanently removed.`"
+          confirm-label="Delete"
+          cancel-label="Cancel"
+          danger
+          @close="askDelete = false"
+          @confirm="doDelete"
+        />
+      </ClientOnly>
     </div>
   </article>
-
-  <ClientOnly>
-    <ConfirmModal
-      v-if="isOwner"
-      :open="askDelete"
-      title="Delete project?"
-      :message="`“${p.name || 'Untitled'}” will be permanently removed.`"
-      confirm-label="Delete"
-      cancel-label="Cancel"
-      danger
-      @close="askDelete = false"
-      @confirm="doDelete"
-    />
-  </ClientOnly>
 </template>
