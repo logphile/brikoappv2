@@ -194,4 +194,17 @@
   .card-title-ink   { @apply text-[#FFD808] font-medium leading-tight; }
   .card-date-ink    { @apply text-white/90 text-[11px]; }
   .home-midpad { @apply pt-4; }
-}  
+}
+
+/* Pointer for interactive elements */
+a[href], button, [role="button"], summary,
+input[type="button"], input[type="submit"], input[type="reset"],
+.clickable, .btn {
+  cursor: pointer;
+}
+
+/* Respect disabled states */
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
