@@ -22,12 +22,12 @@ const props = defineProps<{ p: Row }>()
 const router = useRouter()
 const { $supabase } = useNuxtApp() as any
 const userId = ref<string | null>(null)
+// Nuxt auto-imports (@nuxtjs/supabase)
+declare const useSupabaseUser: <T = any>() => { value: any }
 
-const ownerId = computed(() =>
-  (props.p as any)?.owner_id ?? (props.p as any)?.user_id ?? (props.p as any)?.created_by ?? null
-)
+const ownerId = computed(() => (props.p as any)?.owner_id ?? (props.p as any)?.user_id ?? (props.p as any)?.created_by ?? null)
 const isOwner = computed(() => {
-  const u = userId.value
+  const u = useSupabaseUser().value?.id
   const o = ownerId.value
   return !!(u && o && u === o)
 })
