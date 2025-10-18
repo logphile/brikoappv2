@@ -1,10 +1,12 @@
 <template>
   <Teleport to="body">
     <transition name="fade">
-      <div v-if="open" id="new-project-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true">
-        <div class="absolute inset-0 bg-black/50" @click="$emit('update:open', false)" />
+      <div v-if="open" id="new-project-modal" class="fixed inset-0 z-[100] grid place-items-center p-4" role="dialog" aria-modal="true" @keydown.esc="$emit('update:open', false)">
+        <!-- overlay UNDER panel -->
+        <div class="absolute inset-0 bg-black/50 pointer-events-auto" @click="$emit('update:open', false)" />
 
-        <div class="relative w-full max-w-lg rounded-2xl bg-white/95 dark:bg-[#111827]/95 shadow-xl border border-white/10 backdrop-blur p-6">
+        <!-- panel ABOVE overlay -->
+        <div class="relative z-10 w-full max-w-lg rounded-2xl bg-white dark:bg-[#111827] shadow-xl border border-white/10 p-6">
           <div class="mb-4">
             <h2 class="text-2xl font-semibold text-[#343434]">Start a new project</h2>
             <p class="text-sm text-[#343434]/70">Pick a generator to begin.</p>

@@ -16,7 +16,11 @@ const route = useRoute()
 const supabase = useSupabaseClient() as SupabaseClient
 const router = useRouter()
 
-const projectId = computed(() => (route.query?.remix ?? (route as any)?.params?.id ?? '').toString().trim())
+const projectId = computed(() => {
+  const q = (route.query || {}) as Record<string, any>
+  const p = (route as any)?.params?.id
+  return String(q.remix || q.id || q.project || p || '').trim()
+})
 
 const project = ref<any>(null)
 const loading = ref(true)
@@ -38,7 +42,10 @@ async function load () {
   project.value = null
   img.value = null
   try {
-    if (!projectId.value) { errorMsg.value = 'No project id.'; return }
+    if (!projectId.value) {
+      // Fresh draft: no id provided; render editor shell without error
+      return
+    }
     if (import.meta.dev) {
       // eslint-disable-next-line no-console
       console.log('[typeof supabase.from]', typeof (supabase as any)?.from)
@@ -155,12 +162,12 @@ async function onRemix(){
       <header class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold">Photo</h1>
         <div class="flex items-center gap-3">
-          <button class="btn btn-purple" @click="exportBricklink(project)">Export for BrickLink (.xml)</button>
+          <button v-if="project" class="btn btn-purple" @click="exportBricklink(project)">Export for BrickLink (.xml)</button>
           <NuxtLink to="/studio" class="btn btn-purple">Back to Studio</NuxtLink>
         </div>
       </header>
 
-      <div v-if="loading" class="text-[color:var(--dark)/.7]">Loading…</div>
+      <div v-if="loading" class="text:[color:var(--dark)/.7]">Loading…</div>
       <div v-else-if="errorMsg" class="text-[color:var(--dark)/.7]">{{ errorMsg }}</div>
 
       <div v-else class="rounded-2xl overflow-hidden border border-[color:var(--dark)/.15] bg-white/60 p-2">
