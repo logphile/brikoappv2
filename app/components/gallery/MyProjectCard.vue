@@ -23,7 +23,14 @@ const router = useRouter()
 const { $supabase } = useNuxtApp() as any
 const userId = ref<string | null>(null)
 
-const isOwner = computed(() => userId.value === props.p.user_id)
+const ownerId = computed(() =>
+  (props.p as any)?.owner_id ?? (props.p as any)?.user_id ?? (props.p as any)?.created_by ?? null
+)
+const isOwner = computed(() => {
+  const u = userId.value
+  const o = ownerId.value
+  return !!(u && o && u === o)
+})
 const previewUrl = ref<string | null>(null)
 const busyToggle = ref(false)
 const isPublic = ref<boolean>(!!props.p.is_public)
@@ -113,6 +120,10 @@ async function togglePublic(){
 <template>
   <article
     class="gallery-card group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition hover:bg-white/7"
+    :data-live-card="'gallery'"
+    :data-owner-id="(p as any).owner_id || (p as any).user_id || (p as any).created_by || null"
+    :data-user="userId"
+    :data-is-owner="isOwner"
   >
     <!-- Thumb -->
     <NuxtLink :to="{ path: '/mosaic', query: { remix: p.id } }" class="block">
@@ -151,6 +162,7 @@ async function togglePublic(){
         <time :datetime="p.created_at">{{ new Date(p.created_at).toLocaleDateString() }}</time>
       </div>
 
+      <ClientOnly>
       <div class="actions mt-2 flex items-center gap-2">
         <NuxtLink
           :to="{ path: '/mosaic', query: { remix: p.id } }"
@@ -184,15 +196,17 @@ async function togglePublic(){
     </div>
   </article>
 
-  <ConfirmModal
-    v-if="isOwner"
-    :open="askDelete"
-    title="Delete project?"
-    :message="`“${p.name || 'Untitled'}” will be permanently removed.`"
-    confirm-label="Delete"
-    cancel-label="Cancel"
-    danger
-    @close="askDelete = false"
-    @confirm="doDelete"
-  />
+  <ClientOnly>
+    <ConfirmModal
+      v-if="isOwner"
+      :open="askDelete"
+      title="Delete project?"
+      :message="`“${p.name || 'Untitled'}” will be permanently removed.`"
+      confirm-label="Delete"
+      cancel-label="Cancel"
+      danger
+      @close="askDelete = false"
+      @confirm="doDelete"
+    />
+  </ClientOnly>
 </template>
