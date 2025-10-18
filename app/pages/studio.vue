@@ -6,16 +6,26 @@
         <p class="mt-2 text-[#34343A]/70">Start a new project or explore the community.</p>
       </div>
       <div class="hidden md:flex items-center gap-3">
-        <AppButton
+        <NuxtLink
           to="/gallery"
-          icon="i-lucide-users"
-          label="Community Gallery"
-        />
-        <AppButton
-          to="/studio/new"
-          icon="i-lucide-plus"
-          label="New Project"
-        />
+          class="inline-flex items-center justify-center h-10 px-4 rounded-xl
+                 ring-1 ring-white/10 bg-[#FF0062] text-white font-medium
+                 hover:bg-[#e20058] transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF0062]/50"
+          aria-label="Open Community Gallery"
+        >
+          Community Gallery
+        </NuxtLink>
+        <button
+          type="button"
+          @click="openNewProjectModal()"
+          class="inline-flex items-center justify-center h-10 px-4 rounded-xl
+                 ring-1 ring-[#34343A]/20 bg-white/70 text-[#34343A] font-medium
+                 hover:bg-white transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#34343A]/30"
+          aria-haspopup="dialog"
+          aria-controls="new-project-modal"
+        >
+          New Project
+        </button>
       </div>
     </header>
 
@@ -60,7 +70,7 @@
             <p class="font-medium">Create your first project</p>
             <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
           </div>
-          <NuxtLink :to="{ name: 'studio-new' }" class="btn-primary">New Project</NuxtLink>
+          <button type="button" class="btn-primary cursor-pointer" @click="openNewProjectModal()">New Project</button>
         </div>
       </div>
     </div>
@@ -86,7 +96,7 @@
       </div>
     </div>
 
-    <NuxtLink :to="{ name: 'studio-new' }" class="md:hidden fixed bottom-4 right-4 btn-primary shadow-md">New Project</NuxtLink>
+    <button type="button" @click="openNewProjectModal()" class="md:hidden fixed bottom-4 right-4 btn-primary shadow-md cursor-pointer">New Project</button>
   </main>
 </template>
 
@@ -97,7 +107,7 @@ import { useHead } from 'nuxt/app'
 declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
 import ProjectGrid from '@/components/ProjectGrid.vue'
-import AppButton from '@/components/ui/AppButton.vue'
+import { useUiStore } from '@/stores/ui'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
@@ -127,6 +137,9 @@ const supabase = useSupabaseClient<any>()
 const { buildPreviewUrl } = useProjects()
 
 const user = ref<any>(null)
+
+const ui = useUiStore()
+function openNewProjectModal(){ ui.newProjectOpen = true }
 
 // Your Projects
 const myItems = ref<any[]>([])

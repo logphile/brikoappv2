@@ -37,15 +37,16 @@
         </li>
 
         <li class="relative group">
-          <NuxtLink
-            :to="{ name: 'studio-new' }"
+          <button
+            type="button"
+            @click="openNewProject()"
             role="menuitem"
-            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition', route.name === 'studio-new' ? 'font-semibold' : '']"
+            :class="[rowCls, 'flex items-center gap-3 rounded-xl px-3 py-2 text-left text-[#FFD808] bg-transparent hover:bg-white/10 focus:bg-white/10 transition cursor-pointer']"
           >
             <span class="absolute left-1 top-1/2 -translate-y-1/2 h-5 w-1.5 rounded-full bg-pink-500 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition" aria-hidden="true"></span>
             <span aria-hidden="true" class="material-symbols-rounded h-4.5 w-4.5 text-lg text-[#FFD808]">add_circle</span>
             <span>New Project</span>
-          </NuxtLink>
+          </button>
         </li>
 
         <li><div class="my-1 h-px bg-white/15"></div></li>
@@ -91,6 +92,7 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter } from 'nuxt/app'
 import { useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useUiStore } from '@/stores/ui'
 
 const props = defineProps<{ label: string }>()
 
@@ -101,6 +103,7 @@ const { logout } = useAuth()
 const router = useRouter()
 
 const rowCls = 'menu-item'
+const ui = useUiStore()
 
 function toggle(){ open.value = !open.value }
 
@@ -108,6 +111,11 @@ async function signOut(){
   open.value = false
   try { await logout() } catch {}
   router.push('/')
+}
+
+function openNewProject(){
+  open.value = false
+  ui.newProjectOpen = true
 }
 
 function onClickOutside(ev: MouseEvent){

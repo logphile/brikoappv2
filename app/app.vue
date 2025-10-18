@@ -9,6 +9,7 @@
     <AppFooter />
     <ToastHost />
     <PrivacyBanner />
+    <NewProjectPortal />
     <!-- vue-sonner toaster host -->
     <Toaster position="top-right" expand rich-colors theme="dark" :duration="2500" />
   </div>
@@ -21,6 +22,7 @@ import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 import ToastHost from '@/components/ToastHost.client.vue'
 import PrivacyBanner from '@/components/PrivacyBanner.vue'
+import NewProjectPortal from '@/components/ui/NewProjectPortal.vue'
 import { useSiteMeta } from '@/composables/useSiteMeta'
 import { Toaster } from 'vue-sonner'
 
