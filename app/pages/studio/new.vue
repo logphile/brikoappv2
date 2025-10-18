@@ -132,7 +132,7 @@ import { useBrikoSupabase } from '@/composables/useBrikoSupabase'
 import { saveToGalleryPrivate } from '@/lib/gallery'
 
 // @ts-expect-error definePageMeta is provided by Nuxt at runtime
-definePageMeta({ middleware: ['auth'] })
+definePageMeta({ requiresAuth: true })
 
 const form = reactive<{ title: string; visibility: 'private'|'public'; width: number; height: number; units: 'studs'|'cm'|'in'; palette: 'lego'|'duplo'|'bw'; file: File | null }>({
   title: '',

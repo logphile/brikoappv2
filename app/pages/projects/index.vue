@@ -22,5 +22,8 @@
 import { useHead } from 'nuxt/app'
 import MyGalleryGrid from '@/components/gallery/MyGalleryGrid.vue'
 
+// @ts-expect-error definePageMeta is a Nuxt macro available at runtime
+definePageMeta({ requiresAuth: true })
+
 useHead({ title: 'My Gallery — Briko' })
 </script>

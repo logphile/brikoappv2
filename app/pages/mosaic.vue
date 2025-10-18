@@ -40,7 +40,7 @@ import Chip from '@/components/ui/Chip.vue'
 declare const useSupabaseClient: <T = any>() => T
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false, middleware: ['auth'] })
+definePageMeta({ ssr: false })
 
 const mosaic = useMosaicStore()
 const { public: cfg } = useRuntimeConfig() as any

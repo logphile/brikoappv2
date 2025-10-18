@@ -8,5 +8,5 @@
 <script setup lang="ts">
 import CommunityGrid from '@/components/CommunityGrid.vue'
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false, middleware: ['auth'] })
+definePageMeta({ ssr: false })
 </script>

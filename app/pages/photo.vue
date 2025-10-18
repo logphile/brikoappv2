@@ -7,7 +7,7 @@ import { fromNowSafe, formatDateSafe } from '@/utils/date'
 import BricklinkExportDialog from '@/components/export/BricklinkExportDialog.vue'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false, middleware: ['auth'] })
+definePageMeta({ ssr: false })
 
 // Nuxt auto-imported composable
 declare const useSupabaseClient: <T = any>() => T

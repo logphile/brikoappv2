@@ -162,7 +162,7 @@
 
 <script setup lang="ts">
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
-definePageMeta({ ssr: false, middleware: ['auth'] })
+definePageMeta({ ssr: false })
 import { ref, onMounted, watch, computed } from 'vue'
 import { useNuxtApp, useHead } from 'nuxt/app'
 import { useSupabaseSafeClient } from '@/composables/useSupabaseSafeClient'
