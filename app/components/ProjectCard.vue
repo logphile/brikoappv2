@@ -48,8 +48,9 @@
             </NuxtLink>
             <button
               class="inline-flex items-center justify-center h-9 px-3 rounded-full
-                     leading-none text-sm font-medium bg-white/10 text-white/90
-                     ring-1 ring-white/15 hover:bg-white/20 transition"
+                     leading-none text-sm font-medium text-white
+                     bg-[#2F3061] hover:bg-[#2F3061]/90
+                     ring-1 ring-black/0 shadow-sm transition"
               @click.stop="onRemix(project.id)"
               :disabled="isRemixing"
             >

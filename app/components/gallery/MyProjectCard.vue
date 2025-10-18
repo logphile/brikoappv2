@@ -177,7 +177,9 @@ async function togglePublic(){
           <button
             type="button"
             class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
-                   ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
+                   text-sm font-medium text-white
+                   bg-[#2F3061] hover:bg-[#2F3061]/90
+                   ring-1 ring-black/0 shadow-sm transition"
             :disabled="isRemixing"
             @click.stop.prevent="onRemix"
           >
