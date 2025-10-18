@@ -44,11 +44,19 @@
                 <template #actions>
                   <div class="hidden md:flex items-center gap-2">
                     <span class="text-xs text-[#2F3061]/80">Preset</span>
-                    <PresetChips v-model:preset="preset" />
+                    <UiPillGroup dense v-model="preset" :options="[
+                      { label: 'Auto', value: 'auto' },
+                      { label: 'Line Art', value: 'lineart' },
+                      { label: 'Photo Pop', value: 'pop' }
+                    ]" />
                   </div>
                 </template>
                 <div class="md:hidden mb-4">
-                  <PresetChips v-model:preset="preset" />
+                  <UiPillGroup dense v-model="preset" :options="[
+                    { label: 'Auto', value: 'auto' },
+                    { label: 'Line Art', value: 'lineart' },
+                    { label: 'Photo Pop', value: 'pop' }
+                  ]" />
                 </div>
                 <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
               </StepCard>
@@ -59,7 +67,11 @@
               <section class="pt-4 pb-6">
                 <h3 class="text-lg font-semibold text-[#343434] mb-1">Style presets</h3>
                 <div class="mt-2">
-                  <PresetChips v-model:preset="preset" />
+                  <UiPillGroup dense v-model="preset" :options="[
+                    { label: 'Auto', value: 'auto' },
+                    { label: 'Line Art', value: 'lineart' },
+                    { label: 'Photo Pop', value: 'pop' }
+                  ]" />
                 </div>
               </section>
               <!-- Output & Preview -->
@@ -116,10 +128,10 @@
               <section class="pt-4 pb-0">
                 <h3 class="text-lg font-semibold text-[#343434] mb-3">Actions</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
-                  <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="loading || !imgReady" @click="process">
+                  <UiButton as="button" variant="primary" class="rounded-lg px-4 py-2" :disabled="loading || !imgReady" @click="process">
                     <span v-if="!loading">Generate</span>
                     <span v-else>Processing…</span>
-                  </ButtonPrimary>
+                  </UiButton>
                   <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonOutline>
                   <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
                 </div>
