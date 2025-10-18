@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 import { useNuxtApp } from 'nuxt/app'
 import { signedUrl } from '@/lib/signed-url'
 import { deleteProject } from '@/lib/gallery'
+import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import { useToasts } from '@/composables/useToasts'
 
 type Row = {
   id: string
@@ -26,6 +28,9 @@ const previewUrl = ref<string | null>(null)
 const busyToggle = ref(false)
 const isPublic = ref<boolean>(!!props.p.is_public)
 const isRemixing = ref(false)
+const { show: showToast } = useToasts()
+const askDelete = ref(false)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -66,6 +71,22 @@ async function onDelete() {
   } catch (e: any) {
     console.error('Delete failed', e?.message || e)
     alert('Could not delete this project.')
+  }
+}
+
+async function doDelete() {
+  if (!isOwner.value || deleting.value) return
+  deleting.value = true
+  try {
+    await deleteProject(props.p)
+    window.dispatchEvent(new CustomEvent('project:deleted', { detail: props.p.id }))
+    showToast('Project removed.', 'success')
+  } catch (e:any) {
+    console.error('Delete failed', e?.message || e)
+    showToast('Could not delete this project.', 'error')
+  } finally {
+    deleting.value = false
+    askDelete.value = false
   }
 }
 
@@ -132,13 +153,15 @@ async function togglePublic(){
       <div class="mt-3 flex items-center gap-2">
         <NuxtLink
           :to="{ path: '/mosaic', query: { remix: p.id } }"
-          class="h-9 rounded-xl px-3 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition"
+          class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
+                 ring-1 ring-black/10 bg-white/50 hover:bg-white/70 text-[var(--briko-ink-900)] transition"
         >
           View
         </NuxtLink>
         <button
           type="button"
-          class="h-9 rounded-xl px-3 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
+          class="inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
+                 ring-1 ring-black/10 bg-white/10 hover:bg-white/20 text-[var(--briko-ink-900)] transition"
           :disabled="isRemixing"
           @click.stop.prevent="onRemix"
         >
@@ -148,8 +171,9 @@ async function togglePublic(){
         <button
           v-if="isOwner"
           type="button"
-          @click="onDelete"
-          class="ml-auto h-9 rounded-xl px-3 ring-1 ring-red-500/30 text-red-600/90 bg-red-50/60 hover:bg-red-50"
+          @click="askDelete = true"
+          class="ml-auto inline-flex items-center justify-center h-9 px-3 rounded-xl leading-none
+                 ring-1 ring-red-500/30 text-red-50 bg-[#FF0062] hover:bg-[#ff1c73] transition"
           title="Delete"
         >
           Delete
@@ -157,4 +181,16 @@ async function togglePublic(){
       </div>
     </div>
   </article>
+
+  <ConfirmModal
+    v-if="isOwner"
+    :open="askDelete"
+    title="Delete project?"
+    :message="`“${p.name || 'Untitled'}” will be permanently removed.`"
+    confirm-label="Delete"
+    cancel-label="Cancel"
+    danger
+    @close="askDelete = false"
+    @confirm="doDelete"
+  />
 </template>
