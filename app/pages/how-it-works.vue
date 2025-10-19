@@ -72,7 +72,7 @@ const faq = [
           <span class="h-[3px] w-10 rounded-full" style="background:#2F3061"></span>
         </h2>
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid auto-rows-fr gap-4 md:grid-cols-2">
           <StepCard num="1" title="Upload">
             Drag & drop an image or pick a file. Briko preprocesses it for crisp edges.
           </StepCard>
