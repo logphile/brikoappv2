@@ -153,7 +153,7 @@ async function togglePublic(){
         </h3>
         <button
           class="inline-flex items-center rounded-xl px-2 h-6 text-xs ring-1 transition"
-          :class="isPublic ? 'bg-pink/10 text-pink ring-pink/40' : 'bg-white/10 text-white ring-white/20'"
+          :class="isPublic ? 'bg-pink/10 text-pink ring-pink/40' : 'bg-ink/10 text-ink ring-ink/30'"
           :disabled="busyToggle"
           @click="togglePublic"
           :aria-pressed="isPublic"

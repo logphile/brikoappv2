@@ -84,7 +84,7 @@ useHead({
 
             <div class="flex items-center gap-3">
               <UiButton variant="primary" to="/mosaic">Try Photo to Bricks Now! →</UiButton>
-              <UiButton variant="secondary" to="/gallery">Explore Gallery</UiButton>
+              <UiButton variant="pill" to="/community">Explore Gallery</UiButton>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
