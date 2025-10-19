@@ -9,6 +9,9 @@ on:
     - cron: '0 9 * * 1'   # Mondays 09:00 UTC – weekly drift check
   workflow_dispatch:
 
+env:
+  UNPLUGIN_ICONS_DISABLE_AUTO_INSTALL: '1'
+
 defaults:
   run:
     working-directory: app

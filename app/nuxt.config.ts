@@ -5,7 +5,7 @@ import { dirname, resolve } from 'node:path'
 export default defineNuxtConfig({
   css: ['@/assets/css/base.css', '~/assets/css/fonts.css', '~/assets/css/tailwind.css', '~/assets/css/app.css', '~/assets/css/main.css', '~/assets/css/tokens.css'],
 
-  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase', '@nuxt/image'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase', '@nuxt/image', ['unplugin-icons/nuxt', { autoInstall: false }]],
 
   // Icons are vendored as local components; no icon plugin needed
 
