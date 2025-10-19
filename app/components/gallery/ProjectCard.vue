@@ -1,5 +1,5 @@
 <template>
-  <article v-if="!broken" class="gallery-card group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 transition hover:bg-white/7">
+  <article v-if="!broken" class="gallery-card group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-black/10 shadow-card transition hover:-translate-y-0.5">
     <!-- Preview area: square, original swap on hover/tap -->
     <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
@@ -46,11 +46,11 @@
 
     <!-- Caption under image: keep ink card variant or light variant -->
     <div :class="['mt-2 p-3 rounded-2xl border', props.caption === 'light' ? 'bg-white/5 border-[#34343A]/20 text-[var(--briko-ink-900)]' : 'card-caption-ink']">
-      <h3 :class="[props.caption === 'light' ? 'text-[#34343A] font-medium' : 'card-title-ink', 'text-base line-clamp-1']">
+      <h3 :class="[props.caption === 'light' ? 'text-[#34343A] font-medium' : 'card-title-ink', 'text-[13px] line-clamp-1']">
         {{ name }}
       </h3>
       <div class="mt-1">
-        <span :class="[props.caption === 'light' ? 'text-[#34343A]/70 text-[11px]' : 'card-date-ink']">{{ dateLocal }}</span>
+        <span :class="[props.caption === 'light' ? 'text-[#34343A]/70' : 'card-date-ink', 'text-[13px]']">{{ dateLocal }}</span>
       </div>
     </div>
   </article>

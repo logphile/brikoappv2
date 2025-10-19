@@ -22,7 +22,7 @@
   </NuxtLink>
 
   <!-- Studio overlay style: soft card with square preview and hover actions -->
-  <article v-else class="gallery-card card card-hover group relative overflow-hidden">
+  <article v-else class="gallery-card card group relative overflow-hidden rounded-2xl ring-1 ring-black/10 shadow-card transition hover:-translate-y-0.5">
     <!-- cover -->
     <div class="relative aspect-square overflow-hidden rounded-2xl bg-black/5">
       <div class="absolute inset-0 animate-pulse bg-black/5" v-if="!imgLoaded" />
@@ -71,9 +71,9 @@
     </div>
     <!-- caption -->
     <div class="mt-2 card-caption-ink p-3">
-      <h3 class="card-title-ink text-base line-clamp-1">{{ project.title || 'Untitled' }}</h3>
+      <h3 class="card-title-ink text-[13px] line-clamp-1">{{ project.title || 'Untitled' }}</h3>
       <div class="mt-1">
-        <span class="card-date-ink">{{ new Date(project.created_at).toLocaleDateString() }}</span>
+        <span class="card-date-ink text-[13px]">{{ new Date(project.created_at).toLocaleDateString() }}</span>
       </div>
     </div>
   </article>

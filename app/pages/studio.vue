@@ -33,10 +33,15 @@
             <option value="za">Z → A</option>
             <option value="largest">Largest</option>
           </select>
-          <div class="hidden sm:flex gap-2">
-            <button :class="['pill-micro', filter==='all' && 'bg-[#34343A]/10']" @click="filter='all'">All</button>
-            <button :class="['pill-micro', filter==='public' && 'bg-[#34343A]/10']" @click="filter='public'">Public</button>
-            <button :class="['pill-micro', filter==='private' && 'bg-[#34343A]/10']" @click="filter='private'">Private</button>
+          <div class="hidden sm:block">
+            <UiPillGroup
+              v-model="filter"
+              :options="[
+                { label: 'All', value: 'all' },
+                { label: 'Public', value: 'public' },
+                { label: 'Private', value: 'private' }
+              ]"
+            />
           </div>
         </div>
       </div>
@@ -101,6 +106,7 @@ import { useProjects } from '@/composables/useProjects'
 import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useUiStore } from '@/stores/ui'
 import UiButton from '@/components/ui/UiButton.vue'
+import UiPillGroup from '@/components/ui/UiPillGroup.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
