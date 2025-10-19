@@ -10,17 +10,19 @@
     <!-- Filters bar -->
     <section class="rounded-2xl border border-black/10 bg-white/30 backdrop-blur p-3 md:p-4 mb-6">
       <div class="flex flex-wrap items-center gap-2">
-        <!-- Kind chips -->
-        <button v-for="k in kinds" :key="k" @click="setKind(k)"
-                class="chip capitalize" :class="{ 'chip--active': kind===k }">
-          {{ k }}
-        </button>
-        <!-- Sort chips on the right -->
+        <!-- Primary kind filters: segmented/pills -->
+        <UiPillGroup
+          v-model="kind"
+          :options="[
+            { label: 'All', value: 'all' },
+            { label: 'Mosaic', value: 'mosaic' },
+            { label: 'Voxel', value: 'voxel' },
+            { label: 'Avatar', value: 'avatar' },
+          ]"
+        />
+        <!-- Secondary sort filters on the right: outline pills (no fill) -->
         <div class="ml-auto flex gap-2">
-          <button v-for="s in sorts" :key="s" @click="setSort(s)"
-                  class="chip" :class="{ 'chip--active': sort===s }">
-            {{ s }}
-          </button>
+          <UiButton v-for="s in sorts" :key="s" variant="pill" @click="setSort(s)">{{ s }}</UiButton>
         </div>
       </div>
       <!-- Tag input line under chips -->
@@ -58,6 +60,8 @@ import TagPicker, { type TagItem } from '@/components/tags/TagPicker.vue'
 import seedsRaw from '@/data/gallery_seeds.json'
 import { useProjects } from '@/composables/useProjects'
 import InlineLoginBanner from '@/components/studio/InlineLoginBanner.vue'
+import UiPillGroup from '@/components/ui/UiPillGroup.vue'
+import UiButton from '@/components/ui/UiButton.vue'
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false })

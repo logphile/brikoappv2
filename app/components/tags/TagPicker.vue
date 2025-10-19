@@ -7,12 +7,11 @@
       </span>
     </div>
     <div class="relative">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-black/50 select-none" aria-hidden="true">🔎</span>
       <input v-model="q" type="text" :placeholder="placeholder" :aria-label="placeholder || 'Filter by tag'"
-             class="w-full h-11 rounded-xl bg-[rgba(0,0,0,.04)]
-                    border border-[color:var(--ivory-border)] text-[#343434]
-                    placeholder-[#343434B3] px-3 text-sm
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F3061]
-                    focus:border-[#2F3061]"
+             class="w-full h-10 rounded-2xl ring-1 ring-black/10 bg-white/70
+                    pl-9 pr-3 text-sm text-[#343434] placeholder:text-black/50
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F3061]"
              @keydown.enter.prevent="handleEnter" @input="$emit('search', q)" />
       <div v-if="open && suggestions.length > 0" class="absolute z-10 mt-1 w-full rounded-xl bg-slate-900 ring-1 ring-white/10 shadow-lg overflow-hidden">
         <button v-for="s in suggestions" :key="s.id ?? s.slug ?? s.name" class="w-full text-left px-3 py-2 text-sm hover:bg-white/5" @click.prevent="selectSuggestion(s)">
