@@ -5,6 +5,14 @@ import { dirname, resolve } from 'node:path'
 const rootDir = dirname(fileURLToPath(import.meta.url))
 const ASSETS_VERSION = process.env.ASSETS_VERSION || 'v-local'
 
+// Derive Supabase host for remote image allowlist (if provided)
+const SUPABASE_HOST = (() => {
+  try {
+    const u = new URL(process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '')
+    return u.hostname || ''
+  } catch { return '' }
+})()
+
 export default defineNuxtConfig({
   // Production: SSR on; DevTools disabled
   ssr: true,
@@ -15,7 +23,7 @@ export default defineNuxtConfig({
     { path: '~/components/gallery', pathPrefix: true }
   ],
   devtools: { enabled: false },
-  modules: ['@pinia/nuxt', '@vueuse/nuxt', 'unplugin-icons/nuxt'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', 'unplugin-icons/nuxt', '@nuxt/image'],
   plugins: [
     { src: '~/plugins/img-comparison-slider.client', mode: 'client' },
     '~/plugins/schema.org'
@@ -85,6 +93,11 @@ export default defineNuxtConfig({
         livePricing: false
       }
     }
+  },
+  image: {
+    // Basic defaults for thumbs; remote domains allowlist (Supabase public bucket host)
+    domains: SUPABASE_HOST ? [SUPABASE_HOST] : [],
+    format: ['webp']
   },
   nitro: {
     preset: 'static',

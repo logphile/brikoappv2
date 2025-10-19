@@ -3,9 +3,11 @@
   <NuxtLink v-if="!overlay" :to="`/p/${project.id}`"
     class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm transition duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_18px_50px_-16px_rgba(0,229,160,.45)]">
     <div class="framed-img aspect-[4/3] bg-black/30">
-      <img v-if="project.cover_url"
+      <NuxtImg v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
-           loading="lazy" decoding="async" fetchpriority="low"
+           width="320" height="240" format="webp" densities="1x 2x"
+           sizes="(max-width: 640px) 100vw, 320px"
+           loading="lazy" fetchpriority="low"
            class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
            @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-white/40 text-sm">No preview</div>
@@ -26,10 +28,11 @@
     <!-- cover -->
     <div class="relative aspect-square overflow-hidden rounded-2xl bg-black/5">
       <div class="absolute inset-0 animate-pulse bg-black/5" v-if="!imgLoaded" />
-      <img v-if="project.cover_url"
+      <NuxtImg v-if="project.cover_url"
            :src="project.cover_url as string" :alt="project.title || 'Project preview'"
-           loading="lazy" decoding="async" fetchpriority="low"
+           width="320" height="320" format="webp" densities="1x 2x"
            sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw"
+           loading="lazy" fetchpriority="low"
            class="h-full w-full object-cover"
            @load="onImgLoad" @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-black/60 text-sm">No preview</div>

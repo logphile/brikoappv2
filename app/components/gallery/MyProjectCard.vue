@@ -129,13 +129,17 @@ async function togglePublic(){
     <!-- Thumb -->
     <NuxtLink :to="{ path: '/mosaic', query: { remix: p.id } }" class="block">
       <div class="aspect-[16/10] overflow-hidden bg-black/10">
-        <img
+        <NuxtImg
           v-if="previewUrl"
           :src="previewUrl"
           alt=""
-          class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          width="320"
+          height="200"
+          format="webp"
+          densities="1x 2x"
+          sizes="(max-width: 640px) 100vw, 320px"
           loading="lazy"
-          decoding="async"
+          class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
         />
         <div v-else class="h-full w-full grid place-items-center text-sm opacity-60">No preview</div>
       </div>

@@ -3,16 +3,20 @@
     <!-- Preview area: square, original swap on hover/tap -->
     <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
-      <img v-if="thumbUrl" :src="thumbUrl" alt=""
-           loading="lazy" decoding="async"
+      <NuxtImg v-if="thumbUrl" :src="thumbUrl" alt=""
+           width="320" height="320" format="webp" densities="1x 2x"
+           sizes="(max-width: 640px) 100vw, 320px"
+           loading="lazy"
            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
            :class="{ 'opacity-0': showOriginal }"
            @error="onImgError" />
       <div v-else class="absolute inset-0 grid place-items-center text-white/70 text-sm">No preview</div>
 
       <!-- Original (hover/tap reveal) -->
-      <img v-if="originalUrl" :src="originalUrl" alt=""
-           loading="lazy" decoding="async"
+      <NuxtImg v-if="originalUrl" :src="originalUrl" alt=""
+           width="320" height="320" format="webp" densities="1x 2x"
+           sizes="(max-width: 640px) 100vw, 320px"
+           loading="lazy"
            class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100"
            :class="{ 'opacity-100': showOriginal }"
            @error="onImgError" />
