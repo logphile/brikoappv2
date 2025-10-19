@@ -1,5 +1,5 @@
 <template>
-  <article v-if="!broken" class="gallery-card group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-black/10 shadow-card transition hover:-translate-y-0.5">
+  <article v-if="!broken" class="gallery-card group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-black/10 shadow-card transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
     <!-- Preview area: square, original swap on hover/tap -->
     <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->

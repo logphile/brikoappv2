@@ -120,7 +120,7 @@ async function togglePublic(){
 
 <template>
   <article
-    class="gallery-card group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition hover:bg-white/7"
+    class="gallery-card group overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 shadow-xl shadow-black/10 backdrop-blur-sm transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated hover:bg-white/7"
     :data-live-card="'gallery'"
     :data-owner-id="(p as any).owner_id || (p as any).user_id || (p as any).created_by || null"
     :data-user="userId"

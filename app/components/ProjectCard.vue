@@ -1,7 +1,7 @@
 <template>
   <!-- Default (Gallery) style: full-card link -->
   <NuxtLink v-if="!overlay" :to="`/p/${project.id}`"
-    class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm transition duration-200 ease-out hover:-translate-y-[2px] hover:shadow-[0_18px_50px_-16px_rgba(0,229,160,.45)]">
+    class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
     <div class="framed-img aspect-[4/3] bg-black/30">
       <NuxtImg v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
@@ -24,7 +24,7 @@
   </NuxtLink>
 
   <!-- Studio overlay style: soft card with square preview and hover actions -->
-  <article v-else class="gallery-card card group relative overflow-hidden rounded-2xl ring-1 ring-black/10 shadow-card transition hover:-translate-y-0.5">
+  <article v-else class="gallery-card card group relative overflow-hidden rounded-2xl ring-1 ring-black/10 shadow-card transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
     <!-- cover -->
     <div class="relative aspect-square overflow-hidden rounded-2xl bg-black/5">
       <div class="absolute inset-0 animate-pulse bg-black/5" v-if="!imgLoaded" />
