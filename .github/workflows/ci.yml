@@ -11,6 +11,7 @@ on:
 
 env:
   UNPLUGIN_ICONS_DISABLE_AUTO_INSTALL: '1'
+  ICONS_DISABLE_AUTO_INSTALL: '1'
 
 defaults:
   run:
