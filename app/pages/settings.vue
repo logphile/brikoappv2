@@ -6,14 +6,18 @@
         <h1 class="text-5xl lg:text-6xl font-slab">Profile</h1>
         <p class="mt-2 text-[#34343A]/70">Update how your name appears publicly.</p>
       </div>
-      <div class="hidden md:flex items-center gap-3">
-        <NuxtLink to="/studio" class="btn btn-secondary">Briko Studio</NuxtLink>
-        <button @click="onSave" :disabled="saving" class="btn btn-primary">
+    </header>
+
+    <!-- Sticky actions -->
+    <div class="page-wrap mt-4">
+      <div class="sticky top-4 z-10 flex justify-end gap-2">
+        <UiButton variant="secondary" to="/studio">Briko Studio</UiButton>
+        <UiButton as="button" variant="primary" :disabled="saving" @click="onSave">
           <span v-if="!saving">Save</span>
           <span v-else>Saving…</span>
-        </button>
+        </UiButton>
       </div>
-    </header>
+    </div>
 
     <!-- Content cards -->
     <main class="page-wrap mt-8 space-y-10">
@@ -30,7 +34,7 @@
               id="handle"
               v-model="form.handle"
               type="text"
-              class="w-full h-11 rounded-xl px-4 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
+              class="w-full h-10 rounded-2xl px-3 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
               placeholder="yourhandle"
             />
             <p class="mt-1 text-xs opacity-80">Shown on Community, Gallery, remixes, exports, and share links.</p>
@@ -45,7 +49,7 @@
               id="displayName"
               v-model="form.display_name"
               type="text"
-              class="w-full h-11 rounded-xl px-4 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
+              class="w-full h-10 rounded-2xl px-3 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] placeholder-black/50 focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
               placeholder="Your name"
             />
             <p class="mt-1 text-xs opacity-80">How your name appears across Briko.</p>
@@ -66,7 +70,7 @@
               id="email"
               :value="user?.email || ''"
               type="email"
-              class="w-full h-11 rounded-xl px-4 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] placeholder-black/50 disabled:opacity-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
+              class="w-full h-10 rounded-2xl px-3 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] placeholder-black/50 disabled:opacity-100 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
               disabled
             />
             <p class="mt-1 text-xs opacity-80">Email is managed by your account provider.</p>
@@ -79,7 +83,7 @@
               <select
                 id="profileVisibility"
                 v-model="form.profile_visibility"
-                class="w-full h-11 rounded-xl pl-4 pr-10 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] appearance-none focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
+                class="w-full h-10 rounded-2xl pl-3 pr-10 ring-1 ring-white/10 bg-[var(--briko-purple-50)] text-[var(--briko-ink-900)] appearance-none focus:outline-none focus:ring-2 focus:ring-[var(--briko-accent)]"
               >
                 <option value="public">Public</option>
                 <option value="private">Private</option>
@@ -111,12 +115,6 @@
       </section>
     </main>
 
-    <!-- Mobile sticky actions -->
-    <div class="md:hidden fixed bottom-4 right-4 left-4 flex justify-end gap-2">
-      <button @click="onCancel" class="btn-outline-ink">Cancel</button>
-      <button @click="onSave" :disabled="saving" class="btn btn-primary">Save</button>
-    </div>
-
     <!-- Saved feedback -->
     <p v-if="saved==='ok'" class="page-wrap mt-4 text-sm text-[#343434]">Saved. Your header will update momentarily.</p>
     <p v-if="saved==='err'" class="page-wrap mt-4 text-sm text-red-500">{{ serverError || 'Couldn’t save—try again.' }}</p>
@@ -127,6 +125,8 @@
 import { reactive, ref, watchEffect, computed } from 'vue'
 import { useHead } from 'nuxt/app'
 import { useProfile } from '@/composables/useProfile'
+import UiButton from '@/components/ui/UiButton.vue'
+import { useToasts } from '@/composables/useToasts'
 declare const useSupabaseUser: <T = any>() => T
 
 useHead({ title: 'Settings' })
@@ -138,6 +138,7 @@ definePageMeta({ requiresAuth: true, middleware: ['auth'] })
 const user = useSupabaseUser<any>()
 
 const { profile, loading, saveProfile, loadProfile, error: serverError } = useProfile()
+const { show } = useToasts()
 
 const form = reactive({
   handle: '',
@@ -180,6 +181,7 @@ async function onSave(){
   saved.value = err ? 'err' : 'ok'
   saving.value = false
   try { await loadProfile() } catch {}
+  if (!err) { try { show('Profile saved', 'success') } catch {} }
 }
 
 async function onDelete(){
