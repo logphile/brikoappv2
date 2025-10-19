@@ -41,8 +41,8 @@ jobs:
           node-version: '18.x'
           cache: 'pnpm'
           cache-dependency-path: app/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm run generate   # nuxt generate (static build)
+      - run: pnpm -C app install
+      - run: pnpm -C app run generate   # nuxt generate (static build)
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
@@ -62,15 +62,15 @@ jobs:
           node-version: '18.x'
           cache: 'pnpm'
           cache-dependency-path: app/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm exec playwright install --with-deps
+      - run: pnpm -C app install
+      - run: pnpm -C app exec playwright install --with-deps
       - name: Serve static build
+        working-directory: app
         run: |
-          pnpm add -D serve
-          npx serve .output/public -l 4173 &
+          pnpm dlx serve .output/public -l 4173 >/dev/null 2>&1 &
           sleep 2
       - name: Run smoke tests
-        run: pnpm run test:smoke
+        run: pnpm -C app run test:smoke
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
@@ -85,14 +85,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with: { version: 9 }
-      - run: pnpm install
+      - run: pnpm -C app install
       - name: Serve static build
+        working-directory: app
         run: |
-          pnpm add -D serve
-          npx serve .output/public -l 4173 &
+          pnpm dlx serve .output/public -l 4173 >/dev/null 2>&1 &
           sleep 2
       - name: Run LHCI
-        run: pnpm run lhci
+        run: pnpm -C app run lhci
 
   a11y_links_size:
     name: A11y + links + size
@@ -102,10 +102,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with: { version: 9 }
-      - run: pnpm install
+      - run: pnpm -C app install
       - name: Pa11y
-        run: pnpm run a11y
+        run: pnpm -C app run a11y
       - name: Linkinator
-        run: pnpm run links
+        run: pnpm -C app run links
       - name: Size Limit
-        run: pnpm run size
+        run: pnpm -C app run size
