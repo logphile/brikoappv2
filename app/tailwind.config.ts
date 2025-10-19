@@ -96,7 +96,8 @@ export default <Partial<Config>>{
         'soft': '0 10px 30px rgba(0,0,0,.12)',
         'card': '0 6px 18px rgba(0,0,0,.10)',
         'mint-glow': '0 0 0 3px rgba(58,229,159,0.25), 0 8px 24px rgba(58,229,159,0.15)',
-        pill: '0 6px 14px rgba(52,52,52,0.2)'
+        pill: '0 6px 14px rgba(52,52,52,0.2)',
+        elevated: '0 14px 36px -12px rgba(0,0,0,0.22)'
       }
     }
   }
