@@ -12,6 +12,7 @@
   "devDependencies": {
     "@iconify-json/material-symbols": "^1.2.41",
     "@lhci/cli": "^0.15.1",
+    "@nuxt/image": "^1.11.0",
     "@pinia/nuxt": "^0.5.1",
     "@playwright/test": "^1.55.0",
     "@types/node": "^20.14.2",

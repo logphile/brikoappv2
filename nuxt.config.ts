@@ -95,9 +95,13 @@ export default defineNuxtConfig({
     }
   },
   image: {
-    // Basic defaults for thumbs; remote domains allowlist (Supabase public bucket host)
+    // Remote domains allowlist (Supabase public bucket host)
     domains: SUPABASE_HOST ? [SUPABASE_HOST] : [],
-    format: ['webp']
+    // Preferred formats and quality
+    format: ['webp', 'png', 'jpeg'],
+    quality: 80,
+    // Default responsive breakpoints for thumbs/grids
+    screens: { sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }
   },
   nitro: {
     preset: 'static',
