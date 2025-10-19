@@ -69,7 +69,7 @@ useHead({
       <div class="container mx-auto px-4 lg:px-6 py-20 md:py-24 lg:py-28 grid grid-cols-1 lg:grid-cols-[1fr,624px] gap-10 lg:gap-[30px] items-center">
         <!-- Left: copy -->
         <div class="relative z-10">
-            <h1 class="text-[#343434] max-w-[18ch] mb-6 font-extrabold leading-tight text-[42px] md:text-6xl">
+            <h1 class="text-[#343434] max-w-[18ch] mb-6 font-extrabold leading-tight text-[48px] md:text-7xl">
               Create LEGO-<br class="hidden md:block" />style art from your images
             </h1>
 
