@@ -5,7 +5,6 @@
         v-if="open"
         id="new-project-modal"
         class="fixed inset-0 z-[100] grid place-items-center p-4"
-        role="dialog" aria-modal="true"
         @keydown.esc="$emit('update:open', false)"
       >
         <!-- Background dim -->
@@ -13,6 +12,11 @@
 
         <!-- Panel -->
         <div
+          ref="panelRef"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="new-project-title"
+          tabindex="-1"
           class="relative z-10 w-full max-w-lg md:max-w-xl rounded-2xl
                  bg-[rgb(17,24,39)]/95 text-white
                  shadow-[0_10px_35px_-10px_rgba(0,0,0,0.6)]
@@ -27,7 +31,7 @@
               <span class="h-2 w-2 rounded-full bg-[#FF0062]"></span>
               <span class="text-xs font-semibold tracking-wide">New Project</span>
             </div>
-            <h2 class="mt-3 text-2xl font-semibold text-white">Start a new project</h2>
+            <h2 id="new-project-title" ref="titleRef" tabindex="-1" class="mt-3 text-2xl font-semibold text-white">Start a new project</h2>
             <p class="text-sm text-white/70">Pick a generator to begin.</p>
           </div>
 
@@ -102,8 +106,23 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ open: boolean }>()
-defineEmits(['update:open'])
+import { ref, watch, nextTick } from 'vue'
+const props = defineProps<{ open: boolean }>()
+const emit = defineEmits(['update:open'])
+
+const panelRef = ref<HTMLElement | null>(null)
+const titleRef = ref<HTMLElement | null>(null)
+
+watch(() => props.open, (v) => {
+  if (v) {
+    nextTick(() => {
+      try { titleRef.value?.focus() } catch {}
+      if (!document.activeElement || document.activeElement === document.body) {
+        try { panelRef.value?.focus?.() } catch {}
+      }
+    })
+  }
+})
 </script>
 
 <style scoped>
