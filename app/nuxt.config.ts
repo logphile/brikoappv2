@@ -5,7 +5,7 @@ import { dirname, resolve } from 'node:path'
 export default defineNuxtConfig({
   css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css', '~/assets/css/app.css', '~/assets/css/main.css', '~/assets/css/tokens.css'],
 
-  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase'],
+  modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxtjs/supabase', '@nuxt/image'],
 
   // Icons are vendored as local components; no icon plugin needed
 
@@ -21,6 +21,13 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {}
     }
+  },
+
+  // @nuxt/image defaults (static-friendly)
+  image: {
+    format: ['webp', 'png', 'jpeg'],
+    quality: 80,
+    screens: { sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }
   },
 
   // Vite: no special alias for dayjs (use plugin + useDayjs())
