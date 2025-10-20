@@ -91,7 +91,7 @@ useHead({
               </NuxtLink>
               <NuxtLink
                 to="/gallery"
-                class="btn-ghost-light"
+                class="btn-outline-accent"
                 aria-label="Explore the Briko gallery"
               >
                 Explore Gallery

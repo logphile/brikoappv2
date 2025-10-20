@@ -167,6 +167,27 @@
       @apply bg-[color:rgba(255,255,255,0.08)] brightness-110;
     }
 
+    /* Purple outline secondary button */
+    .btn-outline-accent {
+      @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition will-change-transform
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+      color: var(--purple);
+      background: transparent;
+      border-width: 1px; border-style: solid; border-color: var(--purple-ring);
+      --tw-ring-color: var(--purple-ring);
+      --tw-ring-offset-color: transparent;
+      filter: drop-shadow(0 0 8px rgba(47,48,97,0.18));
+    }
+    .btn-outline-accent:hover {
+      @apply brightness-110;
+      background: color-mix(in oklab, var(--purple) 10%, transparent);
+      filter: drop-shadow(0 0 12px rgba(47,48,97,0.28));
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .btn-outline-accent:hover { transform: translateY(-1px); }
+      .btn-outline-accent:active { transform: translateY(0); }
+    }
+
     /* Purple accent CTA buttons */
     .btn-accent {
       @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition will-change-transform
