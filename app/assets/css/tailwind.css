@@ -117,6 +117,31 @@
              hover:bg-[#34343A]/5 transition;
     }
 
+    /* Mint CTA buttons */
+    .btn-mint {
+      @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
+             bg-mint text-ink transition will-change-transform
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70;
+    }
+    .btn-mint:hover {
+      @apply bg-mintLight;
+      box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 8px 22px rgba(0,229,160,0.28);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .btn-mint:hover { transform: translateY(-1px); }
+      .btn-mint:active { transform: translateY(0); }
+    }
+
+    .btn-mint-outline {
+      @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
+             text-mint ring-1 ring-mint/40 bg-transparent transition will-change-transform
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70;
+    }
+    .btn-mint-outline:hover {
+      @apply bg-mint/10;
+      box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 6px 18px rgba(0,229,160,0.25);
+    }
+
     .soft-card {
       @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
     }
