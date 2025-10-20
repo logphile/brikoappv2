@@ -12,7 +12,7 @@
           aria-label="Open Community Gallery"
         >Community Gallery</UiButton>
         <UiButton
-          variant="mint"
+          variant="accent"
           as="button"
           @click="openNewProjectModal()"
           aria-haspopup="dialog"
@@ -67,7 +67,7 @@
             <p class="font-medium">Create your first project</p>
             <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
           </div>
-          <button type="button" class="btn-mint cursor-pointer" @click="openNewProjectModal()">New Project</button>
+          <button type="button" class="btn-accent cursor-pointer" @click="openNewProjectModal()">New Project</button>
         </div>
       </div>
     </div>

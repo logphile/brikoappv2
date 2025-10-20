@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   as?: string
-  variant?: 'primary' | 'secondary' | 'pill' | 'mint' | 'mint-outline'
+  variant?: 'primary' | 'secondary' | 'pill' | 'mint' | 'mint-outline' | 'accent'
   to?: string
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
@@ -22,7 +22,8 @@ defineProps<{
       'h-8 px-3 rounded-xl ring-1 ring-black/10 bg-white/70 text-black hover:bg-white':
         variant==='pill',
       'btn-mint': variant==='mint',
-      'btn-mint-outline': variant==='mint-outline'
+      'btn-mint-outline': variant==='mint-outline',
+      'btn-accent': variant==='accent'
     }"
   >
     <slot />
