@@ -1,6 +1,12 @@
 @import './typography.css';
 /* Tailwind layers */
-  @tailwind base;
+  /* Global design tokens (CSS variables) */
+ :root {
+   --mint: #00E5A0;
+   --mint-light: #2CF0B7;
+   --ink: #343434;
+ }
+ @tailwind base;
   @tailwind components;
   @layer utilities {
     /* local utility aliases using @apply (quick unblock with raw hex) */
@@ -120,27 +126,31 @@
     /* Mint CTA buttons */
     .btn-mint {
       @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
-             bg-mint text-ink transition will-change-transform
-             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70;
+             transition will-change-transform focus-visible:outline-none focus-visible:ring-2;
+      color: var(--ink);
+      background-image: linear-gradient(to bottom, var(--mint), var(--mint-light));
+      /* ring color + offset using CSS variables */
+      --tw-ring-color: var(--mint);
+      /* Tailwind ring-offset utilities accept any color via arbitrary values */
+      box-shadow: none;
     }
-    .btn-mint:hover {
-      @apply bg-mintLight;
-      box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 8px 22px rgba(0,229,160,0.28);
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .btn-mint:hover { transform: translateY(-1px); }
-      .btn-mint:active { transform: translateY(0); }
-    }
+    .btn-mint:focus-visible { outline: none; box-shadow: 0 0 0 2px color-mix(in oklab, var(--mint) 70%, transparent); }
+    .btn-mint:hover { filter: brightness(1.1) drop-shadow(0 0 12px rgba(0,229,160,0.35)); }
+    /* Motion-respectful lift */
+    .motion-safe .btn-mint:hover { transform: translateY(-1px); }
+    .motion-safe .btn-mint:active { transform: translateY(0); }
 
     .btn-mint-outline {
       @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
-             text-mint ring-1 ring-mint/40 bg-transparent transition will-change-transform
-             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint/70;
+             bg-transparent transition will-change-transform focus-visible:outline-none focus-visible:ring-2;
+      color: var(--mint);
+      border-radius: 1rem; /* rounded-2xl fallback for non-TW consumers */
+      /* ring color */
+      --tw-ring-color: var(--mint);
+      box-shadow: none;
+      border-width: 1px; border-style: solid; border-color: rgba(0,229,160,0.40);
     }
-    .btn-mint-outline:hover {
-      @apply bg-mint/10;
-      box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 6px 18px rgba(0,229,160,0.25);
-    }
+    .btn-mint-outline:hover { background-color: rgba(0,229,160,0.10); filter: drop-shadow(0 0 10px rgba(0,229,160,0.25)); }
 
     .soft-card {
       @apply rounded-2xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10;
