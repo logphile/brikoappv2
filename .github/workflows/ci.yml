@@ -23,14 +23,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
-      - uses: actions/setup-node@v4
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20'
           cache: 'pnpm'
           cache-dependency-path: app/pnpm-lock.yaml
-      - run: pnpm install
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: Clean install
+        run: |
+          rm -rf node_modules
+          pnpm install --no-frozen-lockfile
 
   build:
     name: Build static site
@@ -38,15 +45,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
-      - uses: actions/setup-node@v4
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20'
           cache: 'pnpm'
           cache-dependency-path: app/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm run generate   # nuxt generate (static build)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: Clean install
+        run: |
+          rm -rf node_modules
+          pnpm install --no-frozen-lockfile
+      - name: Build static site
+        run: pnpm run generate   # nuxt generate (static build)
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
@@ -59,15 +74,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
-      - uses: actions/setup-node@v4
+      - name: Use Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20'
           cache: 'pnpm'
           cache-dependency-path: app/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm exec playwright install --with-deps
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
       - name: Serve static build
         run: |
           pnpm dlx serve .output/public -l 4173 >/dev/null 2>&1 &
@@ -86,9 +107,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
-      - run: pnpm install
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: app/pnpm-lock.yaml
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile
       - name: Serve static build
         run: |
           pnpm dlx serve .output/public -l 4173 >/dev/null 2>&1 &
@@ -102,9 +133,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
-      - run: pnpm install
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: app/pnpm-lock.yaml
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+      - name: Install deps
+        run: pnpm install --no-frozen-lockfile
       - name: Pa11y
         run: pnpm run a11y
       - name: Linkinator
