@@ -8,7 +8,6 @@ import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
-import UiButton from '@/components/ui/UiButton.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -83,8 +82,20 @@ useHead({
             </ul>
 
             <div class="flex items-center gap-3">
-              <UiButton variant="primary" to="/mosaic">Try Photo to Bricks Now! →</UiButton>
-              <UiButton variant="pill" to="/community">Explore Gallery</UiButton>
+              <NuxtLink
+                to="/mosaic"
+                class="btn-accent"
+                aria-label="Start Photo to Bricks"
+              >
+                Try Photo to Bricks Now! →
+              </NuxtLink>
+              <NuxtLink
+                to="/gallery"
+                class="btn-ghost-light"
+                aria-label="Explore the Briko gallery"
+              >
+                Explore Gallery
+              </NuxtLink>
             </div>
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>

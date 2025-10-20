@@ -156,6 +156,17 @@
     }
     .btn-mint-outline:hover { background-color: rgba(0,229,160,0.10); filter: drop-shadow(0 0 10px rgba(0,229,160,0.25)); }
 
+    /* Ghost light secondary button (for purple/hero sections) */
+    .btn-ghost-light {
+      @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
+             text-white ring-1 ring-white/40 bg-transparent transition will-change-transform
+             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white
+             focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ink)];
+    }
+    .btn-ghost-light:hover {
+      @apply bg-[color:rgba(255,255,255,0.08)] brightness-110;
+    }
+
     /* Purple accent CTA buttons */
     .btn-accent {
       @apply inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold transition will-change-transform
@@ -185,6 +196,29 @@
     /* Ink card (purple) for Settings */
     .card-ink {
       @apply rounded-2xl bg-[#2F3061] text-white border border-white/10 shadow-sm;
+    }
+
+    /* Feature cards (purple band) */
+    .feature-wrap { @apply relative; }
+    .feature-card {
+      @apply rounded-2xl p-5 bg-[color:rgba(255,255,255,0.06)] ring-1 ring-[color:rgba(255,255,255,0.14)] shadow-lg backdrop-blur-[2px] transition;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.25));
+    }
+    .feature-card:hover {
+      @apply bg-[color:rgba(255,255,255,0.08)] ring-[color:rgba(255,255,255,0.20)];
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.30));
+    }
+    .feature-card::before {
+      content: "";
+      display: block;
+      @apply absolute left-0 top-0 h-full w-[3px] rounded-l-2xl;
+      background: linear-gradient(to bottom, var(--purple), var(--purple-dark));
+      opacity: .9;
+    }
+    .feature-title { @apply font-semibold text-white; }
+    .feature-body { @apply text-[color:rgba(255,255,255,0.85)]; }
+    .feature-icon {
+      @apply shrink-0 w-6 h-6 text-[color:rgba(255,255,255,0.95)] ring-1 ring-[color:rgba(255,255,255,0.18)] rounded-xl p-1 bg-[color:rgba(255,255,255,0.06)];
     }
     .section-h--ink { @apply text-[11px] uppercase tracking-wide font-semibold text-white/80; }
     .section-rule--ink { @apply h-px bg-white/15 flex-1; }
