@@ -40,7 +40,7 @@
       <!-- hover action cluster -->
       <div class="pointer-events-none absolute inset-0">
         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
-          <div class="actions w-full flex gap-2">
+          <div class="actions w-full flex gap-2 pointer-events-auto">
             <NuxtLink
               :to="`${viewPrefix}/${project.id}`"
               class="inline-flex items-center justify-center h-9 px-3 rounded-full

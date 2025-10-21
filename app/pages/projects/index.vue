@@ -1,5 +1,5 @@
 <template>
-  <main class="min-h-screen">
+  <main class="min-h-screen text-[#111827]">
     <!-- Page container -->
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
       <!-- Header -->

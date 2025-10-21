@@ -22,8 +22,8 @@
            @error="onImgError" />
 
       <!-- Hover overlay actions: neutral/outline buttons (no mint) -->
-      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25">
-        <div class="actions w-full flex gap-2">
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-end p-3 bg-black/0 group-hover:bg-black/25 pointer-events-none">
+        <div class="actions w-full flex gap-2 pointer-events-auto">
           <NuxtLink
             :to="viewHref"
             class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
@@ -190,7 +190,7 @@ function relativeTime(input?: string){
   const y = Math.floor(mo/12); return r(y,'year')
 }
 
-const viewHref = computed(() => props.publicId ? `/p/${props.publicId}-${slugify(props.name)}` : '/mosaic')
+const viewHref = computed(() => props.publicId ? `/studio/${props.publicId}` : '/mosaic')
 const dateLocal = computed(() => {
   try { return props.date ? new Date(props.date).toLocaleDateString() : '' } catch { return '' }
 })

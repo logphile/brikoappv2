@@ -173,20 +173,18 @@ async function togglePublic(){
       <ClientOnly>
         <div class="actions mt-2 flex items-center gap-2">
           <!-- View -->
-          <UiButton
-            variant="pill"
-            class="flex-1"
-            :to="'/mosaic?remix=' + p.id"
-          >View</UiButton>
+          <NuxtLink
+            :to="`/studio/${p.id}`"
+            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
+            aria-label="View"
+          >View</NuxtLink>
 
           <!-- Remix -->
-          <UiButton
-            as="button"
-            variant="pill"
-            class="flex-1"
-            :disabled="isRemixing"
-            @click.stop.prevent="onRemix"
-          >Remix</UiButton>
+          <NuxtLink
+            :to="`/mosaic?remix=${p.id}`"
+            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium text-white bg-[#2F3061] hover:bg-[#2F3061]/90 ring-1 ring-black/0 shadow-sm transition"
+            aria-label="Remix"
+          >Remix</NuxtLink>
 
           <!-- Delete -->
           <UiButton
