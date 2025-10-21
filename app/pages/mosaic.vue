@@ -1062,7 +1062,8 @@ watchDebounced(
                 enter-from-class="opacity-0 translate-y-2"
                 enter-to-class="opacity-100 translate-y-0"
               >
-                <div class="z-0 rounded-2xl card-outline-soft bg-[#FFD808] p-3 sm:p-4 space-y-6">
+                <div class="z-0 rounded-2xl card-outline-soft bg-[#FFD808] p-3 sm:p-4 flex flex-col min-h-[560px]">
+                  <div class="flex-1 space-y-6">
                   <!-- Step 1: Upload -->
                   <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
                     <StepCard :step="1" title="Upload your photo">
@@ -1227,24 +1228,12 @@ watchDebounced(
 
                   <!-- Precise inputs -->
                   <div class="h-px bg-white/5 my-3"></div>
-                  <!-- Step 2 footer row -->
-                  <div class="mt-6 flex items-center justify-end gap-3 on-yellow">
-                    <UiButton
-                      as="button"
-                      variant="primary"
-                      :disabled="isSaving || !mosaicReady"
-                      @click="onSave"
-                      aria-label="Save mosaic to My Gallery"
-                      title="Save to My Gallery"
-                    >
-                      <span v-if="!isSaving">Save</span>
-                      <span v-else>Saving…</span>
-                    </UiButton>
-                  </div>
                   <!-- Hidden SaveRow to reuse save() logic without showing bottom bar -->
                   <div class="hidden" aria-hidden="true">
                     <SaveRow ref="saveRowRef" :draft="draft" :dirty="isDirty" :onAfterSave="() => markSaved()" />
                   </div>
+                  <!-- Divider between tuning and naming/visibility -->
+                  <div class="my-4 border-t border-[color:rgba(47,48,97,0.18)]"></div>
                   <!-- Step 2: Title + Visibility (on yellow) -->
                   <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] on-yellow">
                     <label class="block">
@@ -1449,6 +1438,19 @@ watchDebounced(
                     </select>
                   </div>
                   <div class="h-px bg-white/5 my-3"></div>
+                  </div>
+                  <!-- Footer actions -->
+                  <div class="pt-4 flex justify-end">
+                    <button
+                      type="button"
+                      class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed"
+                      :disabled="isSaving || !isDirty || !mosaicReady"
+                      @click="onSave"
+                    >
+                      <span v-if="!isSaving">Save</span>
+                      <span v-else>Saving…</span>
+                    </button>
+                  </div>
                 </div>
               </Transition>
             </div>
