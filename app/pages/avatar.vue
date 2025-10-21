@@ -1,178 +1,122 @@
 <template>
-  <Transition appear enter-active-class="transition ease-out duration-600"
-              enter-from-class="opacity-0 translate-y-2"
-              enter-to-class="opacity-100 translate-y-0">
-  <main class="mx-auto max-w-7xl px-6 py-10 text-[#343434] mb-20">
-    <div class="flex items-center justify-between gap-4">
-      <div>
-        <h1 class="text-[#343434] text-4xl md:text-5xl font-bold">{{ copy.avatar.title }}</h1>
-        <p class="text-[#2F3061] text-lg md:text-xl mb-8">{{ copy.avatar.subtitle }}</p>
-        <nav aria-label="Quick guide" class="mt-8 flex flex-wrap gap-6 md:gap-8 items-center">
-          <a v-for="(s, i) in stepsAvatar" :key="s.id" :href="'#' + s.id"
-             :class="[
-               'rounded-lg min-h-[40px] px-4 py-2 flex items-center gap-3 transition-colors duration-150 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-               (i <= activeStepIndex) ? 'bg-[#FF0062] text-[#FFD808] shadow-md' : 'bg-[#2F3061] text-white'
-             ]">
-            <UploadIcon v-if="s.id==='upload'" class="w-5 h-5" />
-            <span v-else class="material-symbols-rounded text-[20px]" :class="(i <= activeStepIndex) ? 'text-[#FFD808]' : 'text-white'" aria-hidden="true">{{ s.icon }}</span>
-            <span class="text-sm" :class="(i <= activeStepIndex) ? 'font-semibold' : ''">{{ s.title }}</span>
-          </a>
-        </nav>
+  <div class="container mx-auto px-4 py-8 grid gap-6 lg:grid-cols-[420px,1fr]">
+    <!-- LEFT PANEL -->
+    <div class="rounded-2xl border border-black/10 bg-[color:rgba(255,255,255,0.08)] p-5 shadow-sm flex flex-col min-h-[640px] space-y-5">
+      <div class="flex-1 space-y-5">
+        <!-- 1) Upload -->
+        <section>
+          <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">1</span>
+            Upload your photo
+          </h3>
+          <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
+        </section>
+
+        <!-- 2) Style presets -->
+        <section>
+          <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
+            Style presets
+          </h3>
+          <UiPillGroup dense v-model="preset" :options="[
+            { label: 'Auto', value: 'auto' },
+            { label: 'Line Art', value: 'lineart' },
+            { label: 'Photo Pop', value: 'pop' }
+          ]" />
+        </section>
+
+        <!-- 3) Output & Preview -->
+        <section>
+          <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
+            Output &amp; Preview
+          </h3>
+          <div class="space-y-4">
+            <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
+            <PreviewQualitySelect v-model:quality="quality" />
+          </div>
+        </section>
+
+        <!-- divider -->
+        <div class="my-2 border-t border-[color:rgba(47,48,97,0.18)]"></div>
+
+        <!-- 4) Options -->
+        <section>
+          <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">4</span>
+            Options
+          </h3>
+          <div class="flex flex-wrap gap-3">
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="ditherFS" />
+              <span>Dither (FS)</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="studStyle" />
+              <span>Stud style</span>
+            </label>
+            <label class="inline-flex items-center gap-2">
+              <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="showPlateOutlines" />
+              <span>Show plate outlines</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- 5) Palette & Background -->
+        <section>
+          <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">5</span>
+            Palette &amp; Background
+          </h3>
+
+          <PaletteSwatches v-model="paletteName" class="mb-3" />
+
+          <label class="block text-sm font-medium text-[color:var(--ink)] mb-1">Background</label>
+          <select v-model="bgMode" class="w-full rounded-xl bg-white/5 ring-1 ring-black/10 px-3 py-2">
+            <option value="keep">Keep quantized image</option>
+            <option value="transparent">Transparent</option>
+            <option value="solid">Solid color</option>
+          </select>
+          <label v-if="bgMode==='solid'" class="block mt-2">
+            <span class="block text-[#2F3061]">Solid color</span>
+            <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white rounded border border-[#343434]/20" />
+          </label>
+        </section>
+      </div>
+
+      <!-- footer -->
+      <div class="pt-2 mt-auto flex flex-wrap justify-end gap-2">
+        <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="loading || !imgReady" @click="process">
+          <span v-if="!loading">Generate</span>
+          <span v-else>Processing…</span>
+        </button>
+        <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady" @click="doExportPng">Download poster</button>
+        <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+        <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery</button>
       </div>
     </div>
 
-    <section class="mt-6">
-      <div class="grid gap-6 lg:grid-cols-[460px,1fr] items-start">
-        <!-- Controls column (yellow panel) -->
-        <aside class="lg:col-span-1">
-          <div class="rounded-2xl border border-black/10 bg-[color:rgba(255,255,255,0.08)] p-5 shadow-sm flex flex-col min-h-[640px] space-y-5">
-            <div class="flex-1 space-y-5">
-              <!-- Upload -->
-              <section id="upload" class="scroll-mt-28 pt-2">
-                <StepCard :step="1" title="Upload your photo">
-                  <template #actions>
-                    <div class="hidden md:flex items-center gap-2">
-                      <span class="text-xs text-[#2F3061]/80">Preset</span>
-                      <UiPillGroup dense v-model="preset" :options="[
-                        { label: 'Auto', value: 'auto' },
-                        { label: 'Line Art', value: 'lineart' },
-                        { label: 'Photo Pop', value: 'pop' }
-                      ]" />
-                    </div>
-                  </template>
-                  <div class="md:hidden mb-4">
-                    <span class="text-xs text-[#2F3061]/80">Preset</span>
-                    <UiPillGroup dense v-model="preset" :options="[
-                      { label: 'Auto', value: 'auto' },
-                      { label: 'Line Art', value: 'lineart' },
-                      { label: 'Photo Pop', value: 'pop' }
-                    ]" />
-                  </div>
-                  <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
-                </StepCard>
-              </section>
-
-              <!-- 2) Style presets -->
-              <section>
-                <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
-                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
-                  Style presets
-                </h3>
-                <div class="mt-2">
-                  <UiPillGroup dense v-model="preset" :options="[
-                    { label: 'Auto', value: 'auto' },
-                    { label: 'Line Art', value: 'lineart' },
-                    { label: 'Photo Pop', value: 'pop' }
-                  ]" />
-                </div>
-              </section>
-
-              <!-- 3) Output & Preview -->
-              <section>
-                <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
-                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
-                  Output & Preview
-                </h3>
-                <div class="space-y-4">
-                  <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
-                  <PreviewQualitySelect v-model:quality="quality" />
-                </div>
-              </section>
-
-            <!-- Divider -->
-            <div class="my-2 border-t border-[color:rgba(47,48,97,0.18)]"></div>
-
-            <!-- 4) Options -->
-            <section>
-              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">4</span>
-                Options
-              </h3>
-              <div class="mt-2 flex flex-wrap gap-4 items-center text-[#2F3061]">
-                <label class="inline-flex items-center gap-2">
-                  <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="ditherFS" />
-                  <span>Dither (FS)</span>
-                </label>
-                <label class="inline-flex items-center gap-2">
-                  <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="studStyle" />
-                  <span>Stud style</span>
-                </label>
-                <label class="inline-flex items-center gap-2">
-                  <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="showPlateOutlines" />
-                  <span>Show plate outlines</span>
-                </label>
-              </div>
-            </section>
-
-            <!-- 5) Palette & Background -->
-            <section>
-              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">5</span>
-                Palette & Background
-              </h3>
-              <div class="space-y-4">
-                <PaletteSwatches v-model="paletteName" />
-                <div class="space-y-3">
-                  <select v-model="bgMode" class="w-full rounded-xl border border-[#343434]/20 bg-white text-[#2F3061] focus:outline-none focus:ring-2 focus:ring-[color:var(--purple)] px-3 py-2">
-                    <option value="keep">Keep quantized image</option>
-                    <option value="solid">Solid color</option>
-                    <option value="transparent">Transparent</option>
-                  </select>
-                  <label v-if="bgMode==='solid'" class="block">
-                    <span class="block text-[#2F3061]">Solid color</span>
-                    <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white rounded border border-[#343434]/20" />
-                  </label>
-                </div>
-              </div>
-            </section>
-
-            <!-- Status chip -->
-            <div class="mt-1 inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-[#343434]">
-              <span class="material-symbols-rounded text-[16px] text-pink-500" aria-hidden="true">check_circle</span>
-              <span>OpenCV: {{ cvReady ? 'ready' : 'loading…' }}</span>
-            </div>
-          </div>
-
-          <!-- Footer actions -->
-          <div class="pt-4 mt-auto flex flex-wrap justify-end gap-2">
-            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="loading || !imgReady" @click="process">
-              <span v-if="!loading">Generate</span>
-              <span v-else>Processing…</span>
-            </button>
-            <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady" @click="doExportPng">Download poster</button>
-            <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
-            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery</button>
+    <!-- RIGHT PREVIEW -->
+    <div class="rounded-2xl bg-[#232449] p-4 shadow-md">
+      <div class="relative aspect-square rounded-2xl overflow-hidden flex items-center justify-center"
+           @dragover.prevent
+           @drop.prevent="onDropOverPreview"
+           title="Drop an image to upload">
+        <Transition name="fadein">
+          <canvas v-show="outReady" ref="outCanvas" class="max-w-full"></canvas>
+        </Transition>
+        <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none" :style="gridOverlayStyle"></div>
+        <div v-if="!outReady" class="absolute inset-0 grid place-items-center">
+          <div class="text-center">
+            <img :src="uploadIcon" alt="" aria-hidden="true" class="mx-auto mb-2 w-16 h-16 select-none" />
+            <p class="text-sm text-[#FFD808]/80">Upload an image to begin.</p>
           </div>
         </div>
-      </aside>
-
-        <!-- Preview column (navy card) -->
-        <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-6 relative">
-          <div class="relative aspect-square rounded-2xl overflow-hidden flex items-center justify-center"
-               @dragover.prevent
-               @drop.prevent="onDropOverPreview"
-               title="Drop an image to upload">
-            <Transition name="fadein">
-              <canvas v-show="outReady" ref="outCanvas" class="max-w-full"></canvas>
-            </Transition>
-            <!-- Grid overlay -->
-            <div v-if="showPlateOutlines && lastTileSizePx" class="absolute inset-0 pointer-events-none" :style="gridOverlayStyle"></div>
-            <div v-if="!outReady" class="absolute inset-0 grid place-items-center">
-              <div class="text-center">
-                <img :src="uploadIcon" alt="" aria-hidden="true" class="mx-auto mb-2 w-16 h-16 select-none" />
-                <p class="text-sm text-[#FFD808]/80">Upload an image to begin.</p>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
-      <!-- Hidden source canvas for processing -->
       <canvas ref="srcCanvas" class="hidden"></canvas>
-    </section>
-  </main>
-  </Transition>
-  
- </template>
+    </div>
+  </div>
+</template>
 
 <script setup lang="ts">
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
