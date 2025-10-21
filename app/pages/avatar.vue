@@ -48,37 +48,36 @@
                       { label: 'Photo Pop', value: 'pop' }
                     ]" />
                   </div>
-                </template>
-                <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
-              </StepCard>
-            </section>
+                  <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
+                </StepCard>
+              </section>
 
-            <!-- 2) Style presets -->
-            <section>
-              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
-                Style presets
-              </h3>
-              <div class="mt-2">
-                <UiPillGroup dense v-model="preset" :options="[
-                  { label: 'Auto', value: 'auto' },
-                  { label: 'Line Art', value: 'lineart' },
-                  { label: 'Photo Pop', value: 'pop' }
-                ]" />
-              </div>
-            </section>
+              <!-- 2) Style presets -->
+              <section>
+                <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
+                  Style presets
+                </h3>
+                <div class="mt-2">
+                  <UiPillGroup dense v-model="preset" :options="[
+                    { label: 'Auto', value: 'auto' },
+                    { label: 'Line Art', value: 'lineart' },
+                    { label: 'Photo Pop', value: 'pop' }
+                  ]" />
+                </div>
+              </section>
 
-            <!-- 3) Output & Preview -->
-            <section>
-              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
-                Output & Preview
-              </h3>
-              <div class="space-y-4">
-                <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
-                <PreviewQualitySelect v-model:quality="quality" />
-              </div>
-            </section>
+              <!-- 3) Output & Preview -->
+              <section>
+                <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
+                  Output & Preview
+                </h3>
+                <div class="space-y-4">
+                  <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
+                  <PreviewQualitySelect v-model:quality="quality" />
+                </div>
+              </section>
 
             <!-- Divider -->
             <div class="my-2 border-t border-[color:rgba(47,48,97,0.18)]"></div>
@@ -193,7 +192,6 @@ import { copy } from '@/lib/copy'
 import PaletteSwatches from '@/components/ui/PaletteSwatches.vue'
 import OutputSizeControl from '@/components/controls/OutputSizeControl.vue'
 import PreviewQualitySelect from '@/components/controls/PreviewQualitySelect.vue'
-import PresetChips from '@/components/controls/PresetChips.vue'
 import { useRemixLoader } from '@/composables/useRemixLoader'
 import { useProjects } from '@/composables/useProjects'
 import StepCard from '@/components/ui/StepCard.vue'
