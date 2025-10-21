@@ -1,7 +1,7 @@
 <template>
   <article v-if="!broken" class="gallery-card group relative overflow-hidden rounded-2xl bg-white/5 ring-1 ring-black/10 shadow-card transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
     <!-- Preview area: square, original swap on hover/tap -->
-    <div class="relative rounded-xl overflow-hidden aspect-square bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
+    <div class="relative aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-white/10 bg-[#1F2A44]" @mouseenter="preloadOriginal" @touchstart.passive="onTapSwap">
       <!-- Mosaic (default) -->
       <NuxtImg v-if="thumbUrl" :src="thumbUrl" alt=""
            width="320" height="320" format="webp" densities="1x 2x"
@@ -48,13 +48,16 @@
       </div>
     </div>
 
-    <!-- Caption under image: keep ink card variant or light variant -->
+    <!-- Caption under image: include handle (username) next to name, date on the right -->
     <div :class="['mt-2 p-3 rounded-2xl border', props.caption === 'light' ? 'bg-white/5 border-[#34343A]/20 text-[var(--briko-ink-900)]' : 'card-caption-ink']">
-      <h3 :class="[props.caption === 'light' ? 'text-[#34343A] font-medium' : 'card-title-ink', 'text-[13px] line-clamp-1']">
-        {{ name }}
-      </h3>
-      <div class="mt-1">
-        <span :class="[props.caption === 'light' ? 'text-[#34343A]/70' : 'card-date-ink', 'text-[13px]']">{{ dateLocal }}</span>
+      <div class="flex items-center justify-between gap-2">
+        <h3 :class="[props.caption === 'light' ? 'text-[#34343A] font-medium' : 'card-title-ink', 'text-[13px] truncate']">
+          <span class="truncate">{{ name }}</span>
+          <span v-if="username" class="ml-2 opacity-80">
+            · @{{ (username || '').replace(/^@/, '') }}
+          </span>
+        </h3>
+        <span :class="[props.caption === 'light' ? 'text-[#34343A]/70' : 'card-date-ink', 'text-[13px] shrink-0']">{{ dateLocal }}</span>
       </div>
     </div>
   </article>

@@ -205,12 +205,24 @@ async function fetchMy(){
       .limit(100)
     rows = data || []
   }
+  // Load current user's profile once to attach handle/display_name
+  let me: { handle?: string|null; display_name?: string|null } = {}
+  try {
+    const { data: prof } = await supabase
+      .from('profiles')
+      .select('handle, display_name')
+      .eq('user_id', user.value.id)
+      .single()
+    me = { handle: prof?.handle ?? null, display_name: prof?.display_name ?? null }
+  } catch {}
+
   myItems.value = rows.map((r:any) => ({
     id: r.id,
     title: r.title,
     created_at: r.updated_at || r.created_at,
     cover_url: r.preview_path ? `${buildPreviewUrl(r.preview_path)}?v=${bust(r.updated_at || r.created_at)}` : null,
     is_public: !!r.is_public,
+    owner: me,
   }))
   loadingMy.value = false
 }
@@ -224,7 +236,7 @@ async function fetchCommPage(){
   const to = from + pageSize - 1
   const { data, error } = await supabase
     .from('user_projects_public')
-    .select('id, title, kind, preview_path, created_at, updated_at')
+    .select('id, title, kind, preview_path, created_at, updated_at, handle, display_name')
     .order('created_at', { ascending: false })
     .range(from, to)
   if(!error){

@@ -128,7 +128,7 @@ async function togglePublic(){
   >
     <!-- Thumb -->
     <NuxtLink :to="{ path: '/mosaic', query: { remix: p.id } }" class="block">
-      <div class="aspect-[16/10] overflow-hidden bg-black/10">
+      <div class="relative aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black/10">
         <NuxtImg
           v-if="previewUrl"
           :src="previewUrl"
@@ -139,7 +139,7 @@ async function togglePublic(){
           densities="1x 2x"
           sizes="(max-width: 640px) 100vw, 320px"
           loading="lazy"
-          class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          class="block h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
         />
         <div v-else class="h-full w-full grid place-items-center text-sm opacity-60">No preview</div>
       </div>
@@ -149,7 +149,10 @@ async function togglePublic(){
     <div class="p-4">
       <div class="flex items-center justify-between gap-3">
         <h3 class="truncate font-medium text-[var(--briko-ink-900)]">
-          {{ p.name || 'Untitled' }}
+          <span class="truncate">{{ p.name || 'Untitled' }}</span>
+          <span v-if="(p as any)?.author?.handle || (p as any)?.profiles?.handle" class="ml-2 opacity-80 text-sm">
+            · @{{ ((p as any)?.author?.handle || (p as any)?.profiles?.handle) }}
+          </span>
         </h3>
         <button
           class="inline-flex items-center rounded-xl px-2 h-6 text-xs ring-1 transition"

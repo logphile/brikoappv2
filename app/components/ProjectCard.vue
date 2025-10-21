@@ -2,13 +2,13 @@
   <!-- Default (Gallery) style: full-card link -->
   <NuxtLink v-if="!overlay" :to="`/p/${project.id}`"
     class="group block rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-sm transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
-    <div class="framed-img aspect-[4/3] bg-black/30">
+    <div class="relative aspect-[4/3] w-full overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black/30">
       <NuxtImg v-if="project.cover_url"
            :src="project.cover_url as string" alt=""
            width="320" height="240" format="webp" densities="1x 2x"
            sizes="(max-width: 640px) 100vw, 320px"
            loading="lazy" fetchpriority="low"
-           class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+           class="block h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
            @error="emit('img-error', project.id)" />
       <div v-else class="h-full w-full grid place-items-center text-white/40 text-sm">No preview</div>
     </div>
@@ -24,9 +24,9 @@
   </NuxtLink>
 
   <!-- Studio overlay style: soft card with square preview and hover actions -->
-  <article v-else class="gallery-card card group relative overflow-hidden rounded-2xl ring-1 ring-black/10 shadow-card transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
+  <article v-else class="gallery-card card group relative overflow-hidden rounded-2xl shadow-card transition will-change-transform hover:-translate-y-0.5 hover:shadow-elevated">
     <!-- cover -->
-    <div class="relative aspect-square overflow-hidden rounded-2xl bg-black/5">
+    <div class="relative aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black/5">
       <div class="absolute inset-0 animate-pulse bg-black/5" v-if="!imgLoaded" />
       <NuxtImg v-if="project.cover_url"
            :src="project.cover_url as string" :alt="project.title || 'Project preview'"
@@ -72,11 +72,16 @@
         </div>
       </div>
     </div>
-    <!-- caption -->
+    <!-- caption: name · @handle · date -->
     <div class="mt-2 card-caption-ink p-3">
-      <h3 class="card-title-ink text-[13px] line-clamp-1">{{ project.title || 'Untitled' }}</h3>
-      <div class="mt-1">
-        <span class="card-date-ink text-[13px]">{{ new Date(project.created_at).toLocaleDateString() }}</span>
+      <div class="flex items-center justify-between gap-2">
+        <h3 class="card-title-ink text-[13px] truncate">
+          <span class="truncate">{{ project.title || 'Untitled' }}</span>
+          <span v-if="project?.owner && (project.owner.handle || project.owner.display_name)" class="ml-2 opacity-80">
+            · @{{ project.owner.handle || project.owner.display_name }}
+          </span>
+        </h3>
+        <span class="card-date-ink text-[13px] shrink-0">{{ new Date(project.created_at).toLocaleDateString() }}</span>
       </div>
     </div>
   </article>
