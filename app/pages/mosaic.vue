@@ -1062,8 +1062,8 @@ watchDebounced(
                 enter-from-class="opacity-0 translate-y-2"
                 enter-to-class="opacity-100 translate-y-0"
               >
-                <div class="z-0 rounded-2xl card-outline-soft bg-[#FFD808] p-3 sm:p-4 flex flex-col min-h-[560px]">
-                  <div class="flex-1 space-y-6">
+                <div class="z-0 rounded-2xl border border-black/10 bg-[color:rgba(255,255,255,0.08)] p-5 shadow-sm flex flex-col min-h-[640px] space-y-5">
+                  <div class="flex-1 space-y-5">
                   <!-- Step 1: Upload -->
                   <section :id="stepsGuide[0].id" class="scroll-mt-28 pt-2">
                     <StepCard :step="1" title="Upload your photo">
@@ -1147,12 +1147,71 @@ watchDebounced(
                       <h2 class="text-xl font-semibold text-[#343434]">Tune mosaic</h2>
                     </div>
                   </section>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-[#343434] text-xl font-semibold">Output size</h3>
-                    <InfoTip label="About output size">
-                      Bigger sizes use more bricks and show more detail.
-                    </InfoTip>
-                    <div class="ml-auto flex items-center gap-2">
+                  <section>
+                    <h3 class="flex items-center justify-between font-semibold text-[color:var(--ink)] text-lg mb-2">
+                      <span class="flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">1</span>
+                        Output size
+                      </span>
+                      <InfoTip label="About output size">
+                        Bigger sizes use more bricks and show more detail.
+                      </InfoTip>
+                    </h3>
+                  </section>
+                  <!-- Preset size pill group -->
+                  <div class="mt-2">
+                    <UiPillGroup
+                      v-model="presetChoice"
+                      :options="[
+                        { label: '16×16', value: '16x16' },
+                        { label: '20×20', value: '20x20' },
+                        { label: '32×32', value: '32x32' },
+                        { label: '48×48', value: '48x48' },
+                        { label: '64×64', value: '64x64' },
+                      ]"
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-5 text-sm">
+                    <label class="text-[#2F3061]"
+                      >Width
+                      <input
+                        type="range"
+                        min="16"
+                        max="256"
+                        step="1"
+                        v-model.number="target.w"
+                        @change="snapDim('w')"
+                        class="w-full accent-[color:var(--purple)] focus:outline-none focus:ring-2 focus:ring-[color:var(--purple-ring)]"
+                      />
+                    </label>
+                    <label class="text-[#2F3061]"
+                      >Height
+                      <input
+                        type="range"
+                        min="16"
+                        max="256"
+                        step="1"
+                        v-model.number="target.h"
+                        @change="snapDim('h')"
+                        class="w-full accent-[color:var(--purple)] focus:outline-none focus:ring-2 focus:ring-[color:var(--purple-ring)]"
+                      />
+                    </label>
+                  </div>
+                  <InlineStats
+                    :items="[
+                      `${target.w}×${target.h} studs`,
+                      `${inchesW}×${inchesH} in`,
+                      `${cmW}×${cmH} cm`,
+                    ]"
+                  />
+
+                  <!-- Step 2: Options -->
+                  <section>
+                    <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                      <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
+                      Options
+                    </h3>
+                    <div class="flex items-center gap-2">
                       <div class="text-xs bg-white/10 rounded-md overflow-hidden">
                         <button
                           :class="['px-2 py-1', !showAdvanced ? 'bg-white/20' : '']"
@@ -1178,53 +1237,7 @@ watchDebounced(
                         {{ mosaic.tilingResult ? 'Regenerate Mosaic' : 'Generate Mosaic' }}
                       </ButtonPrimary>
                     </div>
-                  </div>
-                  <!-- Preset size pill group -->
-                  <div class="mt-2">
-                    <UiPillGroup
-                      v-model="presetChoice"
-                      :options="[
-                        { label: '16×16', value: '16x16' },
-                        { label: '20×20', value: '20x20' },
-                        { label: '32×32', value: '32x32' },
-                        { label: '48×48', value: '48x48' },
-                        { label: '64×64', value: '64x64' },
-                      ]"
-                    />
-                  </div>
-                  <div class="grid grid-cols-2 gap-5 text-sm">
-                    <label class="text-[#2F3061]"
-                      >Width
-                      <input
-                        type="range"
-                        min="16"
-                        max="256"
-                        step="1"
-                        v-model.number="target.w"
-                        @change="snapDim('w')"
-                        class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]"
-                      />
-                    </label>
-                    <label class="text-[#2F3061]"
-                      >Height
-                      <input
-                        type="range"
-                        min="16"
-                        max="256"
-                        step="1"
-                        v-model.number="target.h"
-                        @change="snapDim('h')"
-                        class="w-full accent-[#FF0062] focus:outline-none focus:ring-2 focus:ring-[#FF0062]"
-                      />
-                    </label>
-                  </div>
-                  <InlineStats
-                    :items="[
-                      `${target.w}×${target.h} studs`,
-                      `${inchesW}×${inchesH} in`,
-                      `${cmW}×${cmH} cm`,
-                    ]"
-                  />
+                  </section>
 
                   <!-- Precise inputs -->
                   <div class="h-px bg-white/5 my-3"></div>
@@ -1234,10 +1247,14 @@ watchDebounced(
                   </div>
                   <!-- Divider between tuning and naming/visibility -->
                   <div class="my-4 border-t border-[color:rgba(47,48,97,0.18)]"></div>
-                  <!-- Step 2: Title + Visibility (on yellow) -->
-                  <div class="mt-6 grid gap-4 lg:grid-cols-[1fr_auto] on-yellow">
+                  <!-- Step 3: Title -->
+                  <section class="mt-6">
+                    <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                      <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
+                      Title
+                    </h3>
                     <label class="block">
-                      <span class="label block text-sm font-semibold">Title</span>
+                      <span class="label block text-sm font-semibold sr-only">Title</span>
                       <input
                         v-model="draft.title"
                         type="text"
@@ -1248,9 +1265,16 @@ watchDebounced(
                                focus:outline-none focus:ring-2 focus:ring-[#FF0062] focus:border-transparent"
                       />
                     </label>
+                  </section>
 
+                  <!-- Step 4: Visibility -->
+                  <section>
+                    <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                      <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">4</span>
+                      Visibility
+                    </h3>
                     <div class="flex flex-col">
-                      <span class="label text-sm font-semibold mb-2">Visibility</span>
+                      <span class="label text-sm font-semibold mb-2 sr-only">Visibility</span>
                       <div class="segmented" role="group" aria-label="Visibility">
                         <button
                           type="button"
@@ -1272,7 +1296,7 @@ watchDebounced(
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </section>
                   <div>
                     <div class="flex items-center gap-2">
                       <h4 class="text-sm font-medium text-[#343434]/80">
