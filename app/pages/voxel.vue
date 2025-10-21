@@ -13,8 +13,6 @@ import { PRICE_ESTIMATE_SHORT } from '@/lib/disclaimer'
 import { createWorkerTask } from '@/utils/worker-task'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import { copy } from '@/lib/copy'
-import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
-import ButtonOutline from '@/components/ui/ButtonOutline.vue'
 import UploadIcon from '@/components/ui/UploadIcon.vue'
 // (computed imported above)
 import { legoPalette as LEGO_PALETTE } from '@/lib/palette/lego'
@@ -331,74 +329,76 @@ async function makePublic(){
     <div class="mt-8 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
       <!-- Controls panel (left) -->
       <aside class="lg:col-span-1">
-        <div class="bg-[#FFD808] card-outline-soft rounded-xl shadow-sm p-6 space-y-6">
+        <div class="rounded-2xl border border-black/10 bg-[color:rgba(255,255,255,0.08)] p-5 shadow-sm flex flex-col min-h-[640px] space-y-5">
           <!-- Upload -->
           <section id="upload" class="scroll-mt-28 pt-2">
-            <div class="flex items-center gap-3 mb-1">
-              <div class="inline-grid h-9 w-9 place-items-center rounded-xl border border-white/30 bg-white/70">
-                <span class="material-symbols-rounded text-[20px] text-[#FF0062]" aria-hidden="true">cloud_upload</span>
-              </div>
-              <h2 class="text-lg font-semibold text-[#343434]">Upload</h2>
-            </div>
+            <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">1</span>
+              Upload
+            </h3>
             <div class="pt-2">
               <UploadBox :maxSizeMB="25" accept="image/*" :label="'Drag a photo here or'" :buttonText="'browse'" @file="onFile" @error="(msg) => console.warn(msg)" />
             </div>
           </section>
+          <!-- 2) Voxel settings -->
+          <section>
+            <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
+              Voxel settings
+            </h3>
+            <label class="flex items-center justify-between text-[color:var(--ink)] font-medium mb-1">
+              Resolution
+              <span class="text-[color:rgba(0,0,0,0.55)] text-sm">{{ size }}³</span>
+            </label>
+            <input type="range" min="16" max="96" step="8" v-model.number="size" class="w-full accent-[color:var(--purple)]" aria-label="Resolution" />
+            <p class="text-[color:rgba(0,0,0,0.6)] text-sm mt-1">Higher = more detail (slower).</p>
+          </section>
 
-          <div class="divide-y divide-[#343434]/10">
-            <!-- Voxel settings -->
-            <section class="pt-4 pb-6">
-              <h3 class="h3 text-[#343434] mb-1">Voxel settings</h3>
-              <div class="flex items-center gap-2 mb-1">
-                <label class="block text-sm text-[#2F3061]">Resolution</label>
-                <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" style="background:rgba(255,0,98,.12); color:#FF0062;">{{ size }}³</span>
-              </div>
-              <input type="range" min="16" max="96" step="8" v-model.number="size" class="range-pink">
-              <div class="text-xs text-[#2F3061] mt-1">Higher = more detail (slower).</div>
-            </section>
+          <!-- 3) Lighting -->
+          <section>
+            <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
+              Lighting
+            </h3>
+            <label class="flex items-center justify-between text-[color:var(--ink)] font-medium mb-1">
+              Brightness
+              <span class="text-[color:rgba(0,0,0,0.55)] text-sm">{{ exposure.toFixed(1) }}×</span>
+            </label>
+            <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="w-full accent-[color:var(--purple)]" aria-label="Brightness" />
+          </section>
 
-            <!-- Lighting -->
-            <section class="pt-4 pb-6">
-              <h3 class="h3 text-[#343434] mb-1">Lighting</h3>
-              <div class="flex items-center gap-2 mb-1">
-                <label class="block text-sm text-[#2F3061]">Brightness</label>
-                <span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs" style="background:rgba(255,0,98,.12); color:#FF0062;">{{ exposure.toFixed(1) }}×</span>
-              </div>
-              <input type="range" min="0.8" max="1.6" step="0.1" v-model.number="exposure" class="range-pink" />
-            </section>
+          <!-- Divider to separate tuning from actions -->
+          <div class="my-2 border-t border-[color:rgba(47,48,97,0.18)]"></div>
 
-            <!-- Build steps -->
-            <section class="pt-4 pb-6">
-              <h3 class="h3 text-[#343434] mb-1">Build steps</h3>
-              <p class="text-sm text-[#2F3061]">Control how many layers per step.</p>
-            </section>
+          <!-- 4) Build steps -->
+          <section>
+            <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">4</span>
+              Build steps
+            </h3>
+            <p class="text-sm text-[color:rgba(0,0,0,0.60)]">Control how many layers per step.</p>
+          </section>
 
-            <!-- Export -->
-            <section class="pt-4 pb-0">
-              <h3 class="h3 text-[#343434] mb-3">Export</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
-                <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">
-                  <span v-if="!pdfWorking">One-click PDF</span>
-                  <span v-else>Generating…</span>
-                </ButtonPrimary>
-                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!vox" @click="exportPng">Export PNG</ButtonOutline>
-                <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!vox" @click="exportCsv">Export CSV</ButtonOutline>
-              </div>
-            </section>
+          <!-- Primary + Export actions -->
+          <section class="space-y-3">
+            <!-- Primary actions -->
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="btn-accent" :disabled="!srcBitmap || loading" :aria-busy="loading" @click="scheduleRegen">{{ vox ? 'Rebuild' : 'Run voxelize' }}</button>
+              <button type="button" class="btn-outline-accent" @click="useSample">Use sample</button>
+            </div>
+            <!-- Export actions -->
+            <div class="flex flex-wrap gap-2">
+              <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="pdfWorking || !vox" :aria-busy="pdfWorking" @click.stop.prevent="previewRef?.exportPdf?.()">One-click PDF</button>
+              <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!vox" @click="exportPng">Export PNG</button>
+              <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!vox" @click="exportCsv">Export CSV</button>
+            </div>
+          </section>
+
+          <!-- Footer Save (pinned bottom-right) -->
+          <div class="pt-2 mt-auto flex justify-end gap-2">
+            <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery</button>
           </div>
-
-          <!-- Primary/secondary actions -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
-            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!srcBitmap || loading" :aria-busy="loading" @click="scheduleRegen">{{ vox ? 'Rebuild' : 'Run voxelize' }}</ButtonPrimary>
-            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" @click="useSample">Use sample</ButtonOutline>
-          </div>
-
-          <!-- Save/Publish -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
-            <ButtonPrimary type="button" variant="pink" class="rounded-lg px-4 py-2 hover:bg-[#FF0062]/90 active:translate-y-[1px] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!vox || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonPrimary>
-            <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
-          </div>
-
         </div>
       </aside>
 
