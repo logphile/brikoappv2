@@ -114,7 +114,7 @@
               <div class="space-y-4">
                 <PaletteSwatches v-model="paletteName" />
                 <div class="space-y-3">
-                  <select v-model="bgMode" class="w-full rounded-xl border border-[#343434]/20 bg-white text-[#2F3061] focus:outline-none focus:ring-2 focus:ring-[color:var(--purple-ring)] px-3 py-2">
+                  <select v-model="bgMode" class="w-full rounded-xl border border-[#343434]/20 bg-white text-[#2F3061] focus:outline-none focus:ring-2 focus:ring-[color:var(--purple)] px-3 py-2">
                     <option value="keep">Keep quantized image</option>
                     <option value="solid">Solid color</option>
                     <option value="transparent">Transparent</option>
@@ -141,8 +141,8 @@
               <span v-else>Processing…</span>
             </button>
             <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady" @click="doExportPng">Download poster</button>
-            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery</button>
             <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery</button>
           </div>
         </div>
       </aside>
