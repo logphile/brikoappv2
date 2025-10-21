@@ -19,30 +19,28 @@
           </a>
         </nav>
       </div>
-      <div class="flex items-center gap-3">
-        <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
-                       :disabled="!outReady" @click="doExportPng">Export PNG</ButtonOutline>
-        <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed"
-                       :disabled="saving || !canShare || !outReady" @click="saveAvatar">{{ saving ? 'Saving…' : 'Save' }}</ButtonOutline>
-        <label class="rounded-lg px-4 py-2 border border-[#FF0062] text-[#FF0062] bg-transparent text-sm cursor-pointer select-none hover:bg-[#343434] hover:text-white transition"
-               :class="(!projectId || !canShare) ? 'opacity-50 pointer-events-none' : ''">
-          <input type="checkbox" class="sr-only" v-model="isPublic" :disabled="!projectId || !canShare" @change="onTogglePublic" />
-          <span>{{ isPublic ? 'Public' : 'Make Public' }}</span>
-        </label>
-        <NuxtLink v-if="shareToken" :to="sharePath" class="text-sm underline">Share link</NuxtLink>
-      </div>
     </div>
 
     <section class="mt-6">
       <div class="grid gap-6 lg:grid-cols-[460px,1fr] items-start">
         <!-- Controls column (yellow panel) -->
         <aside class="lg:col-span-1">
-          <div class="rounded-2xl card-outline-soft bg-[#FFD808] p-3 sm:p-4">
-            <!-- Upload -->
-            <section id="upload" class="scroll-mt-28 pt-2">
-              <StepCard :step="1" title="Upload your photo">
-                <template #actions>
-                  <div class="hidden md:flex items-center gap-2">
+          <div class="rounded-2xl border border-black/10 bg-[color:rgba(255,255,255,0.08)] p-5 shadow-sm flex flex-col min-h-[640px] space-y-5">
+            <div class="flex-1 space-y-5">
+              <!-- Upload -->
+              <section id="upload" class="scroll-mt-28 pt-2">
+                <StepCard :step="1" title="Upload your photo">
+                  <template #actions>
+                    <div class="hidden md:flex items-center gap-2">
+                      <span class="text-xs text-[#2F3061]/80">Preset</span>
+                      <UiPillGroup dense v-model="preset" :options="[
+                        { label: 'Auto', value: 'auto' },
+                        { label: 'Line Art', value: 'lineart' },
+                        { label: 'Photo Pop', value: 'pop' }
+                      ]" />
+                    </div>
+                  </template>
+                  <div class="md:hidden mb-4">
                     <span class="text-xs text-[#2F3061]/80">Preset</span>
                     <UiPillGroup dense v-model="preset" :options="[
                       { label: 'Auto', value: 'auto' },
@@ -62,57 +60,68 @@
               </StepCard>
             </section>
 
-            <div class="divide-y divide-[#343434]/10">
-              <!-- Style presets -->
-              <section class="pt-4 pb-6">
-                <h3 class="text-lg font-semibold text-[#343434] mb-1">Style presets</h3>
-                <div class="mt-2">
-                  <UiPillGroup dense v-model="preset" :options="[
-                    { label: 'Auto', value: 'auto' },
-                    { label: 'Line Art', value: 'lineart' },
-                    { label: 'Photo Pop', value: 'pop' }
-                  ]" />
-                </div>
-              </section>
-              <!-- Output & Preview -->
-              <section class="pt-4 pb-6">
-                <h3 class="text-lg font-semibold text-[#343434] mb-1">Output & Preview</h3>
-                <div class="space-y-4">
-                  <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
-                  <PreviewQualitySelect v-model:quality="quality" />
-                </div>
-              </section>
+            <!-- 2) Style presets -->
+            <section>
+              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">2</span>
+                Style presets
+              </h3>
+              <div class="mt-2">
+                <UiPillGroup dense v-model="preset" :options="[
+                  { label: 'Auto', value: 'auto' },
+                  { label: 'Line Art', value: 'lineart' },
+                  { label: 'Photo Pop', value: 'pop' }
+                ]" />
+              </div>
+            </section>
 
-              <!-- Options -->
-              <section class="pt-4 pb-6">
-                <h3 class="text-lg font-semibold text-[#343434] mb-1">Options</h3>
-                <div class="mt-2 flex flex-wrap gap-4 items-center text-[#2F3061]">
-                  <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" class="h-4 w-4 accent-[#2F3061]" v-model="ditherFS" />
-                    <span>Dither (FS)</span>
-                  </label>
-                  <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" class="h-4 w-4 accent-[#2F3061]" v-model="studStyle" />
-                    <span>Stud style</span>
-                  </label>
-                  <label class="inline-flex items-center gap-2">
-                    <input type="checkbox" class="h-4 w-4 accent-[#2F3061]" v-model="showPlateOutlines" />
-                    <span>Show plate outlines</span>
-                  </label>
-                </div>
-              </section>
+            <!-- 3) Output & Preview -->
+            <section>
+              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">3</span>
+                Output & Preview
+              </h3>
+              <div class="space-y-4">
+                <OutputSizeControl v-model:width="widthStuds" v-model:height="heightStuds" />
+                <PreviewQualitySelect v-model:quality="quality" />
+              </div>
+            </section>
 
-              <!-- Palette -->
-              <section class="pt-4 pb-6">
-                <h3 class="text-lg font-semibold text-[#343434] mb-1">Palette</h3>
+            <!-- Divider -->
+            <div class="my-2 border-t border-[color:rgba(47,48,97,0.18)]"></div>
+
+            <!-- 4) Options -->
+            <section>
+              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">4</span>
+                Options
+              </h3>
+              <div class="mt-2 flex flex-wrap gap-4 items-center text-[#2F3061]">
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="ditherFS" />
+                  <span>Dither (FS)</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="studStyle" />
+                  <span>Stud style</span>
+                </label>
+                <label class="inline-flex items-center gap-2">
+                  <input type="checkbox" class="h-4 w-4 accent-[color:var(--purple)]" v-model="showPlateOutlines" />
+                  <span>Show plate outlines</span>
+                </label>
+              </div>
+            </section>
+
+            <!-- 5) Palette & Background -->
+            <section>
+              <h3 class="flex items-center gap-2 font-semibold text-[color:var(--ink)] text-lg mb-2">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple)] text-white text-sm font-medium">5</span>
+                Palette & Background
+              </h3>
+              <div class="space-y-4">
                 <PaletteSwatches v-model="paletteName" />
-              </section>
-
-              <!-- Background -->
-              <section class="pt-4 pb-6">
-                <h3 class="text-lg font-semibold text-[#343434] mb-1">Background</h3>
                 <div class="space-y-3">
-                  <select v-model="bgMode" class="w-full rounded-xl border border-[#343434]/20 bg-white text-[#2F3061] focus:outline-none focus:ring-2 focus:ring-[#FF0062] px-3 py-2">
+                  <select v-model="bgMode" class="w-full rounded-xl border border-[#343434]/20 bg-white text-[#2F3061] focus:outline-none focus:ring-2 focus:ring-[color:var(--purple-ring)] px-3 py-2">
                     <option value="keep">Keep quantized image</option>
                     <option value="solid">Solid color</option>
                     <option value="transparent">Transparent</option>
@@ -122,27 +131,28 @@
                     <input type="color" v-model="bgSolid" class="mt-2 h-9 w-16 bg-white rounded border border-[#343434]/20" />
                   </label>
                 </div>
-              </section>
+              </div>
+            </section>
 
-              <!-- Actions -->
-              <section class="pt-4 pb-0">
-                <h3 class="text-lg font-semibold text-[#343434] mb-3">Actions</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 space-y-4 sm:space-y-0">
-                  <UiButton as="button" variant="primary" class="rounded-lg px-4 py-2" :disabled="loading || !imgReady" @click="process">
-                    <span v-if="!loading">Generate</span>
-                    <span v-else>Processing…</span>
-                  </UiButton>
-                  <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery (private)</ButtonOutline>
-                  <ButtonOutline type="button" variant="pink" class="rounded-lg px-4 py-2 border-[#FF0062] text-[#FF0062] bg-transparent hover:bg-[#343434] hover:text-white focus-visible:ring-2 focus-visible:ring-[#FF0062] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFD808] active:!translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</ButtonOutline>
-                </div>
-                <div class="mt-3 inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-[#343434]">
-                  <span class="material-symbols-rounded text-[16px] text-pink-500" aria-hidden="true">check_circle</span>
-                  <span>OpenCV: {{ cvReady ? 'ready' : 'loading…' }}</span>
-                </div>
-              </section>
+            <!-- Status chip -->
+            <div class="mt-1 inline-flex items-center gap-1 rounded-full border border-pink-500/80 bg-white/70 px-2 py-0.5 text-xs font-medium text-[#343434]">
+              <span class="material-symbols-rounded text-[16px] text-pink-500" aria-hidden="true">check_circle</span>
+              <span>OpenCV: {{ cvReady ? 'ready' : 'loading…' }}</span>
             </div>
           </div>
-        </aside>
+
+          <!-- Footer actions -->
+          <div class="pt-4 mt-auto flex flex-wrap justify-end gap-2">
+            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="loading || !imgReady" @click="process">
+              <span v-if="!loading">Generate</span>
+              <span v-else>Processing…</span>
+            </button>
+            <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady" @click="doExportPng">Download poster</button>
+            <button type="button" class="btn-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!outReady || publishing" :aria-busy="publishing" @click="publishToGallery">Save to Gallery</button>
+            <button type="button" class="btn-outline-accent disabled:opacity-60 disabled:cursor-not-allowed" :disabled="!galleryProjectId" @click="makePublic">Make Public</button>
+          </div>
+        </div>
+      </aside>
 
         <!-- Preview column (navy card) -->
         <section class="lg:col-span-1 rounded-xl shadow-lg ring-1 ring-[#343434]/20 bg-[#2F3061] p-6 relative">
