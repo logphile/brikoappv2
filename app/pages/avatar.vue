@@ -49,13 +49,6 @@
                     ]" />
                   </div>
                 </template>
-                <div class="md:hidden mb-4">
-                  <UiPillGroup dense v-model="preset" :options="[
-                    { label: 'Auto', value: 'auto' },
-                    { label: 'Line Art', value: 'lineart' },
-                    { label: 'Photo Pop', value: 'pop' }
-                  ]" />
-                </div>
                 <UploadCard accept="image/png,image/jpeg,image/webp" acceptLabel="PNG, JPG, or WebP" :maxSizeMb="25" @files="onAvatarFiles" />
               </StepCard>
             </section>
@@ -191,8 +184,6 @@ import { useSupabaseSafeClient } from '@/composables/useSupabaseSafeClient'
 // Nuxt auto-imported composable (not used directly here)
 declare const useSupabaseClient: <T = any>() => T
 import { useRoute } from 'vue-router'
-import ButtonPrimary from '@/components/ui/ButtonPrimary.vue'
-import ButtonOutline from '@/components/ui/ButtonOutline.vue'
 import UploadIcon from '@/components/ui/UploadIcon.vue'
 import { useToasts } from '@/composables/useToasts'
 import { lego16, lego32 } from '@/lib/palette/legoPresets'
