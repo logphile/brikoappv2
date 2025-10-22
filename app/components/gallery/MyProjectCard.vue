@@ -126,22 +126,35 @@ async function togglePublic(){
     :data-user="userId"
     :data-is-owner="isOwner"
   >
-    <!-- Thumb -->
-    <NuxtLink :to="{ path: '/mosaic', query: { remix: p.id } }" class="block">
-      <div class="relative aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 ring-white/10 bg-black/10">
-        <NuxtImg
+    <!-- Media -->
+    <NuxtLink :to="`/studio/${p.id}`" class="group block" aria-label="Open project">
+      <div
+        class="relative aspect-[4/3] w-full overflow-hidden rounded-2xl
+               ring-1 ring-black/10
+               transition-all duration-200
+               group-hover:-translate-y-0.5 group-hover:shadow-xl
+               group-hover:ring-2 group-hover:ring-[#00E5A0] group-hover:shadow-[0_0_12px_#00E5A040]
+               motion-reduce:transition-none motion-reduce:transform-none"
+      >
+        <img
           v-if="previewUrl"
           :src="previewUrl"
           alt=""
-          width="320"
-          height="200"
-          format="webp"
-          densities="1x 2x"
-          sizes="(max-width: 640px) 100vw, 320px"
+          class="block h-full w-full object-cover"
           loading="lazy"
-          class="block h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          decoding="async"
         />
         <div v-else class="h-full w-full grid place-items-center text-sm opacity-60">No preview</div>
+
+        <!-- Optional stud overlay -->
+        <div
+          class="pointer-events-none absolute inset-0 opacity-0
+                 group-hover:opacity-20 transition-opacity
+                 bg-[url('/patterns/stud-pattern.svg')] bg-[length:28px_28px] mix-blend-overlay"
+        ></div>
+
+        <!-- Bottom vignette -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent"></div>
       </div>
     </NuxtLink>
 
@@ -165,13 +178,20 @@ async function togglePublic(){
         </button>
       </div>
 
-      <div class="mt-1 text-xs opacity-60 flex items-center gap-3">
-        <time :datetime="p.created_at">{{ new Date(p.created_at).toLocaleDateString() }}</time>
+      <!-- Footer bar: name · @handle · date -->
+      <div class="mt-2 flex items-center justify-between rounded-b-2xl bg-[#2B2E5B] px-4 py-3 text-[13px] font-semibold text-white">
+        <div class="min-w-0 truncate">
+          <span class="truncate">{{ p.name || 'Untitled' }}</span>
+          <span v-if="(p as any)?.author?.handle || (p as any)?.profiles?.handle" class="ml-2 opacity-80">
+            · @{{ ((p as any)?.author?.handle || (p as any)?.profiles?.handle) }}
+          </span>
+        </div>
+        <time class="shrink-0 opacity-80">{{ new Date(p.created_at).toLocaleDateString() }}</time>
       </div>
 
       <!-- Actions (client-only to avoid SSR race with user) -->
       <ClientOnly>
-        <div class="actions mt-2 flex items-center gap-2">
+        <div class="actions mt-2 flex items-center gap-2" @click.stop>
           <!-- View -->
           <NuxtLink
             :to="`/studio/${p.id}`"
