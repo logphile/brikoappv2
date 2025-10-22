@@ -10,8 +10,9 @@
         <p class="mt-2 text-sm opacity-80">Your saved builds. Private by default—make them public to share.</p>
       </header>
 
-      <!-- Cards grid -->
+      <!-- Cards or empty state -->
       <section class="mt-6 sm:mt-8">
+        <!-- Prefer the grid component (it handles its own loading/state); this page-level EmptyState is a fallback -->
         <MyGalleryGrid />
       </section>
     </div>
