@@ -191,29 +191,28 @@ async function togglePublic(){
 
       <!-- Actions (client-only to avoid SSR race with user) -->
       <ClientOnly>
-        <div class="actions mt-2 flex items-center gap-2" @click.stop>
+        <div class="actions mt-3 flex items-center gap-2" @click.stop>
           <!-- View -->
           <NuxtLink
             :to="`/studio/${p.id}`"
-            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium bg-white text-gray-900/90 ring-1 ring-black/10 shadow-sm hover:bg-white/90 hover:shadow-md transition"
+            class="inline-flex h-9 items-center justify-center rounded-xl px-3 ring-1 ring-white/15 hover:bg-white/5 transition"
             aria-label="View"
           >View</NuxtLink>
 
           <!-- Remix -->
           <NuxtLink
             :to="`/photo?project=${p.id}`"
-            class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium text-white bg-[#2F3061] hover:bg-[#2F3061]/90 ring-1 ring-black/0 shadow-sm transition"
+            class="inline-flex h-9 items-center justify-center rounded-xl px-3 bg-[#6D5BF5] text-white hover:brightness-110 transition"
             aria-label="Remix"
           >Remix</NuxtLink>
 
           <!-- Delete -->
-          <UiButton
+          <button
             v-if="isOwner"
-            as="button"
-            variant="pill"
-            class="flex-1"
+            type="button"
+            class="inline-flex h-9 items-center justify-center rounded-xl px-3 bg-[#FF0062] text-white hover:brightness-110 transition"
             @click.stop="askDelete = true"
-          >Delete</UiButton>
+          >Delete</button>
         </div>
 
         <!-- Confirm modal -->
