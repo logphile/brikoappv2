@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-dvh flex flex-col bg-[var(--brand-bg)]">
+  <div class="min-h-dvh flex flex-col bg-[var(--brand-bg)] text-[#111827]">
     <AppHeader />
     <div class="flex-1">
       <NuxtLayout>

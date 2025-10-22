@@ -181,7 +181,7 @@ async function togglePublic(){
 
           <!-- Remix -->
           <NuxtLink
-            :to="`/mosaic?remix=${p.id}`"
+            :to="`/photo?project=${p.id}`"
             class="flex-1 inline-flex items-center justify-center h-9 px-3 rounded-full leading-none text-sm font-medium text-white bg-[#2F3061] hover:bg-[#2F3061]/90 ring-1 ring-black/0 shadow-sm transition"
             aria-label="Remix"
           >Remix</NuxtLink>
