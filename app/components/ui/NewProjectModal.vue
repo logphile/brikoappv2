@@ -38,7 +38,7 @@
           <!-- Choices -->
           <div class="grid gap-3">
             <NuxtLink
-              to="/photo"
+              to="/mosaic"
               class="group block rounded-xl p-4
                      bg-white/5 hover:bg-white/8
                      ring-1 ring-white/10 hover:ring-[#FF0062]/40
