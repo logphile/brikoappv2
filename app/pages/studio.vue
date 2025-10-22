@@ -59,15 +59,15 @@
         @deleted="onMyProjectDeleted"
       />
       <div v-else class="mt-4">
-        <div class="card p-8 flex items-center gap-4">
-          <div class="rounded-full h-10 w-10 bg-[#34343A]/10 flex items-center justify-center">
+        <div class="rounded-2xl bg-white/40 ring-1 ring-black/5 p-5 md:p-6 text-[#111827] transition-colors hover:bg-white/50 flex items-center gap-4">
+          <div class="rounded-full h-10 w-10 bg-black/5 ring-1 ring-black/10 flex items-center justify-center">
             <span class="text-[#34343A]">+</span>
           </div>
           <div class="flex-1">
             <p class="font-medium">Create your first project</p>
             <p class="text-sm text-[#34343A]/70">Upload a photo and turn it into bricks in seconds.</p>
           </div>
-          <button type="button" class="btn-accent cursor-pointer" @click="openNewProjectModal()">New Project</button>
+          <button type="button" class="rounded-xl px-4 py-2 ring-1 ring-black/10 hover:bg-black/5 cursor-pointer" @click="openNewProjectModal()">New Project</button>
         </div>
       </div>
     </div>
