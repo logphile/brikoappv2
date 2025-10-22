@@ -1,6 +1,49 @@
 <script setup lang="ts">
+import { useHead } from 'nuxt/app'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
+
 const featuresFree = ['Mosaic builder','PNG / CSV exports','Basic voxel preview']
 const featuresPro  = ['Unlimited exports','Avatar posters','Curated MOC packs','Save & share projects']
+
+// SEO
+useHead({
+  title: 'Pricing',
+  meta: [
+    { name: 'description', content: 'Briko is free to start. Mosaic builder, exports, and a basic 3D preview are included. Pro is coming soon.' },
+    { name: 'keywords', content: 'Briko pricing, LEGO mosaic generator pricing, voxel builder pricing, Briko app' },
+    { property: 'og:title', content: 'Pricing | Briko' },
+    { property: 'og:description', content: 'Briko is free to start. Mosaic builder, exports, and a basic 3D preview are included. Pro is coming soon.' },
+    { property: 'og:url', content: 'https://briko.app/pricing' },
+    { property: 'og:image', content: 'https://briko.app/og-default.png' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Pricing | Briko' },
+    { name: 'twitter:description', content: 'Briko is free to start. Mosaic builder, exports, and a basic 3D preview are included. Pro is coming soon.' },
+    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
+  ],
+  link: [
+    { rel: 'canonical', href: 'https://briko.app/pricing' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const pricingWebPage = webPageJsonLd(
+  siteUrl,
+  '/pricing',
+  'Pricing',
+  'Briko is free to start. Mosaic builder, exports, and a basic 3D preview are included. Pro is coming soon.'
+)
+const pricingBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'Pricing', path: '/pricing' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(pricingWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(pricingBreadcrumbs) }
+  ]
+})
 </script>
 
 <template>

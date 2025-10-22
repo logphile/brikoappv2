@@ -100,6 +100,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useHead } from 'nuxt/app'
+import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 // Nuxt auto-imported composable
 declare const useSupabaseClient: <T = any>() => T
 import { useProjects } from '@/composables/useProjects'
@@ -117,6 +118,7 @@ useHead({
   title: 'Briko Studio',
   meta: [
     { name: 'description', content: 'Your creative hub — explore community builds or manage your own projects.' },
+    { name: 'keywords', content: 'Briko Studio, gallery, LEGO mosaic, voxel builder, manage projects, Briko app' },
     { property: 'og:title', content: 'Briko Studio | Briko' },
     { property: 'og:description', content: 'Your creative hub — explore community builds or manage your own projects.' },
     { property: 'og:type', content: 'website' },
@@ -129,6 +131,26 @@ useHead({
   ],
   link: [
     { rel: 'canonical', href: 'https://briko.app/studio' }
+  ]
+})
+
+// JSON-LD: WebPage + Breadcrumbs
+const siteUrl = 'https://briko.app'
+const studioWebPage = webPageJsonLd(
+  siteUrl,
+  '/studio',
+  'Briko Studio',
+  'Your creative hub — explore community builds or manage your own projects.'
+)
+const studioBreadcrumbs = breadcrumbJsonLd(siteUrl, [
+  { name: 'Home', path: '/' },
+  { name: 'Briko Studio', path: '/studio' }
+])
+
+useHead({
+  script: [
+    { type: 'application/ld+json', innerHTML: JSON.stringify(studioWebPage) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(studioBreadcrumbs) }
   ]
 })
 

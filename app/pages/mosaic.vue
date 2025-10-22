@@ -79,6 +79,7 @@ useHead({
       content:
         'Transform your photos into LEGO-style mosaics with Briko’s instant brick tiler. Export parts list and cost estimate.',
     },
+    { name: 'keywords', content: 'LEGO mosaic generator, photo to LEGO, mosaic builder, Briko app, parts list, LEGO MOC' },
     { property: 'og:title', content: 'Photo to Bricks | Briko' },
     {
       property: 'og:description',

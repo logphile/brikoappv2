@@ -96,6 +96,7 @@ useHead({
   title: '3D Builder',
   meta: [
     { name: 'description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
+    { name: 'keywords', content: 'LEGO voxel builder, 3D brick builder, voxel art, Briko app, LEGO MOC' },
     { property: 'og:title', content: '3D Builder | Briko' },
     { property: 'og:description', content: 'Preview your ideas in 3D voxel bricks. Rotate, zoom, and generate a layered build guide with Briko.' },
     { property: 'og:url', content: 'https://briko.app/voxel' },

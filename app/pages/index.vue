@@ -17,6 +17,7 @@ useHead({
   title: 'Turn Any Idea Into a Brick Build',
   meta: [
     { name: 'description', content: 'Create LEGO-style mosaics and voxel builds in seconds. Upload any image, preview instantly, and export a parts list with Briko.' },
+    { name: 'keywords', content: 'LEGO mosaic generator, photo to LEGO, pixel art builder, LEGO MOC, Briko app, voxel builder' },
     { property: 'og:title', content: 'Briko | Turn Any Idea Into a Brick Build' },
     { property: 'og:description', content: 'Image → Mosaic/Voxel → BOM + price → PDF/CSV/PNG.' },
     { property: 'og:url', content: 'https://briko.app/' },

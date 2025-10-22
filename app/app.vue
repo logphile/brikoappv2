@@ -27,6 +27,9 @@ import { useSiteMeta } from '@/composables/useSiteMeta'
 import { Toaster } from 'vue-sonner'
 
 const { siteName, siteUrl } = useSiteMeta()
+useHead({
+  titleTemplate: (titleChunk?: string) => titleChunk ? `${titleChunk} – Briko` : 'Briko – Turn Photos into LEGO-Style Builds'
+})
 // Force Poppins (font-sans) globally on <body>
 useHead({
   bodyAttrs: { class: 'font-sans antialiased' }
@@ -66,8 +69,8 @@ const appJsonLd = {
   '@type': ['WebApplication','SoftwareApplication'],
   name: siteName,
   url: siteUrl,
-  applicationCategory: 'DesignApplication',
-  operatingSystem: 'Web',
+  applicationCategory: 'CreativeApplication',
+  operatingSystem: 'Any',
   description: 'Create LEGO-style mosaics and voxel builds in seconds. Upload, preview, export parts list and build guides.',
   offers: {
     '@type': 'Offer',
@@ -75,6 +78,7 @@ const appJsonLd = {
     priceCurrency: 'USD',
     category: 'Free'
   },
+  creator: { '@type': 'Person', name: 'Phil' },
   image: `${siteUrl}/og-default.png`,
   sameAs: [],
   isAccessibleForFree: true

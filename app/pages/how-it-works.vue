@@ -5,6 +5,7 @@ useHead({
   title: 'How It Works',
   meta: [
     { name: 'description', content: 'Upload any image → Preview in bricks → Export build guide. Briko makes creating your own brick MOCs simple.' },
+    { name: 'keywords', content: 'how it works, LEGO mosaic generator, photo to LEGO, voxel builder, Briko app, build guide' },
     { property: 'og:title', content: 'How It Works | Briko' },
     { property: 'og:description', content: 'Fast previews, smart tiling, and practical exports.' },
     { property: 'og:url', content: 'https://briko.app/how-it-works' },
