@@ -133,7 +133,7 @@ async function togglePublic(){
                ring-1 ring-black/10
                transition-all duration-200
                group-hover:-translate-y-0.5 group-hover:shadow-xl
-               group-hover:ring-2 group-hover:ring-[#00E5A0] group-hover:shadow-[0_0_12px_#00E5A040]
+               group-hover:ring-2 group-hover:ring-[#FF0062] group-hover:shadow-[0_0_12px_#FF006240]
                motion-reduce:transition-none motion-reduce:transform-none"
       >
         <img
