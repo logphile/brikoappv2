@@ -2,3 +2,8 @@
 .soft-card { @apply rounded-2xl ring-1 ring-black/10 bg-white/5; }
 .soft-panel { @apply rounded-2xl ring-1 ring-black/5 bg-white/40 text-[#111827]; }
 .soft-panel:hover { @apply bg-white/50; }
+
+/* brand pink helpers */
+.text-brand-pink { color: #FF0062; }
+.hover\:text-brand-pink:hover { color: #FF0062; }
+.ring-brand-pink\/40 { --tw-ring-color: rgb(255 6 98 / 0.4); }

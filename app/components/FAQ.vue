@@ -5,7 +5,9 @@
     <div v-for="(f, i) in faqs" :key="i" class="border-t border-black/10 py-5">
       <details class="group">
         <summary
-          class="cursor-pointer text-lg font-semibold text-[#111827] hover:text-[#00E5A0] transition-colors"
+          class="cursor-pointer text-lg font-semibold text-[#111827]
+                 hover:text-brand-pink focus-visible:text-brand-pink
+                 focus-visible:outline-none focus-visible:ring-2 ring-brand-pink/40 rounded-sm transition-colors"
         >
           {{ f.q }}
         </summary>
