@@ -27,18 +27,18 @@ export async function saveProjectCover(opts: {
   if (!supabase) supabase = (useNuxtApp() as any)?.$supabase
   if (!supabase) throw new Error('Supabase client unavailable')
 
-  const filename = `${projectId}.png`
-  const path = `covers/${filename}`
+  // Object key inside the 'covers' bucket (no bucket prefix)
+  const key = `projects/${projectId}.png`
 
   // Upload with upsert
-  const { error: upErr } = await supabase.storage.from('covers').upload(path, blob, {
+  const { error: upErr } = await supabase.storage.from('covers').upload(key, blob, {
     contentType: 'image/png',
     upsert: true
   })
   if (upErr) throw upErr
 
   // Public URL (no expiry)
-  const { data } = supabase.storage.from('covers').getPublicUrl(path)
+  const { data } = supabase.storage.from('covers').getPublicUrl(key)
   const url = (data as any)?.publicUrl || (data as any)?.publicURL || (data as any)?.public_url
   if (!url) throw new Error('Could not resolve public URL for cover')
 
