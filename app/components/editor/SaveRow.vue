@@ -4,6 +4,7 @@ import { useRoute } from 'nuxt/app'
 // Nuxt auto-imported composables from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
 declare const useSupabaseUser: <T = any>() => T
+import { useProjects } from '@/composables/useProjects'
 
 // Minimal draft structure used by the editor
 type ProjectDraft = {
@@ -92,6 +93,37 @@ async function save() {
     if (!props.draft.id && data?.id) props.draft.id = data.id as string
     savedAt.value = new Date().toLocaleTimeString()
     props.onAfterSave?.(props.draft.id as string)
+
+    // Best-effort: export PNG cover and set public cover_url on projects
+    try {
+      const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
+      if (cvs && user.value?.id && props.draft.id) {
+        const { canvasToBlob } = useProjects()
+        const blob = await canvasToBlob(cvs)
+        const key = `${user.value.id}/${props.draft.id}/cover.png`
+        const { error: upErr } = await supabase.storage
+          .from('covers')
+          .upload(key, blob, { contentType: 'image/png', upsert: true })
+        if (!upErr) {
+          const { data: pub } = supabase.storage.from('covers').getPublicUrl(key)
+          const coverUrl = (pub as any)?.publicUrl || (pub as any)?.publicURL || (pub as any)?.public_url || null
+          if (coverUrl) {
+            try {
+              await supabase
+                .from('projects')
+                .update({ cover_url: coverUrl })
+                .eq('id', props.draft.id)
+                .eq('user_id', user.value.id)
+            } catch (e) {
+              // fallback without eq user guard (older schemas)
+              try { await supabase.from('projects').update({ cover_url: coverUrl }).eq('id', props.draft.id) } catch {}
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[SaveRow] cover upload failed', e)
+    }
   } catch (e: any) {
     console.error(e); alert(e?.message ?? 'Save failed')
   } finally {

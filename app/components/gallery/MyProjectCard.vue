@@ -16,6 +16,7 @@ type Row = {
   thumbnail_path?: string | null
   mosaic_path?: string | null
   original_path?: string | null
+  cover_url?: string | null
   is_public: boolean
 }
 
@@ -45,11 +46,16 @@ onMounted(async () => {
     const u = await $supabase?.auth?.getUser?.()
     userId.value = u?.data?.user?.id || null
   } catch {}
-  previewUrl.value =
-    (await signedUrl(props.p.thumbnail_path)) ||
-    (await signedUrl(props.p.mosaic_path)) ||
-    (await signedUrl(props.p.original_path)) ||
-    null
+  // Prefer public cover_url when present; otherwise sign storage paths
+  if (props.p.cover_url) {
+    previewUrl.value = props.p.cover_url
+  } else {
+    previewUrl.value =
+      (await signedUrl(props.p.thumbnail_path)) ||
+      (await signedUrl(props.p.mosaic_path)) ||
+      (await signedUrl(props.p.original_path)) ||
+      null
+  }
 })
 
 // keep in sync when parent updates prop

@@ -11,6 +11,7 @@ export type MyProjectRow = {
   thumbnail_path?: string | null
   mosaic_path?: string | null
   original_path?: string | null
+  cover_url?: string | null
 }
 
 // Reactive variant for client pages: waits for auth to be ready and exposes refresh()
@@ -28,7 +29,7 @@ export function useMyGallery() {
       // Modern schema: user_id/name/thumbnail_path
       const q = await supabase
         .from('projects')
-        .select('id, user_id, name, thumbnail_path, mosaic_path, original_path, is_public, created_at')
+        .select('id, user_id, name, thumbnail_path, mosaic_path, original_path, cover_url, is_public, created_at')
         .eq('user_id', userId.value!)
         .order('created_at', { ascending: false })
       if (q.error) throw q.error
