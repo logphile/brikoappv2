@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { useNuxtApp } from 'nuxt/app'
+import { useNuxtApp } from '#imports'
 
 // Nuxt will auto-import useSupabaseClient when @nuxtjs/supabase is installed.
 // Declare the symbol for TS to avoid editor complaints if types lag.

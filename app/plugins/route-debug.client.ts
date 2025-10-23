@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from 'nuxt/app'
+import { defineNuxtPlugin, useRouter, useRoute } from '#imports'
 import { onMounted } from 'vue'
 
 export default defineNuxtPlugin(() => {

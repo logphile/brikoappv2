@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRoute } from 'nuxt/app'
+import { useRoute } from 'vue-router'
 // Nuxt auto-imported composables from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
 declare const useSupabaseUser: <T = any>() => T

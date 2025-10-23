@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useHead } from 'nuxt/app'
+import { useHead } from '#imports'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 // Nuxt auto-imported composable
 declare const useSupabaseClient: <T = any>() => T

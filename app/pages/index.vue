@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHead } from 'nuxt/app'
+import { useHead } from '#imports'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'

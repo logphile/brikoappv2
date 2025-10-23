@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, useNuxtApp } from 'nuxt/app'
+import { defineNuxtPlugin, useNuxtApp } from '#imports'
 
 export default defineNuxtPlugin(() => {
   if (import.meta.dev) {

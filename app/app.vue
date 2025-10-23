@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRuntimeConfig } from 'nuxt/app'
+import { useRuntimeConfig } from '#imports'
 import { useHead } from '#imports'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'

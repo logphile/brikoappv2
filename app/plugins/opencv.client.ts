@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from 'nuxt/app'
+import { defineNuxtPlugin } from '#imports'
 
 export default defineNuxtPlugin(async () => {
   if (typeof window === 'undefined') return

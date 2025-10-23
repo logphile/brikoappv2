@@ -1,4 +1,4 @@
-import { useNuxtApp } from 'nuxt/app'
+import { useNuxtApp } from '#imports'
 
 export type PublishOpts = {
   file: Blob

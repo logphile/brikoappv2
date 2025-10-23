@@ -1,4 +1,4 @@
-import { defineNuxtPlugin } from 'nuxt/app'
+import { defineNuxtPlugin } from '#imports'
 
 // Logs any browser fetch to your Supabase project. Temporary debug utility.
 export default defineNuxtPlugin(() => {

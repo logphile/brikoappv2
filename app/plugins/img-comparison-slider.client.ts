@@ -2,7 +2,7 @@
 // Robust to environments where the npm package isn't installed by
 // attempting a runtime import and falling back to a CDN ESM build.
 // Library: https://github.com/sneas/img-comparison-slider
-import { defineNuxtPlugin } from 'nuxt/app'
+import { defineNuxtPlugin } from '#imports'
 
 export default defineNuxtPlugin(async () => {
   if (typeof window === 'undefined') return

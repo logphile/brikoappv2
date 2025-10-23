@@ -1,4 +1,4 @@
-import { useState } from 'nuxt/app'
+import { useState } from '#imports'
 
 export type ToastType = 'info' | 'success' | 'error'
 export interface ToastItem {

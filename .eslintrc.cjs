@@ -62,6 +62,19 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-explicit-any': 'off'
       }
+    },
+    {
+      files: ['server/**/*.{ts,js}'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            paths: [
+              { name: 'nuxt/app', message: 'Use #imports or h3 on server.' }
+            ]
+          }
+        ]
+      }
     }
   ],
   globals: {

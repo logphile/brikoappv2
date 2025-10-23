@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, useRoute, useHead, useRuntimeConfig } from 'nuxt/app'
+import { defineNuxtPlugin, useRoute, useHead, useRuntimeConfig } from '#imports'
 import { computed } from 'vue'
 
 // Adds a canonical link on every route. Uses a stable key to avoid duplicates.

@@ -4,8 +4,14 @@ declare const useSupabaseClient: <T = any>() => T
 declare const useSupabaseUser: <T = any>() => any
 
 export function useProfile() {
-  const supabase = useSupabaseClient<any>()
-  const user = useSupabaseUser<any>()
+  // SSR-safe: only access Supabase composables on client
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let supabase: any = null
+  let user: any = ref(null)
+  if (import.meta.client) {
+    try { supabase = useSupabaseClient<any>() } catch {}
+    try { user = useSupabaseUser<any>() } catch {}
+  }
 
   const profile = ref<{
     user_id: string
@@ -17,7 +23,7 @@ export function useProfile() {
   const error = ref<string | null>(null)
 
   async function loadProfile() {
-    if (!user?.value) return
+    if (!user?.value || !supabase) return
     loading.value = true; error.value = null
     const { data, error: err } = await supabase
       .from('profiles')
@@ -35,7 +41,7 @@ export function useProfile() {
   }
 
   async function saveProfile(patch: Partial<Omit<NonNullable<typeof profile.value>, 'user_id'>>) {
-    if (!user?.value) return { data: null, err: new Error('Not authenticated') }
+    if (!user?.value || !supabase) return { data: null, err: new Error('Not authenticated') }
     loading.value = true; error.value = null
     const payload = {
       user_id: user.value.id,

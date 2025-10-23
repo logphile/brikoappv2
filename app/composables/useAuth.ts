@@ -1,4 +1,4 @@
-import { useState } from 'nuxt/app'
+import { useState } from '#imports'
 // Nuxt auto-imported composable from @nuxtjs/supabase (only exists on client)
 declare const useSupabaseClient: <T = any>() => T
 

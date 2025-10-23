@@ -1,4 +1,4 @@
-import { useRuntimeConfig } from 'nuxt/app'
+import { useRuntimeConfig } from '#imports'
 import type { SupabaseClient } from '@supabase/supabase-js'
 // Nuxt auto-imported composable
 declare const useSupabaseClient: <T = any>() => T

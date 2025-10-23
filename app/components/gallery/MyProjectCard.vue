@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useNuxtApp } from 'nuxt/app'
+import { useNuxtApp } from '#imports'
 import { signedUrl } from '@/lib/signed-url'
 import { deleteProject } from '@/lib/gallery'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'

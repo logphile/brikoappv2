@@ -1,4 +1,4 @@
-import { useRuntimeConfig } from 'nuxt/app'
+import { useRuntimeConfig } from '#imports'
 
 export const useSiteMeta = () => {
   const config = useRuntimeConfig()

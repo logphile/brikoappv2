@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHead } from 'nuxt/app'
+import { useHead } from '#imports'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 useHead({
   title: 'How It Works',

@@ -1,4 +1,4 @@
-import { defineNuxtPlugin, useHead, useRuntimeConfig } from 'nuxt/app'
+import { defineNuxtPlugin, useHead, useRuntimeConfig } from '#imports'
 
 export default defineNuxtPlugin(() => {
   const siteUrl = (useRuntimeConfig().public as any)?.siteUrl || 'https://briko.app'
