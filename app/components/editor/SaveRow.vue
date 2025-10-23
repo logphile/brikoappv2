@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 // Nuxt auto-imported composables from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
 declare const useSupabaseUser: <T = any>() => T
-import { useProjects } from '@/composables/useProjects'
+import { saveProjectCover } from '@/composables/useProjectCover'
 
 // Minimal draft structure used by the editor
 type ProjectDraft = {
@@ -97,28 +97,12 @@ async function save() {
     // Best-effort: export PNG cover and set public cover_url on projects
     try {
       const cvs: HTMLCanvasElement | OffscreenCanvas | undefined = (window as any).__brikoCanvas
-      if (cvs && user.value?.id && props.draft.id) {
-        const { canvasToBlob } = useProjects()
-        const blob = await canvasToBlob(cvs)
-        const key = `${user.value.id}/${props.draft.id}/cover.png`
-        const { error: upErr } = await supabase.storage
-          .from('covers')
-          .upload(key, blob, { contentType: 'image/png', upsert: true })
-        if (!upErr) {
-          const { data: pub } = supabase.storage.from('covers').getPublicUrl(key)
-          const coverUrl = (pub as any)?.publicUrl || (pub as any)?.publicURL || (pub as any)?.public_url || null
-          if (coverUrl) {
-            try {
-              await supabase
-                .from('projects')
-                .update({ cover_url: coverUrl })
-                .eq('id', props.draft.id)
-                .eq('user_id', user.value.id)
-            } catch (e) {
-              // fallback without eq user guard (older schemas)
-              try { await supabase.from('projects').update({ cover_url: coverUrl }).eq('id', props.draft.id) } catch {}
-            }
-          }
+      const fallbackEl = document.getElementById('mosaic-preview-capture') as HTMLElement | null
+      if (user.value?.id && props.draft.id) {
+        // Prefer live canvas if available, otherwise capture the preview host
+        const el = (cvs instanceof HTMLCanvasElement ? (cvs as any as HTMLElement) : fallbackEl)
+        if (el) {
+          await saveProjectCover({ projectId: props.draft.id, el })
         }
       }
     } catch (e) {
