@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHead } from '#imports'
+import { ref } from 'vue'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
@@ -8,6 +9,7 @@ import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
+import { subscribeEmail } from '@/composables/useSubscribers'
 
 const siteUrl = 'https://briko.app'
 
@@ -60,6 +62,20 @@ useHead({
     { type: 'application/ld+json', innerHTML: JSON.stringify(homeBreadcrumbs) }
   ]
 })
+
+const email = ref('')
+const subscribed = ref(false)
+async function subscribe() {
+  if (!email.value) return
+  try {
+    await subscribeEmail(email.value)
+    subscribed.value = true
+    email.value = ''
+  } catch (e) {
+    console.error(e)
+    alert('Subscription failed. Try again later.')
+  }
+}
 </script>
 
 <template>
@@ -147,6 +163,23 @@ useHead({
 
     <!-- How it works -->
     <HowItWorks />
+
+    <!-- Email capture block -->
+    <section class="w-full bg-[#FFD808]/20 border-t border-[#2F3061]/10 py-12 mt-20">
+      <div class="max-w-2xl mx-auto text-center px-4">
+        <h2 class="text-2xl font-semibold text-[#2F3061] mb-4">Stay in the loop</h2>
+        <p class="text-[#2F3061]/70 mb-6">Get featured builds and new parts packs.</p>
+        <form @submit.prevent="subscribe" class="flex flex-col sm:flex-row gap-3 justify-center">
+          <input type="email" v-model="email" required placeholder="you@example.com"
+            class="flex-1 rounded-xl p-3 border border-[#2F3061]/30 bg-white/80 focus:ring-2 focus:ring-[#2F3061] text-[#2F3061]" />
+          <button type="submit"
+            class="px-6 py-3 rounded-xl bg-[#2F3061] text-white font-medium hover:bg-[#403E7A] transition">
+            Subscribe
+          </button>
+        </form>
+        <p v-if="subscribed" class="mt-4 text-[#2F3061]">Thanks! You’re on the list. 💛</p>
+      </div>
+    </section>
   </div>
 </template>
 

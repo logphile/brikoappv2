@@ -94,6 +94,14 @@
     </div>
 
     <button type="button" @click="openNewProjectModal()" class="md:hidden fixed bottom-4 right-4 btn-primary shadow-md cursor-pointer">New Project</button>
+    
+    <!-- Feedback entry point -->
+    <div class="page-wrap my-10 text-right">
+      <button @click="showFeedback = true" class="text-sm text-[#2F3061]/70 hover:text-[#2F3061]">
+        💬 Feedback / Bug?
+      </button>
+    </div>
+    <FeedbackModal :show="showFeedback" @close="showFeedback = false" />
   </main>
 </template>
 
@@ -108,6 +116,7 @@ import ProjectGrid from '@/components/ProjectGrid.vue'
 import { useUiStore } from '@/stores/ui'
 import UiButton from '@/components/ui/UiButton.vue'
 import UiPillGroup from '@/components/ui/UiPillGroup.vue'
+import FeedbackModal from '@/components/modals/FeedbackModal.vue'
 // Removed MyGalleryGrid to avoid duplicating owner gallery on Studio page
 
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
@@ -161,6 +170,7 @@ const user = ref<any>(null)
 
 const ui = useUiStore()
 function openNewProjectModal(){ ui.newProjectOpen = true }
+const showFeedback = ref(false)
 
 // Your Projects
 const myItems = ref<any[]>([])
