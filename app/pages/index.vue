@@ -3,7 +3,6 @@ import { useHead } from 'nuxt/app'
 import { ref } from 'vue'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
-import CompareSlider from '@/components/home/CompareSlider.vue'
 import FeaturePoints from '@/components/home/FeaturePoints.vue'
 import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
@@ -121,12 +120,15 @@ async function subscribe() {
 
         <!-- Right: hero before/after slider -->
         <div class="flex justify-center lg:justify-end">
-          <CompareSlider
-            left="/home-1-original.jpg"
-            right="/home-1-mosaic.png"
-            aspect="16/9"
-            :initial="50"
-          />
+          <div class="w-[560px] md:w-[640px] justify-self-end">
+            <CompareSlider
+              left="/home-1-original.jpg"
+              right="/home-1-mosaic.png"
+              aspect="16/9"
+              :initial="50"
+              class="block"
+            />
+          </div>
         </div>
       </div>
     </section>

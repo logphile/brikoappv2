@@ -37,7 +37,7 @@ const move = (e: PointerEvent) => {
 <template>
   <div class="rounded-2xl overflow-hidden">
     <div
-      class="relative w-full bg-black/5 select-none"
+      class="relative w-full bg-black/5 select-none min-h-[180px]"
       :style="aspectStyle"
       role="region"
       aria-label="Image comparison slider"

@@ -20,7 +20,8 @@ export default defineNuxtConfig({
   // Only auto-register from explicit folders to avoid duplicate names
   components: [
     { path: '~/components/ui', pathPrefix: false },
-    { path: '~/components/gallery', pathPrefix: true }
+    { path: '~/components/gallery', pathPrefix: true },
+    { path: '~/components/home', pathPrefix: false }
   ],
   devtools: { enabled: false },
   modules: ['@pinia/nuxt', '@vueuse/nuxt', 'unplugin-icons/nuxt', '@nuxt/image'],
