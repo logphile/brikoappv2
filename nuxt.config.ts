@@ -70,6 +70,10 @@ export default defineNuxtConfig({
     '/projects/**': { prerender: false },
     '/project/**': { prerender: false },
     '/share/**': { prerender: false }
+    ,
+    // Admin pages should run client-side (middleware uses client auth state)
+    '/admin': { prerender: false, ssr: false },
+    '/admin/**': { prerender: false, ssr: false }
   },
   css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css', '~/assets/css/main.css', '~/assets/css/fixes.css', '~/assets/css/base.css'],
   postcss: {
@@ -79,6 +83,7 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY || '',
     public: {
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '',
       supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',

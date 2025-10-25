@@ -37,6 +37,7 @@ import SaveRow from '@/components/editor/SaveRow.vue'
 import Chip from '@/components/ui/Chip.vue'
 import UiButton from '@/components/ui/UiButton.vue'
 import UiPillGroup from '@/components/ui/UiPillGroup.vue'
+import { trackEvent } from '@/composables/useAnalytics'
 
 // Nuxt auto-imported composable from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
@@ -162,8 +163,8 @@ onMounted(() => {
   // Sweep any SSR-hydrated stale toasts (e.g., 'Updating preview…')
   try {
     toasts.value
-      .filter((t) => /Updating preview…|Updating preview/.test(String(t.message)))
-      .forEach((t) => dismissToast(t.id))
+      .filter((t: any) => /Updating preview…|Updating preview/.test(String(t.message)))
+      .forEach((t: any) => dismissToast(t.id))
   } catch {}
   didMount.value = true
 })
@@ -562,6 +563,7 @@ async function onFile(file: File) {
     mosaic.setGrid((full.quantizedIndexes || full.indexes) as Uint16Array, full.width, full.height)
     // auto-run tiling so exports and 3D become available
     await mosaic.runGreedyTiling()
+    try { trackEvent('mosaic_generated', { size: `${mosaic.width}x${mosaic.height}`, palette: 'briko-v1' }) } catch {}
   } catch (e: any) {
     console.error(e)
     mosaic.status = 'error'
@@ -716,6 +718,7 @@ async function onDownloadPdf() {
     }
     showToast('Your PDF is ready!', 'success', 2500)
     guideGenerated.value = true
+    try { trackEvent('export_pdf', { projectId: draft.id }) } catch {}
   } catch (err: any) {
     console.error('[BuildGuide] generation failed:', err)
     showToast('Something went wrong. Please try again.', 'error', 3000)
@@ -735,6 +738,7 @@ function onDownloadCsv() {
   try {
     downloadPartsListCsvSimple(rows, mosaic.settings.topSurface || 'plates')
     showToast('Your CSV is ready!', 'success', 2000)
+    try { trackEvent('export_csv', { projectId: draft.id }) } catch {}
   } catch (e) {
     console.error('[CSV] export failed', e)
     showToast('Something went wrong. Please try again.', 'error', 3000)
@@ -749,6 +753,7 @@ async function onDownloadPng() {
   try {
     await downloadPng('briko-mosaic.png')
     showToast('PNG ready!', 'success', 2000)
+    try { trackEvent('export_png', { projectId: draft.id }) } catch {}
   } catch (e) {
     console.error('[PNG] export failed', e)
     showToast('Something went wrong. Please try again.', 'error', 3000)
@@ -760,7 +765,7 @@ async function onDownloadPng() {
 // Bridge for StepCard + UploadCard
 function onMosaicFiles(files: FileList) {
   const f = files?.[0]
-  if (f) onFile(f)
+  if (f) { trackEvent('upload_start'); onFile(f) }
 }
 
 function openBLDialog() {
@@ -827,15 +832,18 @@ function shareX() {
   const u = encodeURIComponent(currentUrl())
   const t = encodeURIComponent('Check out my Briko mosaic!')
   window.open(`https://twitter.com/intent/tweet?url=${u}&text=${t}`, '_blank')
+  try { trackEvent('share_click', { projectId: draft.id, dest: 'x' }) } catch {}
 }
 function shareFB() {
   const u = encodeURIComponent(currentUrl())
   window.open(`https://www.facebook.com/sharer/sharer.php?u=${u}`, '_blank')
+  try { trackEvent('share_click', { projectId: draft.id, dest: 'facebook' }) } catch {}
 }
 function shareReddit() {
   const u = encodeURIComponent(currentUrl())
   const t = encodeURIComponent('My Briko mosaic')
   window.open(`https://www.reddit.com/submit?url=${u}&title=${t}`, '_blank')
+  try { trackEvent('share_click', { projectId: draft.id, dest: 'reddit' }) } catch {}
 }
 
 // Lightweight analytics for Buy CTAs (no-op if gtag missing)
@@ -880,7 +888,7 @@ function handleDrop(e: DragEvent) {
   e.stopPropagation()
   dropActive.value = false
   const f = e.dataTransfer?.files?.[0]
-  if (f) onFile(f)
+  if (f) { trackEvent('upload_start'); onFile(f) }
 }
 function handleDragOver(e: DragEvent) {
   e.preventDefault()

@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 declare const useSupabaseClient: <T = any>() => T
 declare const useSupabaseUser: <T = any>() => T
 import { saveProjectCover } from '@/composables/useProjectCover'
+import { trackEvent } from '@/composables/useAnalytics'
 
 // Minimal draft structure used by the editor
 type ProjectDraft = {
@@ -93,6 +94,7 @@ async function save() {
     if (!props.draft.id && data?.id) props.draft.id = data.id as string
     savedAt.value = new Date().toLocaleTimeString()
     props.onAfterSave?.(props.draft.id as string)
+    try { trackEvent('save_project', { projectId: props.draft.id }) } catch {}
 
     // Best-effort: export PNG cover and set public cover_url on projects
     try {
