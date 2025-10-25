@@ -118,17 +118,15 @@ async function subscribe() {
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
-        <!-- Right: inline compare proof (no component) -->
+        <!-- Right: hero compare -->
         <div class="flex justify-center lg:justify-end">
-          <div class="rounded-2xl overflow-hidden w-[560px] md:w-[640px] justify-self-end">
-            <div class="relative w-full aspect-[16/9] bg-black/5">
-              <img src="/home-1-original.jpg" alt="left" class="absolute inset-0 w-full h-full object-cover" />
-              <div class="absolute inset-0 overflow-hidden" style="width:50%">
-                <img src="/home-1-mosaic.png" alt="right" class="absolute inset-0 w-full h-full object-cover" />
-              </div>
-              <div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-white/90"></div>
-            </div>
-          </div>
+          <CompareSlider
+            left="/home-1-original.jpg"
+            right="/home-1-mosaic.png"
+            aspect="16/9"
+            :initial="50"
+            class="max-w-[560px] md:max-w-[640px] md:justify-self-end"
+          />
         </div>
       </div>
     </section>
@@ -162,8 +160,8 @@ async function subscribe() {
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div class="max-w-[720px]">
             <CompareSlider
-              left="/home-2-original.jpg"
-              right="/home-2-mosaic.png"
+              left="/home-2-mosaic.png"
+              right="/home-2-original.jpg"
               aspect="4/3"
               :initial="50"
             />
