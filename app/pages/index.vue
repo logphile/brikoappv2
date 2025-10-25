@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useHead } from 'nuxt/app'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
-import Compare from '~/components/ui/Compare.vue'
+import HeroSlider from '@/components/home/HeroSlider.vue'
 import FeaturePoints from '@/components/home/FeaturePoints.vue'
 import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
@@ -46,10 +46,6 @@ const heroItems = [
 ]
 
 // (data now owned by components)
-const hasICS = ref(false)
-onMounted(() => {
-  try { hasICS.value = !!(window as any).__icsLoaded } catch { hasICS.value = false }
-})
 
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
@@ -123,15 +119,9 @@ async function subscribe() {
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
-        <!-- Right: hero before/after slider (client-only web component) -->
-        <div class="flex justify-center lg:justify-end rounded-2xl ring-1 ring-black/10 overflow-hidden shadow-card">
-          <ClientOnly>
-            <img-comparison-slider v-if="hasICS" class="block w-full h-auto">
-              <img slot="first" src="/home-1-original.jpg" alt="Original" />
-              <img slot="second" src="/home-1-mosaic.png" alt="Mosaic" />
-            </img-comparison-slider>
-            <Compare v-else left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
-          </ClientOnly>
+        <!-- Right: hero before/after slider -->
+        <div class="flex justify-center lg:justify-end">
+          <HeroSlider first="/home-1-original.jpg" second="/home-1-mosaic.png" />
         </div>
       </div>
     </section>
@@ -163,14 +153,8 @@ async function subscribe() {
 
         <!-- content: image left, cards right -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div class="max-w-[720px] rounded-2xl ring-1 ring-black/10 overflow-hidden shadow-card">
-            <ClientOnly>
-              <img-comparison-slider v-if="hasICS" class="block w-full h-auto">
-                <img slot="first" src="/home-2-original.jpg" alt="Original" />
-                <img slot="second" src="/home-2-mosaic.png" alt="Mosaic" />
-              </img-comparison-slider>
-              <Compare v-else left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
-            </ClientOnly>
+          <div class="max-w-[720px]">
+            <HeroSlider first="/home-2-original.jpg" second="/home-2-mosaic.png" />
           </div>
 
           <!-- 2×2 feature cards -->

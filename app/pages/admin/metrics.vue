@@ -62,7 +62,7 @@ import MetricCard from '~/components/admin/MetricCard.vue'
 definePageMeta({ ssr: false })
 
 const ready = ref(false)
-onMounted(() => { ready.value = true })
+onMounted(() => { ready.value = true; refresh() })
 
 const route = useRoute()
 const router = useRouter()
@@ -87,7 +87,7 @@ watch(days, (d) => {
 })
 watch(() => route.query.days, (v) => { if (v) days.value = Number(v) })
 
-await refresh()
+
 
 const isEmpty = computed(() => {
   const totals = [kpi.value?.uploads, kpi.value?.mosaics, kpi.value?.saves, kpi.value?.pdf, kpi.value?.png, kpi.value?.csv]
