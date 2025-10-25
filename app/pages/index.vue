@@ -121,7 +121,12 @@ async function subscribe() {
 
         <!-- Right: hero before/after slider -->
         <div class="flex justify-center lg:justify-end">
-          <CompareSlider first="/home-1-original.jpg" second="/home-1-mosaic.png" />
+          <CompareSlider
+            left="/home-1-original.jpg"
+            right="/home-1-mosaic.png"
+            aspect="16/9"
+            :initial="50"
+          />
         </div>
       </div>
     </section>
@@ -154,7 +159,12 @@ async function subscribe() {
         <!-- content: image left, cards right -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div class="max-w-[720px]">
-            <CompareSlider first="/home-2-original.jpg" second="/home-2-mosaic.png" />
+            <CompareSlider
+              left="/home-2-original.jpg"
+              right="/home-2-mosaic.png"
+              aspect="4/3"
+              :initial="50"
+            />
           </div>
 
           <!-- 2×2 feature cards -->
