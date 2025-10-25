@@ -31,8 +31,8 @@ useHead({
   link: [
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery (absolute public URLs)
-    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png?v=20251004f' },
-    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004f' },
+    { rel: 'preload', as: 'image', href: '/home-1-mosaic.png' },
+    { rel: 'preload', as: 'image', href: '/home-1-original.jpg' },
     { rel: 'preload', as: 'image', href: '/home-2-mosaic.png' },
     { rel: 'preload', as: 'image', href: '/home-2-original.jpg' }
   ]
@@ -118,16 +118,16 @@ async function subscribe() {
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
-        <!-- Right: hero before/after slider -->
+        <!-- Right: inline compare proof (no component) -->
         <div class="flex justify-center lg:justify-end">
-          <div class="w-[560px] md:w-[640px] justify-self-end">
-            <CompareSlider
-              left="/home-1-original.jpg"
-              right="/home-1-mosaic.png"
-              aspect="16/9"
-              :initial="50"
-              class="block"
-            />
+          <div class="rounded-2xl overflow-hidden w-[560px] md:w-[640px] justify-self-end">
+            <div class="relative w-full aspect-[16/9] bg-black/5">
+              <img src="/home-1-original.jpg" alt="left" class="absolute inset-0 w-full h-full object-cover" />
+              <div class="absolute inset-0 overflow-hidden" style="width:50%">
+                <img src="/home-1-mosaic.png" alt="right" class="absolute inset-0 w-full h-full object-cover" />
+              </div>
+              <div class="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-px bg-white/90"></div>
+            </div>
           </div>
         </div>
       </div>
