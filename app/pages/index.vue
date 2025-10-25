@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useHead } from '#imports'
-import { ref } from 'vue'
+import { useHead } from 'nuxt/app'
+import { ref, onMounted } from 'vue'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
 import Compare from '~/components/ui/Compare.vue'
@@ -33,7 +33,9 @@ useHead({
     { rel: 'canonical', href: 'https://briko.app/' },
     // Preload LCP image for faster discovery (absolute public URLs)
     { rel: 'preload', as: 'image', href: '/home-1-mosaic.png?v=20251004f' },
-    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004f' }
+    { rel: 'preload', as: 'image', href: '/home-1-original.jpg?v=20251004f' },
+    { rel: 'preload', as: 'image', href: '/home-2-mosaic.png' },
+    { rel: 'preload', as: 'image', href: '/home-2-original.jpg' }
   ]
 })
 
@@ -44,6 +46,10 @@ const heroItems = [
 ]
 
 // (data now owned by components)
+const hasICS = ref(false)
+onMounted(() => {
+  try { hasICS.value = !!(window as any).__icsLoaded } catch { hasICS.value = false }
+})
 
 // JSON-LD: WebPage + Breadcrumbs
 const homeWebPage = webPageJsonLd(
@@ -117,9 +123,15 @@ async function subscribe() {
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
-        <!-- Right: hero before/after slider -->
+        <!-- Right: hero before/after slider (client-only web component) -->
         <div class="flex justify-center lg:justify-end rounded-2xl ring-1 ring-black/10 overflow-hidden shadow-card">
-          <Compare left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
+          <ClientOnly>
+            <img-comparison-slider v-if="hasICS" class="block w-full h-auto">
+              <img slot="first" src="/home-1-original.jpg" alt="Original" />
+              <img slot="second" src="/home-1-mosaic.png" alt="Mosaic" />
+            </img-comparison-slider>
+            <Compare v-else left="/home-1-mosaic.png" right="/home-1-original.jpg" ratio="4/3" :start="50" />
+          </ClientOnly>
         </div>
       </div>
     </section>
@@ -152,7 +164,13 @@ async function subscribe() {
         <!-- content: image left, cards right -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div class="max-w-[720px] rounded-2xl ring-1 ring-black/10 overflow-hidden shadow-card">
-            <Compare left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
+            <ClientOnly>
+              <img-comparison-slider v-if="hasICS" class="block w-full h-auto">
+                <img slot="first" src="/home-2-original.jpg" alt="Original" />
+                <img slot="second" src="/home-2-mosaic.png" alt="Mosaic" />
+              </img-comparison-slider>
+              <Compare v-else left="/home-2-mosaic.png" right="/home-2-original.jpg" ratio="4/3" :start="52" />
+            </ClientOnly>
           </div>
 
           <!-- 2×2 feature cards -->

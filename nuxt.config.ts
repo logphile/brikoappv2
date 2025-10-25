@@ -175,6 +175,9 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#FFD808' }
       ],
       link: [
+        { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: 'anonymous' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' },
         { rel: 'icon', type: 'image/svg+xml', href: '/brand/briko-icon.svg?v=1' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/brand/favicon-32.png?v=2' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/brand/favicon-16.png?v=2' },

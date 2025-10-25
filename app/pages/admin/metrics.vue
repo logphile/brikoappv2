@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6 py-10 max-w-5xl mx-auto">
+  <div v-if="ready" class="px-6 py-10 max-w-5xl mx-auto">
     <header class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-extrabold tracking-tight text-black">Analytics</h1>
       <RangeTabs v-model="days" />
@@ -49,14 +49,20 @@
       </div>
     </section>
   </div>
+  <div v-else class="p-8 text-sm text-black/60">Checking access…</div>
   
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RangeTabs from '~/components/admin/RangeTabs.vue'
 import MetricCard from '~/components/admin/MetricCard.vue'
+
+definePageMeta({ ssr: false })
+
+const ready = ref(false)
+onMounted(() => { ready.value = true })
 
 const route = useRoute()
 const router = useRouter()
