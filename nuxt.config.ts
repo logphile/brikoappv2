@@ -25,7 +25,6 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ['@pinia/nuxt', '@vueuse/nuxt', 'unplugin-icons/nuxt', '@nuxt/image'],
   plugins: [
-    { src: '~/plugins/img-comparison-slider.client', mode: 'client' },
     '~/plugins/schema.org'
   ],
   typescript: { strict: true },

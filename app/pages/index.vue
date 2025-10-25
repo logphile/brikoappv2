@@ -3,7 +3,7 @@ import { useHead } from 'nuxt/app'
 import { ref } from 'vue'
 import { webPageJsonLd, breadcrumbJsonLd } from '@/utils/jsonld'
 import FeatureList from '~/components/FeatureList.vue'
-import HeroSlider from '@/components/home/HeroSlider.vue'
+import CompareSlider from '@/components/home/CompareSlider.vue'
 import FeaturePoints from '@/components/home/FeaturePoints.vue'
 import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
@@ -121,7 +121,7 @@ async function subscribe() {
 
         <!-- Right: hero before/after slider -->
         <div class="flex justify-center lg:justify-end">
-          <HeroSlider first="/home-1-original.jpg" second="/home-1-mosaic.png" />
+          <CompareSlider first="/home-1-original.jpg" second="/home-1-mosaic.png" />
         </div>
       </div>
     </section>
@@ -154,7 +154,7 @@ async function subscribe() {
         <!-- content: image left, cards right -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div class="max-w-[720px]">
-            <HeroSlider first="/home-2-original.jpg" second="/home-2-mosaic.png" />
+            <CompareSlider first="/home-2-original.jpg" second="/home-2-mosaic.png" />
           </div>
 
           <!-- 2×2 feature cards -->
