@@ -18,6 +18,7 @@
       <div class="py-12">
         <!-- This pack sizes to its contents and is centered by mx-auto -->
         <div class="footer-pack w-fit mx-auto flex flex-wrap lg:flex-nowrap items-start gap-y-8 sm:gap-y-10 gap-x-12 lg:gap-x-16 xl:gap-x-16 px-6 lg:px-8">
+        <span class="shrink-0 w-6 lg:w-8" aria-hidden="true"></span>
         <!-- Column: Build -->
         <section class="w-[11.75rem] sm:w-[12rem] lg:w-[12rem] xl:w-[12.5rem]">
           <div class="footer-head mb-3 font-semibold">Build</div>
@@ -60,6 +61,7 @@
             <li><FooterBrick to="/sitemap.xml" label="Sitemap" /></li>
           </ul>
         </section>
+        <span class="shrink-0 w-6 lg:w-8" aria-hidden="true"></span>
         </div>
       </div>
 
