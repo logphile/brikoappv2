@@ -15,7 +15,9 @@
     <!-- ONE container for everything -->
     <div class="footer-container text-[#343434] text-[14px] md:text-[15px]">
       <!-- Columns -->
-      <div class="footer-grid flex flex-wrap justify-center gap-y-8 sm:gap-y-10 gap-x-12 xl:gap-x-20 py-12">
+      <div class="py-12">
+        <!-- This pack sizes to its contents and is centered by mx-auto -->
+        <div class="footer-pack w-fit mx-auto flex flex-wrap gap-y-8 sm:gap-y-10 gap-x-12 xl:gap-x-20">
         <!-- Column: Build -->
         <section class="w-[12.5rem] lg:w-[13rem]">
           <div class="footer-head mb-3 font-semibold">Build</div>
@@ -58,6 +60,7 @@
             <li><FooterBrick to="/sitemap.xml" label="Sitemap" /></li>
           </ul>
         </section>
+        </div>
       </div>
 
       <!-- Divider (optional) -->
