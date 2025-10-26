@@ -93,7 +93,7 @@ async function subscribe() {
               <span class="lg:block">your images</span>
             </h1>
 
-            <ul class="space-y-2 mb-6">
+            <ul class="mt-[12px] lg:mt-[15px] space-y-2 mb-6">
               <li v-for="h in heroItems" :key="h.label" class="flex items-center gap-3">
                 <span class="inline-flex h-7 w-7 rounded-lg bg-[#FF0062] ring-1 ring-black/10 items-center justify-center">
                   <component :is="h.Icon" class="h-[18px] w-[18px] text-white" />
