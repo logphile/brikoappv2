@@ -13,9 +13,9 @@
     -->
 
     <!-- ONE container for everything -->
-    <div class="site-container text-[#343434] text-[14px] md:text-[15px]">
+    <div class="page-wrap text-[#343434] text-[14px] md:text-[15px]">
       <!-- Columns -->
-      <div class="footer-grid mx-auto max-w-screen-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center lg:justify-items-start px-0">
+      <div class="footer-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center lg:justify-items-start py-10">
         <!-- Column: Build -->
         <section>
           <div class="footer-head">Build</div>
@@ -64,7 +64,7 @@
       <hr class="my-6 border-black/10" />
 
       <!-- Legal line -->
-      <p class="legal-line mx-auto max-w-4xl text-center text-xs md:text-sm opacity-80">
+      <p class="legal-line text-center text-xs md:text-sm opacity-80 pb-10">
         Briko is an independent tool — not affiliated with, endorsed by, or associated with the LEGO® Group. LEGO® is a
         trademark of the LEGO Group of companies.
       </p>
