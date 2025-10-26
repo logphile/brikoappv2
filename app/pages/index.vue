@@ -84,7 +84,7 @@ async function subscribe() {
   <div>
     <!-- HERO -->
     <section class="relative bg-brand-yellow">
-      <div class="container mx-auto px-4 lg:px-6 py-20 md:py-24 lg:py-28 grid grid-cols-1 lg:grid-cols-[1fr,624px] gap-10 lg:gap-[30px] items-center">
+      <div class="container mx-auto px-4 lg:px-6 py-20 md:py-24 lg:py-28 grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_1fr] lg:grid-cols-[1.1fr_0.9fr] xl:grid-cols-[1fr_1fr]">
         <!-- Left: copy -->
         <div class="relative z-10">
             <h1 class="text-[#343434] max-w-[18ch] mb-6 font-extrabold leading-tight text-[48px] md:text-7xl">
@@ -120,13 +120,17 @@ async function subscribe() {
         </div>
 
         <!-- RIGHT COLUMN — TOP HERO COMPARE -->
-        <div class="flex justify-center lg:justify-end">
+        <div class="w-full md:justify-self-end">
           <CompareSlider
             left="/home-1-original.jpg"
             right="/home-1-mosaic.png"
-            aspect="16/9"
             :initial="50"
-            class="max-w-[560px] md:max-w-[640px] md:justify-self-end"
+            aspect="4/3"
+            class="w-full
+                   md:max-w-[640px]
+                   lg:max-w-[720px]
+                   xl:max-w-[840px]
+                   2xl:max-w-[920px]"
           />
         </div>
       </div>
