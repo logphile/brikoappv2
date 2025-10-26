@@ -13,13 +13,13 @@
     -->
 
     <!-- ONE container for everything -->
-    <div class="page-wrap text-[#343434] text-[14px] md:text-[15px]">
+    <div class="page-wrap text-[#343434] text-[14px] md:text-[15px] lg:px-10">
       <!-- Columns -->
-      <div class="footer-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(4,max-content)] justify-center gap-8 lg:gap-10 py-10">
+      <div class="footer-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(4,max-content)] justify-center gap-y-8 sm:gap-y-10 gap-x-10 lg:gap-x-16 xl:gap-x-24 py-12">
         <!-- Column: Build -->
-        <section>
-          <div class="footer-head">Build</div>
-          <ul class="footer-links">
+        <section class="min-w-[12rem] lg:min-w-[13rem]">
+          <div class="footer-head mb-3 font-semibold">Build</div>
+          <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
             <li v-if="cfg?.features?.builder3d"><FooterBrick to="/voxel" label="3D Builder" /></li>
             <li><FooterBrick to="/avatar"  label="Brick Yourself" /></li>
@@ -28,9 +28,9 @@
         </section>
 
         <!-- Column: Learn -->
-        <section>
-          <div class="footer-head">Learn</div>
-          <ul class="footer-links">
+        <section class="min-w-[12rem] lg:min-w-[13rem]">
+          <div class="footer-head mb-3 font-semibold">Learn</div>
+          <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/how-it-works"   label="Docs" /></li>
             <li><FooterBrick to="#"   label="Blog" /></li>
             <li><FooterBrick to="#"   label="Help Center" /></li>
@@ -39,9 +39,9 @@
         </section>
 
         <!-- Column: Company -->
-        <section>
-          <div class="footer-head">Company</div>
-          <ul class="footer-links">
+        <section class="min-w-[12rem] lg:min-w-[13rem]">
+          <div class="footer-head mb-3 font-semibold">Company</div>
+          <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="mailto:hello@briko.app" label="Contact" /></li>
             <li><FooterBrick to="/gallery" label="Community Gallery" /></li>
             <li><FooterBrick to="#" label="Changelog" /></li>
@@ -50,9 +50,9 @@
         </section>
 
         <!-- Column: Legal -->
-        <section>
-          <div class="footer-head">Legal</div>
-          <ul class="footer-links">
+        <section class="min-w-[12rem] lg:min-w-[13rem]">
+          <div class="footer-head mb-3 font-semibold">Legal</div>
+          <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/privacy" label="Privacy" /></li>
             <li><FooterBrick to="/terms"   label="Terms" /></li>
             <li><FooterBrick to="/sitemap.xml" label="Sitemap" /></li>
