@@ -15,7 +15,7 @@
     <!-- ONE container for everything -->
     <div class="site-container text-[#343434] text-[14px] md:text-[15px]">
       <!-- Columns -->
-      <div class="footer-grid mx-auto max-w-6xl md:max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-x-10 gap-y-6 px-0">
+      <div class="footer-grid mx-auto max-w-screen-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center lg:justify-items-start px-0">
         <!-- Column: Build -->
         <section>
           <div class="footer-head">Build</div>
