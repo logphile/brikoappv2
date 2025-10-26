@@ -9,6 +9,7 @@ import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
 import { subscribeEmail } from '@/composables/useSubscribers'
+import CompareSlider from '~/components/home/CompareSlider.vue'
 
 const siteUrl = 'https://briko.app'
 
@@ -118,7 +119,7 @@ async function subscribe() {
             <p class="sr-only" :data-build="buildTag">build: {{ buildTag.slice(0,10) }}</p>
         </div>
 
-        <!-- Right: hero compare -->
+        <!-- RIGHT COLUMN — TOP HERO COMPARE -->
         <div class="flex justify-center lg:justify-end">
           <CompareSlider
             left="/home-1-original.jpg"
@@ -158,6 +159,7 @@ async function subscribe() {
 
         <!-- content: image left, cards right -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <!-- LEFT COLUMN — PURPLE SECTION COMPARE -->
           <div class="max-w-[720px]">
             <CompareSlider
               left="/home-2-mosaic.png"
