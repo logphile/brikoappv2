@@ -184,6 +184,19 @@
   .prose-muted    { @apply text-sm text-[#34343A]/70; }
   .font-display   { font-family: theme('fontFamily.slab'); }
 
+  /* Footer’s private container = single source of truth */
+  .footer-container{
+    /* fixed center + width that matches your main content */
+    max-width: 72rem;         /* 1152px ~= Tailwind max-w-7xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;       /* ~px-8 */
+    padding-right: 2rem;
+  }
+  @media (min-width: 1024px){
+    .footer-container{ padding-left: 2.5rem; padding-right: 2.5rem; } /* ~lg:px-10 */
+  }
+
   .card       { @apply rounded-2xl border border-[#34343A]/20 bg-white/5; }
   .card-ink   { @apply rounded-2xl bg-[#2F3061] text-white border border-white/10; }
   .section-h--ink { @apply text-[11px] uppercase tracking-wide font-semibold text-white/80; }

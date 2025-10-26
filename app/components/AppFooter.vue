@@ -13,9 +13,9 @@
     -->
 
     <!-- ONE container for everything -->
-    <div class="page-wrap text-[#343434] text-[14px] md:text-[15px] lg:px-10">
+    <div class="footer-container text-[#343434] text-[14px] md:text-[15px]">
       <!-- Columns -->
-      <div class="footer-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(4,max-content)] justify-center gap-y-8 sm:gap-y-10 gap-x-10 lg:gap-x-16 xl:gap-x-24 py-12">
+      <div class="footer-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-8 sm:gap-y-10 gap-x-12 xl:gap-x-20 justify-center py-12">
         <!-- Column: Build -->
         <section class="min-w-[12rem] lg:min-w-[13rem]">
           <div class="footer-head mb-3 font-semibold">Build</div>
