@@ -17,9 +17,9 @@
       <!-- Columns -->
       <div class="py-12">
         <!-- This pack sizes to its contents and is centered by mx-auto -->
-        <div class="footer-pack w-fit mx-auto flex flex-wrap gap-y-8 sm:gap-y-10 gap-x-12 xl:gap-x-20 px-6 xl:px-10">
+        <div class="footer-pack w-fit mx-auto flex flex-wrap lg:flex-nowrap items-start gap-y-8 sm:gap-y-10 gap-x-12 lg:gap-x-16 xl:gap-x-16 px-6 lg:px-8">
         <!-- Column: Build -->
-        <section class="w-[12.5rem] lg:w-[13rem]">
+        <section class="w-[11.75rem] sm:w-[12rem] lg:w-[12rem] xl:w-[12.5rem]">
           <div class="footer-head mb-3 font-semibold">Build</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
@@ -30,7 +30,7 @@
         </section>
 
         <!-- Column: Learn -->
-        <section class="w-[12.5rem] lg:w-[13rem]">
+        <section class="w-[11.75rem] sm:w-[12rem] lg:w-[12rem] xl:w-[12.5rem]">
           <div class="footer-head mb-3 font-semibold">Learn</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/how-it-works"   label="Docs" /></li>
@@ -41,7 +41,7 @@
         </section>
 
         <!-- Column: Company -->
-        <section class="w-[12.5rem] lg:w-[13rem]">
+        <section class="w-[11.75rem] sm:w-[12rem] lg:w-[12rem] xl:w-[12.5rem]">
           <div class="footer-head mb-3 font-semibold">Company</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="mailto:hello@briko.app" label="Contact" /></li>
@@ -52,7 +52,7 @@
         </section>
 
         <!-- Column: Legal -->
-        <section class="w-[12.5rem] lg:w-[13rem]">
+        <section class="w-[11.75rem] sm:w-[12rem] lg:w-[12rem] xl:w-[12.5rem]">
           <div class="footer-head mb-3 font-semibold">Legal</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/privacy" label="Privacy" /></li>
