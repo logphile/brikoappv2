@@ -87,7 +87,7 @@ async function subscribe() {
       <div class="container mx-auto px-4 lg:px-6 py-20 md:py-24 lg:py-28 grid grid-cols-1 items-center gap-10 md:grid-cols-[1fr_1fr] lg:grid-cols-[1.1fr_0.9fr] xl:grid-cols-[1fr_1fr]">
         <!-- Left: copy -->
         <div class="relative z-10">
-            <h1 class="text-[#343434] max-w-[18ch] font-extrabold tracking-tight text-[clamp(2.25rem,5vw,4.5rem)] leading-[1.05] lg:space-y-[6px] mb-[15px]">
+            <h1 class="text-[#343434] max-w-[18ch] font-extrabold tracking-tight text-[clamp(2.25rem,5vw,4.5rem)] leading-[1.05] lg:space-y-[6px] mb-10">
               <span>Create LEGO-</span>
               <span class="lg:block">style art from</span>
               <span class="lg:block">your images</span>
