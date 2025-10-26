@@ -15,9 +15,9 @@
     <!-- ONE container for everything -->
     <div class="footer-container text-[#343434] text-[14px] md:text-[15px]">
       <!-- Columns -->
-      <div class="footer-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-8 sm:gap-y-10 gap-x-12 xl:gap-x-20 justify-center py-12">
+      <div class="footer-grid flex flex-wrap justify-center gap-y-8 sm:gap-y-10 gap-x-12 xl:gap-x-20 py-12">
         <!-- Column: Build -->
-        <section class="min-w-[12rem] lg:min-w-[13rem]">
+        <section class="w-[12.5rem] lg:w-[13rem]">
           <div class="footer-head mb-3 font-semibold">Build</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/mosaic"  label="Photo to Bricks" /></li>
@@ -28,7 +28,7 @@
         </section>
 
         <!-- Column: Learn -->
-        <section class="min-w-[12rem] lg:min-w-[13rem]">
+        <section class="w-[12.5rem] lg:w-[13rem]">
           <div class="footer-head mb-3 font-semibold">Learn</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/how-it-works"   label="Docs" /></li>
@@ -39,7 +39,7 @@
         </section>
 
         <!-- Column: Company -->
-        <section class="min-w-[12rem] lg:min-w-[13rem]">
+        <section class="w-[12.5rem] lg:w-[13rem]">
           <div class="footer-head mb-3 font-semibold">Company</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="mailto:hello@briko.app" label="Contact" /></li>
@@ -50,7 +50,7 @@
         </section>
 
         <!-- Column: Legal -->
-        <section class="min-w-[12rem] lg:min-w-[13rem]">
+        <section class="w-[12.5rem] lg:w-[13rem]">
           <div class="footer-head mb-3 font-semibold">Legal</div>
           <ul class="footer-links space-y-2.5 md:space-y-3">
             <li><FooterBrick to="/privacy" label="Privacy" /></li>
