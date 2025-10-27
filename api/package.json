@@ -2,6 +2,8 @@
   "name": "briko-functions",
   "version": "1.0.0",
   "private": true,
+  "type": "commonjs",
+  "engines": { "node": ">=18" },
   "dependencies": {
     "@azure/functions": "^4.4.0",
     "@supabase/supabase-js": "^2.47.8",
