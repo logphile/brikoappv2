@@ -2,12 +2,9 @@
   "name": "briko-functions",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "engines": { "node": ">=18" },
   "dependencies": {
     "@azure/functions": "^4.4.0",
     "@supabase/supabase-js": "^2.47.8",
-    "nodemailer": "^6.9.14",
-    "zod": "^3.23.8"
+    "nodemailer": "^6.9.14"
   }
 }
