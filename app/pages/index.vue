@@ -206,7 +206,7 @@ async function subscribe() {
             Subscribe
           </button>
         </form>
-        <p v-if="subscribed" class="mt-4 text-[#2F3061]">Thanks! You’re on the list. 💛</p>
+        <p v-if="subscribed" class="mt-4 text-[#2F3061] flex items-center gap-1">Thanks! You’re on the list. <span class="text-pink-500">♥</span></p>
       </div>
     </section>
   </div>
