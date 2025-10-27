@@ -48,6 +48,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.2",
+    "nodemailer": "^7.0.10",
     "three": "^0.165.0",
     "vue-compare-image": "^0.2.0",
     "vue-sonner": "^1.1.3",

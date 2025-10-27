@@ -8,7 +8,6 @@ import HowItWorks from '@/components/sections/HowItWorks.vue'
 import IconUpload from '@/components/icons/IconUpload.vue'
 import IconTune from '@/components/icons/IconTune.vue'
 import IconAuto from '@/components/icons/IconAuto.vue'
-import { subscribeEmail } from '@/composables/useSubscribers'
 import CompareSlider from '~/components/home/CompareSlider.vue'
 
 const siteUrl = 'https://briko.app'
@@ -70,9 +69,16 @@ const subscribed = ref(false)
 async function subscribe() {
   if (!email.value) return
   try {
-    await subscribeEmail(email.value)
-    subscribed.value = true
-    email.value = ''
+    const res = await $fetch('/api/subscribe', {
+      method: 'POST',
+      body: { email: email.value, hp: '' },
+    })
+    if ((res as any)?.ok) {
+      subscribed.value = true
+      email.value = ''
+    } else {
+      throw new Error((res as any)?.error || 'Subscription failed.')
+    }
   } catch (e) {
     console.error(e)
     alert('Subscription failed. Try again later.')
@@ -190,6 +196,9 @@ async function subscribe() {
         <h2 class="text-2xl font-semibold text-[#2F3061] mb-4">Stay in the loop</h2>
         <p class="text-[#2F3061]/70 mb-6">Get featured builds and new parts packs.</p>
         <form @submit.prevent="subscribe" class="flex flex-col sm:flex-row gap-3 justify-center">
+          <!-- honeypot: hidden text field that must remain empty -->
+          <input type="text" tabindex="-1" aria-hidden="true" autocomplete="off"
+            class="sr-only" style="position:absolute;left:-10000px" />
           <input type="email" v-model="email" required placeholder="you@example.com"
             class="flex-1 rounded-xl p-3 border border-[#2F3061]/30 bg-white/80 focus:ring-2 focus:ring-[#2F3061] text-[#2F3061]" />
           <button type="submit"

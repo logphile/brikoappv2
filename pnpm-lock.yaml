@@ -29,6 +29,9 @@ importers:
       jspdf-autotable:
         specifier: ^3.8.2
         version: 3.8.4(jspdf@2.5.2)
+      nodemailer:
+        specifier: ^7.0.10
+        version: 7.0.10
       three:
         specifier: ^0.165.0
         version: 0.165.0
@@ -4416,6 +4419,10 @@ packages:
   node-source-walk@7.0.1:
     resolution: {integrity: sha512-3VW/8JpPqPvnJvseXowjZcirPisssnBuDikk6JIZ8jQzF7KJQX52iPFX4RYYxLycYH7IbMRSPUOga/esVjy5Yg==}
     engines: {node: '>=18'}
+
+  nodemailer@7.0.10:
+    resolution: {integrity: sha512-Us/Se1WtT0ylXgNFfyFSx4LElllVLJXQjWi2Xz17xWw7amDKO2MLtFnVp1WACy7GkVGs+oBlRopVNUzlrGSw1w==}
+    engines: {node: '>=6.0.0'}
 
   nopt@8.1.0:
     resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
@@ -11312,6 +11319,8 @@ snapshots:
   node-source-walk@7.0.1:
     dependencies:
       '@babel/parser': 7.28.3
+
+  nodemailer@7.0.10: {}
 
   nopt@8.1.0:
     dependencies:
