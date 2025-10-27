@@ -43,8 +43,13 @@ module.exports = async function (context, req) {
 
   try {
     const { email, hp } = (req.body || {});
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE) {
+      context.log.error("Missing Supabase envs");
+      context.res = { status: 500, jsonBody: { ok: false, error: "server_supabase_env_missing" } };
+      return;
+    }
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      context.res = { status: 400, jsonBody: { ok: false, error: "Invalid email." } };
+      context.res = { status: 400, jsonBody: { ok: false, error: "invalid_email" } };
       return;
     }
     if (hp && String(hp).trim() !== "") {
@@ -57,9 +62,9 @@ module.exports = async function (context, req) {
     const ip = Array.isArray(xff) ? xff[0] : String(xff).split(",")[0] || null;
 
     const { error } = await client.from("subscriptions").insert({ email, ip, user_id: null });
-    if (error && error.code !== "23505") {
-      context.log.error("Supabase insert error:", error);
-      context.res = { status: 500, jsonBody: { ok: false, error: "Subscription failed. Try again later." } };
+    if (error && error.code !== "23505") { // 23505 = duplicate
+      context.log.error("DB insert failed:", error);
+      context.res = { status: 500, jsonBody: { ok: false, error: "db_insert_failed" } };
       return;
     }
 
@@ -67,6 +72,6 @@ module.exports = async function (context, req) {
     context.res = { status: 200, jsonBody: { ok: true } };
   } catch (e) {
     context.log.error("Subscribe exception:", e);
-    context.res = { status: 500, jsonBody: { ok: false, error: "Subscription failed. Try again later." } };
+    context.res = { status: 500, jsonBody: { ok: false, error: "server_exception" } };
   }
 };
