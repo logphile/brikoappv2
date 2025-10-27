@@ -18,6 +18,10 @@ module.exports = async function (context, req) {
       context.res = { status: 400, jsonBody: { ok:false, error:"invalid_email" } };
       return;
     }
+    if (body.hp && String(body.hp).trim() !== "") {
+      context.res = { status: 200, jsonBody: { ok: true } }; // honeypot
+      return;
+    }
 
     // 1) Env check
     const url = process.env.SUPABASE_URL;
