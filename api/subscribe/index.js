@@ -23,6 +23,15 @@ module.exports = async function (context, req) {
       };
       return;
     }
+    // Honeypot: treat non-empty hp as success and bail quietly
+    if (req.body && String(req.body.hp || "").trim() !== "") {
+      context.res = {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ok: true })
+      };
+      return;
+    }
 
     // 1) Env check
     const url = process.env.SUPABASE_URL;
@@ -79,36 +88,25 @@ module.exports = async function (context, req) {
     // 6) Best-effort SMTP notify/welcome (non-blocking)
     try {
       const nodemailer = require("nodemailer");
+      const { sendWelcome, sendAdminNotify } = require("../_mail_welcome");
 
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 465),
-        secure: String(process.env.SSL || process.env.SMTP_SECURE || "true") === "true",
+        secure: String(process.env.SMTP_SECURE || "true") === "true",
         auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
       });
 
-      // 1) Notify Phil
-      await transporter.sendMail({
-        from: process.env.SUBSCRIBE_FROM || "Briko <phil@briko.app>",
-        to: process.env.SUBSCRIBE_NOTIFY_TO || "phil@briko.app",
-        subject: "New Briko subscriber",
-        text: `Email: ${email}\nWhen: ${new Date().toISOString()}\nIP: ${ip || "n/a"}` 
-      }).catch(() => {}); // don't block on mail
+      // Do not block on transport readiness
+      transporter.verify().catch(() => {});
 
-      // 2) Optional welcome email to the subscriber (uncomment if you want it)
-      // await transporter.sendMail({
-      //   from: process.env.SUBSCRIBE_FROM || "Briko <phil@briko.app>",
-      //   to: email,
-      //   replyTo: "phil@briko.app",
-      //   subject: "You’re in — Briko updates",
-      //   text:
-      // `Hey!
-      // 
-      // You’re on the Briko list. We’ll share new builds, parts packs, and early features soon.
-      // If you ever want off, just reply “unsubscribe”.
-      // 
-      // – Phil @ Briko`
-      // }).catch(() => {});
+      // Notify Phil (always)
+      sendAdminNotify(transporter, email, ip).catch(() => {});
+
+      // Optional welcome to subscriber (default true if env unset)
+      if ((process.env.SUBSCRIBE_SEND_WELCOME || "true") === "true") {
+        sendWelcome(transporter, email).catch(() => {});
+      }
     } catch (_) { /* swallow mail errors */ }
 
     // 7) Success
