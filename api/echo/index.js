@@ -1,7 +1,8 @@
-module.exports = async function (_ctx, req) {
+module.exports = async function (context, req) {
   const ts = new Date().toISOString();
   const who = (req.query && req.query.who) || 'briko';
-  return {
+
+  context.res = {
     status: 200,
     headers: {
       'content-type': 'application/json',
