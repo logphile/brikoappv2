@@ -1,5 +1,4 @@
 const { buildTransport, fromAddress } = require('../_utils/mailer');
-const { loadTemplate } = require('../_utils/template');
 
 module.exports = async function (context, req) {
   try {
@@ -16,14 +15,9 @@ module.exports = async function (context, req) {
 
     if (String(mode).toLowerCase() === 'html') {
       try {
-        const html = loadTemplate('_templates/briko-welcome.html');
-        if (html) {
-          mail = {
-            ...mail,
-            subject: 'Briko mail self-test (HTML)',
-            html
-          };
-        }
+        const sub = require('../subscribe');
+        const html = sub && sub.WELCOME_HTML;
+        if (html) mail = { ...mail, subject: 'Briko mail self-test (HTML)', html };
       } catch (_) { /* fall back to text */ }
     }
 
