@@ -1,6 +1,7 @@
 const { serverSupabase } = require('../_utils/supa');
 const { keyRole } = require('../_utils/keyRole');
 const { buildTransport, fromAddress } = require('../_utils/mailer');
+const { loadTemplate } = require('../_utils/template');
 
 function json(status, body, extraHeaders = {}) {
   return {
@@ -9,6 +10,11 @@ function json(status, body, extraHeaders = {}) {
     body: JSON.stringify(body)
   };
 }
+
+const WELCOME_HTML = (() => {
+  try { return loadTemplate('_templates/briko-welcome.html'); }
+  catch { return null; }
+})();
 
 module.exports = async function (context, req) {
   const svc = process.env.NUXT_SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE;
@@ -48,39 +54,33 @@ module.exports = async function (context, req) {
     }
 
     if (inserted) {
-      // best-effort emails; do not fail the request if they error
-      try {
-        const transport = buildTransport();
-        if (notifyTo) {
-          await transport.sendMail({
-            from: fromAddress(),
-            to: notifyTo,
-            subject: 'New Briko subscriber',
-            text: `New subscriber: ${email}`,
-            html: `<div style="font:14px system-ui,-apple-system,Segoe UI,Roboto">New subscriber: <b>${email}</b></div>`
-          });
+      // Fire-and-forget send; do not block response
+      (async () => {
+        try {
+          const t = buildTransport();
+          if (notifyTo) {
+            await t.sendMail({
+              from: fromAddress(),
+              to: notifyTo,
+              subject: 'New Briko subscriber',
+              text: `New subscriber: ${email}`,
+              html: `<div style="font:14px system-ui,-apple-system,Segoe UI,Roboto">New subscriber: <b>${email}</b></div>`
+            });
+          }
+          if (welcomeOn && WELCOME_HTML) {
+            await t.sendMail({
+              from: fromAddress(),
+              to: email,
+              subject: 'Welcome to Briko 💛',
+              text: 'Thanks for joining Briko. You’re on the list for new builds, features, and parts packs. Visit https://briko.app',
+              html: WELCOME_HTML,
+              headers: { 'X-Entity-Ref-ID': 'briko-subscribe-welcome' }
+            });
+          }
+        } catch (mailErr) {
+          context.log.error('[subscribe] MAIL_ERROR', mailErr && (mailErr.message || mailErr));
         }
-        if (welcomeOn) {
-          await transport.sendMail({
-            from: fromAddress(),
-            to: email,
-            subject: 'Welcome to Briko',
-            text: "Thanks! You’re on the list. We’ll ping you with new builds, features, and parts packs.",
-            html: `
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                <tr><td align="center" style="padding:24px;">
-                  <img src="https://briko.app/brand/briko-banner.png" alt="Briko" width="480" style="max-width:100%;height:auto;border:0" />
-                  <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto;max-width:560px;margin:24px auto;text-align:left;line-height:1.5;">
-                    <h1 style="margin:0 0 8px;font-size:20px;">Thanks! You’re on the list. <span style="color:#FF0062">♥</span></h1>
-                    <p style="margin:0;">We’ll ping you with new builds, features, and parts packs.</p>
-                  </div>
-                </td></tr>
-              </table>`
-          });
-        }
-      } catch (mailErr) {
-        context.log.error('[subscribe] MAIL_ERROR', mailErr && (mailErr.message || mailErr));
-      }
+      })();
     }
 
     // duplicates count as success
