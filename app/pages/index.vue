@@ -66,22 +66,37 @@ useHead({
 
 const email = ref('')
 const subscribed = ref(false)
-async function subscribe() {
-  if (!email.value) return
+const notice = ref('')
+const busy = ref(false)
+async function handleSubscribe() {
+  const emailVal = email.value?.trim()
+  if (!emailVal) { notice.value = 'Please enter a valid email.'; return }
+  busy.value = true
+  notice.value = ''
   try {
-    const res = await $fetch('/api/subscribe', {
+    const res = await fetch('/api/subscribe', {
       method: 'POST',
-      body: { email: email.value, hp: '' },
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email: emailVal })
     })
-    if ((res as any)?.ok) {
+    let data: any = null
+    try { data = await res.json() } catch {}
+    if (res.ok) {
       subscribed.value = true
       email.value = ''
-    } else {
-      throw new Error((res as any)?.error || 'Subscription failed.')
+      return
     }
+    const code = data?.code
+    if (code === 'INVALID_EMAIL') { notice.value = 'Please enter a valid email.'; return }
+    if (code === 'DB') { notice.value = 'Already subscribed or temporarily unavailable.'; return }
+    if (code === 'WRONG_KEY') { notice.value = 'Server config issue detected. Try again later.'; return }
+    if (code === 'CONFIG_MISSING') { notice.value = 'Server missing config. Try again later.'; return }
+    notice.value = 'Subscription failed. Try again later.'
   } catch (e) {
-    console.error(e)
-    alert('Subscription failed. Try again later.')
+    console.error('[subscribe] client error', e)
+    notice.value = 'Network issue. Try again in a bit.'
+  } finally {
+    busy.value = false
   }
 }
 </script>
@@ -195,17 +210,18 @@ async function subscribe() {
       <div class="max-w-2xl mx-auto text-center px-4">
         <h2 class="text-2xl font-semibold text-[#2F3061] mb-4">Stay in the loop!</h2>
         <p class="text-[#2F3061]/70 mb-6">Get featured builds and new parts packs.</p>
-        <form @submit.prevent="subscribe" class="flex flex-col sm:flex-row gap-3 justify-center">
+        <form @submit.prevent="handleSubscribe" class="flex flex-col sm:flex-row gap-3 justify-center">
           <!-- honeypot: hidden text field that must remain empty -->
           <input type="text" tabindex="-1" aria-hidden="true" autocomplete="off"
             class="sr-only" style="position:absolute;left:-10000px" />
           <input type="email" v-model="email" required placeholder="you@example.com"
             class="flex-1 rounded-xl p-3 border border-[#2F3061]/30 bg-white/80 focus:ring-2 focus:ring-[#2F3061] text-[#2F3061]" />
-          <button type="submit"
-            class="px-6 py-3 rounded-xl bg-[#2F3061] text-white font-medium hover:bg-[#403E7A] transition">
+          <button type="submit" :disabled="busy"
+            class="px-6 py-3 rounded-xl bg-[#2F3061] text-white font-medium hover:bg-[#403E7A] transition disabled:opacity-60 disabled:cursor-not-allowed">
             Subscribe
           </button>
         </form>
+        <p v-if="notice && !subscribed" class="mt-3 text-sm text-red-600" aria-live="polite">{{ notice }}</p>
         <p v-if="subscribed" class="mt-4 text-[#2F3061] flex items-center gap-1">Thanks! You’re on the list. <span class="text-[#FF0062]">♥</span></p>
       </div>
     </section>
