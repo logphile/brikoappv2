@@ -22,6 +22,16 @@ module.exports = async function (context, req) {
   const welcomeOn = String(process.env.WELCOME_EMAIL_ENABLED || 'false').toLowerCase() === 'true';
   const notifyTo = process.env.SUBSCRIBE_NOTIFY_TO;
 
+  // Track flags for instrumentation
+  const hdrs = {
+    'x-key-role': role,
+    'x-briko-notify-present': String(!!notifyTo),
+    'x-briko-welcome-on': String(welcomeOn),
+    'x-briko-template': String(!!WELCOME_HTML),
+    'x-briko-new': 'unknown',
+    'x-briko-mail-sent': 'none'
+  };
+
   try {
     const email = (req.body && req.body.email || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -41,6 +51,7 @@ module.exports = async function (context, req) {
       context.log.error('[subscribe] DB_SELECT_ERROR', selErr.message);
       return json(409, { ok:false, code:'DB', message: selErr.message }, { 'x-key-role': role });
     }
+    hdrs['x-briko-new'] = String(!exists);
 
     let inserted = false;
     if (!exists) {
@@ -53,6 +64,7 @@ module.exports = async function (context, req) {
       inserted = true;
     }
 
+    let sent = [];
     if (inserted) {
       // Send emails (awaited) on first insert only, with soft timeouts
       try {
@@ -71,6 +83,7 @@ module.exports = async function (context, req) {
             text: `New subscriber: ${email}`,
             html: `<div style="font:14px system-ui,-apple-system,Segoe UI,Roboto">New subscriber: <b>${email}</b></div>`
           }));
+          sent.push('admin');
         }
 
         if (welcomeOn && WELCOME_HTML) {
@@ -82,15 +95,21 @@ module.exports = async function (context, req) {
             html: WELCOME_HTML,
             headers: { 'X-Entity-Ref-ID': 'briko-subscribe-welcome' }
           }));
+          sent.push('welcome');
         }
       } catch (mailErr) {
         context.log.error('[subscribe] MAIL_ERROR', mailErr && (mailErr.message || mailErr));
         // do not fail the request; continue to return 200
       }
     }
+    if (sent.length) hdrs['x-briko-mail-sent'] = sent.join(',');
 
     // duplicates count as success
-    return json(200, { ok:true }, { 'x-key-role': role });
+    return {
+      status: 200,
+      headers: { 'content-type': 'application/json', ...hdrs },
+      body: JSON.stringify({ ok: true })
+    };
   } catch (e) {
     context.log.error('[subscribe] UNHANDLED', e && (e.stack || e.message || e));
     const code = e && e.code ? e.code : 'UNKNOWN';
