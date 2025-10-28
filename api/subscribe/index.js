@@ -54,33 +54,39 @@ module.exports = async function (context, req) {
     }
 
     if (inserted) {
-      // Fire-and-forget send; do not block response
-      (async () => {
-        try {
-          const t = buildTransport();
-          if (notifyTo) {
-            await t.sendMail({
-              from: fromAddress(),
-              to: notifyTo,
-              subject: 'New Briko subscriber',
-              text: `New subscriber: ${email}`,
-              html: `<div style="font:14px system-ui,-apple-system,Segoe UI,Roboto">New subscriber: <b>${email}</b></div>`
-            });
-          }
-          if (welcomeOn && WELCOME_HTML) {
-            await t.sendMail({
-              from: fromAddress(),
-              to: email,
-              subject: 'Welcome to Briko 💛',
-              text: 'Thanks for joining Briko. You’re on the list for new builds, features, and parts packs. Visit https://briko.app',
-              html: WELCOME_HTML,
-              headers: { 'X-Entity-Ref-ID': 'briko-subscribe-welcome' }
-            });
-          }
-        } catch (mailErr) {
-          context.log.error('[subscribe] MAIL_ERROR', mailErr && (mailErr.message || mailErr));
+      // Send emails (awaited) on first insert only, with soft timeouts
+      try {
+        const t = buildTransport();
+
+        const withTimeout = (p, ms = 3000) => Promise.race([
+          p,
+          new Promise((_, rej) => setTimeout(() => rej(new Error('MAIL_TIMEOUT')), ms))
+        ]);
+
+        if (notifyTo) {
+          await withTimeout(t.sendMail({
+            from: fromAddress(),
+            to: notifyTo,
+            subject: 'New Briko subscriber',
+            text: `New subscriber: ${email}`,
+            html: `<div style="font:14px system-ui,-apple-system,Segoe UI,Roboto">New subscriber: <b>${email}</b></div>`
+          }));
         }
-      })();
+
+        if (welcomeOn && WELCOME_HTML) {
+          await withTimeout(t.sendMail({
+            from: fromAddress(),
+            to: email,
+            subject: 'Welcome to Briko 💛',
+            text: 'Thanks for joining Briko. You’re on the list for new builds, features, and parts packs. Visit https://briko.app',
+            html: WELCOME_HTML,
+            headers: { 'X-Entity-Ref-ID': 'briko-subscribe-welcome' }
+          }));
+        }
+      } catch (mailErr) {
+        context.log.error('[subscribe] MAIL_ERROR', mailErr && (mailErr.message || mailErr));
+        // do not fail the request; continue to return 200
+      }
     }
 
     // duplicates count as success
