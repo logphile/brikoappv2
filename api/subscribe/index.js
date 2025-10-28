@@ -70,11 +70,22 @@ module.exports = async function (context, req) {
       existed = !!chk.data;
     } catch (_) {}
 
-    const { data, error } = await supabase
+    let data, error;
+    ({ data, error } = await supabase
       .from('subscriptions')
-      .upsert({ email, source }, { onConflict: 'email' })
-      .select('email')
-      .single();
+      .upsert({ email, source }, { onConflict: 'email', returning: 'representation' })
+      .select('email, created_at')
+      .maybeSingle()
+    );
+
+    if ((error && error.code === 'PGRST204') || (!data && !error)) {
+      const check = await supabase
+        .from('subscriptions')
+        .select('email, created_at')
+        .eq('email', email)
+        .maybeSingle();
+      if (check.data) { data = check.data; error = null; }
+    }
 
     if (error) {
       const isDup = (error.code === '23505');
@@ -91,7 +102,7 @@ module.exports = async function (context, req) {
       return;
     }
 
-    const newlyAdded = existed === false ? true : (existed === true ? false : false);
+    const newlyAdded = (existed === false);
     hdrs['x-briko-new'] = String(newlyAdded);
 
     let sent = [];
