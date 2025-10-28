@@ -1,125 +1,46 @@
-// api/subscribe/index.js
+const { serverSupabase } = require('../_utils/supa');
+const { keyRole } = require('../_utils/keyRole');
+
+function json(status, body, extraHeaders = {}) {
+  return {
+    status,
+    headers: { 'content-type': 'application/json', ...extraHeaders },
+    body: JSON.stringify(body)
+  };
+}
+
 module.exports = async function (context, req) {
-  // CORS preflight
-  if (req.method === "OPTIONS") {
-    context.res = {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": req.headers.origin || "*",
-        "Access-Control-Allow-Methods": "POST,OPTIONS",
-        "Access-Control-Allow-Headers": "content-type"
-      }
-    };
-    return;
-  }
+  const svc = process.env.NUXT_SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE;
+  const role = keyRole(svc);
 
   try {
-    const email = String((req.body && req.body.email) || "");
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      context.res = {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "invalid_email" })
-      };
-      return;
-    }
-    // Honeypot: treat non-empty hp as success and bail quietly
-    if (req.body && String(req.body.hp || "").trim() !== "") {
-      context.res = {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: true })
-      };
-      return;
+    const email = (req.body && req.body.email || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return json(422, { ok:false, code:'INVALID_EMAIL', hint:'Please enter a valid email.' }, { 'x-key-role': role });
     }
 
-    // 1) Env check
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE;
-    if (!url || !key) {
-      context.res = {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "server_supabase_env_missing", haveUrl: !!url, haveKey: !!key })
-      };
-      return;
+    if (role !== 'service_role') {
+      context.log.error('[subscribe] WRONG_KEY role=', role);
+      return json(500, { ok:false, code:'WRONG_KEY', hint:'Server not using service_role key.' }, { 'x-key-role': role });
     }
 
-    // 2) Require inside try so module errors surface as JSON
-    const { createClient } = require("@supabase/supabase-js");
+    const supa = serverSupabase();
 
-    // 3) Create client
-    let supa;
-    try {
-      supa = createClient(url, key, { auth: { persistSession: false } });
-    } catch (e) {
-      context.res = {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "create_client_failed", detail: String(e?.message || e) })
-      };
-      return;
+    // upsert requires a unique index on email
+    const { error } = await supa
+      .from('subscriptions')
+      .upsert({ email, source: 'site' }, { onConflict: 'email', ignoreDuplicates: true });
+
+    if (error) {
+      context.log.error('[subscribe] DB_ERROR', { message: error.message, details: error.details, hint: error.hint });
+      return json(409, { ok:false, code:'DB', message: error.message }, { 'x-key-role': role });
     }
 
-    // 4) Quick read to prove connectivity/table
-    const ping = await supa.from("subscriptions").select("id").limit(1);
-    if (ping.error) {
-      context.res = {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "db_read_failed", code: ping.error.code, detail: ping.error.message })
-      };
-      return;
-    }
-
-    // 5) Insert (duplicates accepted)
-    const ipHdr = req.headers["x-forwarded-for"] || "";
-    const ip = Array.isArray(ipHdr) ? ipHdr[0] : String(ipHdr).split(",")[0] || null;
-    const ins = await supa.from("subscriptions").insert({ email, ip, user_id: null });
-    if (ins.error && ins.error.code !== "23505") {
-      context.res = {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ok: false, error: "db_insert_failed", code: ins.error.code, detail: ins.error.message })
-      };
-      return;
-    }
-
-    // 6) Best-effort SMTP notify/welcome (non-blocking)
-    try {
-      const nodemailer = require("nodemailer");
-      const { sendWelcome, sendAdminNotify } = require("../_mail_welcome");
-
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT || 465),
-        secure: String(process.env.SMTP_SECURE || "true") === "true",
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-      });
-
-      // Do not block on transport readiness
-      transporter.verify().catch(() => {});
-
-      // Notify Phil (always)
-      sendAdminNotify(transporter, email, ip).catch(() => {});
-
-      // Optional welcome to subscriber (default true if env unset)
-      if ((process.env.SUBSCRIBE_SEND_WELCOME || "true") === "true") {
-        sendWelcome(transporter, email).catch(() => {});
-      }
-    } catch (_) { /* swallow mail errors */ }
-
-    // 7) Success
-    context.res = {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ok: true })
-    };
+    return json(200, { ok:true }, { 'x-key-role': role });
   } catch (e) {
-    context.res = {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ok: false, error: "server_exception", detail: String(e?.message || e) })
-    };
+    context.log.error('[subscribe] UNHANDLED', e && (e.stack || e.message || e));
+    const code = e && e.code ? e.code : 'UNKNOWN';
+    const hint = code === 'CONFIG_MISSING' ? 'Missing Supabase env vars in Azure.' : 'Unexpected server error.';
+    return json(500, { ok:false, code, hint }, { 'x-key-role': role });
   }
 };
