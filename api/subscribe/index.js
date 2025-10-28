@@ -5,6 +5,9 @@ const { buildTransport, fromAddress } = require('../_utils/mailer');
 // Inline HTML template to avoid filesystem issues
 const WELCOME_HTML = `<!DOCTYPE html><html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><title>Welcome to Briko</title><style>body,table,td,p{margin:0;padding:0}img{border:0;outline:0;text-decoration:none;display:block}table{border-collapse:collapse}a{text-decoration:none}.bg-paper{background:#F5F4F1}.bg-yellow{background:#FFD808}.ink{color:#343434}.muted{color:#666}.wrap{width:100%}.container{width:100%;max-width:600px;margin:0 auto}.card{border-radius:12px;overflow:hidden}.px{padding-left:24px;padding-right:24px}.py{padding-top:24px;padding-bottom:24px}.pt{padding-top:24px}.btn{background:#FF0062;color:#fff!important;font-weight:700;border-radius:10px}.btn-txt{font-size:16px;line-height:16px;padding:14px 22px;display:inline-block}.system-font{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}.h1{font-size:32px;line-height:1.15;font-weight:900;letter-spacing:.2px}.p{font-size:16px;line-height:1.55}.small{font-size:12px;line-height:1.4}@media (max-width:620px){.px{padding-left:16px!important;padding-right:16px!important}.py{padding-top:20px!important;padding-bottom:20px!important}.h1{font-size:28px!important}}</style></head><body class="bg-paper system-font"><center class="wrap"><table width="100%" role="presentation"><tr><td height="28">&nbsp;</td></tr></table><table role="presentation" class="container card" width="600" align="center"><tr><td class="bg-yellow px py"><table role="presentation" width="100%"><tr><td align="left" valign="middle"><div class="h1 ink system-font" style="font-weight:900;">WELCOME TO<br><span style="font-size:40px;">BRIKO!</span></div></td><td align="right" valign="middle" style="width:120px;"><img src="https://briko.app/brand/briko-icon-accent.svg" width="96" height="96" alt="Briko icon" style="width:96px;height:96px"></td></tr></table><table role="presentation" width="100%" style="margin-top:18px;margin-bottom:18px"><tr><td style="height:2px;background:#FF0062;border-radius:2px"></td></tr></table><table role="presentation" width="100%"><tr><td class="ink system-font p"><p class="p">Hey there 👋</p><p class="p" style="margin-top:10px">Thanks for joining <strong>Briko</strong>. You’re officially on the list for new builds, features, and parts packs.</p></td></tr></table><table role="presentation" align="left" style="margin-top:14px;margin-bottom:10px"><tr><td><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="https://briko.app" arcsize="12%" fillcolor="#FF0062" stroke="f"><w:anchorlock/><center style="color:#ffffff;font-family:Segoe UI, Arial, sans-serif;font-size:16px;font-weight:700;">Visit Briko</center></v:roundrect><![endif]--><!--[if !mso]><!-- --><a class="btn btn-txt system-font" href="https://briko.app" target="_blank">Visit Briko</a><!--<![endif]--></td></tr></table><table role="presentation" width="100%"><tr><td class="pt ink system-font p">— The Briko Team</td></tr></table></td></tr></table><table role="presentation" class="container" width="600" align="center" style="margin-top:16px"><tr><td align="center" class="small muted system-font">© 2025 Briko · <a href="https://briko.app" class="muted" style="color:#666">briko.app</a></td></tr></table><table width="100%" role="presentation"><tr><td height="28">&nbsp;</td></tr></table></center></body></html>`;
 
+// Normalized email validator
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function jsonRes(context, status, body, headers = {}) {
   context.res = {
     status,
@@ -30,9 +33,19 @@ module.exports = async function (context, req) {
   };
 
   try {
-    const email = (req.body && req.body.email || '').trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      jsonRes(context, 422, { ok:false, code:'INVALID_EMAIL' }, { 'x-key-role': role });
+    // Normalize request body
+    const body = (req.body && typeof req.body === 'object') ? req.body : {};
+    const raw = (body.email || '').toString();
+    const email = raw.trim().toLowerCase();
+    const source = (body.source || 'site').slice(0, 64);
+
+    // Cheap guardrails
+    if (!email || !EMAIL_RE.test(email)) {
+      context.res = {
+        status: 400,
+        headers: { 'content-type': 'application/json', 'x-briko-reason': 'bad_email' },
+        body: JSON.stringify({ ok: false, reason: 'bad_email' })
+      };
       return;
     }
     if (role !== 'service_role') {
@@ -41,32 +54,48 @@ module.exports = async function (context, req) {
       return;
     }
 
-    const supa = serverSupabase();
+    // Idempotent UPSERT using service role
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NUXT_SUPABASE_URL || process.env.SUPABASE_URL,
+      process.env.NUXT_SUPABASE_SERVICE_ROLE || process.env.SUPABASE_SERVICE_ROLE,
+      { auth: { persistSession: false } }
+    );
 
-    // check existence first to know if it's a new row
-    const { data: exists, error: selErr } = await supa
-      .from('subscriptions').select('email').eq('email', email).maybeSingle();
-    if (selErr) {
-      context.log.error('[subscribe] DB_SELECT_ERROR', selErr.message);
-      jsonRes(context, 409, { ok:false, code:'DB', message: selErr.message }, { 'x-key-role': role });
+    // Pre-check existence for diagnostic and to gate welcome/admin send
+    let existed = null;
+    try {
+      const chk = await supabase
+        .from('subscriptions').select('email').eq('email', email).maybeSingle();
+      existed = !!chk.data;
+    } catch (_) {}
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .upsert({ email, source }, { onConflict: 'email' })
+      .select('email')
+      .single();
+
+    if (error) {
+      const isDup = (error.code === '23505');
+      context.res = {
+        status: isDup ? 409 : 500,
+        headers: {
+          'content-type': 'application/json',
+          ...hdrs,
+          'x-briko-dbcode': error.code || 'n/a',
+          'x-briko-reason': isDup ? 'duplicate' : 'db_error'
+        },
+        body: JSON.stringify({ ok:false, reason: isDup ? 'duplicate' : 'db_error', code: error.code, msg: error.message })
+      };
       return;
     }
-    hdrs['x-briko-new'] = String(!exists);
 
-    let inserted = false;
-    if (!exists) {
-      const { error: insErr } = await supa
-        .from('subscriptions').insert({ email, source:'site' });
-      if (insErr) {
-        context.log.error('[subscribe] DB_INSERT_ERROR', insErr.message);
-        jsonRes(context, 409, { ok:false, code:'DB', message: insErr.message }, { 'x-key-role': role });
-        return;
-      }
-      inserted = true;
-    }
+    const newlyAdded = existed === false ? true : (existed === true ? false : false);
+    hdrs['x-briko-new'] = String(newlyAdded);
 
     let sent = [];
-    if (inserted) {
+    if (newlyAdded) {
       // Send emails (awaited) on first insert only, with soft timeouts
       try {
         const t = buildTransport();
