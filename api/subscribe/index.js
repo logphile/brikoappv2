@@ -1,6 +1,7 @@
 const { serverSupabase } = require('../_utils/supa');
 const { keyRole } = require('../_utils/keyRole');
 const { buildTransport, fromAddress } = require('../_utils/mailer');
+const { readEmailPng } = require('../_utils/emailAssets');
 
 // CID-embedded logo config
 const LOGO_CID = 'briko-logo';
@@ -34,6 +35,14 @@ function jsonRes(context, status, body, headers = {}) {
     headers: { 'content-type': 'application/json', ...headers },
     body: JSON.stringify(body)
   };
+}
+
+function renderWelcomeHtml(logoSrc) {
+  try {
+    return WELCOME_HTML.replace('cid:' + LOGO_CID, logoSrc);
+  } catch (_) {
+    return WELCOME_HTML;
+  }
 }
 
 module.exports = async function (context, req) {
@@ -148,14 +157,32 @@ module.exports = async function (context, req) {
         }
 
         if (welcomeOn && WELCOME_HTML) {
-          await withTimeout(t.sendMail({
+          let logoBuf = null;
+          try {
+            logoBuf = readEmailPng(LOGO_FILE);
+          } catch (_) {
+            try { logoBuf = await loadLogoBuffer(context); } catch (_) {}
+          }
+
+          const mailOpts = {
             from: fromAddress(),
             to: email,
             subject: 'Welcome to Briko 🧱',
             text: 'Thanks for joining Briko. You’re on the list for new builds, features, and parts packs. Visit https://briko.app',
-            html: WELCOME_HTML,
+            html: renderWelcomeHtml(logoBuf ? ('cid:' + LOGO_CID) : LOGO_URL),
             headers: { 'X-Entity-Ref-ID': 'briko-subscribe-welcome' }
-          }));
+          };
+
+          if (logoBuf) {
+            mailOpts.attachments = [{
+              filename: LOGO_FILE,
+              content: logoBuf,
+              cid: LOGO_CID,
+              contentType: 'image/png'
+            }];
+          }
+
+          await withTimeout(t.sendMail(mailOpts));
           sent.push('welcome');
         }
       } catch (mailErr) {
