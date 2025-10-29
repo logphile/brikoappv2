@@ -12,8 +12,10 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         <!-- Mosaic Engine -->
         <article class="rounded-2xl ring-1 ring-black/10 shadow-card p-5 md:p-6 text-[#343434] transition hover:-translate-y-0.5">
           <div class="flex items-center gap-3">
-            <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <IconPalette class="h-[18px] w-[18px] text-[#2F3061]" />
+            <span class="inline-grid place-items-center h-9 w-9 rounded-xl
+                         bg-[#2F3061] ring-1 ring-black/10 shadow-sm
+                         transition-transform duration-150 hover:scale-[1.03] focus-visible:scale-[1.03]">
+              <IconPalette class="h-5 w-5 text-[#FFD808]" />
             </span>
             <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
@@ -25,8 +27,10 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         <!-- 3D Voxel Preview -->
         <article class="rounded-2xl ring-1 ring-black/10 shadow-card p-5 md:p-6 text-[#343434] transition hover:-translate-y-0.5">
           <div class="flex items-center gap-3">
-            <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <IconLayers class="h-[18px] w-[18px] text-[#2F3061]" />
+            <span class="inline-grid place-items-center h-9 w-9 rounded-xl
+                         bg-[#2F3061] ring-1 ring-black/10 shadow-sm
+                         transition-transform duration-150 hover:scale-[1.03] focus-visible:scale-[1.03]">
+              <IconLayers class="h-5 w-5 text-[#FFD808]" />
             </span>
             <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
@@ -38,8 +42,10 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         <!-- Smart BOM -->
         <article class="rounded-2xl ring-1 ring-black/10 shadow-card p-5 md:p-6 text-[#343434] transition hover:-translate-y-0.5">
           <div class="flex items-center gap-3">
-            <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <IconReceipt class="h-[18px] w-[18px] text-[#2F3061]" />
+            <span class="inline-grid place-items-center h-9 w-9 rounded-xl
+                         bg-[#2F3061] ring-1 ring-black/10 shadow-sm
+                         transition-transform duration-150 hover:scale-[1.03] focus-visible:scale-[1.03]">
+              <IconReceipt class="h-5 w-5 text-[#FFD808]" />
             </span>
             <h3 class="text-[18px] font-semibold">Smart BOM</h3>
           </div>
@@ -51,8 +57,10 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         <!-- Fast Exports -->
         <article class="rounded-2xl ring-1 ring-black/10 shadow-card p-5 md:p-6 text-[#343434] transition hover:-translate-y-0.5">
           <div class="flex items-center gap-3">
-            <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <IconDownload class="h-[18px] w-[18px] text-[#2F3061]" />
+            <span class="inline-grid place-items-center h-9 w-9 rounded-xl
+                         bg-[#2F3061] ring-1 ring-black/10 shadow-sm
+                         transition-transform duration-150 hover:scale-[1.03] focus-visible:scale-[1.03]">
+              <IconDownload class="h-5 w-5 text-[#FFD808]" />
             </span>
             <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
@@ -64,8 +72,10 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         <!-- Save & Share -->
         <article class="rounded-2xl ring-1 ring-black/10 shadow-card p-5 md:p-6 text-[#343434] transition hover:-translate-y-0.5">
           <div class="flex items-center gap-3">
-            <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <IconPhoto class="h-[18px] w-[18px] text-[#2F3061]" />
+            <span class="inline-grid place-items-center h-9 w-9 rounded-xl
+                         bg-[#2F3061] ring-1 ring-black/10 shadow-sm
+                         transition-transform duration-150 hover:scale-[1.03] focus-visible:scale-[1.03]">
+              <IconPhoto class="h-5 w-5 text-[#FFD808]" />
             </span>
             <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
@@ -78,8 +88,10 @@ import IconBolt from '@/components/icons/IconBolt.vue'
         <!-- Performance -->
         <article class="rounded-2xl ring-1 ring-black/10 shadow-card p-5 md:p-6 text-[#343434] transition hover:-translate-y-0.5">
           <div class="flex items-center gap-3">
-            <span class="inline-flex h-8 w-8 rounded-lg bg-[#FFD808] ring-1 ring-black/10 items-center justify-center">
-              <IconBolt class="h-[18px] w-[18px] text-[#2F3061]" />
+            <span class="inline-grid place-items-center h-9 w-9 rounded-xl
+                         bg-[#2F3061] ring-1 ring-black/10 shadow-sm
+                         transition-transform duration-150 hover:scale-[1.03] focus-visible:scale-[1.03]">
+              <IconBolt class="h-5 w-5 text-[#FFD808]" />
             </span>
             <h3 class="text-[18px] font-semibold">Performance</h3>
           </div>
