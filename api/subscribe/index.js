@@ -131,7 +131,7 @@ module.exports = async function (context, req) {
           await withTimeout(t.sendMail({
             from: fromAddress(),
             to: email,
-            subject: 'Welcome to Briko 💛',
+            subject: 'Welcome to Briko 🧱',
             text: 'Thanks for joining Briko. You’re on the list for new builds, features, and parts packs. Visit https://briko.app',
             html: WELCOME_HTML,
             headers: { 'X-Entity-Ref-ID': 'briko-subscribe-welcome' }

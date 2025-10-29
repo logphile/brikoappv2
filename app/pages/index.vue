@@ -222,7 +222,7 @@ async function handleSubscribe() {
           </button>
         </form>
         <p v-if="notice && !subscribed" class="mt-3 text-sm text-red-600" aria-live="polite">{{ notice }}</p>
-        <p v-if="subscribed" class="mt-4 text-[#2F3061] flex items-center gap-1">Thanks! You’re on the list. <span class="text-[#FF0062]">♥</span></p>
+        <p v-if="subscribed" class="mt-4 text-[#2F3061] flex items-center gap-1">Thanks! You’re on the list. <span class="text-[#FF0062]">🧱</span></p>
       </div>
     </section>
   </div>
