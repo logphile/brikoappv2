@@ -208,7 +208,7 @@ async function handleSubscribe() {
     <!-- Email capture block -->
     <section class="w-full bg-[#FFD808]/20 border-t border-[#2F3061]/10 py-12 mt-20">
       <div class="max-w-2xl mx-auto text-center px-4">
-        <h2 class="text-2xl font-semibold text-[#2F3061] mb-4">Stay in the loop!</h2>
+        <h2 class="text-2xl font-semibold text-[#2F3061] mb-4">Join the build.</h2>
         <p class="text-[#2F3061]/70 mb-6">Get featured builds and new parts packs.</p>
         <form @submit.prevent="handleSubscribe" class="flex flex-col sm:flex-row gap-3 justify-center">
           <!-- honeypot: hidden text field that must remain empty -->
