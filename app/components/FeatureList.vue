@@ -17,7 +17,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
             </span>
             <h3 class="text-[18px] font-semibold">Mosaic Engine</h3>
           </div>
-          <p class="mt-2 text-[15px]">
+          <p class="mt-2 text-[17px]/[26px]">
             Turn any photo into a colorful brick mosaic in seconds.
           </p>
         </article>
@@ -30,7 +30,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
             </span>
             <h3 class="text-[18px] font-semibold">3D Voxel Preview</h3>
           </div>
-          <p class="mt-2 text-[15px]">
+          <p class="mt-2 text-[17px]/[26px]">
             See your build in 3D — rotate, zoom, and step through layers.
           </p>
         </article>
@@ -43,7 +43,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
             </span>
             <h3 class="text-[18px] font-semibold">Smart BOM</h3>
           </div>
-          <p class="mt-2 text-[15px]">
+          <p class="mt-2 text-[17px]/[26px]">
             Get an instant parts list with sizes and counts, ready to order.
           </p>
         </article>
@@ -56,7 +56,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
             </span>
             <h3 class="text-[18px] font-semibold">Fast Exports</h3>
           </div>
-          <p class="mt-2 text-[15px]">
+          <p class="mt-2 text-[17px]/[26px]">
             Download your build steps as PNG, CSV, or PDF with one click.
           </p>
         </article>
@@ -69,7 +69,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
             </span>
             <h3 class="text-[18px] font-semibold">Save &amp; Share</h3>
           </div>
-          <p class="mt-2 text-[15px]">
+          <p class="mt-2 text-[17px]/[26px]">
             Keep your projects online and share them with friends
             <span class="text-pink-500">(coming soon)</span>.
           </p>
@@ -83,7 +83,7 @@ import IconBolt from '@/components/icons/IconBolt.vue'
             </span>
             <h3 class="text-[18px] font-semibold">Performance</h3>
           </div>
-          <p class="mt-2 text-[15px]">
+          <p class="mt-2 text-[17px]/[26px]">
             Smooth and instant — mosaics and 3D models render in under 2 seconds.
           </p>
         </article>

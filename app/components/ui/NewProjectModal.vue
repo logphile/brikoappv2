@@ -48,7 +48,7 @@
               <div class="flex items-start justify-between">
                 <div>
                   <div class="text-base font-semibold text-white">Mosaic (Photo → Bricks)</div>
-                  <div class="mt-0.5 text-[15px] text-white/70">LEGO-style color map, greedy tiling, BOM.</div>
+                  <div class="mt-0.5 text-[17px]/[26px] text-white/70">LEGO-style color map, greedy tiling, BOM.</div>
                 </div>
                 <span class="mt-1 opacity-0 group-hover:opacity-100 transition
                               inline-flex h-6 w-6 items-center justify-center rounded-full
@@ -65,7 +65,7 @@
                      focus:ring-2 focus:ring-[#FF0062]/60"
             >
               <div class="text-base font-semibold text-white">3D Voxel Builder</div>
-              <div class="mt-0.5 text-[15px] text-white/70">Live 3D preview with instanced bricks.</div>
+              <div class="mt-0.5 text-[17px]/[26px] text-white/70">Live 3D preview with instanced bricks.</div>
             </NuxtLink>
 
             <NuxtLink
@@ -77,7 +77,7 @@
                      focus:ring-2 focus:ring-[#FF0062]/60"
             >
               <div class="text-base font-semibold text-white">Avatar (LEGO-style)</div>
-              <div class="mt-0.5 text-[15px] text-white/70">Quick face filter—fun & sharable.</div>
+              <div class="mt-0.5 text-[17px]/[26px] text-white/70">Quick face filter—fun & sharable.</div>
             </NuxtLink>
           </div>
 
