@@ -9,11 +9,10 @@
       "/images/*",
       "/favicon.*",
       "/robots.txt",
+      "/sitemap.xml",
+      "/api/*",
       "/slider/*"
     ]
-  },
-  "responseOverrides": {
-    "404": { "rewrite": "/index.html", "statusCode": 200 }
   },
   "mimeTypes": {
     ".webp": "image/webp",
@@ -38,7 +37,14 @@
       "headers": {
         "cache-control": "no-store"
       }
-    }
+    },
+    { "route": "/old-path",          "redirect": "/new-path",    "statusCode": 301 },
+    { "route": "/old",                "redirect": "/",            "statusCode": 301 },
+    { "route": "/community-studio",   "redirect": "/gallery",     "statusCode": 301 },
+    { "route": "/community-studio/*", "redirect": "/gallery",     "statusCode": 301 },
+    { "route": "/photo-to-bricks",    "redirect": "/mosaic",      "statusCode": 301 },
+    { "route": "/sitemap",            "redirect": "/sitemap.xml", "statusCode": 301 },
+    { "route": "/sitemap/",           "redirect": "/sitemap.xml", "statusCode": 301 }
   ],
   "globalHeaders": {
     "cache-control": "no-store"
