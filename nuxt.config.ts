@@ -45,13 +45,6 @@ export default defineNuxtConfig({
     '/privacy': { prerender: true },
     '/terms': { prerender: true },
     '/legal': { prerender: true },
-    '/community-studio': { redirect: '/gallery' },
-    '/community-studio/**': { redirect: '/gallery' },
-    // Historic URL label ("Photo to Bricks") now routes to /mosaic
-    '/photo-to-bricks': { redirect: '/mosaic' },
-    // Robustness: if any link points to /sitemap, redirect to the static sitemap.xml
-    '/sitemap': { redirect: '/sitemap.xml' },
-    '/sitemap/': { redirect: '/sitemap.xml' },
     // Runtime pages should not be prerendered (client-only work: auth/stores/workers)
     '/login': { prerender: false, ssr: false },
     '/login/**': { prerender: false, ssr: false },
@@ -127,6 +120,13 @@ export default defineNuxtConfig({
         '/studio', '/studio/community',
         '/mosaic', '/voxel'
       ]
+    },
+    routeRules: {
+      '/community-studio': { redirect: { to: '/gallery', statusCode: 301 } },
+      '/community-studio/**': { redirect: { to: '/gallery', statusCode: 301 } },
+      '/photo-to-bricks': { redirect: { to: '/mosaic', statusCode: 301 } },
+      '/sitemap': { redirect: { to: '/sitemap.xml', statusCode: 301 } },
+      '/sitemap/': { redirect: { to: '/sitemap.xml', statusCode: 301 } }
     }
   },
   vite: {
@@ -164,6 +164,7 @@ export default defineNuxtConfig({
   // optional: reduce CSS inlining into HTML (uncomment if needed)
   // experimental: { inlineSSRStyles: false },
   app: {
+    trailingSlash: false,
     // Put every deploy’s assets under its own folder to avoid stale edge caches
     buildAssetsDir: `/_nuxt/${ASSETS_VERSION}/`,
     head: {
