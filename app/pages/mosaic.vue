@@ -38,6 +38,7 @@ import Chip from '@/components/ui/Chip.vue'
 import UiButton from '@/components/ui/UiButton.vue'
 import UiPillGroup from '@/components/ui/UiPillGroup.vue'
 import { trackEvent } from '@/composables/useAnalytics'
+import CompareSlider from '@/components/CompareSlider.vue'
 
 // Nuxt auto-imported composable from @nuxtjs/supabase
 declare const useSupabaseClient: <T = any>() => T
@@ -1057,6 +1058,23 @@ watchDebounced(
         }}</span>
       </a>
     </nav>
+
+    <section class="mx-auto max-w-5xl p-6 bg-[#F5F4F1] text-[#343434] rounded-2xl mt-8">
+      <h2 class="mb-4 text-2xl font-bold tracking-tight">Before / After</h2>
+
+      <CompareSlider :start="55" label="Mosaic comparison">
+        <template #left>
+          <img src="/demo-mosaic.jpg" class="block w-full h-auto" alt="Processed mosaic preview">
+        </template>
+        <template #right>
+          <img src="/demo-original.jpg" class="block w-full h-auto" alt="Original image">
+        </template>
+      </CompareSlider>
+
+      <p class="mt-3 text-sm opacity-75">
+        Drag the pink handle • Use ←/→ arrows (Shift for bigger steps)
+      </p>
+    </section>
 
     <div class="mt-12 grid gap-8 lg:gap-12 lg:grid-cols-[460px,1fr] items-start">
       <!-- left column -->
