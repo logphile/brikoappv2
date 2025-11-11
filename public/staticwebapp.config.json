@@ -43,8 +43,7 @@
     { "route": "/community-studio",   "redirect": "/gallery",     "statusCode": 301 },
     { "route": "/community-studio/*", "redirect": "/gallery",     "statusCode": 301 },
     { "route": "/photo-to-bricks",    "redirect": "/mosaic",      "statusCode": 301 },
-    { "route": "/sitemap",            "redirect": "/sitemap.xml", "statusCode": 301 },
-    { "route": "/sitemap/",           "redirect": "/sitemap.xml", "statusCode": 301 }
+    { "route": "/sitemap",            "redirect": "/sitemap.xml", "statusCode": 301 }
   ],
   "globalHeaders": {
     "cache-control": "no-store"
