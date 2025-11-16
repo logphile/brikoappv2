@@ -66,23 +66,32 @@ import UiButton from '@/components/ui/UiButton.vue'
 // @ts-expect-error definePageMeta is a Nuxt macro available at runtime
 definePageMeta({ ssr: false })
 
+const route = useRoute()
+
 // SEO
-useHead({
-  title: 'Community Gallery',
-  meta: [
-    { name: 'description', content: 'Explore public remixes and builds from the Briko community.' },
-    { property: 'og:title', content: 'Community Gallery | Briko' },
-    { property: 'og:description', content: 'Explore public remixes and builds from the Briko community.' },
-    { property: 'og:url', content: 'https://briko.app/gallery' },
-    { property: 'og:image', content: 'https://briko.app/og-default.png' },
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Community Gallery | Briko' },
-    { name: 'twitter:description', content: 'Explore public remixes and builds from the Briko community.' },
-    { name: 'twitter:image', content: 'https://briko.app/og-default.png' }
-  ],
-  link: [
-    { rel: 'canonical', href: 'https://briko.app/gallery' }
-  ]
+useHead(() => {
+  const base = 'https://briko.app/gallery'
+
+  return {
+    title: 'Community Gallery',
+    meta: [
+      { name: 'description', content: 'Explore public remixes and builds from the Briko community.' },
+      { property: 'og:title', content: 'Community Gallery | Briko' },
+      { property: 'og:description', content: 'Explore public remixes and builds from the Briko community.' },
+      { property: 'og:url', content: base },
+      { property: 'og:image', content: 'https://briko.app/og-default.png' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Community Gallery | Briko' },
+      { name: 'twitter:description', content: 'Explore public remixes and builds from the Briko community.' },
+      { name: 'twitter:image', content: 'https://briko.app/og-default.png' },
+      ...(route.query.q
+        ? [{ name: 'robots', content: 'noindex,follow' }]
+        : [])
+    ],
+    link: [
+      { rel: 'canonical', href: base }
+    ]
+  }
 })
 
 // Data types from gallery view
